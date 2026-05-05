@@ -33,6 +33,7 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -640,6 +641,7 @@ label {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -654,6 +656,19 @@ input {
   padding: 0 13px;
 }
 
+select {
+  height: 46px;
+  padding: 0 13px;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, rgba(255, 255, 255, 0.68) 50%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.68) 50%, transparent 50%),
+    rgba(4, 10, 22, 0.38);
+  background-position: calc(100% - 18px) 19px, calc(100% - 12px) 19px, 0 0;
+  background-size: 6px 6px, 6px 6px, auto;
+  background-repeat: no-repeat;
+}
+
 textarea {
   resize: vertical;
   min-height: 132px;
@@ -661,6 +676,7 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
   border-color: rgba(55, 221, 189, 0.72);
   box-shadow: 0 0 0 3px rgba(55, 221, 189, 0.11);

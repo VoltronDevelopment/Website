@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { type CSSProperties, FormEvent, useMemo, useState } from "react";
 
-const metrics = ["240-Hour Salt Spray", "15-25 Micron Film", "200-400V ED Range", "300-500 Tonne/Month"];
+const metrics = ["240-Hour Salt Spray", "15-25 Micron Film", "200-400V ED Range", "1000-2000 Tonne/Month"];
 
 const capabilities = [
   {
@@ -20,7 +20,7 @@ const capabilities = [
   },
   {
     title: "High-Volume Readiness",
-    body: "Designed for 300-500 tonnes per month production capacity with disciplined flow."
+    body: "Designed for 1000-2000 tonnes per month production capacity with disciplined flow."
   }
 ];
 
@@ -119,7 +119,7 @@ export default function Home() {
             </p>
             <div className="hero-actions">
               <a className="button primary" href="#contact">Request a Quote</a>
-              <a className="button secondary" href="#capabilities">Explore Capabilities</a>
+              <a className="button secondary" href="/voltron-company-profile.pdf" download>Download Company Profile</a>
             </div>
           </div>
           <div className="hero-visual" aria-label="Electric Voltron brand visual">
@@ -273,7 +273,7 @@ export default function Home() {
               <span>CTO</span>
               <h3>Omkar</h3>
               <p>
-                IIT Madras B.Tech + M.Tech, Intelligent Manufacturing, R&amp;D experience at Tata Motors and Philips, with
+                IIT Madras B.Tech + M.Tech with 10+ years of experience, Intelligent Manufacturing, R&amp;D experience at Tata Motors and Philips, with
                 expertise in modelling, design, development, PDLM, and SDLC.
               </p>
             </article>
@@ -281,7 +281,7 @@ export default function Home() {
               <div className="leader-photo" aria-label="Photo placeholder for Akshay">A</div>
               <span>COO</span>
               <h3>Akshay</h3>
-              <p>10 years of experience in retail, operations, execution, and business process management.</p>
+              <p>10+ years of experience in retail, operations, execution, and business process management.</p>
             </article>
           </div>
         </section>
@@ -296,10 +296,19 @@ export default function Home() {
             <div className="contact-points">
               <span>Automotive & industrial components</span>
               <span>Quote-ready technical intake</span>
-              <span>Backend inquiry capture included</span>
+              <span>Email notification and durable inquiry storage ready</span>
             </div>
           </div>
           <form className="quote-form" onSubmit={submitInquiry}>
+            <label>
+              Inquiry Type
+              <select name="inquiryType" defaultValue="Request a Quote" required>
+                <option>Request a Quote</option>
+                <option>General Contact</option>
+                <option>Supplier / Vendor Inquiry</option>
+                <option>Partnership Inquiry</option>
+              </select>
+            </label>
             <div className="field-pair">
               <label>
                 Name
@@ -326,10 +335,24 @@ export default function Home() {
                 <input name="componentType" type="text" placeholder="Automotive bracket, casting, sheet metal..." />
               </label>
               <label>
+                Material / Substrate
+                <input name="material" type="text" placeholder="MS, casting, galvanized steel..." />
+              </label>
+            </div>
+            <div className="field-pair">
+              <label>
                 Monthly Volume
                 <input name="monthlyVolume" type="text" placeholder="Approx. tonnes/month or parts/month" />
               </label>
+              <label>
+                Coating Thickness
+                <input name="coatingThickness" type="text" placeholder="Example: 15-25 microns" />
+              </label>
             </div>
+            <label>
+              Salt Spray Requirement
+              <input name="saltSprayRequirement" type="text" placeholder="Example: 240 hours" />
+            </label>
             <label>
               Requirement
               <textarea name="requirement" rows={5} placeholder="Tell us about the part, substrate, performance target, and timeline." required />
