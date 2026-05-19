@@ -208,6 +208,11 @@ export default function Home() {
             <div className="electric-line line-one" />
             <div className="electric-line line-two" />
             <div className="electric-line line-three" />
+            <div className="system-orbit" aria-hidden="true">
+              {heroLayers.map(([layer], index) => (
+                <span key={layer} style={{ "--orbit-index": index } as CSSProperties}>{layer}</span>
+              ))}
+            </div>
             <div className="logo-field">
               <Image src="/voltron-logo.png" alt="Voltron logo" width={620} height={620} priority />
             </div>
@@ -276,7 +281,7 @@ export default function Home() {
             <h2>The Voltron Process Intelligence Stack</h2>
             <p>Instead of presenting only tanks and machines, Voltron presents the full intelligence stack around coating reliability.</p>
           </div>
-          <div className="stack-list">
+          <div className="stack-list architecture-stack">
             {intelligenceStack.map(([title, body], index) => (
               <article key={title}>
                 <span>Layer {index + 1}</span>
@@ -295,10 +300,24 @@ export default function Home() {
             <h2>Every Lot Should Have a Story</h2>
             <p>Voltron’s traceability system is designed to connect customer material to the final dispatch record.</p>
           </div>
-          <div className="trace-chain">
-            {traceabilityItems.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
+          <div className="lot-passport">
+            <div className="passport-header">
+              <span>Digital Lot Passport</span>
+              <strong>Traceable</strong>
+            </div>
+            <div className="trace-chain">
+              {traceabilityItems.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+            <div className="passport-grid">
+              <span>Bath pH</span>
+              <span>Voltage</span>
+              <span>Oven Cycle</span>
+              <span>DFT</span>
+              <span>Operator</span>
+              <span>Dispatch</span>
+            </div>
           </div>
           <div className="trace-card">
             <p>
@@ -423,7 +442,7 @@ export default function Home() {
             <p className="eyebrow dark">Customer Promise</p>
             <h2>What Voltron Promises</h2>
           </div>
-          <div className="promise-grid">
+          <div className="promise-table">
             {promises.map(([need, response]) => (
               <article key={need}>
                 <span>{need}</span>
