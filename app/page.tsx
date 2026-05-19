@@ -34,6 +34,16 @@ const vosConnections = [
   ["ESG", "ETP, energy, water, sludge and safety records"]
 ];
 
+const vosFlow = [
+  ["RFQ", "Requirement matrix"],
+  ["Inward", "DC + lot creation"],
+  ["Rack", "Loading pattern"],
+  ["ED", "Bath + rectifier"],
+  ["Oven", "Curing record"],
+  ["Inspect", "DFT + release"],
+  ["Dispatch", "DC / invoice"]
+];
+
 const intelligenceStack = [
   ["Coating Infrastructure", "12-tank ED/CED process line with pretreatment, CED bath, UF rinses, oven curing, DM plant and ETP."],
   ["PLC-Controlled Operations", "PLC/HMI-based control for transporter logic, sequencing, alarms, interlocks and operator visibility."],
@@ -71,6 +81,14 @@ const qualityControls = [
   "NCR / CAPA / 8D"
 ];
 
+const qualityGates = [
+  ["01", "Requirement Review", "Customer requirement matrix and coating feasibility."],
+  ["02", "Process Planning", "Process flow, PFMEA, Control Plan and racking feasibility."],
+  ["03", "Process Control", "Bath parameters, voltage/current, dwell time and oven validation."],
+  ["04", "Inspection", "DFT, adhesion, visual checks and salt spray where required."],
+  ["05", "Release", "Final documentation, dispatch status, NCR/CAPA closure where needed."]
+];
+
 const dashboardGroups = [
   {
     title: "CEO Dashboard",
@@ -102,6 +120,15 @@ const erpWorkflows = [
   "Document control"
 ];
 
+const erpFlow = [
+  ["Sales", "Enquiry", "Quotation"],
+  ["Production", "Inward", "Lot tracking"],
+  ["Quality", "Inspection", "Release"],
+  ["Stores", "Inventory", "Purchase"],
+  ["Maintenance", "Assets", "Downtime"],
+  ["Finance", "Invoice", "Receivables"]
+];
+
 const roadmapPhases = [
   ["Phase 1", "Digital Control Foundation", "PLC/HMI, process records, document control, ERP workflows and production tracking."],
   ["Phase 2", "Process Visibility", "Dashboards for DFT, bath parameters, oven, production, dispatch, inventory, maintenance and EHS."],
@@ -125,6 +152,15 @@ const esgBlocks = [
   }
 ];
 
+const esgMetrics = [
+  ["Water", "Rinse usage", "82%"],
+  ["Energy", "kWh / tonne", "68%"],
+  ["ETP", "Compliance", "94%"],
+  ["Chemical", "Consumption", "76%"],
+  ["Sludge", "Records", "88%"],
+  ["Safety", "PPE / training", "96%"]
+];
+
 const promises = [
   ["Corrosion protection", "ED/CED process with DFT and validation records"],
   ["Consistency", "Process parameters, Control Plan and SPC"],
@@ -133,6 +169,17 @@ const promises = [
   ["Delivery reliability", "ERP-enabled production and dispatch tracking"],
   ["ESG compliance", "ETP, energy, water, safety and sludge records"],
   ["Cost discipline", "Cost/kg and resource consumption dashboards"]
+];
+
+const reviewChecklist = [
+  "Part geometry",
+  "Substrate",
+  "Coating thickness",
+  "Corrosion target",
+  "Monthly volume",
+  "Masking needs",
+  "Packing method",
+  "Documentation expectations"
 ];
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
@@ -270,6 +317,16 @@ export default function Home() {
               </article>
             ))}
           </div>
+          <div className="vos-flow" aria-label="Voltron Operating System process flow">
+            {vosFlow.map(([step, detail]) => (
+              <article key={step}>
+                <strong>{step}</strong>
+                <span>{detail}</span>
+              </article>
+            ))}
+            <div className="vos-branch capa">NCR / CAPA / 8D</div>
+            <div className="vos-branch esg">ETP / Energy / Water / Safety</div>
+          </div>
           <p className="section-line">
             VOS helps Voltron operate as an ERP-enabled, process-controlled, audit-ready ED coating partner.
           </p>
@@ -335,9 +392,15 @@ export default function Home() {
             </p>
           </div>
           <div className="quality-layout">
-            <div className="badge-grid">
-              {qualityControls.map((control) => (
-                <span key={control}>{control}</span>
+            <div className="quality-gates">
+              {qualityGates.map(([number, title, body]) => (
+                <article key={title}>
+                  <span>{number}</span>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{body}</p>
+                  </div>
+                </article>
               ))}
             </div>
             <div className="principle-card">
@@ -345,6 +408,11 @@ export default function Home() {
               <p>
                 The goal is not to inspect defects at the end. The goal is to control the process so defects do not travel forward.
               </p>
+              <div className="quality-chip-cloud">
+                {qualityControls.slice(4).map((control) => (
+                  <span key={control}>{control}</span>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -386,8 +454,17 @@ export default function Home() {
               ED coating is a process business. ERP makes the process visible beyond the shopfloor.
             </p>
           </div>
+          <div className="erp-flow">
+            {erpFlow.map(([department, primary, secondary]) => (
+              <article key={department}>
+                <strong>{department}</strong>
+                <span>{primary}</span>
+                <span>{secondary}</span>
+              </article>
+            ))}
+          </div>
           <div className="workflow-cloud">
-            {erpWorkflows.map((workflow) => (
+            {erpWorkflows.slice(6).map((workflow) => (
               <span key={workflow}>{workflow}</span>
             ))}
           </div>
@@ -401,7 +478,7 @@ export default function Home() {
               Voltron’s Industry 4.0 approach is practical. We are building digital capability around real coating-operation pain points.
             </p>
           </div>
-          <div className="roadmap-list">
+          <div className="roadmap-list roadmap-timeline">
             {roadmapPhases.map(([phase, title, body]) => (
               <article key={phase}>
                 <span>{phase}</span>
@@ -429,6 +506,17 @@ export default function Home() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+              </article>
+            ))}
+          </div>
+          <div className="esg-meter-grid">
+            {esgMetrics.map(([metric, label, level]) => (
+              <article key={metric}>
+                <div>
+                  <strong>{metric}</strong>
+                  <span>{label}</span>
+                </div>
+                <i style={{ "--meter": level } as CSSProperties} />
               </article>
             ))}
           </div>
@@ -501,6 +589,11 @@ export default function Home() {
               <span>Part geometry and substrate review</span>
               <span>Corrosion, thickness and documentation expectations</span>
               <span>Production, dispatch and audit-readiness discussion</span>
+            </div>
+            <div className="review-checklist">
+              {reviewChecklist.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
             </div>
           </div>
           <form className="quote-form" onSubmit={submitInquiry}>
