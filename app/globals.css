@@ -114,8 +114,7 @@ textarea {
 .hero-copy,
 .hero-visual,
 .section > *,
-.contact-section > *,
-.footer {
+.contact-section > * {
   width: min(100%, 1160px);
 }
 
@@ -1577,6 +1576,7 @@ textarea:focus {
 }
 
 .footer {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   gap: 20px;
