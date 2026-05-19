@@ -280,7 +280,7 @@ h3 {
 .system-orbit {
   position: absolute;
   z-index: 1;
-  width: min(94vw, 620px);
+  width: min(78vw, 500px);
   aspect-ratio: 1;
   border: 1px dashed rgba(55, 221, 189, 0.2);
   border-radius: 50%;
@@ -317,7 +317,7 @@ h3 {
   font-weight: 900;
   text-align: center;
   text-transform: uppercase;
-  transform: rotate(var(--angle)) translateX(min(43vw, 300px)) rotate(calc(-1 * var(--angle)));
+  transform: rotate(var(--angle)) translateX(min(34vw, 230px)) rotate(calc(-1 * var(--angle)));
   animation: counterSpin 34s linear infinite;
 }
 
@@ -767,12 +767,12 @@ h3 {
 }
 
 .dashboard-card:nth-child(3) .mini-bars {
-  align-items: center;
+  align-items: end;
 }
 
 .dashboard-card:nth-child(3) .mini-bars span {
-  height: 12px;
-  border-radius: 99px;
+  height: var(--level);
+  border-radius: 8px 8px 3px 3px;
 }
 
 .dashboard-card ul,
@@ -1339,7 +1339,7 @@ textarea:focus {
 
 @keyframes counterSpin {
   to {
-    transform: rotate(var(--angle)) translateX(min(43vw, 300px)) rotate(calc(-1 * var(--angle) - 360deg));
+    transform: rotate(var(--angle)) translateX(min(34vw, 230px)) rotate(calc(-1 * var(--angle) - 360deg));
   }
 }
 

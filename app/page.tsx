@@ -363,10 +363,10 @@ export default function Home() {
                   <strong>{groupIndex === 0 ? "Business" : groupIndex === 1 ? "Technical" : "Execution"}</strong>
                 </div>
                 <div className="mini-bars" aria-hidden="true">
-                  <span style={{ "--level": "82%" } as CSSProperties} />
-                  <span style={{ "--level": "58%" } as CSSProperties} />
-                  <span style={{ "--level": "74%" } as CSSProperties} />
-                  <span style={{ "--level": "91%" } as CSSProperties} />
+                  <span style={{ "--level": groupIndex === 2 ? "92%" : "82%" } as CSSProperties} />
+                  <span style={{ "--level": groupIndex === 2 ? "76%" : "58%" } as CSSProperties} />
+                  <span style={{ "--level": groupIndex === 2 ? "84%" : "74%" } as CSSProperties} />
+                  <span style={{ "--level": groupIndex === 2 ? "96%" : "91%" } as CSSProperties} />
                 </div>
                 <ul>
                   {group.items.map((item) => (
