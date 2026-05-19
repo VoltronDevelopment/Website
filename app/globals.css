@@ -1164,22 +1164,16 @@ h3 {
 }
 
 .leader-photo {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  display: grid;
-  place-items: center;
+  width: 112px;
+  height: 112px;
+  display: block;
   margin-bottom: 22px;
-  border: 1px solid rgba(74, 143, 253, 0.16);
-  border-radius: 8px;
-  color: rgba(74, 143, 253, 0.34);
-  background:
-    linear-gradient(135deg, rgba(55, 221, 189, 0.12), rgba(74, 143, 253, 0.12)),
-    linear-gradient(rgba(13, 29, 57, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(13, 29, 57, 0.06) 1px, transparent 1px),
-    #f8fbff;
-  background-size: auto, 22px 22px, 22px 22px, auto;
-  font-size: clamp(42px, 6vw, 70px);
-  font-weight: 900;
+  border: 3px solid rgba(55, 221, 189, 0.38);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  background: #f8fbff;
+  box-shadow: 0 18px 44px rgba(13, 29, 57, 0.12);
 }
 
 .leader-grid span {

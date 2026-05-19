@@ -459,13 +459,25 @@ export default function Home() {
           </div>
           <div className="leader-grid">
             <article>
-              <div className="leader-photo" aria-label="Photo placeholder for Rajendra">R</div>
+              <Image
+                className="leader-photo"
+                src="/executives/rajendra.png"
+                alt="Rajendra, CEO and Co-Founder"
+                width={160}
+                height={160}
+              />
               <span>CEO &amp; Co-Founder</span>
               <h3>Rajendra</h3>
               <p>20+ years of experience in manufacturing, real estate, finance, execution, and operations.</p>
             </article>
             <article>
-              <div className="leader-photo" aria-label="Photo placeholder for Omkar">O</div>
+              <Image
+                className="leader-photo"
+                src="/executives/omkar.png"
+                alt="Omkar, CTO and Co-Founder"
+                width={160}
+                height={160}
+              />
               <span>CTO &amp; Co-Founder</span>
               <h3>Omkar</h3>
               <p>
