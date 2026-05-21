@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { type CSSProperties, FormEvent, useMemo, useState } from "react";
+import { type CSSProperties, FormEvent, useEffect, useMemo, useState } from "react";
 
 const heroLayers = [
   ["Process Line", "12-tank CED process"],
@@ -189,6 +189,34 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const currentYear = useMemo(() => new Date().getFullYear(), []);
 
+  useEffect(() => {
+    const animatedElements = document.querySelectorAll<HTMLElement>("[data-animate]");
+
+    if (!("IntersectionObserver" in window)) {
+      animatedElements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.18,
+        rootMargin: "0px 0px -8% 0px"
+      }
+    );
+
+    animatedElements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, []);
+
   async function submitInquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setStatus("submitting");
@@ -238,7 +266,7 @@ export default function Home() {
       </header>
 
       <main>
-        <section className="hero" id="home">
+        <section className="hero is-visible" id="home" data-animate>
           <div className="hero-copy">
             <p className="eyebrow">The Future of ED Coating Is Process Intelligence</p>
             <h1>Corrosion Protection, Powered by Process Intelligence</h1>
@@ -274,7 +302,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section problem-section" id="problem">
+        <section className="section problem-section" id="problem" data-animate>
           <div className="section-heading left">
             <p className="eyebrow dark">The Industry Problem</p>
             <h2>What the Industry Actually Needs</h2>
@@ -299,7 +327,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section vos-section" id="vos">
+        <section className="section vos-section" id="vos" data-animate>
           <div className="section-heading">
             <p className="eyebrow">Voltron Operating System</p>
             <h2>A digital and process governance layer for ED coating operations</h2>
@@ -332,7 +360,7 @@ export default function Home() {
           </p>
         </section>
 
-        <section className="section stack-section" id="stack">
+        <section className="section stack-section" id="stack" data-animate>
           <div className="section-heading left">
             <p className="eyebrow dark">Process Intelligence Stack</p>
             <h2>The Voltron Process Intelligence Stack</h2>
@@ -351,7 +379,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section traceability" id="traceability">
+        <section className="section traceability" id="traceability" data-animate>
           <div className="section-heading">
             <p className="eyebrow dark">Lot Traceability</p>
             <h2>Every Lot Should Have a Story</h2>
@@ -383,7 +411,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section quality" id="quality">
+        <section className="section quality" id="quality" data-animate>
           <div className="section-heading left">
             <p className="eyebrow dark">Quality Governance</p>
             <h2>Quality Is Not a Final Inspection Activity</h2>
@@ -417,7 +445,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section dashboards">
+        <section className="section dashboards" data-animate>
           <div className="section-heading">
             <p className="eyebrow">Decision Dashboards</p>
             <h2>Custom Dashboards for Real Plant Decisions</h2>
@@ -446,7 +474,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section erp-section">
+        <section className="section erp-section" data-animate>
           <div className="section-heading left">
             <p className="eyebrow dark">ERP-Enabled Operations</p>
             <h2>From RFQ to Invoice — Connected</h2>
@@ -470,7 +498,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section roadmap" id="roadmap">
+        <section className="section roadmap" id="roadmap" data-animate>
           <div className="section-heading">
             <p className="eyebrow dark">Industry 4.0 Roadmap</p>
             <h2>Industry 4.0, Built in Phases</h2>
@@ -489,7 +517,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section esg-section">
+        <section className="section esg-section" data-animate>
           <div className="section-heading left">
             <p className="eyebrow dark">ESG Discipline</p>
             <h2>ESG for Coating Operations, Not Brochure ESG</h2>
@@ -525,7 +553,7 @@ export default function Home() {
           </p>
         </section>
 
-        <section className="section promise-section">
+        <section className="section promise-section" data-animate>
           <div className="section-heading">
             <p className="eyebrow dark">Customer Promise</p>
             <h2>What Voltron Promises</h2>
@@ -540,7 +568,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="section leadership">
+        <section className="section leadership" data-animate>
           <div className="section-heading">
             <p className="eyebrow dark">Leadership</p>
             <h2>Led by Manufacturing, R&amp;D, and Execution Expertise</h2>
@@ -576,7 +604,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="contact-section" id="contact">
+        <section className="contact-section" id="contact" data-animate>
           <div className="contact-copy">
             <p className="eyebrow">Technical Review</p>
             <h2>Looking for a Coating Partner Built for the Next Decade?</h2>

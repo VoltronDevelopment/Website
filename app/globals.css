@@ -38,6 +38,62 @@ textarea {
   font: inherit;
 }
 
+[data-animate] {
+  --reveal-shift: 28px;
+}
+
+[data-animate] .section-heading,
+[data-animate] .problem-copy,
+[data-animate] .question-list span,
+[data-animate] .vos-map article,
+[data-animate] .vos-flow article,
+[data-animate] .vos-branch,
+[data-animate] .stack-list article,
+[data-animate] .lot-passport,
+[data-animate] .trace-card,
+[data-animate] .quality-gates article,
+[data-animate] .principle-card,
+[data-animate] .dashboard-card,
+[data-animate] .erp-flow article,
+[data-animate] .workflow-cloud span,
+[data-animate] .roadmap-list article,
+[data-animate] .esg-grid article,
+[data-animate] .esg-meter-grid article,
+[data-animate] .promise-table article,
+[data-animate] .leader-grid article,
+[data-animate] .contact-copy,
+[data-animate] .quote-form {
+  opacity: 0;
+  transform: translateY(var(--reveal-shift));
+  transition: opacity 700ms ease, transform 700ms ease;
+  transition-delay: calc(var(--stagger, 0) * 80ms);
+}
+
+[data-animate].is-visible .section-heading,
+[data-animate].is-visible .problem-copy,
+[data-animate].is-visible .question-list span,
+[data-animate].is-visible .vos-map article,
+[data-animate].is-visible .vos-flow article,
+[data-animate].is-visible .vos-branch,
+[data-animate].is-visible .stack-list article,
+[data-animate].is-visible .lot-passport,
+[data-animate].is-visible .trace-card,
+[data-animate].is-visible .quality-gates article,
+[data-animate].is-visible .principle-card,
+[data-animate].is-visible .dashboard-card,
+[data-animate].is-visible .erp-flow article,
+[data-animate].is-visible .workflow-cloud span,
+[data-animate].is-visible .roadmap-list article,
+[data-animate].is-visible .esg-grid article,
+[data-animate].is-visible .esg-meter-grid article,
+[data-animate].is-visible .promise-table article,
+[data-animate].is-visible .leader-grid article,
+[data-animate].is-visible .contact-copy,
+[data-animate].is-visible .quote-form {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .site-header {
   position: fixed;
   inset: 0 0 auto;
@@ -275,6 +331,7 @@ h3 {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(55, 221, 189, 0.1), rgba(74, 143, 253, 0.04) 48%, transparent 70%);
   box-shadow: inset 0 0 75px rgba(74, 143, 253, 0.15);
+  animation: logoFieldPulse 5.8s ease-in-out infinite;
 }
 
 .system-orbit {
@@ -328,6 +385,22 @@ h3 {
   object-fit: cover;
   border-radius: 32px;
   filter: drop-shadow(0 0 42px rgba(55, 221, 189, 0.45));
+}
+
+.logo-field::after,
+.lot-passport::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 15%, rgba(255, 255, 255, 0.22), transparent 48%);
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+
+.hero.is-visible .logo-field::after,
+.traceability.is-visible .lot-passport::after {
+  animation: scanSweep 2.4s ease 550ms both;
 }
 
 .electric-line {
@@ -454,6 +527,7 @@ h3 {
 }
 
 .question-list span {
+  --stagger: 1;
   min-height: 54px;
   display: flex;
   align-items: center;
@@ -464,6 +538,47 @@ h3 {
   color: #1f2937;
   font-weight: 750;
   box-shadow: 0 12px 32px rgba(13, 29, 57, 0.045);
+}
+
+.question-list span:nth-child(2),
+.vos-map article:nth-child(2),
+.vos-flow article:nth-child(2),
+.stack-list article:nth-child(2),
+.quality-gates article:nth-child(2),
+.dashboard-card:nth-child(2),
+.erp-flow article:nth-child(2),
+.roadmap-list article:nth-child(2),
+.esg-grid article:nth-child(2),
+.esg-meter-grid article:nth-child(2),
+.promise-table article:nth-child(2),
+.leader-grid article:nth-child(2) {
+  --stagger: 2;
+}
+
+.question-list span:nth-child(3),
+.vos-map article:nth-child(3),
+.vos-flow article:nth-child(3),
+.stack-list article:nth-child(3),
+.quality-gates article:nth-child(3),
+.dashboard-card:nth-child(3),
+.erp-flow article:nth-child(3),
+.roadmap-list article:nth-child(3),
+.esg-grid article:nth-child(3),
+.esg-meter-grid article:nth-child(3),
+.promise-table article:nth-child(3) {
+  --stagger: 3;
+}
+
+.question-list span:nth-child(n + 4),
+.vos-map article:nth-child(n + 4),
+.vos-flow article:nth-child(n + 4),
+.stack-list article:nth-child(n + 4),
+.quality-gates article:nth-child(n + 4),
+.erp-flow article:nth-child(n + 4),
+.roadmap-list article:nth-child(n + 4),
+.esg-meter-grid article:nth-child(n + 4),
+.promise-table article:nth-child(n + 4) {
+  --stagger: 4;
 }
 
 .vos-section,
@@ -528,6 +643,13 @@ h3 {
   height: 2px;
   background: var(--gradient);
   box-shadow: 0 0 24px rgba(55, 221, 189, 0.34);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1200ms ease 300ms;
+}
+
+.vos-section.is-visible .vos-flow::before {
+  transform: scaleX(1);
 }
 
 .vos-flow article {
@@ -552,6 +674,12 @@ h3 {
   border-radius: 50%;
   background: var(--teal);
   box-shadow: 0 0 0 5px rgba(55, 221, 189, 0.14), 0 0 22px rgba(55, 221, 189, 0.7);
+}
+
+.vos-section.is-visible .vos-flow article::before,
+.quality.is-visible .quality-gates article > span {
+  animation: nodePulse 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--stagger, 0) * 160ms);
 }
 
 .vos-flow strong {
@@ -639,6 +767,13 @@ h3 {
   border-radius: 99px;
   background: var(--gradient);
   box-shadow: 0 0 24px rgba(55, 221, 189, 0.24);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1200ms ease 250ms;
+}
+
+.stack-section.is-visible .architecture-stack::before {
+  transform: scaleY(1);
 }
 
 .architecture-stack article {
@@ -782,6 +917,13 @@ h3 {
   bottom: 22px;
   width: 2px;
   background: linear-gradient(var(--teal), var(--blue));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 1200ms ease 260ms;
+}
+
+.quality.is-visible .quality-gates::before {
+  transform: scaleY(1);
 }
 
 .quality-gates article {
@@ -879,10 +1021,16 @@ h3 {
 }
 
 .mini-bars span {
-  height: var(--level);
+  height: 0;
   border-radius: 8px 8px 3px 3px;
   background: var(--gradient);
   box-shadow: 0 0 24px rgba(55, 221, 189, 0.24);
+  transition: height 900ms ease;
+  transition-delay: calc(var(--stagger, 0) * 120ms + 260ms);
+}
+
+.dashboards.is-visible .mini-bars span {
+  height: var(--level);
 }
 
 .dashboard-card:nth-child(2) .mini-bars {
@@ -910,7 +1058,6 @@ h3 {
 }
 
 .dashboard-card:nth-child(3) .mini-bars span {
-  height: var(--level);
   border-radius: 8px 8px 3px 3px;
 }
 
@@ -1027,6 +1174,13 @@ h3 {
   height: 3px;
   border-radius: 99px;
   background: var(--gradient);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1400ms ease 280ms;
+}
+
+.roadmap.is-visible .roadmap-timeline::before {
+  transform: scaleX(1);
 }
 
 .roadmap-list article,
@@ -1119,6 +1273,12 @@ h3 {
   border-radius: 99px;
   background:
     linear-gradient(90deg, var(--green) var(--meter), rgba(13, 29, 57, 0.08) var(--meter));
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 900ms ease 350ms;
+}
+
+.esg-section.is-visible .esg-meter-grid i {
+  clip-path: inset(0 0 0 0);
 }
 
 .promise-grid {
@@ -1613,6 +1773,32 @@ textarea:focus {
   }
 }
 
+@keyframes logoFieldPulse {
+  0%,
+  100% {
+    box-shadow: inset 0 0 75px rgba(74, 143, 253, 0.15), 0 0 0 rgba(55, 221, 189, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 96px rgba(74, 143, 253, 0.22), 0 0 46px rgba(55, 221, 189, 0.12);
+  }
+}
+
+@keyframes scanSweep {
+  to {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes nodePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
 @media (max-width: 1080px) {
   .tech-layout,
   .contact-section,
@@ -1743,6 +1929,39 @@ textarea:focus {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  [data-animate] .section-heading,
+  [data-animate] .problem-copy,
+  [data-animate] .question-list span,
+  [data-animate] .vos-map article,
+  [data-animate] .vos-flow article,
+  [data-animate] .vos-branch,
+  [data-animate] .stack-list article,
+  [data-animate] .lot-passport,
+  [data-animate] .trace-card,
+  [data-animate] .quality-gates article,
+  [data-animate] .principle-card,
+  [data-animate] .dashboard-card,
+  [data-animate] .erp-flow article,
+  [data-animate] .workflow-cloud span,
+  [data-animate] .roadmap-list article,
+  [data-animate] .esg-grid article,
+  [data-animate] .esg-meter-grid article,
+  [data-animate] .promise-table article,
+  [data-animate] .leader-grid article,
+  [data-animate] .contact-copy,
+  [data-animate] .quote-form {
+    opacity: 1;
+    transform: none;
+  }
+
+  .mini-bars span {
+    height: var(--level);
+  }
+
+  .esg-meter-grid i {
+    clip-path: inset(0 0 0 0);
+  }
+
   *,
   *::before,
   *::after {
