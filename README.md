@@ -47,15 +47,30 @@ npm run admin:ensure-tables
 
 CloudFormation template: `infra/dynamodb-tables.json`.
 
-### 2. IAM
+### 2. IAM (already done in account `328833518871`)
 
-Attach managed policy `VoltronWebsiteBackendAccess`  
-(`arn:aws:iam::328833518871:policy/VoltronWebsiteBackendAccess`)  
-to the Amplify SSR compute role (source JSON: `infra/amplify-compute-policy.json`).
+SSR compute role: `VoltronWebsiteAmplifyComputeRole`  
+Policy attached: `VoltronWebsiteBackendAccess`  
+(`arn:aws:iam::328833518871:policy/VoltronWebsiteBackendAccess`)
 
-Gives DynamoDB read/write on the three website tables and SES send.
+This is **separate from** `VOS-Academy` / `VoltronAcademyAmplifyComputeRole`.
 
-### 3. Amplify environment variables
+Source JSON: `infra/amplify-compute-policy.json`.
+
+### 3. Amplify app
+
+| | |
+|--|--|
+| App name | `Voltron-Website` |
+| App ID | `d1e3dp517f391n` |
+| Region | `ap-south-1` |
+| Platform | `WEB_COMPUTE` (Next.js SSR) |
+| Default URL | `https://d1e3dp517f391n.amplifyapp.com` |
+| Compute role | `VoltronWebsiteAmplifyComputeRole` |
+
+Connect the GitHub repo `VoltronDevelopment/Website` → branch `main` in the Amplify console if the branch is not linked yet. Env vars below are already set on the app.
+
+### 4. Amplify environment variables
 
 ```text
 VOLTRON_AWS_REGION=ap-south-1
@@ -77,9 +92,9 @@ npm run admin:hash-password -- "your-strong-password"
 
 Paste the `scrypt$…` value after `omkar:` in `ADMIN_CREDENTIALS`.
 
-`amplify.yml` already exports these vars into `.env.production` at build time.
+`amplify.yml` exports these vars into `.env.production` at build time.
 
-### 4. Smoke test after deploy
+### 5. Smoke test after deploy
 
 1. Open `/admin/login` (not linked from the public site nav).
 2. Sign in → open Voltron Alpha → **Start review** → change a task → **Save & apply**.
@@ -92,13 +107,3 @@ Paste the `scrypt$…` value after `omkar:` in `ADMIN_CREDENTIALS`.
 | `npm run admin:ensure-tables` | Create DynamoDB tables if missing |
 | `npm run admin:hash-password` | Hash a password for `ADMIN_CREDENTIALS` |
 | `npm run optimize-images` | Compress public images |
-
-## Company Profile
-
-Place the company profile PDF at:
-
-```text
-public/voltron-company-profile.pdf
-```
-
-The hero download button points to `/voltron-company-profile.pdf`.
