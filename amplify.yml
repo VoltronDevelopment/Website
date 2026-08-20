@@ -8,6 +8,8 @@ frontend:
     build:
       commands:
         - env | grep -e VOLTRON_AWS_REGION -e INQUIRIES_TABLE_NAME -e INQUIRY_TO_EMAIL -e SES_FROM_EMAIL -e NEXT_PUBLIC_SITE_URL -e PROJECTS_TABLE_NAME -e REVIEWS_TABLE_NAME >> .env.production || true
+        - test -n "$ADMIN_CREDENTIALS" && printf '%s\n' "ADMIN_CREDENTIALS=$ADMIN_CREDENTIALS" >> .env.production || true
+        - test -n "$ADMIN_SESSION_SECRET" && printf '%s\n' "ADMIN_SESSION_SECRET=$ADMIN_SESSION_SECRET" >> .env.production || true
         - npm run build
   artifacts:
     baseDirectory: .next
