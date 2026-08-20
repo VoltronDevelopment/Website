@@ -25,3 +25,4 @@ _*.txt
 /images/
 .amplify-release-secrets.json
 infra/amplify-env-vars.json
+infra/amplify-env-vars.json

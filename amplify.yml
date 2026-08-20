@@ -3,6 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
+        - node -v && npm -v
+        - pwd && ls -la
+        - test -f package-lock.json || (echo "ERROR package-lock.json missing in $(pwd)" && ls -la && exit 1)
         - npm ci
     build:
       commands:
