@@ -65,7 +65,7 @@ Source JSON: `infra/amplify-compute-policy.json`.
 | App ID | `d249bqg5o2liz1` |
 | Region | `us-east-1` (GitHub-connected production app) |
 | Platform | `WEB_COMPUTE` (Next.js SSR) |
-| Default URL | `https://d249bqg5o2liz1.amplifyapp.com` |
+| Default URL | `https://main.d249bqg5o2liz1.amplifyapp.com` |
 | Compute role | `VoltronWebsiteAmplifyComputeRole` |
 
 A separate pre-provisioned app `Voltron-Website` (`d1e3dp517f391n`) exists in `ap-south-1` without GitHub — use the **us-east-1** app above for deploys.
@@ -83,8 +83,10 @@ SES_FROM_EMAIL=info@voltroncoat.com
 INQUIRY_TO_EMAIL=info@voltroncoat.com
 NEXT_PUBLIC_SITE_URL=https://voltroncoat.com
 ADMIN_SESSION_SECRET=<long-random-string>
-ADMIN_CREDENTIALS=omkar:<scrypt-or-password>
+ADMIN_CREDENTIALS=omkar:omkar123,akshay:akshay123,hanumant:hanumant123
 ```
+
+Admin secrets are read at **runtime** from Amplify env (not baked into the build artifact).
 
 Hash a password:
 

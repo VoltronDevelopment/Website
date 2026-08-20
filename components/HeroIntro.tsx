@@ -38,7 +38,8 @@ export function HeroIntro() {
   const [activeLine, setActiveLine] = useState(-1);
 
   useEffect(() => {
-    if (getPrefersReducedMotion()) {
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    if (mobile || getPrefersReducedMotion()) {
       setPhase(3);
       setActiveLine(3);
       return;

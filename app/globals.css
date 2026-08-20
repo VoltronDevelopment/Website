@@ -4263,10 +4263,22 @@ h2 {
   }
 }
 
+@media (max-width: 768px) {
+  .hero-pillar-connectors,
+  .pillar-node {
+    display: none;
+  }
+
+  .hero-logo-cluster {
+    width: min(280px, 72vw);
+    height: clamp(160px, 26svh, 200px);
+  }
+}
+
 @media (max-width: 600px) {
   .hero-logo-cluster {
-    width: 98vw;
-    height: clamp(210px, 30svh, 240px);
+    width: min(260px, 78vw);
+    height: clamp(150px, 24svh, 190px);
   }
 
   .pillar-head {
@@ -4986,6 +4998,7 @@ h2 {
   min-height: 0;
 }
 
+@media (min-width: 601px) {
 .manufacturing-loop-visual {
   position: relative;
   width: min(100%, 760px);
@@ -5171,6 +5184,7 @@ h2 {
   line-height: 1.55;
   margin: 0;
 }
+}
 
 @media (max-width: 1100px) {
   #loop .screen-inner {
@@ -5182,13 +5196,15 @@ h2 {
     gap: 42px;
   }
 
-  .manufacturing-loop-visual {
-    min-height: 430px;
-    padding-top: 54px;
-  }
+  @media (min-width: 601px) {
+    .manufacturing-loop-visual {
+      min-height: 430px;
+      padding-top: 54px;
+    }
 
-  .manufacturing-loop-node {
-    min-height: 270px;
+    .manufacturing-loop-node {
+      min-height: 270px;
+    }
   }
 }
 
@@ -6193,6 +6209,7 @@ h2 {
   font-size: clamp(2.15rem, 3.2vw, 3.1rem);
 }
 
+@media (min-width: 601px) {
 .manufacturing-loop-visual {
   width: 100%;
   max-width: 700px;
@@ -6217,6 +6234,7 @@ h2 {
 .manufacturing-loop-node {
   min-height: 264px;
   padding-inline: 8px;
+}
 }
 
 @media (max-width: 1220px) {
