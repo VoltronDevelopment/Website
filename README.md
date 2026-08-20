@@ -61,12 +61,14 @@ Source JSON: `infra/amplify-compute-policy.json`.
 
 | | |
 |--|--|
-| App name | `Voltron-Website` |
-| App ID | `d1e3dp517f391n` |
-| Region | `ap-south-1` |
+| App name | `Website` (Amplify console) |
+| App ID | `d249bqg5o2liz1` |
+| Region | `us-east-1` (GitHub-connected production app) |
 | Platform | `WEB_COMPUTE` (Next.js SSR) |
-| Default URL | `https://d1e3dp517f391n.amplifyapp.com` |
+| Default URL | `https://d249bqg5o2liz1.amplifyapp.com` |
 | Compute role | `VoltronWebsiteAmplifyComputeRole` |
+
+A separate pre-provisioned app `Voltron-Website` (`d1e3dp517f391n`) exists in `ap-south-1` without GitHub — use the **us-east-1** app above for deploys.
 
 Connect the GitHub repo `VoltronDevelopment/Website` → branch `main` in the Amplify console if the branch is not linked yet. Env vars below are already set on the app.
 
