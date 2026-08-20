@@ -8,3 +8,20 @@ styles.css
 script.js
 /Voltron Logo.png
 /voltron-logo.png
+
+# Logs and local tooling
+*.log
+tsconfig.tsbuildinfo
+.visual-check/
+_*.py
+_*.txt
+
+# Keep README and legitimate docs; ignore ad-hoc audit dumps at repo root
+/_*.py
+/_*.txt
+
+# Local / source assets — not part of the deployable site
+/Voltron Coating Solutions-Company Deck.pdf
+/images/
+.amplify-release-secrets.json
+infra/amplify-env-vars.json

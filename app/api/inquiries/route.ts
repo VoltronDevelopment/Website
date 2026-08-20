@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isValidationError } from "@/lib/errors";
 import { storeInquiry, validateInquiry } from "@/lib/inquiries";
 
 export async function POST(request: Request) {
@@ -13,14 +14,24 @@ export async function POST(request: Request) {
       message: "Inquiry received. Voltron will contact you shortly."
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to submit inquiry.";
+    if (isValidationError(error)) {
+      return NextResponse.json(
+        {
+          ok: false,
+          message: error.message
+        },
+        { status: 400 }
+      );
+    }
+
+    console.error("[api/inquiries] unexpected error", error);
 
     return NextResponse.json(
       {
         ok: false,
-        message
+        message: "Unable to submit inquiry. Please try again shortly."
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }

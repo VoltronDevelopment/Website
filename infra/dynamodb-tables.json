@@ -1,0 +1,51 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "DynamoDB tables for Voltron website inquiries + Founder Admin projects/reviews",
+  "Parameters": {
+    "TablePrefix": {
+      "Type": "String",
+      "Default": "VoltronWebsite",
+      "Description": "Prefix for DynamoDB table names"
+    }
+  },
+  "Resources": {
+    "InquiriesTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "${TablePrefix}Inquiries" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [{ "AttributeName": "id", "AttributeType": "S" }],
+        "KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }]
+      }
+    },
+    "ProjectsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "${TablePrefix}Projects" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [{ "AttributeName": "id", "AttributeType": "S" }],
+        "KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }]
+      }
+    },
+    "ReviewsTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Fn::Sub": "${TablePrefix}Reviews" },
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [{ "AttributeName": "id", "AttributeType": "S" }],
+        "KeySchema": [{ "AttributeName": "id", "KeyType": "HASH" }]
+      }
+    }
+  },
+  "Outputs": {
+    "InquiriesTableName": {
+      "Value": { "Ref": "InquiriesTable" }
+    },
+    "ProjectsTableName": {
+      "Value": { "Ref": "ProjectsTable" }
+    },
+    "ReviewsTableName": {
+      "Value": { "Ref": "ReviewsTable" }
+    }
+  }
+}

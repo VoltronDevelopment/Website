@@ -1,36 +1,32 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { assets, siteUrl } from "@/lib/assets";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap"
-});
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-space-grotesk",
-  display: "swap"
-});
+const title = "Voltron | Engineering the Future of Manufacturing";
+const description =
+  "Voltron connects technology, infrastructure and operations to build intelligent manufacturing systems.";
 
 export const metadata: Metadata = {
-  title: "Voltron Coating Solutions | Smart ED Coating",
-  description:
-    "Automotive-grade ED coating for corrosion-resistant automotive and industrial components, powered by process intelligence.",
-  keywords: [
-    "Voltron Coating Solutions",
-    "ED coating",
-    "e-coating",
-    "electrodeposition coating",
-    "automotive coating",
-    "corrosion protection",
-    "industrial coating"
-  ],
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
   openGraph: {
-    title: "Voltron Coating Solutions",
-    description: "Automotive-grade ED coating, engineered for reliability.",
-    type: "website"
+    title,
+    description,
+    type: "website",
+    url: siteUrl,
+    siteName: "Voltron",
+    images: [{ url: assets.ogImage, width: 1200, height: 630, alt: "Voltron — Engineering the Future of Manufacturing" }]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [assets.ogImage]
+  },
+  robots: {
+    index: true,
+    follow: true
   }
 };
 
@@ -41,7 +37,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${spaceGrotesk.variable}`}>{children}</body>
+      <body>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

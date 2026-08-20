@@ -1,6 +1,6 @@
 # Voltron Website
 
-Single-page full-stack Next.js website for Voltron Coating Solutions.
+Single-page full-stack Next.js website for Voltron Coating Solutions, plus Founder Admin (`/admin`).
 
 ## Run locally
 
@@ -11,25 +11,87 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+Admin (local defaults when env is unset): `http://localhost:3000/admin` — user `omkar` / password `voltron`.
+
+Leave `PROJECTS_TABLE_NAME` and `REVIEWS_TABLE_NAME` blank locally to use `data/projects.json` and `data/reviews.json`.
+
 ## Backend
+
+### Public inquiries
 
 The quote/contact form posts to `POST /api/inquiries`.
 
-During local development, submissions are stored in `data/inquiries.json` unless `INQUIRIES_TABLE_NAME` is configured.
+Local default: `data/inquiries.json`. Production: DynamoDB table `VoltronWebsiteInquiries`.
 
-For production on AWS Amplify:
+### Founder Admin
 
-1. Create a DynamoDB table named `VoltronWebsiteInquiries` with partition key `id` as a string.
-2. Verify the sender email identity in AWS SES, for example `info@voltroncoat.com`.
-3. Give the Amplify SSR compute role permission to write to DynamoDB and send SES email.
-4. Add these environment variables in Amplify:
+- Login: `POST /api/admin/login`
+- Projects / milestones / workstreams / reviews under `/api/admin/projects…`
+- Live Gantt is read-only; edits go through **Start review → Save & apply**
+
+## Production (AWS Amplify)
+
+### 1. DynamoDB tables
+
+Create (or re-run) tables with partition key `id` (String), on-demand:
+
+| Table | Env var |
+|-------|---------|
+| `VoltronWebsiteInquiries` | `INQUIRIES_TABLE_NAME` |
+| `VoltronWebsiteProjects` | `PROJECTS_TABLE_NAME` |
+| `VoltronWebsiteReviews` | `REVIEWS_TABLE_NAME` |
+
+```powershell
+npm run admin:ensure-tables
+```
+
+CloudFormation template: `infra/dynamodb-tables.json`.
+
+### 2. IAM
+
+Attach managed policy `VoltronWebsiteBackendAccess`  
+(`arn:aws:iam::328833518871:policy/VoltronWebsiteBackendAccess`)  
+to the Amplify SSR compute role (source JSON: `infra/amplify-compute-policy.json`).
+
+Gives DynamoDB read/write on the three website tables and SES send.
+
+### 3. Amplify environment variables
 
 ```text
 VOLTRON_AWS_REGION=ap-south-1
 INQUIRIES_TABLE_NAME=VoltronWebsiteInquiries
+PROJECTS_TABLE_NAME=VoltronWebsiteProjects
+REVIEWS_TABLE_NAME=VoltronWebsiteReviews
 SES_FROM_EMAIL=info@voltroncoat.com
-INQUIRY_TO_EMAIL=infor@voltroncoat.com
+INQUIRY_TO_EMAIL=info@voltroncoat.com
+NEXT_PUBLIC_SITE_URL=https://voltroncoat.com
+ADMIN_SESSION_SECRET=<long-random-string>
+ADMIN_CREDENTIALS=omkar:<scrypt-or-password>
 ```
+
+Hash a password:
+
+```powershell
+npm run admin:hash-password -- "your-strong-password"
+```
+
+Paste the `scrypt$…` value after `omkar:` in `ADMIN_CREDENTIALS`.
+
+`amplify.yml` already exports these vars into `.env.production` at build time.
+
+### 4. Smoke test after deploy
+
+1. Open `/admin/login` (not linked from the public site nav).
+2. Sign in → open Voltron Alpha → **Start review** → change a task → **Save & apply**.
+3. Reload the project page and confirm the change persisted.
+
+## Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run admin:ensure-tables` | Create DynamoDB tables if missing |
+| `npm run admin:hash-password` | Hash a password for `ADMIN_CREDENTIALS` |
+| `npm run optimize-images` | Compress public images |
 
 ## Company Profile
 

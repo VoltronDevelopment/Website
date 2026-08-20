@@ -3,6 +3,8 @@ import path from "node:path";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+import { validationError } from "@/lib/errors";
+import { isAllowedInquiryType } from "@/lib/inquiry-intents";
 
 export type InquiryPayload = {
   inquiryType: string;
@@ -24,9 +26,10 @@ export type StoredInquiry = InquiryPayload & {
   source: "website";
 };
 
+const MAX_FIELD_LENGTH = 800;
 const dataDirectory = path.join(process.cwd(), "data");
 const dataFile = path.join(dataDirectory, "inquiries.json");
-const defaultInquiryEmail = "infor@voltroncoat.com";
+const defaultInquiryEmail = "info@voltroncoat.com";
 
 const awsRegion = process.env.VOLTRON_AWS_REGION || process.env.AWS_REGION || "ap-south-1";
 const inquiriesTableName = process.env.INQUIRIES_TABLE_NAME;
@@ -35,12 +38,18 @@ const sesFromEmail = process.env.SES_FROM_EMAIL;
 
 export function validateInquiry(input: unknown): InquiryPayload {
   if (!input || typeof input !== "object") {
-    throw new Error("Invalid request body.");
+    validationError("Invalid request body.");
   }
 
   const body = input as Record<string, unknown>;
+  const inquiryType = normalizeRequired(body.inquiryType, "Inquiry type");
+
+  if (!isAllowedInquiryType(inquiryType)) {
+    validationError("Select a valid inquiry intent.");
+  }
+
   const payload: InquiryPayload = {
-    inquiryType: normalizeRequired(body.inquiryType, "Inquiry type"),
+    inquiryType,
     name: normalizeRequired(body.name, "Name"),
     company: normalizeRequired(body.company, "Company"),
     email: normalizeEmail(body.email),
@@ -70,7 +79,14 @@ export async function storeInquiry(payload: InquiryPayload): Promise<StoredInqui
     await storeInquiryLocally(inquiry);
   }
 
-  await sendInquiryEmail(inquiry);
+  try {
+    await sendInquiryEmail(inquiry);
+  } catch (error) {
+    console.error("[inquiries] notification email failed", {
+      inquiryId: inquiry.id,
+      error: error instanceof Error ? error.message : error
+    });
+  }
 
   return inquiry;
 }
@@ -104,11 +120,12 @@ async function storeInquiryInDynamoDb(inquiry: StoredInquiry) {
 
 async function sendInquiryEmail(inquiry: StoredInquiry) {
   if (!sesFromEmail) {
+    console.warn("[inquiries] SES_FROM_EMAIL not set; skipping notification email");
     return;
   }
 
   const client = new SESv2Client({ region: awsRegion });
-  const subject = `Voltron website inquiry: ${inquiry.company}`;
+  const subject = `Voltron website inquiry: ${sanitizeEmailSubjectPart(inquiry.company)}`;
   const text = formatInquiryEmail(inquiry);
 
   await client.send(
@@ -133,6 +150,10 @@ async function sendInquiryEmail(inquiry: StoredInquiry) {
   );
 }
 
+function sanitizeEmailSubjectPart(value: string): string {
+  return value.replace(/[\r\n]+/g, " ").trim().slice(0, 120);
+}
+
 function formatInquiryEmail(inquiry: StoredInquiry): string {
   return [
     "New inquiry from the Voltron website",
@@ -140,15 +161,15 @@ function formatInquiryEmail(inquiry: StoredInquiry): string {
     `Inquiry ID: ${inquiry.id}`,
     `Created: ${inquiry.createdAt}`,
     `Type: ${inquiry.inquiryType}`,
+    `Program / process: ${inquiry.componentType || "-"}`,
     `Name: ${inquiry.name}`,
     `Company: ${inquiry.company}`,
     `Email: ${inquiry.email}`,
     `Phone: ${inquiry.phone || "-"}`,
-    `Component type: ${inquiry.componentType || "-"}`,
-    `Material/substrate: ${inquiry.material || "-"}`,
-    `Monthly volume: ${inquiry.monthlyVolume || "-"}`,
-    `Coating thickness: ${inquiry.coatingThickness || "-"}`,
-    `Salt spray requirement: ${inquiry.saltSprayRequirement || "-"}`,
+    `Part / material: ${inquiry.material || "-"}`,
+    `Volume / scale: ${inquiry.monthlyVolume || "-"}`,
+    `Spec / timeline: ${inquiry.coatingThickness || "-"}`,
+    `Quality / model: ${inquiry.saltSprayRequirement || "-"}`,
     "",
     "Requirement:",
     inquiry.requirement
@@ -158,23 +179,29 @@ function formatInquiryEmail(inquiry: StoredInquiry): string {
 function normalizeRequired(value: unknown, label: string): string {
   const normalized = typeof value === "string" ? value.trim() : "";
   if (!normalized) {
-    throw new Error(`${label} is required.`);
+    validationError(`${label} is required.`);
   }
-  if (normalized.length > 800) {
-    throw new Error(`${label} is too long.`);
+  if (normalized.length > MAX_FIELD_LENGTH) {
+    validationError(`${label} is too long.`);
   }
   return normalized;
 }
 
 function normalizeOptional(value: unknown): string | undefined {
   const normalized = typeof value === "string" ? value.trim() : "";
-  return normalized || undefined;
+  if (!normalized) {
+    return undefined;
+  }
+  if (normalized.length > MAX_FIELD_LENGTH) {
+    validationError("One or more fields is too long.");
+  }
+  return normalized;
 }
 
 function normalizeEmail(value: unknown): string {
   const email = normalizeRequired(value, "Email").toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error("Enter a valid email address.");
+    validationError("Enter a valid email address.");
   }
   return email;
 }
