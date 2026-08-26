@@ -4496,7 +4496,9 @@ html.js .hero-brand-copy:not(.visible) .hero-tagline {
 
 @media (max-width: 900px) {
   #advantage {
+    min-height: auto;
     overflow: visible;
+    padding-bottom: 88px;
   }
 
   .advantage-header h2 {
@@ -4524,7 +4526,16 @@ html.js .hero-brand-copy:not(.visible) .hero-tagline {
   }
 
   .network-advantage-proofs {
-    margin-top: -16px;
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    margin: 20px 0 8px;
+    padding: 16px 0 0;
+    border-top: 1px solid rgba(74, 143, 253, 0.2);
+  }
+
+  .network-advantage-proofs li {
+    padding: 0;
   }
 }
 
@@ -11465,13 +11476,28 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
   .screen-hero .hero-intro,
   .hero-intro {
     height: auto;
-    min-height: 0;
+    min-height: 100svh;
     max-height: none;
     overflow: visible;
   }
 
   .hero-intro {
-    padding: 36px 20px 40px;
+    justify-content: flex-start;
+    padding: calc(var(--header-h) + 28px) 20px 28px;
+  }
+
+  .hero-stage {
+    flex: 0 0 auto;
+    gap: 16px;
+    padding-top: 12px;
+  }
+
+  .hero-scroll-hint,
+  .hero-scroll-hint.visible {
+    position: static;
+    transform: none;
+    margin-top: 20px;
+    opacity: 1;
   }
 
   .hero-nebula,
@@ -11486,6 +11512,25 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
     max-height: none;
     overflow: visible;
     padding-bottom: 48px;
+  }
+
+  #advantage {
+    min-height: auto;
+    overflow: visible;
+    padding-bottom: 88px;
+  }
+
+  .network-advantage-proofs {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    margin: 20px 0 8px;
+    padding: 16px 0 0;
+    border-top: 1px solid rgba(74, 143, 253, 0.2);
+  }
+
+  .network-advantage-proofs li {
+    padding: 0;
   }
 
   #gap .cps-visual {
