@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit --pretty false",
+    "typecheck": "tsc --noEmit --pretty false",
+    "secret-scan": "node scripts/secret-scan.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "optimize-images": "node scripts/optimize-images.mjs",

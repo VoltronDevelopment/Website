@@ -16,7 +16,7 @@ export async function createSessionToken(user: string): Promise<string> {
 }
 
 export async function verifySessionToken(token: string | undefined): Promise<string | null> {
-  return verifyToken(token, resolveSessionSecret());
+  return verifyToken(token);
 }
 
 export function parseAdminCredentials(): Map<string, string> {

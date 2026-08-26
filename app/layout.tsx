@@ -4,7 +4,7 @@ import "./globals.css";
 
 const title = "Voltron | Engineering the Future of Manufacturing";
 const description =
-  "Voltron connects technology, infrastructure and operations to build intelligent manufacturing systems.";
+  "Voltron connects technology, infrastructure and operations — with manufacturing context, digital QMS and Voltron AI specialist intelligence.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -36,7 +36,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('js');"
+          }}
+        />
+      </head>
       <body>
         <a className="skip-link" href="#main-content">
           Skip to main content

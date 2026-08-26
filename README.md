@@ -11,7 +11,7 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-Admin (local defaults when env is unset): `http://localhost:3000/admin` — user `omkar` / password `voltron`.
+Admin: `http://localhost:3000/admin`. Set `ADMIN_CREDENTIALS` and `ADMIN_SESSION_SECRET` in `.env.local` (see `.env.example`). Generate hashes with `npm run admin:hash-password -- "your-strong-password"`. Do not reuse previously published founder passwords.
 
 Leave `PROJECTS_TABLE_NAME` and `REVIEWS_TABLE_NAME` blank locally to use `data/projects.json` and `data/reviews.json`.
 
@@ -70,9 +70,11 @@ Source JSON: `infra/amplify-compute-policy.json`.
 
 A separate pre-provisioned app `Voltron-Website` (`d1e3dp517f391n`) exists in `ap-south-1` without GitHub — use the **us-east-1** app above for deploys.
 
-Connect the GitHub repo `VoltronDevelopment/Website` → branch `main` in the Amplify console if the branch is not linked yet. Env vars below are already set on the app.
+Connect the GitHub repo `VoltronDevelopment/Website` → branch `main` in the Amplify console if the branch is not linked yet. Admin secrets must be set (and rotated) in the Amplify console — not in this repo.
 
 ### 4. Amplify environment variables
+
+Set non-secret table/region/URL values as Amplify console env vars. Set admin secrets in the Amplify console (or Secrets Manager) — never in git.
 
 ```text
 VOLTRON_AWS_REGION=ap-south-1
@@ -82,11 +84,13 @@ REVIEWS_TABLE_NAME=VoltronWebsiteReviews
 SES_FROM_EMAIL=info@voltroncoat.com
 INQUIRY_TO_EMAIL=info@voltroncoat.com
 NEXT_PUBLIC_SITE_URL=https://voltroncoat.com
-ADMIN_SESSION_SECRET=<long-random-string>
-ADMIN_CREDENTIALS=omkar:omkar123,akshay:akshay123,hanumant:hanumant123
+ADMIN_SESSION_SECRET=<generate-a-new-long-random-string>
+ADMIN_CREDENTIALS=<user:scrypt-hash,comma-separated>
 ```
 
-Admin secrets are read at **runtime** from Amplify env (not baked into the build artifact).
+Treat previously committed or documented admin passwords and session secrets as compromised. Rotate `ADMIN_CREDENTIALS` and `ADMIN_SESSION_SECRET` in the Amplify console (this invalidates existing admin sessions). Do not reuse values from the retired `.amplify-release-secrets.json` dump.
+
+Admin secrets are read at **runtime** from Amplify env (not baked into the build artifact). `amplify.yml` copies `ADMIN_CREDENTIALS` and `ADMIN_SESSION_SECRET` from the Amplify console into `.env.production` at build time — it does not read a secrets JSON file.
 
 Hash a password:
 
@@ -94,9 +98,7 @@ Hash a password:
 npm run admin:hash-password -- "your-strong-password"
 ```
 
-Paste the `scrypt$…` value after `omkar:` in `ADMIN_CREDENTIALS`.
-
-`amplify.yml` exports these vars into `.env.production` at build time.
+Paste the `scrypt$…` value after the username in `ADMIN_CREDENTIALS` in the Amplify console.
 
 ### 5. Smoke test after deploy
 
@@ -110,4 +112,4 @@ Paste the `scrypt$…` value after `omkar:` in `ADMIN_CREDENTIALS`.
 |--------|---------|
 | `npm run admin:ensure-tables` | Create DynamoDB tables if missing |
 | `npm run admin:hash-password` | Hash a password for `ADMIN_CREDENTIALS` |
-| `npm run optimize-images` | Compress public images |
+| `npm run optimize-images` | Compress public PNGs to WebP for mobile-sized delivery |

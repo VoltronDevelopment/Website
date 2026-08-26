@@ -19,9 +19,9 @@ export function BusinessModelInfographic() {
         startedRef.current = true;
         let step = 0;
         interval = window.setInterval(() => {
-          setPhase((p) => Math.min(4, p + 1));
+          setPhase((p) => Math.min(3, p + 1));
           step += 1;
-          if (step >= 4 && interval) clearInterval(interval);
+          if (step >= 3 && interval) clearInterval(interval);
         }, 650);
       },
       { threshold: 0.2 }
@@ -91,15 +91,11 @@ export function BusinessModelInfographic() {
         <p className="biz-card-eyebrow">One Connected Network</p>
         <h3>Where It Compounds</h3>
         <p className="biz-card-sub">Owned plants and JV factories operate on a common Voltron architecture.</p>
-        <p className="biz-factory-chain">Factory 01 ↔ Factory 02 ↔ Factory 03 ↔ Factory 04</p>
-        <p className="biz-card-tags">Quality · Process · Maintenance · Energy · Production · Cost</p>
+        <div className="biz-network-meta">
+          <p className="biz-factory-chain">Factory 01 ↔ Factory 02 ↔ Factory 03 ↔ Factory 04</p>
+          <p className="biz-card-tags">Quality · Process · Maintenance · Energy · Production · Cost</p>
+        </div>
       </article>
-
-      <p className={`biz-compound ${phase >= 4 ? "visible" : ""}`.trim()}>
-        Every factory adds capability. Every factory adds intelligence.
-      </p>
-
-      <p className={`biz-loop-tag ${phase >= 4 ? "visible" : ""}`.trim()}>Learn → Improve → Scale</p>
     </div>
   );
 }

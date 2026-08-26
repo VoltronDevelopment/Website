@@ -34,7 +34,8 @@ export function VoltronCustomerVisual() {
     };
 
     const runSequence = () => {
-      if (getPrefersReducedMotion()) {
+      const mobile = window.matchMedia("(max-width: 768px)").matches;
+      if (mobile || getPrefersReducedMotion()) {
         setActive(processSteps.length - 1);
         return;
       }

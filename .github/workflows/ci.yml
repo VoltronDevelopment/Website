@@ -1,0 +1,61 @@
+# This is the only GitHub Actions workflow that runs today: Website is the only
+# git remote. Sibling ERP/SCADA/Twin trees are not in this repository and are
+# gated by the workspace-root workflow when those products share a repo.
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  website-static:
+    name: Website lint, tests, secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Secret scan
+        run: npm run secret-scan
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://voltroncoat.com
+
+  website-dependency-audit:
+    name: Website dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit (high severity)
+        run: npm audit --audit-level=high

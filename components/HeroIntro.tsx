@@ -34,7 +34,7 @@ const LINE_MS = 1200;
 const GAP_MS = 200;
 
 export function HeroIntro() {
-  const [phase, setPhase] = useState(0);
+  const [phase, setPhase] = useState(1);
   const [activeLine, setActiveLine] = useState(-1);
 
   useEffect(() => {
@@ -45,7 +45,6 @@ export function HeroIntro() {
       return;
     }
 
-    const t1 = window.setTimeout(() => setPhase(1), 300);
     const t2 = window.setTimeout(() => {
       setPhase(2);
       setActiveLine(0);
@@ -57,7 +56,7 @@ export function HeroIntro() {
       setPhase(3);
     }, 900 + (LINE_MS + GAP_MS) * 3);
 
-    return () => [t1, t2, t3, t4, t5].forEach(clearTimeout);
+    return () => [t2, t3, t4, t5].forEach(clearTimeout);
   }, []);
 
   return (

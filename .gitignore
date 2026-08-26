@@ -25,4 +25,18 @@ _*.txt
 /images/
 .amplify-release-secrets.json
 infra/amplify-env-vars.json
-infra/amplify-env-vars.json
+
+# Unoptimized marketing sources — ship the WebP from `npm run optimize-images`
+/public/Kavo.png
+/public/Meko.png
+/public/Rixa.png
+/public/Saro.png
+/public/Teyo.png
+/public/Zilo.png
+/public/agent_card.png
+/public/ai_factory_background.png
+/public/ai_ring.png
+/public/hilt.png
+/public/voltron_factory_flow.png
+/public/voltron_network.png
+/public/voltron_qms.png

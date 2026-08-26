@@ -4,17 +4,21 @@ import { SiteFooter } from "@/components/home/SiteFooter";
 import { HeroIntro } from "@/components/HeroIntro";
 import { Reveal } from "@/components/Reveal";
 import { SiteHeader } from "@/components/SiteHeader";
-import { BusinessModelInfographic } from "@/components/visuals/BusinessModelInfographic";
-import { AlphaFlowVisual } from "@/components/visuals/AlphaFlowVisual";
+import { AlphaProofVisual } from "@/components/visuals/AlphaProofVisual";
 import { ArchitectureLayers } from "@/components/visuals/ArchitectureLayers";
+import { BusinessModelInfographic } from "@/components/visuals/BusinessModelInfographic";
 import { CyberPhysicalStack } from "@/components/visuals/CyberPhysicalStack";
-import { ManufacturingLoopVisual } from "@/components/visuals/ManufacturingLoopVisual";
+import { DigitalQmsCapabilityStrip } from "@/components/visuals/DigitalQmsCapabilityStrip";
+import { DigitalQmsVisual } from "@/components/visuals/DigitalQmsVisual";
+import { HitlVisual } from "@/components/visuals/HitlVisual";
+import { ContextSceneVisual, ContextSpineVisual } from "@/components/visuals/ManufacturingContextVisual";
 import { ModularPlatformVisual } from "@/components/visuals/ModularPlatformVisual";
-import { PlatformSystemsVisual } from "@/components/visuals/PlatformSystemsVisual";
-import { VoltronAdvantageVisual } from "@/components/visuals/VoltronAdvantageVisual";
-import { VoltronCustomerVisual } from "@/components/visuals/VoltronCustomerVisual";
-import { leaders, philosophy } from "@/lib/site-content";
+import { NetworkAdvantageVisual } from "@/components/visuals/NetworkAdvantageVisual";
+import { VoltronAiAgentsExperience } from "@/components/visuals/VoltronAiAgentsExperience";
+import { VoltronAiVisual } from "@/components/visuals/VoltronAiVisual";
+import { hitlSequence, leaders, philosophy } from "@/lib/site-content";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 export default function Home() {
   return (
@@ -29,17 +33,16 @@ export default function Home() {
         <section className="screen screen-dark screen-glow" id="gap">
           <div className="screen-inner split split-center">
             <Reveal className="split-copy">
-              <p className="eyebrow">Post-jugaad manufacturing</p>
+              <p className="eyebrow">When the factory becomes a system</p>
               <h2>
                 India&apos;s next factories will be{" "}
                 <span className="accent">cyber-physical systems</span>.
               </h2>
               <p className="lead">
-                The jugaad era expanded capacity. The next era needs a{" "}
-                <strong>digital twin</strong> — where physical execution and system intelligence run as one system,
-                not in parallel spreadsheets.
+                The jugaad era expanded capacity. The next era needs factories where physical execution,
+                manufacturing context and intelligence operate as one system — not in parallel spreadsheets.
               </p>
-              <p className="bridge-line">Built for the post-jugaad transition — from assumption to system truth.</p>
+              <p className="bridge-line accent">Built for the post-jugaad transition — from assumption to system truth.</p>
               <div className="philosophy-row">
                 {philosophy.map((word) => (
                   <span key={word}>{word}</span>
@@ -59,7 +62,22 @@ export default function Home() {
           <div className="screen-inner architecture-page">
             <Reveal className="architecture-header center-text">
               <p className="eyebrow">The Voltron Architecture</p>
-              <h2>A factory cannot become intelligent in pieces.</h2>
+              <h2>
+                A factory cannot become intelligent <span className="accent">in pieces.</span>
+              </h2>
+              <p className="architecture-vos">
+                <span className="vos-mark">
+                  <span className="sr-only">VOS</span>
+                  <span className="vos-v" aria-hidden="true">V</span>
+                  <span className="vos-os" aria-hidden="true">OS</span>
+                </span>
+                <span className="architecture-vos-eq">=</span>
+                <span>Execution</span>
+                <span className="architecture-vos-plus">+</span>
+                <span>Context</span>
+                <span className="architecture-vos-plus">+</span>
+                <span>Intelligence</span>
+              </p>
             </Reveal>
 
             <Reveal delay={100}>
@@ -72,13 +90,15 @@ export default function Home() {
           <div className="screen-inner split split-center">
             <Reveal className="split-copy">
               <p className="eyebrow">Modular manufacturing platform</p>
-              <h2>Built once. <span className="accent">Configured for every factory.</span></h2>
+              <h2>
+                Built once. <span className="accent">Configured for every factory.</span>
+              </h2>
               <p className="lead">
                 Every factory has its own process, equipment and operating rhythm. Voltron keeps the underlying
                 manufacturing logic reusable, then configures the plant around the reality on the floor.
               </p>
               <p className="bridge-line accent">Reusable logic. Factory-specific execution.</p>
-              <p className="statement-sm">Voltron Core · Capability Modules · Process Packages</p>
+              <p className="statement-sm">Voltron Core · Capability Modules · Process Packages · Voltron AI</p>
             </Reveal>
 
             <Reveal className="split-visual" delay={100}>
@@ -89,64 +109,88 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="screen screen-dark technology-middle" id="platform">
-          <div className="screen-inner platform-page">
-            <Reveal className="platform-page-header center-text">
-              <p className="eyebrow">One manufacturing model</p>
-              <h2>Three systems. <span className="accent">One connected factory.</span></h2>
+        <section className="screen screen-dark technology-middle context-screen" id="context">
+          <div className="screen-inner context-page">
+            <div className="context-main-grid">
+              <Reveal className="context-narrative split-copy">
+              <p className="eyebrow">One manufacturing context</p>
+              <h2>
+                Every lot becomes a
+                <span className="accent">connected manufacturing story.</span>
+              </h2>
               <p className="lead">
-                ERP, SCADA and the digital twin are not separate tools placed beside the factory. They are different
-                ways of working with the same manufacturing model.
+                Requirements, execution, evidence and decisions — connected in one continuous context.
               </p>
-              <p className="bridge-line accent">Run the factory. See the process. Understand the system.</p>
+              <p className="bridge-line accent">One lot. One context. One traceable story.</p>
+              </Reveal>
+
+              <Reveal className="context-scene-col" delay={80}>
+                <ContextSceneVisual />
+              </Reveal>
+
+              <Reveal className="context-spine-col" delay={120}>
+                <ContextSpineVisual />
+              </Reveal>
+            </div>
+          </div>
+        </section>
+
+        <section className="screen screen-light technology-middle qms-screen" id="qms">
+          <div className="screen-inner qms-page">
+            <Reveal className="qms-header center-text">
+              <p className="eyebrow">Voltron Digital QMS</p>
+              <h2>
+                Quality should not become <span className="accent">another digital silo.</span>
+              </h2>
+              <p className="lead center">
+                Quality information already exists across Control Plans, PFMEA, inspections, SCADA, calibration,
+                supplier certificates, external laboratories, spreadsheets and people. Voltron connects those records
+                to the manufacturing context of the part and lot.
+              </p>
+              <p className="bridge-line accent">Smart at the core. Compatible at the edges.</p>
             </Reveal>
 
-            <Reveal delay={100}>
-              <PlatformSystemsVisual />
+            <Reveal delay={80}>
+              <DigitalQmsVisual />
+            </Reveal>
+
+            <Reveal className="qms-capability-full" delay={140}>
+              <DigitalQmsCapabilityStrip />
             </Reveal>
           </div>
         </section>
 
-        <section className="screen screen-light technology-middle" id="loop">
+        <section className="screen screen-dark technology-middle voltron-ai-screen" id="voltron-ai">
+          <VoltronAiVisual />
+        </section>
+
+        <section className="screen screen-dark ai-agents-screen" id="ai-team">
+          <VoltronAiAgentsExperience />
+        </section>
+
+        <section className="screen screen-dark technology-middle hitl-screen" id="hitl">
           <div className="screen-inner split split-center">
             <Reveal className="split-copy">
-              <p className="eyebrow">Cyber-physical operating loop</p>
-              <h2>Digital instructions. <span className="accent">Physical execution. Continuous feedback.</span></h2>
+              <p className="eyebrow">Voltron HITL</p>
+              <h2>
+                Intelligence at the <span className="accent">point of work.</span>
+              </h2>
               <p className="lead">
-                ERP defines what should happen. The shopfloor performs it. SCADA records what is happening. The twin
-                builds context around what happened, so operations can improve the next cycle.
+                Voltron can configure the information, guidance, inputs and actions projected onto screens throughout the
+                factory. Each station sees only what the person at that point needs.
               </p>
-              <p className="bridge-line accent">Plan → Execute → Observe → Understand → Improve</p>
+              <ol className="bridge-line hitl-sequence">
+                {hitlSequence.map((step, index) => (
+                  <li key={step} style={{ "--i": index } as CSSProperties}>
+                    {step}
+                  </li>
+                ))}
+              </ol>
             </Reveal>
 
             <Reveal className="split-visual" delay={100}>
               <div className="visual-stage visual-stage-tall">
-                <ManufacturingLoopVisual />
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="screen screen-light" id="voltron">
-          <div className="screen-inner split split-center">
-            <Reveal className="split-copy">
-              <p className="eyebrow">Digital thread · Customer visibility</p>
-              <h2>Your customers see the same truth as your factory.</h2>
-              <p className="lead">
-                Every manufacturing event carries context from the one before it. Batch progress, lot status, quality
-                records and dispatch ETA can be shared live because the factory knows the same truth.
-              </p>
-              <p className="bridge-line accent">Data + Context = Manufacturing Intelligence</p>
-              <div className="visibility-row">
-                <span>Live batch status</span>
-                <span>Lot traceability</span>
-                <span>Dispatch ETA</span>
-              </div>
-            </Reveal>
-
-            <Reveal className="split-visual" delay={100}>
-              <div className="visual-stage">
-                <VoltronCustomerVisual />
+                <HitlVisual />
               </div>
             </Reveal>
           </div>
@@ -156,12 +200,15 @@ export default function Home() {
           <div className="screen-inner split split-center">
             <Reveal className="split-copy">
               <p className="eyebrow">Voltron Alpha · Application 01</p>
-              <h2>Our first prototype runs on the shopfloor.</h2>
+              <h2>
+                Built on the shopfloor. <span className="accent">Not in a demo room.</span>
+              </h2>
               <p className="lead">
-                Voltron Alpha is a live surface-treatment facility — where infrastructure, operations and Voltron prove
-                themselves in production. CED, phosphating and powder coating are where we begin.
+                Voltron Alpha is our first real-world manufacturing environment for proving the Voltron architecture
+                under actual production conditions — surface treatment, digital systems and specialist intelligence
+                working together.
               </p>
-              <p className="bridge-line accent">Surface treatment first. Manufacturing intelligence forever.</p>
+              <p className="bridge-line accent">Alpha is not the product. It is the proof.</p>
               <div className="process-row">
                 <span>CED</span>
                 <span>Phosphating</span>
@@ -172,8 +219,8 @@ export default function Home() {
             </Reveal>
 
             <Reveal className="split-visual" delay={100}>
-              <div className="visual-stage">
-                <AlphaFlowVisual />
+              <div className="visual-stage visual-stage-tall">
+                <AlphaProofVisual />
               </div>
             </Reveal>
           </div>
@@ -200,7 +247,7 @@ export default function Home() {
                   <article className="leader-glass">
                     <span className="leader-discipline">{person.discipline}</span>
                     <div className="leader-photo">
-                      <Image src={person.image} alt={person.name} width={80} height={80} />
+                      <Image src={person.image} alt={person.name} width={80} height={80} sizes="80px" />
                     </div>
                     <h3>{person.name}</h3>
                     <p className="role">{person.role}</p>
@@ -218,24 +265,12 @@ export default function Home() {
             <Reveal className="biz-page-header center-text">
               <p className="eyebrow">Business Model</p>
               <h2>
-                One manufacturing platform.{" "}
-                <span className="accent">Multiple ways to scale.</span>
+                One manufacturing platform. <span className="accent">Multiple ways to scale.</span>
               </h2>
-              <p className="lead center biz-page-lead">
-                Voltron builds manufacturing capacity through{" "}
-                <strong>company-owned plants</strong> and <strong>strategic factory partnerships</strong> — all
-                connected through the same technology, engineering and operating architecture.
-              </p>
             </Reveal>
 
             <Reveal delay={80}>
               <BusinessModelInfographic />
-            </Reveal>
-
-            <Reveal delay={160}>
-              <p className="biz-closer">
-                Own where we prove. Partner where we scale. Connect everything through Voltron.
-              </p>
             </Reveal>
           </div>
         </section>
@@ -243,19 +278,18 @@ export default function Home() {
         <section className="screen screen-dark screen-glow" id="advantage">
           <div className="screen-inner advantage-page">
             <Reveal className="advantage-header center-text">
-              <p className="eyebrow">The Voltron Advantage</p>
+              <p className="eyebrow">Technology / Network Advantage</p>
               <h2>
-                One architecture.{" "}
-                <span className="accent">Every layer of manufacturing.</span>
+                One architecture. <span className="accent">A network that compounds.</span>
               </h2>
               <p className="lead center advantage-lead">
-                Voltron connects the factory from the machine level to the business level — through one integrated
-                manufacturing platform.
+                Every Voltron factory connects to the same manufacturing architecture — carrying reusable process,
+                engineering and intelligence across the network.
               </p>
             </Reveal>
 
             <Reveal delay={80}>
-              <VoltronAdvantageVisual />
+              <NetworkAdvantageVisual />
             </Reveal>
           </div>
         </section>

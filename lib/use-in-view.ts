@@ -1,17 +1,13 @@
-"use client";
+import { useEffect, useState, type RefObject } from "react";
 
-import type { CSSProperties, ReactNode } from "react";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-
-type RevealProps = {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
+type UseInViewOptions = {
+  threshold?: number;
+  rootMargin?: string;
+  /** Force visible after this many ms if observer never fires. */
+  fallbackMs?: number;
 };
 
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-function elementIsInView(node: HTMLElement, threshold = 0.05) {
+function elementIsInView(node: HTMLElement, threshold: number) {
   const rect = node.getBoundingClientRect();
   if (rect.height <= 0 && rect.width <= 0) return false;
 
@@ -24,11 +20,11 @@ function elementIsInView(node: HTMLElement, threshold = 0.05) {
   return elementRatio >= threshold || viewportRatio >= Math.min(threshold, 0.12);
 }
 
-export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
+export function useInView(ref: RefObject<HTMLElement | null>, options: UseInViewOptions = {}) {
+  const { threshold = 0.05, rootMargin = "0px 0px -10% 0px", fallbackMs = 8000 } = options;
   const [visible, setVisible] = useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useEffect(() => {
     const node = ref.current;
     if (!node) return;
 
@@ -40,17 +36,17 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     };
 
     const check = () => {
-      if (elementIsInView(node)) reveal();
+      if (elementIsInView(node, threshold)) reveal();
     };
 
     check();
-    window.requestAnimationFrame(check);
+    const raf = window.requestAnimationFrame(check);
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) reveal();
       },
-      { threshold: [0.08, 0.18, 0.32], rootMargin: "0px 0px -12% 0px" }
+      { threshold: [0, threshold, 0.25], rootMargin }
     );
 
     observer.observe(node);
@@ -59,25 +55,18 @@ export function Reveal({ children, className = "", delay = 0 }: RevealProps) {
     window.addEventListener("resize", check, { passive: true });
 
     const fallback = window.setTimeout(() => {
-      if (elementIsInView(node)) reveal();
-    }, 8000);
+      if (elementIsInView(node, threshold)) reveal();
+    }, fallbackMs);
 
     return () => {
       done = true;
+      window.cancelAnimationFrame(raf);
       observer.disconnect();
       window.removeEventListener("scroll", check);
       window.removeEventListener("resize", check);
       window.clearTimeout(fallback);
     };
-  }, []);
+  }, [ref, rootMargin, threshold, fallbackMs]);
 
-  return (
-    <div
-      ref={ref}
-      className={`reveal ${visible ? "is-visible" : ""} ${className}`.trim()}
-      style={{ "--reveal-delay": `${delay}ms` } as CSSProperties}
-    >
-      {children}
-    </div>
-  );
+  return visible;
 }

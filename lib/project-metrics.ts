@@ -69,9 +69,13 @@ export function countTaskMix(streams: Workstream[]): Record<TaskMixCategory, num
   return counts;
 }
 
+function hasDate(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
 export function nextMilestoneName(project: Project): string | null {
   const upcoming = [...project.milestones]
-    .filter((m) => m.status !== "completed")
+    .filter((m) => m.status !== "completed" && hasDate(m.endDate))
     .sort((a, b) => a.endDate.localeCompare(b.endDate));
   return upcoming[0]?.name ?? null;
 }
@@ -195,7 +199,7 @@ export function buildAttentionItems(projects: Project[]): AttentionItem[] {
     }
 
     for (const ms of project.milestones) {
-      if (ms.status === "completed") continue;
+      if (ms.status === "completed" || !hasDate(ms.endDate)) continue;
       const dueIn = daysUntil(ms.endDate);
       if (dueIn >= 0 && dueIn <= 7) {
         items.push({

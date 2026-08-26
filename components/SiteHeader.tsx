@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 const observedSections = [
   { id: "home", href: "#home" },
   { id: "architecture", href: "#architecture" },
+  { id: "voltron-ai", href: "#voltron-ai" },
   { id: "alpha", href: "#alpha" },
   { id: "model", href: "#model" },
   { id: "people", href: "#people" },
