@@ -65,7 +65,6 @@ export function ArchitectureLayers() {
               </div>
             </div>
           </div>
-          <p>One connected architecture. Not disconnected systems.</p>
         </div>
 
         <div className="architecture-system-column architecture-system-column-right">

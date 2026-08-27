@@ -6713,7 +6713,8 @@ html.js .hero-brand-copy:not(.visible) .hero-tagline {
 
 .architecture-backbone {
   min-height: 0;
-  gap: 6px;
+  gap: 0;
+  padding-top: 16px;
 }
 
 .architecture-backbone-core {
@@ -7297,7 +7298,8 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
   display: grid;
   place-items: center;
   align-content: center;
-  gap: 6px;
+  gap: 0;
+  padding-top: 16px;
   text-align: center;
 }
 
@@ -7384,11 +7386,13 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
 .architecture-physical-band::before {
   content: "";
   position: absolute;
-  top: -10px;
+  top: -12px;
   left: 50%;
-  width: 1px;
-  height: 10px;
-  background: rgba(74, 143, 253, 0.74);
+  width: 2px;
+  height: 12px;
+  background: var(--blue);
+  box-shadow: 0 0 10px rgba(74, 143, 253, 0.85);
+  transform: translateX(-50%);
 }
 
 .architecture-physical-heading,
@@ -10071,9 +10075,14 @@ html.js .ai-agents-experience.visible .ai-agents-flow ol li {
   }
 
   .ai-agents-flow ol {
-    --flow-gap: 28px;
+    --flow-gap: 32px;
     grid-template-columns: 1fr;
     gap: var(--flow-gap);
+    overflow: visible;
+  }
+
+  .ai-agents-flow li {
+    overflow: visible;
   }
 
   .ai-agents-flow li:nth-child(2n)::after {
@@ -10090,8 +10099,8 @@ html.js .ai-agents-experience.visible .ai-agents-flow ol li {
     right: auto;
     bottom: auto;
     left: 50%;
-    margin: 0;
-    transform: translate(-50%, -50%);
+    margin: calc((var(--flow-gap) - 16px) / 2) 0 0;
+    transform: translateX(-50%);
   }
 }
 
@@ -11639,9 +11648,14 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
   }
 
   .ai-agents-flow ol {
-    --flow-gap: 28px;
+    --flow-gap: 32px;
     grid-template-columns: 1fr;
     gap: var(--flow-gap);
+    overflow: visible;
+  }
+
+  .ai-agents-flow li {
+    overflow: visible;
   }
 
   .ai-agents-flow li:nth-child(2n)::after {
@@ -11658,8 +11672,8 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
     right: auto;
     bottom: auto;
     left: 50%;
-    margin: 0;
-    transform: translate(-50%, -50%);
+    margin: calc((var(--flow-gap) - 16px) / 2) 0 0;
+    transform: translateX(-50%);
   }
 
   .advantage-header h2 {
