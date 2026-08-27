@@ -1,5 +1,6 @@
 export const assets = {
   logo: "/voltron-logo.webp",
+  logoMark: "/voltron_logo_without_background.webp",
   ogImage: "/og-image.webp",
   companyProfile: "/voltron-company-profile.pdf",
   factory: {

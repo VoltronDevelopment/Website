@@ -6747,7 +6747,7 @@ html.js .hero-brand-copy:not(.visible) .hero-tagline {
 }
 
 .architecture-physical-band {
-  padding: 7px 14px 5px;
+  padding: 7px 14px 16px;
 }
 
 .architecture-physical-heading {
@@ -6760,7 +6760,7 @@ html.js .hero-brand-copy:not(.visible) .hero-tagline {
 
 .architecture-physical-item {
   gap: 0;
-  padding: 0 5px 2px;
+  padding: 0 5px 10px;
 }
 
 .architecture-physical-image-frame {
@@ -7380,7 +7380,7 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
   border: 1px solid rgba(74, 143, 253, 0.3);
   border-radius: 10px;
   background: linear-gradient(180deg, rgba(13, 28, 51, 0.84), rgba(5, 12, 25, 0.94));
-  padding: 7px 14px 5px;
+  padding: 7px 14px 16px;
 }
 
 .architecture-physical-band::before {
@@ -7433,7 +7433,7 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
   justify-items: center;
   align-content: start;
   gap: 0;
-  padding: 0 5px 2px;
+  padding: 0 5px 10px;
   border-left: 1px solid rgba(255, 255, 255, 0.08);
   opacity: 0;
   transform: translateY(14px);
@@ -8155,17 +8155,15 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
 .architecture-backbone-logo-wrap {
   display: grid;
   place-items: center;
-  width: 72px;
-  height: 72px;
-  border-radius: 16px;
-  overflow: hidden;
+  width: 84px;
+  height: 84px;
+  background: transparent;
 }
 
 .architecture-backbone-logo {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
+  object-fit: contain;
 }
 
 .architecture-visual.visible .architecture-backbone-ring-img {
@@ -11437,8 +11435,8 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
   }
 
   .architecture-backbone-logo-wrap {
-    width: 58px;
-    height: 58px;
+    width: 68px;
+    height: 68px;
   }
 
   .architecture-backbone-ring-copy {

@@ -12,7 +12,7 @@ const systemLayers = [
   { id: "scada", label: "SCADA", detail: "Live process visibility", image: "/scada.webp", side: "right" },
   {
     id: "twin-ai",
-    label: "Digital Twin + Voltron AI",
+    label: "DIGITAL TWIN & AI",
     detail: "Context, insight & specialist intelligence",
     image: "/digital_twin.webp",
     side: "right"
@@ -60,7 +60,7 @@ export function ArchitectureLayers() {
               />
               <div className="architecture-backbone-ring-copy">
                 <span className="architecture-backbone-logo-wrap">
-                  <Image src={assets.logo} alt="Voltron" width={72} height={72} className="architecture-backbone-logo" />
+                  <Image src={assets.logoMark} alt="Voltron" width={88} height={88} className="architecture-backbone-logo" />
                 </span>
               </div>
             </div>

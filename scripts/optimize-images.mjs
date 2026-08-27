@@ -13,6 +13,7 @@ const targets = [
   { file: "public/voltron_screen.png", width: 1400 },
   { file: "public/voltron_alpha.png", width: 1400 },
   { file: "public/voltron-logo.png", width: 320 },
+  { file: "public/voltron_logo_without_background.png", width: 256 },
   { file: "public/team/omkar.png", width: 400 },
   { file: "public/voltron_factory_flow.png", width: 1400 },
   { file: "public/voltron_qms.png", width: 800 },
