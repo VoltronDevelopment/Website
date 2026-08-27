@@ -60,9 +60,8 @@ export function ArchitectureLayers() {
               />
               <div className="architecture-backbone-ring-copy">
                 <span className="architecture-backbone-logo-wrap">
-                  <Image src={assets.logo} alt="Voltron" width={44} height={44} className="architecture-backbone-logo" />
+                  <Image src={assets.logo} alt="Voltron" width={72} height={72} className="architecture-backbone-logo" />
                 </span>
-                <span className="architecture-backbone-ring-label">Digital Backbone</span>
               </div>
             </div>
           </div>

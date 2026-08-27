@@ -63,7 +63,7 @@ export function HitlVisual() {
       <div className="hitl-visual-stage">
         <div className="hitl-kavo">
           <div className="hitl-kavo-art">
-            <Image src={assets.agents.kavo} alt="" fill sizes="220px" className="hitl-kavo-img" />
+            <Image src={assets.agents.kavo} alt="" fill sizes="(max-width: 900px) 280px, 220px" className="hitl-kavo-img" />
           </div>
           <strong>{hitlExample.agent}</strong>
         </div>

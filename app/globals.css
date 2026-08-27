@@ -8140,9 +8140,9 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  width: 58%;
-  transform: translate(-50%, -54%);
+  gap: 0;
+  width: 48%;
+  transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none;
   z-index: 1;
@@ -8151,9 +8151,9 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
 .architecture-backbone-logo-wrap {
   display: grid;
   place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
   overflow: hidden;
 }
 
@@ -8161,18 +8161,7 @@ html.js .architecture-visual:not(.visible) .architecture-system-column-right .ar
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
-}
-
-.architecture-backbone-ring-label {
-  color: #22d3ee;
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: var(--type-kicker);
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  line-height: 1.2;
-  max-width: 9ch;
+  border-radius: 16px;
 }
 
 .architecture-visual.visible .architecture-backbone-ring-img {
@@ -10082,15 +10071,27 @@ html.js .ai-agents-experience.visible .ai-agents-flow ol li {
   }
 
   .ai-agents-flow ol {
+    --flow-gap: 28px;
     grid-template-columns: 1fr;
+    gap: var(--flow-gap);
+  }
+
+  .ai-agents-flow li:nth-child(2n)::after {
+    display: block;
   }
 
   .ai-agents-flow li:not(:last-child)::after {
-    top: auto;
+    content: "↓";
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 16px;
+    top: 100%;
     right: auto;
-    bottom: -16px;
+    bottom: auto;
     left: 50%;
-    transform: translate(-50%, 50%) rotate(90deg);
+    margin: 0;
+    transform: translate(-50%, -50%);
   }
 }
 
@@ -11310,8 +11311,12 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
     justify-items: center;
   }
 
+  .hitl-kavo {
+    width: 100%;
+  }
+
   .hitl-kavo-art {
-    width: min(100%, 120px);
+    width: min(72vw, 260px);
   }
 
   .hitl-kavo strong {
@@ -11423,12 +11428,12 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
   }
 
   .architecture-backbone-logo-wrap {
-    width: 38px;
-    height: 38px;
+    width: 58px;
+    height: 58px;
   }
 
   .architecture-backbone-ring-copy {
-    transform: translate(-50%, -52%);
+    transform: translate(-50%, -50%);
   }
 
   .context-spine > li {
@@ -11472,31 +11477,40 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
 
 /* ── Mobile composition (wallpaper off, vertical stacks, content-height) ── */
 @media (max-width: 900px) {
-  .screen-hero,
-  .screen-hero .hero-intro,
-  .hero-intro {
-    height: auto;
+  .screen-hero {
+    height: 100svh;
     min-height: 100svh;
-    max-height: none;
-    overflow: visible;
+    max-height: 100svh;
+    overflow: hidden;
   }
 
+  .screen-hero .hero-intro,
   .hero-intro {
-    justify-content: flex-start;
-    padding: calc(var(--header-h) + 28px) 20px 28px;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+    justify-content: center;
+    padding: 0 20px 72px;
   }
 
   .hero-stage {
     flex: 0 0 auto;
     gap: 16px;
-    padding-top: 12px;
+    padding-top: 0;
+  }
+
+  .screen-hero .hero-rings {
+    transform: none;
   }
 
   .hero-scroll-hint,
   .hero-scroll-hint.visible {
-    position: static;
-    transform: none;
-    margin-top: 20px;
+    position: absolute;
+    left: 50%;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    margin-top: 0;
     opacity: 1;
   }
 
@@ -11579,8 +11593,12 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
     align-content: start;
   }
 
+  .hitl-kavo {
+    width: 100%;
+  }
+
   .hitl-kavo-art {
-    width: min(100%, 160px);
+    width: min(72vw, 260px);
   }
 
   .hitl-panel {
@@ -11618,6 +11636,30 @@ html.js .reveal.split-copy.is-visible .hitl-sequence li {
   .ai-agents-experience {
     height: auto;
     min-height: 0;
+  }
+
+  .ai-agents-flow ol {
+    --flow-gap: 28px;
+    grid-template-columns: 1fr;
+    gap: var(--flow-gap);
+  }
+
+  .ai-agents-flow li:nth-child(2n)::after {
+    display: block;
+  }
+
+  .ai-agents-flow li:not(:last-child)::after {
+    content: "↓";
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 16px;
+    top: 100%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
   }
 
   .advantage-header h2 {
