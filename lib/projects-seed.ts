@@ -31,7 +31,7 @@ function weekRange(fromWeek: number, toWeek: number): { startDate: string; endDa
   return { startDate, endDate };
 }
 
-type Role = "Omkar" | "Akshay" | "Hanumanat";
+type Role = "Omkar" | "Akshay" | "Hanumant";
 
 type GateId =
   | "ms-incorporated"
@@ -43,7 +43,7 @@ type GateId =
   | "ms-website"
   | "ms-operational";
 
-/** CTO → Omkar, COO → Akshay, CIMO → Hanumanat; dual-owner → first role. */
+/** CTO → Omkar, COO → Akshay, CIMO → Hanumant; dual-owner → first role. */
 type SeedTask = {
   n: number;
   name: string;
@@ -84,7 +84,7 @@ const MILESTONES: Milestone[] = [
     name: "Physical Plant Ready",
     startDate: "2026-10-03",
     endDate: "2026-10-09",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     status: "not_started"
   },
   {
@@ -195,7 +195,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 8,
     name: "Define Alpha factory-space requirements",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 1,
     to: 1,
     milestoneId: "ms-site",
@@ -231,7 +231,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 12,
     name: "Detailed site measurement / as-is layout",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 2,
     to: 3,
     milestoneId: "ms-site",
@@ -240,7 +240,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 13,
     name: "Factory master layout",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 2,
     to: 4,
     milestoneId: "ms-site",
@@ -260,7 +260,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 15,
     name: "Alpha plant technical inspection",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 1,
     to: 2,
     milestoneId: "ms-plant-acquired",
@@ -298,7 +298,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 19,
     name: "Plant dismantling / relocation planning",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 4,
     milestoneId: "ms-physical-plant",
@@ -307,7 +307,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 20,
     name: "Factory cleanup & scrap removal",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 4,
     milestoneId: "ms-physical-plant",
@@ -316,7 +316,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 21,
     name: "Roof / wall / drainage / civil repairs",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 5,
     milestoneId: "ms-physical-plant",
@@ -325,7 +325,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 22,
     name: "Floor crack repair & preparation",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 4,
     milestoneId: "ms-physical-plant",
@@ -334,7 +334,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 23,
     name: "Epoxy / chemical-resistant flooring",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 4,
     to: 5,
     milestoneId: "ms-physical-plant",
@@ -343,7 +343,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 24,
     name: "Floor markings / walkways / zones",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 6,
     milestoneId: "ms-physical-plant",
@@ -352,7 +352,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 25,
     name: "Office partitions / painting / interiors",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 5,
     milestoneId: "ms-physical-plant",
@@ -370,7 +370,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 27,
     name: "Factory electrical-load & utility design",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 2,
     to: 4,
     milestoneId: "ms-physical-plant",
@@ -379,7 +379,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 28,
     name: "Electrical panel / cabling / lighting work",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 4,
     to: 6,
     milestoneId: "ms-physical-plant",
@@ -388,7 +388,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 29,
     name: "Water / air / drainage / ETP / scrubber utilities",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 4,
     to: 7,
     milestoneId: "ms-physical-plant",
@@ -397,7 +397,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 30,
     name: "Plant relocation / positioning",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 6,
     milestoneId: "ms-physical-plant",
@@ -406,7 +406,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 31,
     name: "Tanks / pumps / motors / gearbox refurbishment",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 3,
     to: 6,
     milestoneId: "ms-physical-plant",
@@ -415,7 +415,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 32,
     name: "Process piping / heater / burner installation",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 7,
     milestoneId: "ms-physical-plant",
@@ -424,7 +424,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 33,
     name: "Mechanical alignment & guarding",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 7,
     milestoneId: "ms-physical-plant",
@@ -433,7 +433,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 34,
     name: "Mechanical dry run",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 7,
     to: 8,
     milestoneId: "ms-physical-plant",
@@ -471,7 +471,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 38,
     name: "Sensor installation / field wiring",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 7,
     milestoneId: "ms-scada",
@@ -552,7 +552,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 74,
     name: "Electrical + mechanical commissioning",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 8,
     to: 9,
     milestoneId: "ms-scada",
@@ -729,7 +729,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 54,
     name: "Asset register / maintenance hierarchy",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 5,
     to: 7,
     milestoneId: "ms-operational",
@@ -738,7 +738,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 55,
     name: "PM schedules / spare-parts plan",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 6,
     to: 8,
     milestoneId: "ms-operational",
@@ -765,7 +765,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 58,
     name: "EHS / PPE / fire / chemical handling setup",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 4,
     to: 8,
     milestoneId: "ms-operational",
@@ -891,7 +891,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 82,
     name: "Commissioning punch-list closure",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 11,
     to: 12,
     milestoneId: "ms-operational",
@@ -927,7 +927,7 @@ const SEED_TASKS: SeedTask[] = [
   {
     n: 88,
     name: "Maintenance plan v1 freeze",
-    owner: "Hanumanat",
+    owner: "Hanumant",
     from: 11,
     to: 12,
     milestoneId: "ms-operational",
@@ -1035,7 +1035,7 @@ export const SEED_PROJECTS: Project[] = [
     objective:
       "Deliver Voltron Alpha v1 in 90 days: incorporate, secure site, acquire and install the plant, bring SCADA/ERP/Voltron online, and reach operational readiness with controlled trials.",
     owner: "Omkar",
-    team: ["Omkar", "Akshay", "Hanumanat"],
+    team: ["Omkar", "Akshay", "Hanumant"],
     startDate: "2026-08-15",
     targetDate: "2026-11-15",
     status: "not_started",

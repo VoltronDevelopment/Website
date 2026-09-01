@@ -340,7 +340,7 @@ export const leaders = [
     image: "/team/voltron_operations.webp"
   },
   {
-    name: "Hanumanat",
+    name: "Hanumant",
     role: "Chief Installation & Maintenance Officer",
     discipline: "Plant Engineering",
     cred: "18+ Years in Plant Engineering",

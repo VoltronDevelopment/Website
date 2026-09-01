@@ -12,7 +12,7 @@ export const PRIORITY_LABELS: Record<TaskPriority, string> = {
 };
 
 /** Suggested founder pool — projects can also add custom owner names. */
-export const OWNER_POOL = ["Omkar", "Akshay", "Hanumanat"] as const;
+export const OWNER_POOL = ["Omkar", "Akshay", "Hanumant"] as const;
 export type Owner = string;
 
 export type Workstream = {
