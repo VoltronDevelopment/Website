@@ -34,21 +34,29 @@ function takeRateLimit(key: string, max: number): boolean {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (request.method !== "POST" || pathname !== "/api/inquiries") {
+  if (pathname.startsWith("/api/")) {
+    if (request.method !== "POST" || pathname !== "/api/inquiries") {
+      return NextResponse.next();
+    }
+
+    const ip = clientIp(request);
+    if (!takeRateLimit(`inquiry:${ip}`, MAX_INQUIRY_REQUESTS)) {
+      return NextResponse.json(
+        { ok: false, message: "Too many requests. Please try again in a minute." },
+        { status: 429 }
+      );
+    }
+
     return NextResponse.next();
   }
 
-  const ip = clientIp(request);
-  if (!takeRateLimit(`inquiry:${ip}`, MAX_INQUIRY_REQUESTS)) {
-    return NextResponse.json(
-      { ok: false, message: "Too many requests. Please try again in a minute." },
-      { status: 429 }
-    );
+  if (pathname === "/" || pathname.startsWith("/_next/") || /\.[^/]+$/.test(pathname)) {
+    return NextResponse.next();
   }
 
-  return NextResponse.next();
+  return NextResponse.redirect(new URL("/", request.url));
 }
 
 export const config = {
-  matcher: ["/api/inquiries"]
+  matcher: ["/:path*"]
 };

@@ -1,0 +1,257 @@
+.launch-page {
+  --launch-ice: #eef4f8;
+  --launch-muted: #98a6b4;
+  --launch-cyan: #40dccb;
+  --launch-blue: #498bff;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  overflow: hidden;
+  padding-inline: clamp(24px, 6.2vw, 96px);
+  background:
+    radial-gradient(ellipse at 25% 48%, rgba(21, 66, 90, 0.24), transparent 34rem),
+    radial-gradient(ellipse at 83% 100%, rgba(26, 59, 102, 0.16), transparent 42rem),
+    #060b11;
+  color: var(--launch-ice);
+}
+
+.launch-page::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg, transparent calc(50% - 0.5px), rgba(134, 169, 192, 0.08) 50%, transparent calc(50% + 0.5px));
+  content: "";
+  pointer-events: none;
+}
+
+.launch-grid {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(164, 191, 210, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(164, 191, 210, 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at 50% 48%, #000 6%, transparent 78%);
+  pointer-events: none;
+}
+
+.launch-header,
+.launch-footer {
+  display: flex;
+  width: min(100%, 1440px);
+  align-items: center;
+  justify-content: space-between;
+  margin-inline: auto;
+}
+
+.launch-header {
+  min-height: 84px;
+  border-bottom: 1px solid rgba(198, 218, 234, 0.12);
+}
+
+.launch-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--launch-ice);
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.19em;
+  text-decoration: none;
+}
+
+.launch-header p {
+  margin: 0;
+  color: var(--launch-muted);
+  font-size: 11px;
+  letter-spacing: 0.09em;
+}
+
+.launch-hero {
+  display: grid;
+  width: min(100%, 1180px);
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(32px, 7vw, 104px);
+  margin-inline: auto;
+  padding-block: 48px;
+}
+
+.launch-emblem {
+  position: relative;
+  display: grid;
+  width: min(100%, 460px);
+  aspect-ratio: 1;
+  place-items: center;
+  justify-self: center;
+}
+
+.launch-emblem::before {
+  position: absolute;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(48, 151, 194, 0.2), rgba(31, 94, 145, 0.08) 48%, transparent 72%);
+  content: "";
+  filter: blur(12px);
+}
+
+.launch-orbit {
+  position: absolute;
+  aspect-ratio: 1;
+  border: 1px solid rgba(77, 156, 209, 0.19);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.launch-orbit-outer {
+  width: 96%;
+  border-right-color: rgba(64, 220, 203, 0.62);
+  border-bottom-color: transparent;
+  animation: launch-orbit 32s linear infinite;
+}
+
+.launch-orbit-inner {
+  width: 78%;
+  border-style: dashed;
+  border-color: rgba(100, 147, 184, 0.18);
+}
+
+.launch-orbit-cross {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  background: linear-gradient(90deg, transparent, rgba(91, 137, 176, 0.28), transparent);
+  pointer-events: none;
+}
+
+.launch-orbit-cross-x {
+  width: 118%;
+  height: 1px;
+}
+
+.launch-orbit-cross-y {
+  width: 1px;
+  height: 118%;
+  background: linear-gradient(180deg, transparent, rgba(91, 137, 176, 0.28), transparent);
+}
+
+.launch-logo {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 66%;
+  height: auto;
+  border: 1px solid rgba(100, 161, 204, 0.28);
+  box-shadow: 0 0 80px rgba(22, 91, 135, 0.15);
+}
+
+.launch-copy {
+  padding-block: 20px;
+}
+
+.launch-kicker {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 26px;
+  color: #a8bdca;
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.launch-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--launch-cyan);
+  box-shadow: 0 0 14px rgba(64, 220, 203, 0.72);
+  animation: launch-status 2.8s ease-in-out infinite;
+}
+
+.launch-copy h1 {
+  margin: 0;
+  color: var(--launch-ice);
+  font-family: "Arial Narrow", "Bahnschrift Condensed", var(--font-space-grotesk), sans-serif;
+  font-size: clamp(76px, 10.6vw, 142px);
+  font-weight: 500;
+  letter-spacing: -0.085em;
+  line-height: 0.79;
+  text-transform: uppercase;
+}
+
+.launch-copy h1 span {
+  color: var(--launch-cyan);
+}
+
+.launch-description {
+  max-width: 39ch;
+  margin: 32px 0 0;
+  color: #a5b2bf;
+  font-size: clamp(15px, 1.4vw, 17px);
+  line-height: 1.75;
+}
+
+.launch-signature {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 38px;
+  color: #d1dbe3;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+.launch-signature-rule {
+  width: 42px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--launch-cyan), var(--launch-blue));
+}
+
+.launch-footer {
+  min-height: 58px;
+  border-top: 1px solid rgba(198, 218, 234, 0.12);
+  color: #748391;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+@keyframes launch-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes launch-status {
+  50% { opacity: 0.42; }
+}
+
+@media (max-width: 760px) {
+  .launch-page { padding-inline: 22px; }
+  .launch-page::before { background: linear-gradient(180deg, transparent calc(50% - 0.5px), rgba(134, 169, 192, 0.07) 50%, transparent calc(50% + 0.5px)); }
+  .launch-grid { background-size: 52px 52px; }
+  .launch-header { min-height: 68px; }
+  .launch-header p { font-size: 9px; letter-spacing: 0.04em; }
+  .launch-hero { grid-template-columns: 1fr; gap: 4px; padding-block: 30px 36px; }
+  .launch-emblem { width: min(72vw, 300px); }
+  .launch-copy { padding: 0; text-align: center; }
+  .launch-kicker { justify-content: center; margin-bottom: 20px; font-size: 9px; }
+  .launch-copy h1 { font-size: clamp(72px, 18vw, 112px); }
+  .launch-description { max-width: 34ch; margin: 24px auto 0; font-size: 15px; }
+  .launch-signature { justify-content: center; margin-top: 26px; font-size: 10px; }
+  .launch-footer { min-height: 52px; font-size: 8px; }
+}
+
+@media (max-width: 380px) {
+  .launch-header p { max-width: 115px; text-align: right; line-height: 1.5; }
+  .launch-footer { align-items: flex-start; flex-direction: column; justify-content: center; gap: 4px; padding-block: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launch-orbit-outer,
+  .launch-status-dot { animation: none; }
+}

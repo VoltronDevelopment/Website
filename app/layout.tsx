@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { assets, siteUrl } from "@/lib/assets";
 import "./globals.css";
+import "./coming-soon.css";
 
-const title = "Voltron | Engineering the Future of Manufacturing";
-const description =
-  "Voltron connects technology, infrastructure and operations — with manufacturing context, digital QMS and Voltron AI specialist intelligence.";
+const title = "Voltron — Coming Soon";
+const description = "A new digital home for Voltron is taking shape. Engineering intelligent industry.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title,
+  title: {
+    default: title,
+    template: "%s"
+  },
   description,
   openGraph: {
     title,
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Voltron",
-    images: [{ url: assets.ogImage, width: 1200, height: 630, alt: "Voltron — Engineering the Future of Manufacturing" }]
+    images: [{ url: assets.ogImage, width: 1200, height: 630, alt: "Voltron — Engineering intelligent industry" }]
   },
   twitter: {
     card: "summary_large_image",
@@ -24,10 +27,7 @@ export const metadata: Metadata = {
     description,
     images: [assets.ogImage]
   },
-  robots: {
-    index: true,
-    follow: true
-  }
+  robots: { index: true, follow: true }
 };
 
 export default function RootLayout({
