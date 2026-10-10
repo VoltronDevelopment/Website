@@ -10,11 +10,9 @@
     "lint": "tsc --noEmit --pretty false",
     "typecheck": "tsc --noEmit --pretty false",
     "secret-scan": "node scripts/secret-scan.mjs",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "optimize-images": "node scripts/optimize-images.mjs",
-    "admin:ensure-tables": "node scripts/ensure-dynamo-tables.mjs",
-    "admin:hash-password": "node scripts/hash-admin-password.mjs"
+    "test": "vitest run --configLoader runner",
+    "test:watch": "vitest --configLoader runner",
+    "optimize-images": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1042.0",

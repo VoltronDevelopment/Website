@@ -13,15 +13,12 @@
         "dynamodb:Query",
         "dynamodb:BatchGetItem",
         "dynamodb:BatchWriteItem",
+        "dynamodb:TransactWriteItems",
         "dynamodb:DescribeTable"
       ],
       "Resource": [
         "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteProjects",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteReviews",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries/index/*",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteProjects/index/*",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteReviews/index/*"
+        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries/index/*"
       ]
     },
     {

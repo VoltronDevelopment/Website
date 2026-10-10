@@ -1,4 +1,6 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, rename, rm, writeFile } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
+import { readLocalLedger } from "@/lib/local-ledger";
 import path from "node:path";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
@@ -29,6 +31,7 @@ export type StoredInquiry = InquiryPayload & {
 const MAX_FIELD_LENGTH = 800;
 const dataDirectory = path.join(process.cwd(), "data");
 const dataFile = path.join(dataDirectory, "inquiries.json");
+let localInquiryWriteTail: Promise<void> = Promise.resolve();
 const defaultInquiryEmail = "info@voltroncoat.com";
 
 const awsRegion = process.env.VOLTRON_AWS_REGION || process.env.AWS_REGION || "ap-south-1";
@@ -92,18 +95,25 @@ export async function storeInquiry(payload: InquiryPayload): Promise<StoredInqui
 }
 
 async function storeInquiryLocally(inquiry: StoredInquiry) {
-  await mkdir(dataDirectory, { recursive: true });
-  const existing = await readInquiries();
-  await writeFile(dataFile, JSON.stringify([inquiry, ...existing], null, 2));
-}
-
-async function readInquiries(): Promise<StoredInquiry[]> {
+  // Serialize the entire read/modify/replace, not just the write. This is a
+  // process-local adapter; multi-instance deployments must use DynamoDB.
+  const previous = localInquiryWriteTail;
+  let release!: () => void;
+  localInquiryWriteTail = new Promise<void>((resolve) => { release = resolve; });
+  await previous;
   try {
-    const content = await readFile(dataFile, "utf8");
-    const parsed = JSON.parse(content);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+    const existing = await readLocalLedger<StoredInquiry>(dataFile);
+    await mkdir(dataDirectory, { recursive: true });
+    const temporaryFile = `${dataFile}.${randomUUID()}.tmp`;
+    try {
+      await writeFile(temporaryFile, JSON.stringify([inquiry, ...existing], null, 2), { flag: "wx" });
+      await rename(temporaryFile, dataFile);
+    } catch (error) {
+      await rm(temporaryFile, { force: true }).catch(() => {});
+      throw error;
+    }
+  } finally {
+    release();
   }
 }
 

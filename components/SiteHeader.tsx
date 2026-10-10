@@ -94,7 +94,7 @@ export function SiteHeader() {
   return (
     <header className={`site-header ${isScrolled ? "scrolled" : "transparent"} ${isHeaderHidden && !menuOpen ? "header-hidden" : ""}`.trim()}>
       <Link className="brand" href="#home" aria-label="Voltron home" onClick={() => setMenuOpen(false)}>
-        <Image src={assets.logo} alt="" width={36} height={36} priority className="brand-logo" />
+        <Image src={assets.logo} alt="" width={44} height={44} priority className="brand-logo" />
         <span>Voltron</span>
       </Link>
 

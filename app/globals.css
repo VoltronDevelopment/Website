@@ -5,12 +5,12 @@
   --graphite: #141a22;
   --off-white: #f4f6f8;
   --muted: #8b95a5;
-  --blue: #4a8ffd;
+  --blue: #2f80ed;
   --blue-dim: rgba(74, 143, 253, 0.45);
   --line-dark: rgba(255, 255, 255, 0.1);
   --line-light: rgba(20, 26, 34, 0.12);
   --max: 1040px;
-  --header-h: 64px;
+  --header-h: 48px;
   --font-inter: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-space-grotesk: "Space Grotesk", Inter, ui-sans-serif, system-ui, sans-serif;
   --type-kicker: 0.72rem;
@@ -100,7 +100,7 @@ h2,
 h3 {
   font-family: var(--font-space-grotesk), var(--font-inter), sans-serif;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   text-wrap: balance;
 }
 
@@ -172,16 +172,15 @@ h3 {
 
 .nav-link.active {
   color: #fff;
-  text-shadow:
-    0 0 8px rgba(74, 143, 253, 0.95),
-    0 0 18px rgba(74, 143, 253, 0.55),
-    0 0 32px rgba(74, 143, 253, 0.32);
+  text-shadow: none;
 }
 
 .nav-cta {
-  padding: 8px 18px;
-  border-radius: 999px;
-  border: 1px solid var(--line-dark);
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--blue);
+  background: var(--blue);
   font-size: 0.82rem;
   font-weight: 600;
   color: #fff;
@@ -189,22 +188,8 @@ h3 {
 }
 
 .nav-cta:hover {
-  border-color: var(--blue-dim);
-  background: rgba(74, 143, 253, 0.08);
-}
-
-.nav-admin {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-admin-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 10px rgba(74, 143, 253, 0.65);
+  border-color: var(--blue);
+  background: #1d63d1;
 }
 
 .nav-toggle {
@@ -1743,6 +1728,50 @@ html.js .reveal.split-visual:not(.is-visible) .visual-stage {
     opacity: 1;
     transform: none;
   }
+}
+
+/* Product-aligned marketing layer: quiet type, solid controls, no HUD chrome. */
+:root {
+  --hud-cyan: var(--blue);
+}
+
+.eyebrow,
+.biz-card-eyebrow,
+.voltron-ai-card-eyebrow {
+  display: none;
+}
+
+.btn-primary,
+.btn-alpha-visit {
+  min-height: 32px;
+  margin-top: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  background: var(--blue);
+  color: #fff;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-alpha-visit:hover {
+  border-color: #1d63d1;
+  background: #1d63d1;
+  box-shadow: none;
+  transform: none;
+}
+
+.hud-frame {
+  display: none;
+}
+
+.site-header.scrolled {
+  background: var(--black);
+  border-bottom-color: var(--line-dark);
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .discipline-row span,

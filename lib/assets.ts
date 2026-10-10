@@ -1,6 +1,6 @@
 export const assets = {
   logo: "/voltron-logo.webp",
-  logoMark: "/voltron_logo_without_background.webp",
+  logoMark: "/voltron-logo.webp",
   ogImage: "/og-image.webp",
   companyProfile: "/voltron-company-profile.pdf",
   factory: {
@@ -42,4 +42,4 @@ export const assets = {
   }
 } as const;
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://voltroncoat.com";
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.voltronlattice.com";

@@ -3,8 +3,21 @@ import { isValidationError } from "@/lib/errors";
 import { storeInquiry, validateInquiry } from "@/lib/inquiries";
 
 export async function POST(request: Request) {
+  let body: unknown;
+
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      {
+        ok: false,
+        message: "Request body must be valid JSON."
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
     const payload = validateInquiry(body);
     const inquiry = await storeInquiry(payload);
 

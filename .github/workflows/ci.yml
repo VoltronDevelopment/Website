@@ -40,7 +40,7 @@ jobs:
       - name: Production build
         run: npm run build
         env:
-          NEXT_PUBLIC_SITE_URL: https://voltroncoat.com
+          NEXT_PUBLIC_SITE_URL: https://www.voltronlattice.com
 
   website-dependency-audit:
     name: Website dependency audit
