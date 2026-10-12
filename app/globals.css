@@ -190,7 +190,7 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 .hero-stage { position:relative; z-index:1; display:flex; flex:1; flex-direction:column; align-items:center; justify-content:center; gap:clamp(10px,2svh,18px); padding:88px 24px 28px; text-align:center; }
 .hero-tagline { position:absolute; z-index:2; top:96px; left:50%; width:max-content; max-width:none; margin:0; color:var(--muted); font-size:13px; line-height:1.2; text-align:center; white-space:nowrap; transform:translate(-50%,8px); opacity:0; transition:opacity .55s ease,transform .55s ease; }
 .hero-tagline.visible { opacity:1; transform:translate(-50%,0); }
-.hero-orbit { --logo-size:120px; --orbit-size:348px; --orbit-radius:156px; --orbit-duration:42s; position:relative; z-index:1; display:grid; width:var(--orbit-size); height:var(--orbit-size); flex-shrink:0; place-items:center; margin-top:8px; overflow:visible; }
+.hero-orbit { --logo-size:120px; --orbit-size:348px; --orbit-radius:156px; --orbit-duration:28s; position:relative; z-index:1; display:grid; width:var(--orbit-size); height:var(--orbit-size); flex-shrink:0; place-items:center; margin-top:8px; overflow:visible; }
 .hero-rings { position:absolute; inset:0; z-index:0; display:grid; place-items:center; pointer-events:none; }
 .hero-rings span { position:absolute; width:calc(var(--logo-size) + 28px); height:calc(var(--logo-size) + 28px); border:1px solid rgba(74,143,253,.14); border-radius:50%; animation:brand-ring-breathe 4s ease-in-out infinite; }
 .hero-rings span:nth-child(2) { width:calc(var(--logo-size) + 56px); height:calc(var(--logo-size) + 56px); animation-delay:.5s; }
@@ -205,20 +205,20 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 .hero-logo-wrap.connected { filter:drop-shadow(0 0 18px rgba(74,143,253,.5)) drop-shadow(0 0 36px rgba(74,143,253,.22)); }
 .hero-logo-wrap.connected .hero-logo-glow { opacity:1; }
 .hero-logo-wrap.connected .hero-logo-pulse { opacity:1; animation:pulse-ring 2.5s ease-in-out infinite; }
-.orbit-spinner { position:absolute; inset:0; z-index:3; pointer-events:none; }
+.orbit-spinner { position:absolute; inset:0; z-index:3; pointer-events:none; transform-origin:center center; will-change:transform; }
 .hero-orbit.orbiting .orbit-spinner { animation:orbit-spin var(--orbit-duration) linear infinite; }
 .pillar-node { --orbit-angle:0deg; position:absolute; inset:0; display:grid; place-items:center; opacity:0; transform:rotate(var(--orbit-angle)) translateY(calc(var(--orbit-radius) * -1)); transition:opacity .55s ease; }
 .node-tech { --orbit-angle:-50deg; }
 .node-ops { --orbit-angle:70deg; }
 .node-infra { --orbit-angle:210deg; }
 .hero-intro[data-active-line="0"] .node-tech,.hero-intro[data-active-line="1"] .node-tech,.hero-intro[data-active-line="2"] .node-tech,.hero-intro[data-active-line="3"] .node-tech,.hero-intro[data-active-line="1"] .node-infra,.hero-intro[data-active-line="2"] .node-infra,.hero-intro[data-active-line="3"] .node-infra,.hero-intro[data-active-line="2"] .node-ops,.hero-intro[data-active-line="3"] .node-ops { opacity:1; }
+.pillar-counter { display:grid; place-items:center; transform-origin:center center; will-change:transform; }
+.hero-orbit.orbiting .pillar-counter { animation:orbit-spin var(--orbit-duration) linear infinite reverse; }
 .pillar-seat { display:flex; width:max-content; flex-direction:column; align-items:center; text-align:center; transform:rotate(calc(var(--orbit-angle) * -1)); }
-.hero-orbit.orbiting .pillar-seat { animation:orbit-unspin var(--orbit-duration) linear infinite; }
 .pillar-head { display:block; color:var(--blue); font-size:13px; font-weight:500; line-height:1.2; letter-spacing:0; white-space:nowrap; }
 .pillar-rule { display:block; width:100%; height:1.5px; margin:3px 0; background:var(--blue); opacity:.7; transform:scaleX(0); transform-origin:center; transition:transform .55s ease; }
 .hero-intro[data-active-line="0"] .node-tech .pillar-rule,.hero-intro[data-active-line="1"] .node-tech .pillar-rule,.hero-intro[data-active-line="2"] .node-tech .pillar-rule,.hero-intro[data-active-line="3"] .node-tech .pillar-rule,.hero-intro[data-active-line="1"] .node-infra .pillar-rule,.hero-intro[data-active-line="2"] .node-infra .pillar-rule,.hero-intro[data-active-line="3"] .node-infra .pillar-rule,.hero-intro[data-active-line="2"] .node-ops .pillar-rule,.hero-intro[data-active-line="3"] .node-ops .pillar-rule { transform:scaleX(1); }
 @keyframes orbit-spin { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
-@keyframes orbit-unspin { from { transform:rotate(calc(var(--orbit-angle) * -1)); } to { transform:rotate(calc(var(--orbit-angle) * -1 - 360deg)); } }
 @keyframes pulse-ring { 0%,100% { transform:scale(1); opacity:.3; } 50% { transform:scale(1.06); opacity:.7; } }
 @keyframes brand-ring-breathe { 0%,100% { opacity:.4; transform:scale(.98); } 50% { opacity:.8; transform:scale(1.02); } }
 .hero-below { display:flex; flex-direction:column; align-items:center; gap:clamp(8px,1.4svh,14px); margin-top:10px; opacity:0; transform:translateY(10px); transition:opacity .6s ease,transform .6s ease; }
@@ -247,7 +247,7 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
   .coming-soon-controls { top:12px; right:var(--gutter); gap:8px; }
   .hero-stage { padding:72px 20px 22px; gap:8px; }
   .hero-tagline { top:84px; font-size:clamp(9px,2.7vw,11px); }
-  .hero-orbit { --logo-size:96px; --orbit-size:288px; --orbit-radius:128px; --orbit-duration:36s; margin-top:4px; }
+  .hero-orbit { --logo-size:96px; --orbit-size:288px; --orbit-radius:128px; --orbit-duration:28s; margin-top:4px; }
   .hero-below { margin-top:6px; }
   .pillar-head { font-size:10px; line-height:1.15; }
   .pillar-rule { height:1.25px; margin:2px 0; }
@@ -268,9 +268,9 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
   .hero-brand-copy h1 { font-size:17px; line-height:24px; letter-spacing:.17em; }
 }
 @media (prefers-reduced-motion:reduce) {
-  .hero-logo-pulse,.hero-rings span,.orbit-spinner,.pillar-seat { animation:none !important; }
+  .hero-logo-pulse,.hero-rings span,.orbit-spinner,.pillar-counter { animation:none !important; }
   .hero-logo-pulse { transform:none !important; }
-  .orbit-spinner { transform:none; }
+  .orbit-spinner,.pillar-counter { transform:none; }
   .pillar-node { opacity:1; transform:rotate(var(--orbit-angle)) translateY(calc(var(--orbit-radius) * -1)); }
   .pillar-seat { transform:rotate(calc(var(--orbit-angle) * -1)); }
   .pillar-rule { transform:scaleX(1); }

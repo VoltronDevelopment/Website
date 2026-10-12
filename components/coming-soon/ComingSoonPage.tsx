@@ -128,7 +128,7 @@ function AnimatedBrandMark() {
     <div className="hero-nebula" aria-hidden="true"/><div className="hero-grid-bg" aria-hidden="true"/>
     <div className="hero-stage">
       <p className={`hero-tagline ${phase >= 1 ? "visible" : ""}`}>Building India&apos;s Intelligent Manufacturing Backbone.</p>
-      <div className={`hero-orbit ${phase >= 2 ? "orbiting" : ""}`}>
+      <div className={`hero-orbit ${phase >= 1 ? "orbiting" : ""}`}>
         <div className="hero-rings" aria-hidden="true"><span/><span/><span/></div>
         <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
           <Image className="theme-logo-light hero-logo-img" src="/Brand%20Assets/logo/light%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
@@ -138,10 +138,12 @@ function AnimatedBrandMark() {
         <div className="orbit-spinner">
           {pillars.map(pillar => (
             <div key={pillar.id} className={`pillar-node node-${pillar.id}`} aria-label={`${pillar.above} ${pillar.below}`}>
-              <div className="pillar-seat">
-                <span className="pillar-head">{pillar.above}</span>
-                <span className="pillar-rule" aria-hidden="true"/>
-                <span className="pillar-head">{pillar.below}</span>
+              <div className="pillar-counter">
+                <div className="pillar-seat">
+                  <span className="pillar-head">{pillar.above}</span>
+                  <span className="pillar-rule" aria-hidden="true"/>
+                  <span className="pillar-head">{pillar.below}</span>
+                </div>
               </div>
             </div>
           ))}
