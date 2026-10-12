@@ -7,10 +7,10 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { launchAt } from "@/lib/launch";
 
 const pillars = [
-  { label: "Human ingenuity.", path: "M 202 76 L 282 76 L 322 108 L 352 142 L 358 168", id: "tech" },
-  { label: "Connected intelligence.", path: "M 202 304 L 282 304 L 322 272 L 352 238 L 358 212", id: "infra" },
-  { label: "Manufacturing possibilities.", path: "M 408 190 L 518 190", id: "ops" }
-];
+  { above: "Human", below: "ingenuity.", id: "tech" },
+  { above: "Connected", below: "intelligence.", id: "infra" },
+  { above: "Manufacturing", below: "possibilities.", id: "ops" }
+] as const;
 
 function FounderLogin() {
   const [open, setOpen] = useState(false);
@@ -102,37 +102,53 @@ function AnimatedBrandMark() {
   const [activeLine, setActiveLine] = useState(-1);
 
   useEffect(() => {
-    if (window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setPhase(3);
       setActiveLine(3);
       return;
     }
-    const timers = [
-      window.setTimeout(() => { setPhase(2); setActiveLine(0); }, 900),
-      window.setTimeout(() => setActiveLine(1), 2300),
-      window.setTimeout(() => setActiveLine(2), 3700),
-      window.setTimeout(() => { setActiveLine(3); setPhase(3); }, 5100)
-    ];
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    const timers = mobile
+      ? [
+          window.setTimeout(() => { setPhase(2); setActiveLine(0); }, 450),
+          window.setTimeout(() => setActiveLine(1), 1250),
+          window.setTimeout(() => setActiveLine(2), 2050),
+          window.setTimeout(() => { setActiveLine(3); setPhase(3); }, 2850)
+        ]
+      : [
+          window.setTimeout(() => { setPhase(2); setActiveLine(0); }, 900),
+          window.setTimeout(() => setActiveLine(1), 2300),
+          window.setTimeout(() => setActiveLine(2), 3700),
+          window.setTimeout(() => { setActiveLine(3); setPhase(3); }, 5100)
+        ];
     return () => timers.forEach(window.clearTimeout);
   }, []);
 
   return <div className="hero-intro" data-phase={phase} data-active-line={activeLine >= 0 ? activeLine : undefined}>
     <div className="hero-nebula" aria-hidden="true"/><div className="hero-grid-bg" aria-hidden="true"/>
     <div className="hero-stage">
-      <div className="hero-logo-cluster">
+      <p className={`hero-tagline ${phase >= 1 ? "visible" : ""}`}>Building India&apos;s Intelligent Manufacturing Backbone.</p>
+      <div className="hero-orbit">
         <div className="hero-rings" aria-hidden="true"><span/><span/><span/></div>
-        <div className="hero-pillar-connectors" aria-hidden="true"><svg viewBox="0 0 720 380" className="hero-pillar-svg" preserveAspectRatio="xMidYMid meet">{pillars.map(pillar => <path key={pillar.id} className={`pillar-line pillar-${pillar.id}`} d={pillar.path} pathLength={1}/>)}<circle className="pillar-hub" cx="360" cy="190" r="5"/></svg></div>
-        {pillars.map(pillar => <div key={pillar.id} className={`pillar-node node-${pillar.id}`}><span className="pillar-head">{pillar.label}</span><span className="pillar-rule"/></div>)}
         <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
           <Image className="theme-logo-light hero-logo-img" src="/Brand%20Assets/logo/light%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
           <Image className="theme-logo-dark hero-logo-img" src="/Brand%20Assets/logo/dark%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
           <span className="hero-logo-pulse" aria-hidden="true"/><span className="hero-logo-glow" aria-hidden="true"/>
         </div>
+        {pillars.map(pillar => (
+          <div key={pillar.id} className={`pillar-node node-${pillar.id}`} aria-label={`${pillar.above} ${pillar.below}`}>
+            <div className="pillar-seat">
+              <span className="pillar-head">{pillar.above}</span>
+              <span className="pillar-rule" aria-hidden="true"/>
+              <span className="pillar-head">{pillar.below}</span>
+            </div>
+          </div>
+        ))}
       </div>
-      <div className={`hero-brand-copy ${phase >= 3 ? "visible" : ""}`}>
-        <p className="hero-tagline">Building India&apos;s Intelligent Manufacturing Backbone.</p><h1>VOLTRON LATTICE</h1>
+      <div className={`hero-below ${phase >= 3 ? "visible" : ""}`}>
+        <div className="hero-brand-copy"><h1>VOLTRON LATTICE</h1></div>
+        <div className="launch-announcement"><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p><Countdown/></div>
       </div>
-      <div className="launch-announcement"><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p><Countdown/></div>
     </div>
   </div>;
 }
