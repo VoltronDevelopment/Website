@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { BrandArt } from "./BrandArt";
+import { Action } from "./SiteShell";
+
+export function Hero({ eyebrow, title, children, art, primary = "Explore the architecture", href = "/technology", secondary = "Partner with us", secondaryHref = "/partner", breadcrumb, principles = false }: { eyebrow: string; title: string; children: React.ReactNode; art: string; primary?: string; href?: string; secondary?: string; secondaryHref?: string; breadcrumb?: string; principles?: boolean }) {
+  return <section className={`hero${breadcrumb ? " hero-with-breadcrumb" : ""}${principles ? " hero-with-principles" : ""}`}>{breadcrumb && <nav aria-label="Breadcrumb" className="container breadcrumb"><Link href="/about">About</Link><span aria-hidden="true">/</span><span aria-current="page">{breadcrumb}</span></nav>}<div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">{eyebrow}</p><h1>{title}</h1><p>{children}</p><div className="hero-actions"><Action href={href} secondary>{primary}</Action>{secondary && <Action href={secondaryHref} text>{secondary}</Action>}</div></div><div><BrandArt family={art} className="hero-art" crop /></div></div>{principles && <div className="principles"><div className="container">{["Repeatable", "Measurable", "Traceable", "Scalable", "Intelligent"].map(word => <span key={word}>{word}</span>)}</div></div>}</section>;
+}

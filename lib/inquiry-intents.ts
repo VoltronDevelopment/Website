@@ -1,23 +1,22 @@
-export const alphaVisitIntent = "Voltron Alpha Visit";
-
 export const productionIntents = [
-  alphaVisitIntent,
-  "Production — CED Coating",
   "Production — Phosphating",
+  "Production — CED Coating",
   "Production — Powder Coating",
-  "Production — Other"
+  "Production — Other",
+  "Production — Need guidance"
 ] as const;
 
 export const partnerIntents = [
-  alphaVisitIntent,
-  "Factory JV / Replication",
-  "Strategic Investment",
-  "Technology / Platform Partnership",
-  "General Partnership Discussion"
+  "Factory JV",
+  "Strategic investment",
+  "Platform partnership",
+  "Commons collaboration",
+  "Building with Voltron",
+  "Partnership — Other"
 ] as const;
 
 export const defaultProductionIntent = "Production — CED Coating";
-export const defaultPartnerIntent = "Factory JV / Replication";
+export const defaultPartnerIntent = "Factory JV";
 
 export const allowedInquiryTypes = [
   ...new Set([...productionIntents, ...partnerIntents])

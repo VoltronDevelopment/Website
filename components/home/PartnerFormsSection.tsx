@@ -1,276 +1,88 @@
 "use client";
+import { useRef, useState, type FormEvent } from "react";
+import { useSearchParams } from "next/navigation";
+import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
+import { partnerIntents, productionIntents } from "@/lib/inquiry-intents";
 
-import { Reveal } from "@/components/Reveal";
-import {
-  alphaVisitIntent,
-  defaultPartnerIntent,
-  defaultProductionIntent,
-  partnerIntents,
-  productionIntents
-} from "@/lib/inquiry-intents";
-import type { FormEvent } from "react";
-import { useEffect, useState } from "react";
+type Values = Record<string, string>;
+type FieldSpec = { key: string; label: string; required?: boolean; type?: string; options?: readonly string[]; multiline?: boolean; placeholder?: string; autoComplete?: string };
+const common: FieldSpec[] = [
+  { key: "name", label: "Full name", required: true, autoComplete: "name" },
+  { key: "company", label: "Company", autoComplete: "organization" },
+  { key: "email", label: "Email", required: true, type: "email", autoComplete: "email" },
+  { key: "phone", label: "Phone", type: "tel", autoComplete: "tel" },
+];
+const productionFields: FieldSpec[] = [...common,
+  { key: "intent", label: "Required process", required: true, options: productionIntents },
+  { key: "part", label: "Part or application", placeholder: "Part, material or application" },
+  { key: "volume", label: "Expected volume", placeholder: "Quantity and frequency" },
+  { key: "timing", label: "Timing", placeholder: "When do you plan to start?" },
+  { key: "requirement", label: "Quality requirements", multiline: true, placeholder: "Standards, specifications or performance requirements" },
+];
+const partnershipFields: FieldSpec[] = [...common.map(field => field.key === "company" ? { ...field, label: "Organization" } : field),
+  { key: "intent", label: "Partnership interest", required: true, options: partnerIntents },
+  { key: "requirement", label: "What are you building?", required: true, multiline: true, placeholder: "The factory opportunity, capability or initiative you want to develop" },
+];
 
-type FormStatus = "idle" | "submitting" | "success" | "error";
-
-export function PartnerFormsSection() {
-  const [productionStatus, setProductionStatus] = useState<FormStatus>("idle");
-  const [productionMessage, setProductionMessage] = useState("");
-  const [partnerStatus, setPartnerStatus] = useState<FormStatus>("idle");
-  const [partnerMessage, setPartnerMessage] = useState("");
-  const [productionIntent, setProductionIntent] = useState(defaultProductionIntent);
-  const [partnerIntent, setPartnerIntent] = useState(defaultPartnerIntent);
-
-  useEffect(() => {
-    const onVisitAlpha = () => {
-      setProductionIntent(alphaVisitIntent);
-      setPartnerIntent(alphaVisitIntent);
-    };
-    window.addEventListener("voltron:visit-alpha", onVisitAlpha);
-    return () => window.removeEventListener("voltron:visit-alpha", onVisitAlpha);
-  }, []);
-
-  async function submitInquiry(e: FormEvent<HTMLFormElement>, kind: "production" | "partner") {
-    e.preventDefault();
-    const setStatus = kind === "production" ? setProductionStatus : setPartnerStatus;
-    const setMessage = kind === "production" ? setProductionMessage : setPartnerMessage;
-
-    setStatus("submitting");
-    setMessage("");
-    const form = e.currentTarget;
-    const payload = Object.fromEntries(new FormData(form).entries());
-    try {
-      const res = await fetch("/api/inquiries", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-      const raw = await res.text();
-      let result: { ok: boolean; message: string };
-      try {
-        result = JSON.parse(raw) as { ok: boolean; message: string };
-      } catch {
-        throw new Error("Unable to submit. Please try again.");
-      }
-      if (!res.ok || !result.ok) throw new Error(result.message);
-      setStatus("success");
-      setMessage(result.message);
-      form.reset();
-      if (kind === "production") setProductionIntent(defaultProductionIntent);
-      else setPartnerIntent(defaultPartnerIntent);
-    } catch (err) {
-      setStatus("error");
-      setMessage(err instanceof Error ? err.message : "Unable to submit.");
+function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partnership"; initialIntent?: string }) {
+  const fields = kind === "production" ? productionFields : partnershipFields;
+  const [values, setValues] = useState<Values>({ intent: initialIntent });
+  const [errors, setErrors] = useState<Values>({});
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
+  const busy = useRef(false);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy.current) return;
+    const nextErrors: Values = {};
+    for (const field of fields) {
+      const value = (values[field.key] || "").trim();
+      if (field.required && !value) nextErrors[field.key] = `${field.label} is required.`;
+      else if (field.type === "email" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) nextErrors[field.key] = "Enter a valid email address.";
+      else if (field.options && value && !field.options.includes(value)) nextErrors[field.key] = "Select a valid option.";
+      else if (value.length > 800) nextErrors[field.key] = "Use 800 characters or fewer.";
     }
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length) {
+      setStatus("idle");
+      formRef.current?.querySelector<HTMLElement>(`[name="${Object.keys(nextErrors)[0]}"]`)?.focus();
+      return;
+    }
+    busy.current = true;
+    setStatus("sending");
+    setMessage("");
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch("/api/inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal, body: JSON.stringify({
+        inquiryType: values.intent, name: values.name, company: values.company || "", email: values.email, phone: values.phone,
+        requirement: values.requirement?.trim() || `Production inquiry: ${values.intent}`,
+        componentType: kind === "production" ? values.intent : undefined,
+        material: values.part, monthlyVolume: values.volume, coatingThickness: values.timing,
+        saltSprayRequirement: kind === "production" ? values.requirement : undefined,
+      }) });
+      const result = await response.json();
+      if (!response.ok || result.ok !== true || typeof result.inquiryId !== "string" || !result.inquiryId) throw new Error(result.message || "Unable to submit. Please try again.");
+      setStatus("success");
+      setMessage("Your inquiry has been received. We will review the details and contact you about the next step.");
+    } catch (error) {
+      setStatus("error");
+      setMessage(error instanceof Error && error.name !== "AbortError" ? error.message : "The request timed out. Your details are still here; please try again.");
+    } finally { clearTimeout(timeout); busy.current = false; }
   }
-
-  return (
-    <section className="screen screen-cta" id="partner">
-      <div className="screen-inner partner-page">
-        <Reveal className="partner-intro center-text">
-          <p className="eyebrow">Partner With Voltron</p>
-          <h2>Start the conversation.</h2>
-          <p className="lead center partner-lead">
-            Production programs or factory partnerships — tell us what you&apos;re building.
-          </p>
-        </Reveal>
-
-        <div className="partner-forms">
-          <Reveal>
-            <div className="partner-form-block">
-              <p className="eyebrow">Production Programs</p>
-              <h3>Surface treatment manufacturing</h3>
-              <p className="partner-form-desc">
-                CED, phosphating, powder coating and related production at Voltron Alpha.
-              </p>
-              <form className="form-minimal form-glass" onSubmit={(e) => submitInquiry(e, "production")}>
-                <label>
-                  Intent
-                  <select
-                    name="inquiryType"
-                    required
-                    value={productionIntent}
-                    onChange={(e) => setProductionIntent(e.target.value)}
-                  >
-                    {productionIntents.map((intent) => (
-                      <option key={intent} value={intent}>
-                        {intent}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div className="form-row">
-                  <label>
-                    Name
-                    <input name="name" type="text" required autoComplete="name" maxLength={800} placeholder="Your name" />
-                  </label>
-                  <label>
-                    Company
-                    <input
-                      name="company"
-                      type="text"
-                      required
-                      autoComplete="organization"
-                      maxLength={800}
-                      placeholder="Company name"
-                    />
-                  </label>
-                </div>
-                <div className="form-row">
-                  <label>
-                    Email
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      maxLength={800}
-                      placeholder="you@company.com"
-                    />
-                  </label>
-                  <label>
-                    Phone
-                    <input name="phone" type="tel" autoComplete="tel" maxLength={800} placeholder="+91 …" />
-                  </label>
-                </div>
-                <div className="form-row">
-                  <label>
-                    Part / material
-                    <input name="material" type="text" maxLength={800} placeholder="Component type, substrate, alloy…" />
-                  </label>
-                  <label>
-                    Monthly volume
-                    <input name="monthlyVolume" type="text" maxLength={800} placeholder="Parts per month, batch size…" />
-                  </label>
-                </div>
-                <div className="form-row">
-                  <label>
-                    Coating spec
-                    <input name="coatingThickness" type="text" maxLength={800} placeholder="Thickness, finish, standard…" />
-                  </label>
-                  <label>
-                    Salt spray / quality
-                    <input name="saltSprayRequirement" type="text" maxLength={800} placeholder="Hours, spec, test requirement…" />
-                  </label>
-                </div>
-                <label>
-                  Additional requirements
-                  <textarea
-                    name="requirement"
-                    rows={4}
-                    required
-                    maxLength={800}
-                    placeholder="Part type, timeline, delivery location, drawings available…"
-                  />
-                </label>
-                <button type="submit" className="btn-primary" disabled={productionStatus === "submitting"}>
-                  {productionStatus === "submitting" ? "Sending…" : "Submit production inquiry"}
-                </button>
-                {productionMessage ? (
-                  <p className={`form-msg ${productionStatus}`} role="alert">
-                    {productionMessage}
-                  </p>
-                ) : null}
-              </form>
-            </div>
-          </Reveal>
-
-          <Reveal delay={80}>
-            <div className="partner-form-block">
-              <p className="eyebrow">Partnership &amp; JV</p>
-              <h3>Scale with Voltron</h3>
-              <p className="partner-form-desc">Factory JVs, strategic investment and platform partnerships.</p>
-              <form className="form-minimal form-glass" onSubmit={(e) => submitInquiry(e, "partner")}>
-                <label>
-                  Intent
-                  <select
-                    name="inquiryType"
-                    required
-                    value={partnerIntent}
-                    onChange={(e) => setPartnerIntent(e.target.value)}
-                  >
-                    {partnerIntents.map((intent) => (
-                      <option key={intent} value={intent}>
-                        {intent}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div className="form-row">
-                  <label>
-                    Name
-                    <input name="name" type="text" required autoComplete="name" maxLength={800} placeholder="Your name" />
-                  </label>
-                  <label>
-                    Company
-                    <input
-                      name="company"
-                      type="text"
-                      required
-                      autoComplete="organization"
-                      maxLength={800}
-                      placeholder="Company name"
-                    />
-                  </label>
-                </div>
-                <div className="form-row">
-                  <label>
-                    Email
-                    <input
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      maxLength={800}
-                      placeholder="you@company.com"
-                    />
-                  </label>
-                  <label>
-                    Phone
-                    <input name="phone" type="tel" autoComplete="tel" maxLength={800} placeholder="+91 …" />
-                  </label>
-                </div>
-                <div className="form-row">
-                  <label>
-                    Region / facility
-                    <input name="material" type="text" maxLength={800} placeholder="City, cluster, plant location…" />
-                  </label>
-                  <label>
-                    Scale
-                    <input name="monthlyVolume" type="text" maxLength={800} placeholder="Capacity, investment range…" />
-                  </label>
-                </div>
-                <label>
-                  Timeline
-                  <input name="coatingThickness" type="text" maxLength={800} placeholder="Target launch or decision window" />
-                </label>
-                <label>
-                  Preferred model
-                  <input name="saltSprayRequirement" type="text" maxLength={800} placeholder="Owned factory, JV, platform license…" />
-                </label>
-                <label>
-                  Message
-                  <textarea
-                    name="requirement"
-                    rows={4}
-                    required
-                    maxLength={800}
-                    placeholder="Partnership scope, assets, market, and what you want to build together…"
-                  />
-                </label>
-                <button type="submit" className="btn-primary" disabled={partnerStatus === "submitting"}>
-                  {partnerStatus === "submitting" ? "Sending…" : "Submit partnership inquiry"}
-                </button>
-                {partnerMessage ? (
-                  <p className={`form-msg ${partnerStatus}`} role="alert">
-                    {partnerMessage}
-                  </p>
-                ) : null}
-              </form>
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
+  return <form ref={formRef} className="inquiry-form" onSubmit={submit} noValidate aria-label={kind === "production" ? "Production inquiry" : "Partnership inquiry"} aria-busy={status === "sending"}>
+    {fields.map(field => {
+      const id = `${kind}-${field.key}`;
+      const inputProps = { id, name: field.key, value: values[field.key] || "", required: field.required, "aria-invalid": !!errors[field.key], "aria-describedby": errors[field.key] ? `${id}-error` : undefined, disabled: status === "sending" || status === "success", onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { setValues(current => ({ ...current, [field.key]: event.target.value })); setErrors(current => ({ ...current, [field.key]: "" })); } };
+      return <div className="field" key={field.key}><label htmlFor={id}>{field.label} {!field.required && <span>(optional)</span>}</label>{field.options ? <select {...inputProps}><option value="">Select {kind === "production" ? "a process" : "an interest"}</option>{field.options.map(option => <option key={option} value={option}>{option.replace(/^Production — /, "")}</option>)}</select> : field.multiline ? <textarea {...inputProps} rows={5} maxLength={800} placeholder={field.placeholder}/> : <input {...inputProps} type={field.type || "text"} maxLength={800} autoComplete={field.autoComplete} placeholder={field.placeholder}/>} {errors[field.key] && <p className="field-error" id={`${id}-error`}>{errors[field.key]}</p>}</div>;
+    })}
+    {status === "success" ? <div className="form-status form-success" role="status"><CheckCircle2 size={18} aria-hidden="true"/><p>{message}</p></div> : <><button className="button" type="submit" disabled={status === "sending"}>{status === "sending" ? <><LoaderCircle className="spinner" size={18} aria-hidden="true"/>Submitting...</> : <>Submit {kind === "production" ? "production" : "partnership"} inquiry<ArrowRight size={16} aria-hidden="true"/></>}</button>{status === "error" && <p className="form-error" role="alert">{message}</p>}</>}
+  </form>;
+}
+export function PartnerFormsSection() {
+  const params = useSearchParams();
+  const interest = params.get("interest");
+  const preset = interest === "commons" ? "Commons collaboration" : interest === "people" ? "Building with Voltron" : "";
+  return <><nav className="form-jumps" aria-label="Inquiry forms"><a href="#production">Production programs</a><a href="#partnership">Partnership &amp; JV</a></nav><div className="form-grid"><article id="production" className="inquiry-panel"><h2>Production Programs</h2><p className="eyebrow">Surface treatment manufacturing</p><p>Discuss a phosphating, CED, powder coating or related requirement.</p><InquiryForm kind="production"/></article><article id="partnership" className="inquiry-panel"><h2>Partnership &amp; JV</h2><p className="eyebrow">Scale with Voltron</p><p>Explore factory JVs, strategic investment, platform partnerships or Commons collaborations.</p><InquiryForm key={preset} kind="partnership" initialIntent={preset}/></article></div></>;
 }

@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ok: true,
       inquiryId: inquiry.id,
-      message: "Inquiry received. Voltron will contact you shortly."
+      message: "Thank you. Your inquiry has been received. We will review the details and contact you about the next step."
     });
   } catch (error) {
     if (isValidationError(error)) {

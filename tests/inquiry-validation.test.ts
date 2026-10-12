@@ -12,6 +12,12 @@ const validInquiry = {
 };
 
 describe("validateInquiry", () => {
+  it("accepts an optional company without inventing an organization", () => {
+    expect(validateInquiry({ ...validInquiry, company: undefined }).company).toBe("");
+  });
+  it("accepts a people culture inquiry", () => {
+    expect(validateInquiry({ ...validInquiry, inquiryType: "Building with Voltron" }).inquiryType).toBe("Building with Voltron");
+  });
   it("trims user fields and normalizes email casing", () => {
     expect(validateInquiry(validInquiry)).toEqual({
       inquiryType: "Production — CED Coating",

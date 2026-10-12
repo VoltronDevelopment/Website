@@ -1,6 +1,6 @@
-# Voltron Website
+# Voltron Lattice Website
 
-Marketing site for Voltron Coating Solutions, plus the public inquiry form.
+Voltron Lattice website, temporary founder review access and public inquiry form.
 
 ## Run locally
 
@@ -16,6 +16,8 @@ Leave `INQUIRIES_TABLE_NAME` blank locally to use `data/inquiries.json`. Local w
 ## Backend
 
 The quote/contact form posts to `POST /api/inquiries`.
+
+The public homepage is a Diwali countdown until November 8, 2026 at 12:00 AM IST. Site pages require one of the two temporary founder accounts before launch; inquiry submissions stay closed. Founder passwords are scrypt-hashed in `FOUNDER_CREDENTIALS` and review sessions expire after eight hours.
 
 Local default: `data/inquiries.json`. Production: DynamoDB table `VoltronWebsiteInquiries`.
 
@@ -66,7 +68,11 @@ INQUIRIES_TABLE_NAME=VoltronWebsiteInquiries
 SES_FROM_EMAIL=info@voltroncoat.com
 INQUIRY_TO_EMAIL=info@voltroncoat.com
 NEXT_PUBLIC_SITE_URL=https://www.voltronlattice.com
+FOUNDER_CREDENTIALS=<two founder scrypt records; see format below>
+FOUNDER_SESSION_SECRET=<random secret, at least 32 bytes>
 ```
+
+Founder records use `username:salt-hex:scrypt-hash-hex`, separated by commas. The website verifies these server-side; never place plaintext passwords in Amplify variables, source control or client code. The temporary founder review cookie expires after eight hours. Remove both founder variables when public launch is complete.
 
 ### 5. Smoke test after deploy
 

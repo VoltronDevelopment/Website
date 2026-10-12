@@ -1,0 +1,260 @@
+{
+  "assets": [
+    {
+      "family": "T03-plant-configuration",
+      "theme": "light",
+      "display_size": [
+        240,
+        240
+      ],
+      "viewBox": [
+        480,
+        480
+      ],
+      "svg": "svg/T03-plant-configuration-light.svg",
+      "png_2x": "png/T03-plant-configuration-light@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "T03-voltron-ai",
+      "theme": "light",
+      "display_size": [
+        240,
+        240
+      ],
+      "viewBox": [
+        480,
+        480
+      ],
+      "svg": "svg/T03-voltron-ai-light.svg",
+      "png_2x": "png/T03-voltron-ai-light@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "T04-system-responsibilities",
+      "theme": "light",
+      "display_size": [
+        900,
+        240
+      ],
+      "viewBox": [
+        900,
+        240
+      ],
+      "svg": "svg/T04-system-responsibilities-light.svg",
+      "png_2x": "png/T04-system-responsibilities-light@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "O03-identity-relationships",
+      "theme": "light",
+      "display_size": [
+        440,
+        300
+      ],
+      "viewBox": [
+        880,
+        600
+      ],
+      "svg": "svg/O03-identity-relationships-light.svg",
+      "png_2x": "png/O03-identity-relationships-light@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "O04-manufacturing-relationships",
+      "theme": "light",
+      "display_size": [
+        440,
+        300
+      ],
+      "viewBox": [
+        880,
+        600
+      ],
+      "svg": "svg/O04-manufacturing-relationships-light.svg",
+      "png_2x": "png/O04-manufacturing-relationships-light@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "T03-plant-configuration",
+      "theme": "dark",
+      "display_size": [
+        240,
+        240
+      ],
+      "viewBox": [
+        480,
+        480
+      ],
+      "svg": "svg/T03-plant-configuration-dark.svg",
+      "png_2x": "png/T03-plant-configuration-dark@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "T03-voltron-ai",
+      "theme": "dark",
+      "display_size": [
+        240,
+        240
+      ],
+      "viewBox": [
+        480,
+        480
+      ],
+      "svg": "svg/T03-voltron-ai-dark.svg",
+      "png_2x": "png/T03-voltron-ai-dark@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "T04-system-responsibilities",
+      "theme": "dark",
+      "display_size": [
+        900,
+        240
+      ],
+      "viewBox": [
+        900,
+        240
+      ],
+      "svg": "svg/T04-system-responsibilities-dark.svg",
+      "png_2x": "png/T04-system-responsibilities-dark@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "O03-identity-relationships",
+      "theme": "dark",
+      "display_size": [
+        440,
+        300
+      ],
+      "viewBox": [
+        880,
+        600
+      ],
+      "svg": "svg/O03-identity-relationships-dark.svg",
+      "png_2x": "png/O03-identity-relationships-dark@2x.png",
+      "background": "transparent"
+    },
+    {
+      "family": "O04-manufacturing-relationships",
+      "theme": "dark",
+      "display_size": [
+        440,
+        300
+      ],
+      "viewBox": [
+        880,
+        600
+      ],
+      "svg": "svg/O04-manufacturing-relationships-dark.svg",
+      "png_2x": "png/O04-manufacturing-relationships-dark@2x.png",
+      "background": "transparent"
+    }
+  ],
+  "label_anchors": {
+    "T04-system-responsibilities": {
+      "x": [
+        150,
+        450,
+        750
+      ],
+      "y": 226,
+      "labels": [
+        "Business & production",
+        "Quality & evidence",
+        "Physical control"
+      ]
+    },
+    "O03-identity-relationships": {
+      "labels": [
+        [
+          "Plant",
+          440,
+          45
+        ],
+        [
+          "Part",
+          205,
+          190
+        ],
+        [
+          "Lot",
+          440,
+          348
+        ],
+        [
+          "Operation",
+          290,
+          570
+        ],
+        [
+          "Machine",
+          675,
+          190
+        ]
+      ]
+    },
+    "O04-manufacturing-relationships": {
+      "labels": [
+        [
+          "Requirements",
+          440,
+          34
+        ],
+        [
+          "Processes",
+          180,
+          178
+        ],
+        [
+          "Equipment",
+          700,
+          178
+        ],
+        [
+          "Inspection",
+          285,
+          570
+        ],
+        [
+          "Evidence",
+          595,
+          570
+        ]
+      ],
+      "center_label": [
+        "Manufacturing context",
+        440,
+        350
+      ]
+    }
+  },
+  "palette": {
+    "light": {
+      "bg": "#F3F5F7",
+      "line": "#397CAE",
+      "hidden": "#A3BDCF",
+      "top": "#E7F0F7",
+      "left": "#D0E1EE",
+      "right": "#BBD4E4",
+      "accent": "#2894BC",
+      "text": "#132A42"
+    },
+    "dark": {
+      "bg": "#040406",
+      "line": "#589ABA",
+      "hidden": "#315268",
+      "top": "#132C40",
+      "left": "#0B2131",
+      "right": "#193F55",
+      "accent": "#36BEDA",
+      "text": "#EDF3FA"
+    }
+  },
+  "reuse": "Batch01 cube/polygon/connection primitives",
+  "animation_groups": [
+    "module",
+    "connection",
+    "detail"
+  ]
+}

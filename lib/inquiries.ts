@@ -54,7 +54,7 @@ export function validateInquiry(input: unknown): InquiryPayload {
   const payload: InquiryPayload = {
     inquiryType,
     name: normalizeRequired(body.name, "Name"),
-    company: normalizeRequired(body.company, "Company"),
+    company: normalizeOptional(body.company) || "",
     email: normalizeEmail(body.email),
     phone: normalizeOptional(body.phone),
     requirement: normalizeRequired(body.requirement, "Requirement"),

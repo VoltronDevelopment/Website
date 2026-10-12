@@ -1,0 +1,92 @@
+{
+  "H01-home-hero-lattice": [
+    214,
+    75,
+    516,
+    546
+  ],
+  "H02-execution": [
+    13,
+    -1,
+    217,
+    222
+  ],
+  "H02-context": [
+    25,
+    23,
+    189,
+    214
+  ],
+  "H02-intelligence": [
+    42,
+    3,
+    156,
+    209
+  ],
+  "H03-connected-lot-flow": [
+    88,
+    69,
+    824,
+    152
+  ],
+  "T01-technology-hero-lattice": [
+    235,
+    108,
+    489,
+    449
+  ],
+  "T02-architecture-composition": [
+    61,
+    53,
+    877,
+    196
+  ],
+  "T03-voltron-core": [
+    123,
+    66,
+    233,
+    261
+  ],
+  "T03-capability-modules": [
+    83,
+    87,
+    313,
+    227
+  ],
+  "T03-process-packs": [
+    91,
+    66,
+    297,
+    317
+  ],
+  "T03-plant-configuration": [
+    49,
+    63,
+    381,
+    303
+  ],
+  "T03-voltron-ai": [
+    50,
+    35,
+    379,
+    411
+  ],
+  "T04-system-responsibilities": [
+    74,
+    30,
+    752,
+    170
+  ],
+  "O03-identity-relationships": [
+    146,
+    68,
+    587,
+    479
+  ],
+  "O04-manufacturing-relationships": [
+    124,
+    55,
+    631,
+    489
+  ]
+}
