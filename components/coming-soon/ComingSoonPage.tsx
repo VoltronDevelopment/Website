@@ -4,6 +4,7 @@ import Image from "next/image";
 import { LockKeyhole, X } from "lucide-react";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "@/components/brand/ThemeToggle";
+import { IntroAudio } from "@/components/coming-soon/IntroAudio";
 import { launchAt } from "@/lib/launch";
 
 const pillars = [
@@ -100,6 +101,7 @@ function Countdown() {
 function AnimatedBrandMark() {
   const [phase, setPhase] = useState(1);
   const [activeLine, setActiveLine] = useState(-1);
+  const [copyStep, setCopyStep] = useState(0);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -124,10 +126,20 @@ function AnimatedBrandMark() {
     return () => timers.forEach(window.clearTimeout);
   }, []);
 
-  return <div className="hero-intro" data-phase={phase} data-active-line={activeLine >= 0 ? activeLine : undefined}>
+  useEffect(() => {
+    if (phase < 3) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCopyStep(4);
+      return;
+    }
+    const timers = [1, 2, 3, 4].map(step => window.setTimeout(() => setCopyStep(step), 5000 + (step - 1) * 650));
+    return () => timers.forEach(window.clearTimeout);
+  }, [phase]);
+
+  return <div className="hero-intro" data-phase={phase} data-active-line={activeLine >= 0 ? activeLine : undefined} data-copy-step={copyStep}>
     <div className="hero-nebula" aria-hidden="true"/><div className="hero-grid-bg" aria-hidden="true"/>
     <div className="hero-stage">
-      <p className={`hero-tagline ${phase >= 1 ? "visible" : ""}`}>Building India&apos;s Intelligent Manufacturing Backbone.</p>
+      <p className={`hero-tagline ${copyStep >= 1 ? "visible" : ""}`} aria-hidden={copyStep < 1}>Building India&apos;s Intelligent Manufacturing Backbone.</p>
       <div className={`hero-orbit ${phase >= 1 ? "orbiting" : ""}`}>
         <div className="hero-rings" aria-hidden="true"><span/><span/><span/></div>
         <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
@@ -149,9 +161,12 @@ function AnimatedBrandMark() {
           ))}
         </div>
       </div>
-      <div className={`hero-below ${phase >= 3 ? "visible" : ""}`}>
+      <div className={`hero-below ${copyStep >= 2 ? "visible" : ""}`} aria-hidden={copyStep < 2}>
         <div className="hero-brand-copy"><h1>VOLTRON LATTICE</h1></div>
-        <div className="launch-announcement"><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p><Countdown/></div>
+        <div className="launch-announcement">
+          <div className={`launch-copy ${copyStep >= 3 ? "is-visible" : ""}`} aria-hidden={copyStep < 3}><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p></div>
+          <div className={`launch-countdown-reveal ${copyStep >= 4 ? "is-visible" : ""}`} aria-hidden={copyStep < 4}><Countdown/></div>
+        </div>
       </div>
     </div>
   </div>;
@@ -159,7 +174,7 @@ function AnimatedBrandMark() {
 
 export function ComingSoonPage() {
   return <main id="main-content" className="coming-soon-page">
-    <div className="coming-soon-controls"><ThemeToggle autoCycle/><FounderLogin/></div>
+    <div className="coming-soon-controls"><IntroAudio/><ThemeToggle autoCycle/><FounderLogin/></div>
     <AnimatedBrandMark/>
   </main>;
 }
