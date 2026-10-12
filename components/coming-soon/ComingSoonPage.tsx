@@ -98,7 +98,7 @@ function Countdown() {
   </div>;
 }
 
-function AnimatedBrandMark() {
+function AnimatedBrandMark({ onClockVisible }: { onClockVisible: (visible: boolean) => void }) {
   const [phase, setPhase] = useState(1);
   const [activeLine, setActiveLine] = useState(-1);
   const [copyStep, setCopyStep] = useState(0);
@@ -132,9 +132,16 @@ function AnimatedBrandMark() {
       setCopyStep(4);
       return;
     }
-    const timers = [1, 2, 3, 4].map(step => window.setTimeout(() => setCopyStep(step), 5000 + (step - 1) * 650));
+    const timers = [5000, 6500, 8500, 10500].map((delay, index) => window.setTimeout(() => setCopyStep(index + 1), delay));
     return () => timers.forEach(window.clearTimeout);
   }, [phase]);
+
+  useEffect(() => {
+    if (copyStep < 4) return;
+    const revealDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1500;
+    const timer = window.setTimeout(() => onClockVisible(true), revealDuration);
+    return () => window.clearTimeout(timer);
+  }, [copyStep, onClockVisible]);
 
   return <div className="hero-intro" data-phase={phase} data-active-line={activeLine >= 0 ? activeLine : undefined} data-copy-step={copyStep}>
     <div className="hero-nebula" aria-hidden="true"/><div className="hero-grid-bg" aria-hidden="true"/>
@@ -173,8 +180,9 @@ function AnimatedBrandMark() {
 }
 
 export function ComingSoonPage() {
+  const [clockVisible, setClockVisible] = useState(false);
   return <main id="main-content" className="coming-soon-page">
-    <div className="coming-soon-controls"><IntroAudio/><ThemeToggle autoCycle/><FounderLogin/></div>
-    <AnimatedBrandMark/>
+    <div className="coming-soon-controls"><IntroAudio/><ThemeToggle autoCycle autoCycleComplete={clockVisible}/><FounderLogin/></div>
+    <AnimatedBrandMark onClockVisible={setClockVisible}/>
   </main>;
 }

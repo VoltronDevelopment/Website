@@ -4,10 +4,11 @@ import { Moon, Sun } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { resolveTheme, themeStorageKey, type Theme } from "@/lib/theme";
 
-export function ThemeToggle({ autoCycle = false }: { autoCycle?: boolean }) {
+export function ThemeToggle({ autoCycle = false, autoCycleComplete }: { autoCycle?: boolean; autoCycleComplete?: boolean }) {
   const [theme, setTheme] = useState<Theme>("light");
   const [manualEnabled, setManualEnabled] = useState(!autoCycle);
   const preference = useRef<string | null>(null);
+  const controlledAutoCycle = autoCycleComplete !== undefined;
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
@@ -20,13 +21,13 @@ export function ThemeToggle({ autoCycle = false }: { autoCycle?: boolean }) {
       preference.current = "light";
       applyTheme("light");
       const darkTimer = window.setTimeout(() => applyTheme("dark"), 5000);
-      const finishTimer = window.setTimeout(() => {
+      const finishTimer = controlledAutoCycle ? undefined : window.setTimeout(() => {
         applyTheme("light");
         preference.current = "light";
         try { localStorage.setItem(themeStorageKey, "light"); } catch { /* The sequence still completes without persistence. */ }
         setManualEnabled(true);
       }, 10000);
-      return () => { window.clearTimeout(darkTimer); window.clearTimeout(finishTimer); };
+      return () => { window.clearTimeout(darkTimer); if (finishTimer !== undefined) window.clearTimeout(finishTimer); };
     }
     setManualEnabled(true);
     function readPreference() {
@@ -46,7 +47,19 @@ export function ThemeToggle({ autoCycle = false }: { autoCycle?: boolean }) {
     media.addEventListener("change", apply);
     window.addEventListener("storage", storage);
     return () => { media.removeEventListener("change", apply); window.removeEventListener("storage", storage); };
-  }, [autoCycle]);
+  }, [autoCycle, controlledAutoCycle]);
+
+  useEffect(() => {
+    if (!autoCycle || !autoCycleComplete || theme !== "dark" || manualEnabled) return;
+    const timer = window.setTimeout(() => {
+      document.documentElement.dataset.theme = "light";
+      setTheme("light");
+      preference.current = "light";
+      try { localStorage.setItem(themeStorageKey, "light"); } catch { /* Manual theme controls remain available without storage. */ }
+      setManualEnabled(true);
+    }, 2000);
+    return () => window.clearTimeout(timer);
+  }, [autoCycle, autoCycleComplete, theme, manualEnabled]);
 
   function toggle() {
     if (!manualEnabled) return;
