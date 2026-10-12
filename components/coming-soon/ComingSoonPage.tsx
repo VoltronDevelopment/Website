@@ -59,12 +59,12 @@ function FounderLogin() {
   }
 
   return <>
-    <button ref={triggerRef} className="founder-login-trigger" type="button" onClick={() => setOpen(true)}><LockKeyhole size={15} aria-hidden="true"/>Founder login</button>
+    <button ref={triggerRef} className="founder-login-trigger" type="button" aria-label="Founder login" title="Founder login" onClick={() => setOpen(true)}><LockKeyhole size={16} aria-hidden="true"/></button>
     {open && <div className="founder-login-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) { setOpen(false); triggerRef.current?.focus(); } }}>
       <div ref={dialogRef} className="founder-login-dialog" role="dialog" aria-modal="true" aria-labelledby="founder-login-title">
         <div className="founder-login-heading"><div><p className="eyebrow">Private review</p><h2 id="founder-login-title">Founder sign in</h2></div><button className="icon-button" type="button" aria-label="Close sign in" onClick={() => setOpen(false)}><X size={19}/></button></div>
         <form onSubmit={signIn}>
-          <label className="field"><span>Founder</span><select value={username} onChange={event => setUsername(event.target.value)}><option value="omkar">Omkar</option><option value="sanchit">Sanchit</option></select></label>
+          <label className="field"><span>Founder</span><select value={username} onChange={event => setUsername(event.target.value)}><option value="omkar">Founder 1</option><option value="sanchit">Founder 2</option></select></label>
           <label className="field"><span>Password</span><input type="password" autoComplete="current-password" value={password} onChange={event => setPassword(event.target.value)} required maxLength={256}/></label>
           {error && <p className="founder-login-error" role="alert">{error}</p>}
           <button className="button" type="submit" disabled={pending}>{pending ? "Signing in..." : "Sign in to review"}</button>
@@ -124,8 +124,8 @@ function AnimatedBrandMark() {
         <div className="hero-pillar-connectors" aria-hidden="true"><svg viewBox="0 0 720 380" className="hero-pillar-svg" preserveAspectRatio="xMidYMid meet">{pillars.map(pillar => <path key={pillar.id} className={`pillar-line pillar-${pillar.id}`} d={pillar.path} pathLength={1}/>)}<circle className="pillar-hub" cx="360" cy="190" r="5"/></svg></div>
         {pillars.map(pillar => <div key={pillar.id} className={`pillar-node node-${pillar.id}`}><span className="pillar-head">{pillar.label}</span><span className="pillar-rule"/></div>)}
         <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
-          <Image className="theme-logo-light hero-logo-img" src="/Brand%20Assets/logo/light%20rectangle.png" alt="" width={120} height={120} priority/>
-          <Image className="theme-logo-dark hero-logo-img" src="/Brand%20Assets/logo/dark%20rectangle.png" alt="" width={120} height={120} priority/>
+          <Image className="theme-logo-light hero-logo-img" src="/Brand%20Assets/logo/light%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
+          <Image className="theme-logo-dark hero-logo-img" src="/Brand%20Assets/logo/dark%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
           <span className="hero-logo-pulse" aria-hidden="true"/><span className="hero-logo-glow" aria-hidden="true"/>
         </div>
       </div>

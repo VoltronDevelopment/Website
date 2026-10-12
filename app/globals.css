@@ -182,6 +182,7 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 .coming-soon-page { position:relative; min-height:100svh; overflow:hidden; isolation:isolate; background:var(--canvas); }
 .coming-soon-controls { position:absolute; z-index:10; top:20px; right:max(var(--gutter),calc((100vw - var(--content-width))/2)); display:flex; align-items:center; gap:10px; }
 .founder-login-trigger,.founder-preview-control { display:inline-flex; min-height:44px; align-items:center; justify-content:center; gap:8px; padding:8px 12px; border:1px solid var(--line); border-radius:4px; background:var(--surface); color:var(--ink); font-size:13px; }
+.founder-login-trigger { width:44px; min-width:44px; padding:0; }
 .founder-login-trigger:hover,.founder-preview-control:hover { background:var(--hover); border-color:var(--cube-outline); }
 .hero-intro { position:relative; display:flex; min-height:100svh; flex-direction:column; overflow:hidden; isolation:isolate; }
 .hero-grid-bg { position:absolute; inset:0; z-index:0; background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size:48px 48px; opacity:.22; mask-image:radial-gradient(ellipse 70% 66% at 50% 43%,#000 15%,transparent 100%); pointer-events:none; }
@@ -205,7 +206,8 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 .pillar-node { position:absolute; z-index:3; display:flex; width:30%; flex-direction:column; align-items:flex-start; opacity:.26; transition:opacity .5s,transform .5s; text-align:left; }
 .node-tech { top:16%; left:0; transform:translateY(6px); }
 .node-infra { bottom:16%; left:0; transform:translateY(6px); }
-.node-ops { top:43%; right:0; align-items:flex-start; transform:translateY(6px); }
+.node-ops { top:43%; right:0; align-items:flex-end; text-align:right; transform:translateY(6px); }
+.node-ops .pillar-rule { transform-origin:right; }
 .hero-intro[data-active-line="0"] .node-tech,.hero-intro[data-active-line="1"] .node-tech,.hero-intro[data-active-line="2"] .node-tech,.hero-intro[data-active-line="3"] .node-tech,.hero-intro[data-active-line="1"] .node-infra,.hero-intro[data-active-line="2"] .node-infra,.hero-intro[data-active-line="3"] .node-infra,.hero-intro[data-active-line="2"] .node-ops,.hero-intro[data-active-line="3"] .node-ops { opacity:1; transform:translateY(0); }
 .pillar-head { color:var(--blue); font-size:13px; font-weight:500; line-height:1.35; letter-spacing:0; }
 .pillar-rule { display:block; width:100%; height:2px; margin-top:6px; background:var(--blue); opacity:.6; transform:scaleX(0); transform-origin:left; transition:transform .55s ease; }
@@ -253,10 +255,13 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
   .hero-rings span:nth-child(1) { width:190px; height:190px; }
   .hero-rings span:nth-child(2) { width:260px; height:260px; }
   .hero-rings span:nth-child(3) { width:330px; height:330px; }
-  .pillar-node { width:35%; }
-  .pillar-head { font-size:11px; line-height:1.3; }
+  .pillar-node { width:31%; }
+  .pillar-head { font-size:10px; line-height:1.25; text-wrap:balance; }
+  .pillar-rule { height:1px; margin-top:4px; }
+  .node-ops { align-items:flex-end; text-align:right; }
+  .node-ops .pillar-rule { transform-origin:right; }
   .hero-brand-copy h1 { font-size:20px; line-height:30px; letter-spacing:.22em; }
-  .hero-tagline { max-width:360px; font-size:12px; line-height:18px; }
+  .hero-tagline { max-width:calc(100vw - 40px); font-size:11px; line-height:16px; }
   .launch-countdown { gap:6px; margin-top:10px; }
   .countdown-unit { min-height:54px; }
   .countdown-unit > span { font-size:21px; }
@@ -265,13 +270,18 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 }
 @media (max-width:389px) {
   .coming-soon-controls { top:10px; right:var(--gutter); }
-  .founder-login-trigger { padding-inline:9px; font-size:12px; }
   .hero-stage { padding-inline:16px; }
   .hero-logo-cluster { height:230px; }
   .hero-rings span:nth-child(3) { width:300px; height:300px; }
-  .pillar-node { display:none; }
+  .pillar-node { display:flex; width:34%; }
+  .pillar-head { font-size:9px; line-height:1.2; overflow-wrap:anywhere; }
+  .node-tech { top:8%; }
+  .node-infra { bottom:8%; }
+  .node-ops { top:44%; align-items:flex-end; text-align:right; }
+  .node-ops .pillar-rule { transform-origin:right; }
   .hero-pillar-connectors { display:none; }
-  .hero-brand-copy h1 { font-size:18px; line-height:28px; letter-spacing:.2em; }
+  .hero-brand-copy h1 { font-size:17px; line-height:26px; letter-spacing:.17em; }
+  .hero-tagline { max-width:calc(100vw - 32px); font-size:10px; line-height:15px; }
 }
 @media (prefers-reduced-motion:reduce) {
   .hero-logo-pulse,.hero-rings span,.hero-pillar-svg path { animation:none !important; }
