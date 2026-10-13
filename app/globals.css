@@ -227,8 +227,11 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 .launch-copy { transform:translateX(40px); }
 .launch-countdown-reveal { transform:translateY(12px); }
 .launch-copy.is-visible,.launch-countdown-reveal.is-visible { opacity:1; transform:translateY(0); }
-.hero-brand-copy { margin:0; opacity:0; transform:translateX(-40px); transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.22,1,.36,1); }
-.hero-below.visible .hero-brand-copy { opacity:1; transform:translateX(0); }
+.hero-brand-copy { margin:0; }
+.hero-brand-copy h1 > span { display:inline-block; opacity:0; transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.22,1,.36,1); }
+.hero-word-voltron { transform:translateX(-40px); }
+.hero-word-lattice { transform:translateX(40px); }
+.hero-below.visible .hero-brand-copy h1 > span { opacity:1; transform:translateX(0); }
 .hero-brand-copy h1 { margin:0; color:var(--ink); font-family:Montserrat,Arial,sans-serif; font-size:28px; line-height:36px; font-weight:300; letter-spacing:.25em; text-transform:uppercase; }
 .launch-announcement { margin:0; }
 .launch-announcement .eyebrow { margin-bottom:8px; color:var(--blue); }

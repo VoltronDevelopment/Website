@@ -169,7 +169,7 @@ function AnimatedBrandMark({ onClockVisible }: { onClockVisible: (visible: boole
         </div>
       </div>
       <div className={`hero-below ${copyStep >= 2 ? "visible" : ""}`} aria-hidden={copyStep < 2}>
-        <div className="hero-brand-copy"><h1>VOLTRON LATTICE</h1></div>
+        <div className="hero-brand-copy"><h1><span className="hero-word-voltron">VOLTRON</span>{" "}<span className="hero-word-lattice">LATTICE</span></h1></div>
         <div className="launch-announcement">
           <div className={`launch-copy ${copyStep >= 3 ? "is-visible" : ""}`} aria-hidden={copyStep < 3}><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p></div>
           <div className={`launch-countdown-reveal ${copyStep >= 4 ? "is-visible" : ""}`} aria-hidden={copyStep < 4}><Countdown/></div>

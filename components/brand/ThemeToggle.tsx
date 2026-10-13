@@ -57,7 +57,7 @@ export function ThemeToggle({ autoCycle = false, autoCycleComplete }: { autoCycl
       preference.current = "light";
       try { localStorage.setItem(themeStorageKey, "light"); } catch { /* Manual theme controls remain available without storage. */ }
       setManualEnabled(true);
-    }, 2000);
+    }, 4000);
     return () => window.clearTimeout(timer);
   }, [autoCycle, autoCycleComplete, theme, manualEnabled]);
 
