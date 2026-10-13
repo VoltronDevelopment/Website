@@ -223,10 +223,11 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
 @keyframes brand-ring-breathe { 0%,100% { opacity:.4; transform:scale(.98); } 50% { opacity:.8; transform:scale(1.02); } }
 .hero-below { display:flex; flex-direction:column; align-items:center; gap:clamp(8px,1.4svh,14px); margin-top:10px; opacity:0; transform:translateY(10px); transition:opacity .6s ease,transform .6s ease; }
 .hero-below.visible { opacity:1; transform:translateY(0); }
-.launch-copy,.launch-countdown-reveal { opacity:0; transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.22,1,.36,1); }
-.launch-copy { transform:translateX(40px); }
+.launch-copy > p,.launch-countdown-reveal { opacity:0; transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.22,1,.36,1); }
+.launch-copy > .eyebrow { transform:translateX(-40px); }
+.launch-copy > .launch-date { transform:translateX(40px); }
 .launch-countdown-reveal { transform:translateY(12px); }
-.launch-copy.is-visible,.launch-countdown-reveal.is-visible { opacity:1; transform:translateY(0); }
+.launch-copy.is-visible > p,.launch-countdown-reveal.is-visible { opacity:1; transform:translate(0); }
 .hero-brand-copy { margin:0; }
 .hero-brand-copy h1 > span { display:inline-block; opacity:0; transition:opacity 1.5s ease,transform 1.5s cubic-bezier(.22,1,.36,1); }
 .hero-word-voltron { transform:translateX(-40px); }
