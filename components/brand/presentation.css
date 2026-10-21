@@ -36,9 +36,11 @@ body:has(.site-presentation) {
 :root[data-theme="dark"] .site-presentation {
   --ink:#edf4fc;
   --muted:#b9cadb;
+  --glass-highlight:rgba(106,160,204,.08);
 }
 :root[data-theme="dark"] .presentation-veil { background:linear-gradient(104deg,rgba(12,18,24,.5) 0%,rgba(12,18,24,.24) 38%,transparent 72%) 0 0 / 100% min(92svh,880px) no-repeat,linear-gradient(to bottom,transparent min(56svh,500px),rgba(10,14,18,.44) min(96svh,920px)); }
-.site-presentation #main-content { background-color:transparent; background-image:none; }
+/* Match the legacy selector's exclusions so its pale sheen cannot win. */
+.site-presentation #main-content:not(.coming-soon-page):not(.brand-entry) { background-color:transparent; background-image:none; }
 .site-presentation .section,.site-presentation #main-content .section-white {
   min-height:0;
   padding-block:80px;

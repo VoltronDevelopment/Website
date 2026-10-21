@@ -4,10 +4,11 @@ import {createContext,useCallback,useContext,useEffect,useLayoutEffect,useRef,us
 import {usePathname,useRouter} from "next/navigation";
 import type {HeroController,SharedHeroResources} from "../home/hero-renderer";
 import {canMorph,mixForView,transitionMix,viewForPath,type LatticeView} from "./lattice-transition";
+import {localRect,placedRect,sceneClip,type SceneRect} from "./lattice-placement";
 import "./lattice-experience.css";
 
 type Slot={node:HTMLDivElement;hero:HTMLElement;kind:LatticeView};
-type Pending={path:string;rich:boolean;mix:number;rect:DOMRect;keyboard:boolean;copy?:HTMLElement};
+type Pending={path:string;rich:boolean;mix:number;rect:SceneRect;keyboard:boolean;copy?:HTMLElement};
 const SlotContext=createContext<((node:HTMLDivElement,kind:LatticeView)=>()=>void)|null>(null);
 
 export function LatticeSlot({kind,className,label}:{kind:LatticeView;className:string;label?:string}){
@@ -32,20 +33,22 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const unavailable=useRef(false);
   const activateRef=useRef<(value:Slot,request?:Pending)=>void>(()=>{});
 
-  const position=useCallback((rect?:DOMRect)=>{
+  const position=useCallback((rect?:SceneRect)=>{
     const target=rect??slot.current?.node.getBoundingClientRect();if(!target||!layer.current)return;
+    const panel=slot.current?.node.closest(".site-presentation")?.getBoundingClientRect();
     const header=document.querySelector(".site-header")?.getBoundingClientRect();
-    const top=Math.min(target.height,Math.max(0,(header?.bottom??0)-target.top));
-    let clipPath=`inset(${top}px 0 0 0)`;
+    const clip=sceneClip(target,panel??target,header?.bottom??0);
+    const {top,left,right,bottom}=clip;
+    let clipPath=`inset(${top}px ${right}px ${bottom}px ${left}px)`;
     if(CSS.supports("clip-path","path(evenodd, 'M0 0 H1 V1 H0 Z')")){
-      let path=`M0 ${top} H${target.width} V${target.height} H0 Z`,holes=0;
+      let path=`M${left} ${top} H${target.width-right} V${target.height-bottom} H${left} Z`,holes=0;
       for(const panel of document.querySelectorAll(".about-links,.site-nav.is-open")){
-        const bounds=panel.getBoundingClientRect(),left=Math.max(0,bounds.left-target.left),right=Math.min(target.width,bounds.right-target.left),upper=Math.max(top,bounds.top-target.top),bottom=Math.min(target.height,bounds.bottom-target.top);
-        if(right>left&&bottom>upper){path+=` M${left} ${upper} H${right} V${bottom} H${left} Z`;holes++;}
+        const bounds=panel.getBoundingClientRect(),holeLeft=Math.max(left,bounds.left-target.x),holeRight=Math.min(target.width-right,bounds.right-target.x),upper=Math.max(top,bounds.top-target.y),lower=Math.min(target.height-bottom,bounds.bottom-target.y);
+        if(holeRight>holeLeft&&lower>upper){path+=` M${holeLeft} ${upper} H${holeRight} V${lower} H${holeLeft} Z`;holes++;}
       }
       if(holes)clipPath=`path(evenodd, '${path}')`;
     }
-    Object.assign(layer.current.style,{left:`${target.left}px`,top:`${target.top}px`,width:`${target.width}px`,height:`${target.height}px`,visibility:target.bottom>0&&target.top<innerHeight?"visible":"hidden",clipPath});
+    Object.assign(layer.current.style,{left:`${target.x}px`,top:`${target.y}px`,width:`${target.width}px`,height:`${target.height}px`,visibility:target.y+target.height>0&&target.y<innerHeight?"visible":"hidden",clipPath});
   },[]);
   const clearState=useCallback(()=>{
     clearTimeout(loadingTimer.current);clearTimeout(settleTimer.current);setLoading("");
@@ -77,20 +80,22 @@ export function LatticeExperience({children}:{children:ReactNode}){
     const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
     const rich=request?.rich&&controller.current&&shared.current&&!reduced;
     if(request){
-      if(request.copy){outgoingCopy.current?.remove();outgoingCopy.current=request.copy;document.body.append(request.copy);setTimeout(()=>request.copy?.remove(),160);}
+      if(request.copy){outgoingCopy.current?.remove();outgoingCopy.current=request.copy;value.node.closest(".site-presentation")?.append(request.copy);setTimeout(()=>request.copy?.remove(),160);}
       document.documentElement.dataset.routeState="incoming";clearTimeout(loadingTimer.current);setLoading("");
     }
     if(rich&&request){
       controller.current!.pause();
       await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
       if(token!==generation.current)return;
-      const destination=value.node.getBoundingClientRect(),from=request.rect,start=performance.now();
+      const from=request.rect,start=performance.now();
       layer.current!.dataset.transition="morph";
       const tick=(now:number)=>{
         if(token!==generation.current)return;
         const progress=Math.min(1,(now-start)/800),eased=transitionMix(0,1,progress);
         mix.current=transitionMix(request.mix,mixForView(value.kind),progress);
-        const rect=new DOMRect(from.x+(destination.x-from.x)*eased,from.y+(destination.y-from.y)*eased,from.width+(destination.width-from.width)*eased,from.height+(destination.height-from.height)*eased);
+        const panel=value.node.closest(".site-presentation")!.getBoundingClientRect();
+        const destination=localRect(value.node.getBoundingClientRect(),panel);
+        const rect=placedRect(from,destination,panel,eased);
         position(rect);controller.current!.morph(mix.current,rect.width,rect.height);
         if(progress<1)animation.current=requestAnimationFrame(tick);
         else {animation.current=0;void mount(value,true,token).then(()=>{if(token===generation.current){layer.current!.dataset.transition="settled";finish(request);}});}
@@ -127,14 +132,15 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(url.pathname===currentPath.current&&!pending.current)return;
       event.preventDefault();
       const bounds=slot.current?.node.getBoundingClientRect()??new DOMRect(),current=layer.current?.getBoundingClientRect()??bounds;
+      const panel=slot.current?.node.closest(".site-presentation")?.getBoundingClientRect()??new DOMRect();
       const visible=Math.max(0,Math.min(bounds.bottom,innerHeight)-Math.max(bounds.top,0))/Math.max(1,bounds.height);
-      const request:Pending={path:url.pathname,mix:mix.current,rect:current,keyboard:event.detail===0,rich:canMorph({width:innerWidth,reduced:matchMedia("(prefers-reduced-motion: reduce)").matches,saveData:!!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData,visible,settled:!!pending.current||canvas.current?.dataset.settled==="true",fallback:canvas.current?.dataset.fallback==="true"})};
+      const request:Pending={path:url.pathname,mix:mix.current,rect:localRect(current,panel),keyboard:event.detail===0,rich:canMorph({width:innerWidth,reduced:matchMedia("(prefers-reduced-motion: reduce)").matches,saveData:!!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData,visible,settled:!!pending.current||canvas.current?.dataset.settled==="true",fallback:canvas.current?.dataset.fallback==="true"})};
       const copy=document.querySelector<HTMLElement>(".hero-copy"),copyRect=copy?.getBoundingClientRect();
       if(copy&&copyRect&&copyRect.top>=(document.querySelector(".site-header")?.getBoundingClientRect().bottom??0)&&copyRect.bottom<=innerHeight&&!matchMedia("(prefers-reduced-motion: reduce)").matches){
         const clone=copy.cloneNode(true) as HTMLElement;clone.classList.add("route-copy-snapshot");clone.inert=true;clone.setAttribute("aria-hidden","true");
         const source=[copy,...copy.querySelectorAll<HTMLElement>("*")],cloned=[clone,...clone.querySelectorAll<HTMLElement>("*")];
         source.forEach((node,i)=>{const css=getComputedStyle(node);Object.assign(cloned[i].style,{font:css.font,color:css.color,margin:css.margin,letterSpacing:css.letterSpacing});cloned[i].removeAttribute("id");});
-        Object.assign(clone.style,{position:"fixed",left:`${copyRect.x}px`,top:`${copyRect.y}px`,width:`${copyRect.width}px`,height:`${copyRect.height}px`,padding:getComputedStyle(copy).padding});request.copy=clone;
+        Object.assign(clone.style,{position:"absolute",left:`${copyRect.x-panel.x-1}px`,top:`${copyRect.y-panel.y-1}px`,width:`${copyRect.width}px`,height:`${copyRect.height}px`,padding:getComputedStyle(copy).padding});request.copy=clone;
       }
       generation.current++;cancelAnimationFrame(animation.current);animation.current=0;if(request.rich)controller.current?.pause();
       pending.current=request;clearState();document.documentElement.dataset.routePending=to;

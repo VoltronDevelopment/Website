@@ -8,6 +8,8 @@ Text stays readable while a route loads. Once the destination commits, a brief i
 
 Rapid navigation cancels the previous frame loop and retargets from the current lattice mixture. A new scene mounts into the same canvas after the transformation and releases the old route's objects. Common GPU resources persist until the shared experience unmounts.
 
+Transition rectangles are stored relative to the frosted presentation, not the viewport. Every animation frame reads its current panel and destination bounds, so scroll remains aligned throughout the morph. Artwork is clipped against the presentation, sticky header and open menus. Outgoing copy is also attached to the panel and scrolls with it. No scroll locking is used.
+
 ## Behavior by situation
 
 | Situation | Behavior |

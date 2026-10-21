@@ -3,7 +3,7 @@
 .persistent-lattice-stage canvas[hidden] { display:none; }
 [data-lattice-slot] { position:relative; }
 .persistent-lattice-stage[data-transition="fade"] { animation:lattice-route-fade .18s ease-out both; }
-:root[data-route-state="incoming"] .site-presentation .hero-copy { animation:lattice-copy-enter .35s .08s ease-out both; }
+:root[data-route-state="incoming"] .site-presentation .hero-copy:not(.route-copy-snapshot) { animation:lattice-copy-enter .35s .08s ease-out both; }
 :root[data-route-state="incoming"] .site-presentation .hero-grid > div:last-child:not([data-lattice-slot]) { animation:lattice-route-fade .24s ease-out both; }
 .route-copy-snapshot { z-index:3; pointer-events:none; overflow:hidden; animation:lattice-copy-exit .15s ease-out both; }
 @keyframes lattice-copy-exit { to {opacity:0;transform:translateY(-6px);} }
@@ -13,5 +13,5 @@
 @keyframes lattice-route-fade { from {opacity:0;filter:blur(2px);} to {opacity:1;filter:blur(0);} }
 @keyframes lattice-copy-enter { from {opacity:0;transform:translateY(8px);} to {opacity:1;transform:translateY(0);} }
 @keyframes lattice-loading { from {transform:scaleX(.15);} to {transform:scaleX(.8);} }
-@media (max-width:767px) { :root[data-route-state="incoming"] .site-presentation .hero-copy { animation-duration:.18s; animation-delay:.02s; } }
+@media (max-width:767px) { :root[data-route-state="incoming"] .site-presentation .hero-copy:not(.route-copy-snapshot) { animation-duration:.18s; animation-delay:.02s; } }
 @media (prefers-reduced-motion:reduce) { .persistent-lattice-stage[data-transition="fade"],:root[data-route-state="incoming"] .site-presentation .hero-copy,:root[data-route-state="incoming"] .site-presentation .hero-grid > div:last-child,.route-loading > span:first-child { animation:none; } }

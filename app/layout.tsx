@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   title: { default: "Voltron Lattice | Intelligent Manufacturing", template: "%s | Voltron Lattice" },
   description: "Building India's Intelligent Manufacturing Backbone. Physical production, manufacturing knowledge and intelligence connected through one architecture.",
   openGraph: { siteName: "Voltron Lattice", type: "website", locale: "en_IN" },
+  icons: { icon: { url: "/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png", type: "image/png" } },
   robots: { index: true, follow: true },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
