@@ -22,5 +22,16 @@ export function FounderPreviewControl() {
     window.location.assign("/");
   }
 
-  return <button className="founder-preview-control" type="button" onClick={signOut}><LogOut size={15} aria-hidden="true"/>Exit founder review</button>;
+  return (
+    <button
+      className="founder-preview-control"
+      type="button"
+      onClick={signOut}
+      aria-label="Exit founder review"
+      title="Exit founder review"
+    >
+      <LogOut size={15} aria-hidden="true" />
+      <span className="founder-preview-label">Exit founder review</span>
+    </button>
+  );
 }

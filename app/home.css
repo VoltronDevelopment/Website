@@ -1,0 +1,92 @@
+.home-page { --home-art-height:280px; position:relative; isolation:isolate; }
+.home-page .section { border-bottom:0; position:relative; scroll-margin-top:var(--header-height); }
+.home-page .section > .container { position:relative; z-index:1; }
+.home-page .home-hero { position:relative; isolation:isolate; min-height:var(--scene-height); padding-bottom:24px; border-bottom:0; }
+.home-page .home-hero::before { content:none; background-image:none; }
+.home-page .home-hero .hero-grid { padding-bottom:24px; }
+.home-hero .hero-copy > p:not(.eyebrow) { max-width:420px; line-height:28px; }
+.home-lattice-art { position:relative; width:100%; height:480px; }
+.home-lattice-art canvas,.home-lattice-art .fallback,.home-cube-scene canvas,.home-cube-scene > svg { display:block; position:absolute; inset:0; width:100%; height:100%; }
+.home-lattice-art canvas[hidden],.home-cube-scene canvas[hidden] { display:none; }
+.home-principles { width:100%; flex-shrink:0; }
+.home-principles .container { display:flex; align-items:center; justify-content:center; min-height:64px; }
+.home-principles span { flex:1; text-align:center; color:var(--muted); font-size:14px; line-height:20px; padding:0 16px; }
+.home-principles span + span { border-left:1px solid var(--line); }
+.home-systems { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:48px; }
+.home-system { position:relative; text-align:center; min-width:0; }
+.home-system h3 { font-size:18px; line-height:26px; }
+.home-system p { max-width:230px; margin:16px auto 0; font-size:15px; line-height:24px; }
+.home-cube-scene { position:relative; width:100%; height:var(--home-art-height); }
+.home-cube-enclosure img { position:absolute; width:46%; height:48%; object-fit:contain; left:27%; top:26%; opacity:var(--asset-reveal,0); transform:translateY(calc((1 - var(--asset-reveal,0))*8px)); pointer-events:none; }
+.home-cube-enclosure[data-asset-layer="three"] img { visibility:hidden; }
+@media (prefers-reduced-motion:reduce) { .home-cube-enclosure img { opacity:1; transform:none; } }
+.home-system:not(:last-child)::after { content:""; position:absolute; top:calc(26px + var(--home-art-height)/2); left:calc(100% - 24px); width:96px; border-top:2px dotted var(--cyan); opacity:.5; }
+.home-lot-stages { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:32px; list-style:none; margin:0; padding:0; }
+.home-lot-track { position:relative; isolation:isolate; }
+.home-lot-overview { display:none; }
+.home-lot-scroll { overflow-x:auto; overscroll-behavior-x:contain; }
+.home-lot-scene { position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+.home-lot-scene canvas,.home-lot-scene > svg { display:block; width:100%; height:100%; }
+.home-lot-scene canvas[hidden] { display:none; }
+.home-lot-stages li { position:relative; text-align:center; min-width:0; }
+.home-lot-stages button { display:block; width:100%; padding:0; border:0; background:none; color:var(--ink); }
+.home-lot-stages button > span { display:block; font-size:16px; line-height:24px; font-weight:500; transition:color .35s ease,text-shadow .35s ease; }
+.home-cube-lot { height:300px; max-width:210px; margin:12px auto 0; }
+.home-lot-stages button[data-process-active="true"] > span { color:var(--blue); text-shadow:0 0 14px color-mix(in srgb,var(--blue) 24%,transparent); }
+.home-lot-stages button[aria-pressed="true"] > span { text-decoration:underline; text-decoration-color:var(--line); text-underline-offset:6px; }
+.home-lot-stages li > p { font-size:14px; line-height:22px; margin-top:12px; }
+.home-lot-detail { max-width:680px; text-align:center; min-height:120px; margin:48px auto 0; }
+.home-lot-detail h3 { font-size:16px; line-height:24px; font-weight:500; }
+.home-lot-detail p { margin-top:12px; font-size:15px; line-height:24px; }
+.home-alpha { display:block; }
+.home-page .home-alpha-section { padding-block:72px; }
+.home-alpha .split-copy p:not(.eyebrow) { max-width:700px; }
+.home-philosophy-content { max-width:760px; margin-inline:auto; text-align:center; }
+.home-page .home-philosophy { min-height:var(--scene-height); padding-block:64px; }
+.home-philosophy-content .eyebrow { font-size:12px; line-height:20px; margin-bottom:20px; }
+.home-philosophy-content h2 { font-size:30px; line-height:40px; }
+.home-cube-philosophy { height:370px; max-width:520px; margin:12px auto; }
+.home-philosophy-signature { font-size:15px; line-height:25px; }
+.home-philosophy-statement { margin-top:24px; font-size:18px; line-height:29px; }
+.home-philosophy-content > .text-action { margin-top:24px; }
+@media (max-width:1099px) {
+  .home-lattice-art { height:360px; }
+  .home-page { --home-art-height:230px; }
+  .home-systems { gap:24px; }
+  .home-system:not(:last-child)::after { left:calc(100% - 16px); width:56px; }
+}
+@media (max-width:767px) {
+  .home-lot-overview { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); list-style:none; margin:0 0 24px; padding:0; }
+  .home-lot-overview li + li { border-left:1px solid var(--line); }
+  .home-lot-overview button { width:100%; min-height:44px; padding:6px 2px; font-size:12px; border:0; background:none; color:var(--muted); }
+  .home-lot-overview button[aria-pressed="true"] { color:var(--blue); text-decoration:underline; text-underline-offset:6px; }
+  .home-page .home-hero { padding-top:24px; padding-bottom:16px; }
+  .home-page .home-hero .hero-grid { gap:12px; padding-bottom:8px; }
+  .home-hero .hero-copy h1 { font-size:24px; line-height:31px; }
+  .home-hero .hero-copy .eyebrow { font-size:11px; line-height:18px; margin-bottom:12px; }
+  .home-lattice-art { height:clamp(280px,44svh,400px); width:calc(100% + 24px); max-width:480px; margin-inline:-12px; justify-self:center; }
+  .home-hero .hero-copy > p:not(.eyebrow) { font-size:14px; line-height:22px; margin-top:12px; }
+  .home-principles .container { flex-wrap:wrap; row-gap:12px; padding-block:16px; }
+  .home-principles span { flex:0 0 auto; font-size:12px; padding-inline:10px; }
+  .home-principles span:nth-child(4) { border-left:0; }
+  .home-page { --home-art-height:240px; }
+  .home-systems { grid-template-columns:1fr; gap:40px; }
+  .home-system { max-width:320px; width:100%; margin-inline:auto; }
+  .home-system:not(:last-child)::after { display:none; }
+  .home-system p { margin-top:0; }
+  .home-lot-track { min-width:680px; }
+  .home-lot-stages { grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; }
+  .home-cube-lot { height:280px; }
+  .home-lot-stages li > p { margin-top:0; }
+  .home-lot-detail { text-align:left; margin-top:32px; min-height:155px; }
+  .home-philosophy-content h2 { font-size:25px; line-height:34px; }
+  .home-page .home-philosophy { padding-block:56px; }
+  .home-page .home-alpha-section { padding-block:48px; }
+  .home-cube-philosophy { height:300px; }
+  .home-philosophy-statement { font-size:16px; line-height:26px; }
+}
+@media (max-width:389px) {
+  .home-hero .hero-copy h1 { font-size:22px; line-height:29px; }
+  .home-principles span { padding-inline:8px; font-size:11px; }
+  .home-philosophy-content h2 { font-size:23px; line-height:32px; }
+}

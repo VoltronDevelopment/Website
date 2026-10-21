@@ -1,0 +1,34 @@
+{
+  "assets": [
+    {
+      "family": "H02-execution",
+      "theme": "light",
+      "image": "voltron-factory-systems/Robot arm and cube conveyor-1.png"
+    },
+    {
+      "family": "H02-execution",
+      "theme": "dark",
+      "image": "voltron-factory-systems/Robot arm and cube conveyor-1.png"
+    },
+    {
+      "family": "H02-context",
+      "theme": "light",
+      "image": "voltron-factory-systems/Pastel display with floating checklists.png"
+    },
+    {
+      "family": "H02-context",
+      "theme": "dark",
+      "image": "voltron-factory-systems/Pastel display with floating checklists.png"
+    },
+    {
+      "family": "H02-intelligence",
+      "theme": "light",
+      "image": "voltron-factory-systems/Floating Powder-Blue Brain Sculpture.png"
+    },
+    {
+      "family": "H02-intelligence",
+      "theme": "dark",
+      "image": "voltron-factory-systems/Floating Powder-Blue Brain Sculpture.png"
+    }
+  ]
+}

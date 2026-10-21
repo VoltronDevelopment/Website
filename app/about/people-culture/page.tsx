@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { Compass, Heart, Lightbulb, Search, Wrench } from "lucide-react";
 import { BrandArt } from "@/components/brand/BrandArt";
 import { Hero } from "@/components/brand/Hero";
+import { HumanHeroArtwork } from "@/components/brand/HumanHeroArtwork";
 import { ContextSelector } from "@/components/brand/ContextSelector";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 export const metadata: Metadata = { title: "People Culture", description: "Building the human who builds the system. Individual excellence, aligned to the whole." };
 export default function CulturePage() {
-  return <SiteShell><Hero breadcrumb="People Culture" eyebrow="People Culture" title="Building the human who builds the system." art="P01-people-hero" primary="Build with Voltron" href="/partner?interest=people#partnership" secondary="">Human capability should deepen alongside the technology we build.</Hero>
+  return <SiteShell><Hero className="human-story-hero" breadcrumb="People Culture" eyebrow="People Culture" title="Building the human who builds the system." illustration={<HumanHeroArtwork kind="culture"/>} primary="Build with Voltron" href="/partner?interest=people#partnership" secondary="">Human capability should deepen alongside the technology we build.</Hero>
     <Section white><Intro title="Conditions for growth."/><div className="growth-grid">{[
       { title: "Depth", Icon: Search, text: "Go beyond the surface. Understand problems in context.", example: "Follow a production issue from the part to its process history before proposing a fix." },
       { title: "Craft", Icon: Wrench, text: "Take pride in what we build. Care in the details matters.", example: "Make the work dependable, understandable and useful to the next person." },

@@ -1,0 +1,132 @@
+{
+  "page": "About",
+  "route": "/about",
+  "assets": [
+    {
+      "family": "A01-about-hero",
+      "theme": "light",
+      "svg": "A01-about-hero-light.svg",
+      "image": "A01-about-hero-light.webp",
+      "description": "Voltron identity and industrial purpose",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "A01-about-hero",
+      "theme": "dark",
+      "svg": "A01-about-hero-dark.svg",
+      "image": "A01-about-hero-dark.webp",
+      "description": "Voltron identity and industrial purpose",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "H02-execution",
+      "theme": "light",
+      "svg": "H02-execution-light.svg",
+      "image": "H02-execution-light.webp",
+      "description": "Execution illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "H02-execution",
+      "theme": "dark",
+      "svg": "H02-execution-dark.svg",
+      "image": "H02-execution-dark.webp",
+      "description": "Execution illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "H02-context",
+      "theme": "light",
+      "svg": "H02-context-light.svg",
+      "image": "H02-context-light.webp",
+      "description": "Manufacturing context illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "H02-context",
+      "theme": "dark",
+      "svg": "H02-context-dark.svg",
+      "image": "H02-context-dark.webp",
+      "description": "Manufacturing context illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "H02-intelligence",
+      "theme": "light",
+      "svg": "H02-intelligence-light.svg",
+      "image": "H02-intelligence-light.webp",
+      "description": "Intelligence illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "H02-intelligence",
+      "theme": "dark",
+      "svg": "H02-intelligence-dark.svg",
+      "image": "H02-intelligence-dark.webp",
+      "description": "Intelligence illustration reused on About",
+      "width": 700,
+      "height": 700
+    },
+    {
+      "family": "A03-people-lattice",
+      "theme": "light",
+      "svg": "A03-people-lattice-light.svg",
+      "image": "A03-people-lattice-light.webp",
+      "description": "People connected through shared purpose",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "A03-people-lattice",
+      "theme": "dark",
+      "svg": "A03-people-lattice-dark.svg",
+      "image": "A03-people-lattice-dark.webp",
+      "description": "People connected through shared purpose",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "A05-people-culture",
+      "theme": "light",
+      "svg": "A05-people-culture-light.svg",
+      "image": "A05-people-culture-light.webp",
+      "description": "People Culture preview",
+      "width": 1000,
+      "height": 700
+    },
+    {
+      "family": "A05-people-culture",
+      "theme": "dark",
+      "svg": "A05-people-culture-dark.svg",
+      "image": "A05-people-culture-dark.webp",
+      "description": "People Culture preview",
+      "width": 1000,
+      "height": 700
+    },
+    {
+      "family": "A05-voltron-commons",
+      "theme": "light",
+      "svg": "A05-voltron-commons-light.svg",
+      "image": "A05-voltron-commons-light.webp",
+      "description": "Commons preview",
+      "width": 1000,
+      "height": 700
+    },
+    {
+      "family": "A05-voltron-commons",
+      "theme": "dark",
+      "svg": "A05-voltron-commons-dark.svg",
+      "image": "A05-voltron-commons-dark.webp",
+      "description": "Commons preview",
+      "width": 1000,
+      "height": 700
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import { founderSessionCookie } from "@/lib/founder-session-config";
 import { verifyFounderTokenEdge } from "@/lib/founder-session-edge";
 import { isPrelaunch } from "@/lib/launch";
 import { BrandLogo } from "./BrandLogo";
+import "./presentation.css";
 
 export function Action({ href, children, secondary = false, text = false }: { href: string; children: React.ReactNode; secondary?: boolean; text?: boolean }) {
   return <Link className={text ? "text-action" : `button ${secondary ? "button-outline" : ""}`} href={href}>{children}<ArrowRight size={16} aria-hidden="true" /></Link>;
@@ -14,12 +15,13 @@ export function Action({ href, children, secondary = false, text = false }: { hr
 export function Logo({ footer = false }: { footer?: boolean }) {
   return <BrandLogo footer={footer}/>;
 }
-export async function SiteShell({ children }: { children: React.ReactNode }) {
+export async function SiteShell({ children, presentation = false }: { children: React.ReactNode; presentation?: boolean }) {
   if (isPrelaunch()) {
     const token = (await cookies()).get(founderSessionCookie)?.value;
     if (!await verifyFounderTokenEdge(token)) redirect("/coming-soon");
   }
-  return <><SiteHeader /><main id="main-content">{children}</main><footer className="site-footer"><div className="container footer-grid"><div><Logo footer /><p>Building India&apos;s Intelligent Manufacturing Backbone.</p><p>Pune, Maharashtra<br />www.voltronlattice.com</p></div><nav aria-label="Footer navigation"><Link href="/technology">Technology</Link><Link href="/ontology">Ontology</Link><Link href="/manufacturing">Manufacturing</Link><Link href="/partner">Partner</Link><Link href="/about">About Voltron</Link><Link href="/about/voltron-commons">Voltron Commons</Link></nav></div></footer></>;
+  const content = <><SiteHeader /><main id="main-content">{children}</main><footer className="site-footer"><div className="container footer-grid"><div><Logo footer /><p>Building India&apos;s Intelligent Manufacturing Backbone.</p><p>Pune, Maharashtra<br />www.voltronlattice.com</p></div><nav aria-label="Footer navigation"><Link href="/technology">Technology</Link><Link href="/ontology">Ontology</Link><Link href="/manufacturing">Manufacturing</Link><Link href="/partner">Partner</Link><Link href="/about">About Voltron</Link><Link href="/about/voltron-commons">Voltron Commons</Link></nav></div></footer></>;
+  return <div className={`site-presentation${presentation ? " home-presentation" : ""}`}><div className="presentation-veil" aria-hidden="true"/>{content}</div>;
 }
 export function Section({ children, white = false, className = "", id }: { children: React.ReactNode; white?: boolean; className?: string; id?: string }) {
   return <section id={id} className={`section ${white ? "section-white" : ""} ${className}`}><div className="container">{children}</div></section>;

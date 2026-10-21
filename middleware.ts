@@ -7,6 +7,7 @@ const WINDOW_MS = 60_000;
 const MAX_INQUIRY_REQUESTS = 10;
 const PUBLIC_SITE_PATHS = new Set([
   "/",
+  "/enter",
   "/technology",
   "/technology/ontology",
   "/ontology",

@@ -4,11 +4,13 @@ import { BrandArt } from "@/components/brand/BrandArt";
 import { ArchitectureExplorer } from "@/components/brand/ArchitectureExplorer";
 import { ModularConfiguration } from "@/components/brand/ContextSelector";
 import { Hero } from "@/components/brand/Hero";
+import { TechnologyHeroArtwork } from "@/components/brand/TechnologyHeroArtwork";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 import { artwork as art } from "@/lib/brand-assets";
+import "./technology.css";
 export const metadata: Metadata = { title: "Technology", description: "Execution, context and intelligence connected through the Voltron Lattice architecture." };
 export default function TechnologyPage() {
-  return <SiteShell><Hero eyebrow="Technology" title="A factory cannot become intelligent in pieces." art={art.technology} primary="View the architecture" href="#architecture" secondary="Learn about our approach" secondaryHref="/ontology">Execution. Context. Intelligence. Connected.</Hero>
+  return <SiteShell><Hero className="technology-hero" eyebrow="Technology" title="A factory cannot become intelligent in pieces." illustration={<TechnologyHeroArtwork/>} primary="View the architecture" href="#architecture" secondary="Learn about our approach" secondaryHref="/ontology">Execution. Context. Intelligence. Connected.</Hero>
     <Section white id="architecture"><Intro title="The Voltron Architecture">We connect physical production, manufacturing knowledge and intelligence into coherent systems, beginning on the shopfloor.</Intro><ArchitectureExplorer><BrandArt family={art.architecture} className="architecture-art"/></ArchitectureExplorer><p className="caption centered">Shared context. Clear responsibilities.</p></Section>
     <Section><Intro title="Built once. Configured for every factory.">Reusable manufacturing logic. Factory-specific execution.</Intro><ModularConfiguration><div className="modular-grid">{[
       ["Voltron Core", art.core, "Common data model, services and runtime."], ["Capability Modules", art.capabilities, "Domain capabilities such as quality, maintenance and traceability."], ["Process Packs", art.packs, "Manufacturing logic for specific processes, such as coating or assembly."], ["Plant Configuration", art.plant, "Factory-specific configuration and integration."], ["Voltron AI", art.ai, "Context-aware intelligence for manufacturing."],

@@ -1,0 +1,42 @@
+{
+  "page": "Voltron Commons",
+  "route": "/about/voltron-commons",
+  "assets": [
+    {
+      "family": "C03-learning-nature",
+      "theme": "light",
+      "svg": "C03-learning-nature-light.svg",
+      "image": "C03-learning-nature-light.webp",
+      "description": "Learning, reflection and nature",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "C03-learning-nature",
+      "theme": "dark",
+      "svg": "C03-learning-nature-dark.svg",
+      "image": "C03-learning-nature-dark.webp",
+      "description": "Learning, reflection and nature",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "C04-participation",
+      "theme": "light",
+      "svg": "C04-participation-light.svg",
+      "image": "C04-participation-light.webp",
+      "description": "Participation and collaboration",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "C04-participation",
+      "theme": "dark",
+      "svg": "C04-participation-dark.svg",
+      "image": "C04-participation-dark.webp",
+      "description": "Participation and collaboration",
+      "width": 1200,
+      "height": 900
+    }
+  ]
+}

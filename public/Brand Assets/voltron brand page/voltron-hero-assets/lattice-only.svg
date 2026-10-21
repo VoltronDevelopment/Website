@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 640 520" width="640" height="520" class="static" role="img" aria-labelledby="hero-title hero-desc"><title id="hero-title">Voltron lattice</title><desc id="hero-desc">An airy connected cube lattice surrounds the leaf and circuit emblem.</desc>
+<defs>
+ <linearGradient id="top" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFFFFF" stop-opacity=".65"/><stop offset="1" stop-color="#D3E8F7" stop-opacity=".15"/></linearGradient>
+ <linearGradient id="left" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#E8F0F7" stop-opacity=".30"/><stop offset="1" stop-color="#B9D9EE" stop-opacity=".12"/></linearGradient>
+ <linearGradient id="right" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#BCD7E9" stop-opacity=".20"/><stop offset="1" stop-color="#8DC4E7" stop-opacity=".12"/></linearGradient>
+ <radialGradient id="ground"><stop stop-color="#397CAE" stop-opacity=".12"/><stop offset="1" stop-color="#397CAE" stop-opacity="0"/></radialGradient>
+ <radialGradient id="clear-center"><stop offset="0" stop-color="black"/><stop offset=".65" stop-color="black"/><stop offset="1" stop-color="white"/></radialGradient><mask id="logo-space"><rect width="640" height="520" fill="white"/><ellipse cx="320" cy="243" rx="92" ry="92" fill="url(#clear-center)"/></mask>
+ <filter id="node-glow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="3"/></filter>
+</defs>
+<style>
+.edge{fill:none;stroke:#397CAE;stroke-width:1.25;stroke-linecap:round;vector-effect:non-scaling-stroke;opacity:.53}
+.node{fill:#246BD4;opacity:.82}.rear{opacity:.30}.face{stroke:none}.highlight{stroke:#FFFFFF;stroke-width:1;opacity:.6;fill:none}
+.animated .edge{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .36s cubic-bezier(.45,0,.25,1) forwards;animation-delay:var(--delay)}
+.animated .node{opacity:0;animation:arrive .20s ease-out forwards;animation-delay:var(--delay)}
+.animated .face{opacity:0;animation:appear .55s cubic-bezier(.22,1,.36,1) forwards;animation-delay:var(--delay)}
+.animated .logo{opacity:0;animation:appear .55s cubic-bezier(.22,1,.36,1) 1.25s forwards}
+.animated .glow{opacity:0;animation:pulse .45s ease-in-out var(--delay) both}
+@keyframes draw{to{stroke-dashoffset:0}}@keyframes arrive{to{opacity:.82}}@keyframes appear{to{opacity:1}}@keyframes pulse{0%,100%{opacity:0}45%{opacity:.28}}
+@media(prefers-reduced-motion:reduce){.animated .edge{animation:none;stroke-dashoffset:0}.animated .face,.animated .node,.animated .logo{animation:none;opacity:1}.animated .glow{animation:none;opacity:0}}
+</style>
+<ellipse cx="325" cy="449" rx="200" ry="26" fill="url(#ground)"/>
+<g mask="url(#logo-space)"><g id="surfaces">
+<polygon class="face" points="320,119 396,158 320,197 244,158" fill="url(#top)" style="--delay:0.650s"/>
+<polygon class="face" points="244,246 320,285 320,197 244,158" fill="url(#left)" style="--delay:0.685s"/>
+<polygon class="face" points="244,246 320,285 244,324 168,285" fill="url(#top)" style="--delay:0.720s"/>
+<polygon class="face" points="396,158 472,197 396,236 320,197" fill="url(#top)" style="--delay:0.755s"/>
+<polygon class="face" points="320,373 396,412 396,324 320,285" fill="url(#left)" style="--delay:0.790s"/>
+<polygon class="face" points="472,373 396,412 396,324 472,285" fill="url(#right)" style="--delay:0.825s"/>
+<polygon class="face" points="168,373 244,412 244,324 168,285" fill="url(#left)" style="--delay:0.860s"/>
+<polygon class="face" points="320,373 244,412 244,324 320,285" fill="url(#right)" style="--delay:0.895s"/>
+<polygon class="face" points="320,285 396,324 396,236 320,197" fill="url(#left)" style="--delay:0.930s"/>
+<polygon class="face" points="472,285 396,324 396,236 472,197" fill="url(#right)" style="--delay:0.965s"/>
+</g><g id="edges">
+<path id="edge-0" class="edge" pathLength="1" d="M320 295L320 207" style="--delay:0.120s"/>
+<path id="edge-1" class="edge" pathLength="1" d="M320 295L244 334" style="--delay:0.138s"/>
+<path id="edge-2" class="edge" pathLength="1" d="M320 295L396 334" style="--delay:0.157s"/>
+<path id="edge-3" class="edge" pathLength="1" d="M244 334L244 246" style="--delay:0.175s"/>
+<path id="edge-4" class="edge" pathLength="1" d="M396 334L396 246" style="--delay:0.193s"/>
+<path id="edge-5" class="edge" pathLength="1" d="M244 334L320 373" style="--delay:0.211s"/>
+<path id="edge-6" class="edge" pathLength="1" d="M396 334L320 373" style="--delay:0.229s"/>
+<path id="edge-7" class="edge" pathLength="1" d="M244 334L168 373" style="--delay:0.248s"/>
+<path id="edge-8" class="edge" pathLength="1" d="M396 334L472 373" style="--delay:0.266s"/>
+<path id="edge-9" class="edge" pathLength="1" d="M320 373L320 285" style="--delay:0.284s"/>
+<path id="edge-10" class="edge" pathLength="1" d="M168 373L168 285" style="--delay:0.302s"/>
+<path id="edge-11" class="edge" pathLength="1" d="M472 373L472 285" style="--delay:0.321s"/>
+<path id="edge-12" class="edge" pathLength="1" d="M168 373L244 412" style="--delay:0.339s"/>
+<path id="edge-13" class="edge" pathLength="1" d="M320 373L396 412" style="--delay:0.357s"/>
+<path id="edge-14" class="edge" pathLength="1" d="M320 373L244 412" style="--delay:0.376s"/>
+<path id="edge-15" class="edge" pathLength="1" d="M472 373L396 412" style="--delay:0.394s"/>
+<path id="edge-16" class="edge" pathLength="1" d="M244 412L244 324" style="--delay:0.412s"/>
+<path id="edge-17" class="edge" pathLength="1" d="M396 412L396 324" style="--delay:0.430s"/>
+<path id="edge-18" class="edge" pathLength="1" d="M320 207L320 119" style="--delay:0.449s"/>
+<path id="edge-19" class="edge" pathLength="1" d="M320 207L396 246" style="--delay:0.467s"/>
+<path id="edge-20" class="edge" pathLength="1" d="M320 207L244 246" style="--delay:0.485s"/>
+<path id="edge-21" class="edge" pathLength="1" d="M396 246L396 158" style="--delay:0.503s"/>
+<path id="edge-22" class="edge" pathLength="1" d="M244 246L244 158" style="--delay:0.522s"/>
+<path id="edge-23" class="edge" pathLength="1" d="M244 246L168 285" style="--delay:0.540s"/>
+<path id="edge-24" class="edge" pathLength="1" d="M244 246L320 285" style="--delay:0.558s"/>
+<path id="edge-25" class="edge" pathLength="1" d="M396 246L472 285" style="--delay:0.576s"/>
+<path id="edge-26" class="edge" pathLength="1" d="M396 246L320 285" style="--delay:0.595s"/>
+<path id="edge-27" class="edge" pathLength="1" d="M472 285L472 197" style="--delay:0.613s"/>
+<path id="edge-28" class="edge" pathLength="1" d="M320 285L320 197" style="--delay:0.631s"/>
+<path id="edge-29" class="edge" pathLength="1" d="M320 285L244 324" style="--delay:0.649s"/>
+<path id="edge-30" class="edge" pathLength="1" d="M168 285L244 324" style="--delay:0.667s"/>
+<path id="edge-31" class="edge" pathLength="1" d="M472 285L396 324" style="--delay:0.686s"/>
+<path id="edge-32" class="edge" pathLength="1" d="M320 285L396 324" style="--delay:0.704s"/>
+<path id="edge-33" class="edge" pathLength="1" d="M396 324L396 236" style="--delay:0.722s"/>
+<path id="edge-34" class="edge" pathLength="1" d="M320 119L396 158" style="--delay:0.740s"/>
+<path id="edge-35" class="edge" pathLength="1" d="M320 119L244 158" style="--delay:0.759s"/>
+<path id="edge-36" class="edge" pathLength="1" d="M244 158L320 197" style="--delay:0.777s"/>
+<path id="edge-37" class="edge" pathLength="1" d="M396 158L320 197" style="--delay:0.795s"/>
+<path id="edge-38" class="edge" pathLength="1" d="M396 158L472 197" style="--delay:0.814s"/>
+<path id="edge-39" class="edge" pathLength="1" d="M320 197L396 236" style="--delay:0.832s"/>
+<path id="edge-40" class="edge" pathLength="1" d="M472 197L396 236" style="--delay:0.850s"/>
+</g><g id="nodes">
+<circle id="node-0" class="node" cx="320" cy="295" r="2.4" style="--delay:0.080s"/>
+<circle id="node-1" class="node" cx="244" cy="334" r="2.4" style="--delay:0.127s"/>
+<circle id="node-2" class="node" cx="396" cy="334" r="2.4" style="--delay:0.173s"/>
+<circle id="node-3" class="node" cx="168" cy="373" r="2.4" style="--delay:0.220s"/>
+<circle id="node-4" class="node" cx="320" cy="373" r="2.4" style="--delay:0.267s"/>
+<circle id="node-5" class="node" cx="472" cy="373" r="2.4" style="--delay:0.313s"/>
+<circle id="node-6" class="node" cx="244" cy="412" r="2.4" style="--delay:0.360s"/>
+<circle id="node-7" class="node" cx="396" cy="412" r="2.4" style="--delay:0.407s"/>
+<circle id="node-8" class="node" cx="320" cy="207" r="2.4" style="--delay:0.453s"/>
+<circle id="node-9" class="node" cx="244" cy="246" r="2.4" style="--delay:0.500s"/>
+<circle id="node-10" class="node" cx="396" cy="246" r="2.4" style="--delay:0.547s"/>
+<circle id="node-11" class="node" cx="168" cy="285" r="2.4" style="--delay:0.593s"/>
+<circle id="node-12" class="node" cx="320" cy="285" r="2.4" style="--delay:0.640s"/>
+<circle id="node-13" class="node" cx="472" cy="285" r="2.4" style="--delay:0.687s"/>
+<circle id="node-14" class="node" cx="244" cy="324" r="2.4" style="--delay:0.733s"/>
+<circle id="node-15" class="node" cx="396" cy="324" r="2.4" style="--delay:0.780s"/>
+<circle id="node-16" class="node" cx="320" cy="119" r="2.4" style="--delay:0.827s"/>
+<circle id="node-17" class="node" cx="244" cy="158" r="2.4" style="--delay:0.873s"/>
+<circle id="node-18" class="node" cx="396" cy="158" r="2.4" style="--delay:0.920s"/>
+<circle id="node-19" class="node" cx="320" cy="197" r="2.4" style="--delay:0.967s"/>
+<circle id="node-20" class="node" cx="472" cy="197" r="2.4" style="--delay:1.013s"/>
+<circle id="node-21" class="node" cx="396" cy="236" r="2.4" style="--delay:1.060s"/>
+</g></g>
+</svg>

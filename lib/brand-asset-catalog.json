@@ -1,0 +1,303 @@
+[
+  {
+    "folder": "01-home",
+    "title": "Home",
+    "route": "/",
+    "assets": [],
+    "note": "Existing logo and the three system illustrations stay in ../voltron brand page/. The hero, conveyor and philosophy cubes are generated in Three.js; no replacement lattice image is needed."
+  },
+  {
+    "folder": "02-technology",
+    "title": "Technology",
+    "route": "/technology",
+    "assets": [
+      [
+        "T02-architecture-composition",
+        "Execution, shared meaning and intelligence in one connected architecture",
+        1600,
+        700
+      ],
+      [
+        "T03-voltron-core",
+        "Common model and runtime",
+        600,
+        600
+      ],
+      [
+        "T03-capability-modules",
+        "Quality, maintenance and traceability modules",
+        600,
+        600
+      ],
+      [
+        "T03-process-packs",
+        "Reusable process layers",
+        600,
+        600
+      ],
+      [
+        "T03-plant-configuration",
+        "Factory configuration",
+        600,
+        600
+      ],
+      [
+        "T03-voltron-ai",
+        "Manufacturing intelligence",
+        600,
+        600
+      ]
+    ],
+    "note": "The hero is already Three.js; do not upload a replacement hero cube image."
+  },
+  {
+    "folder": "03-ontology",
+    "title": "Manufacturing Ontology",
+    "route": "/ontology",
+    "assets": [
+      [
+        "O01-ontology-hero",
+        "Manufacturing identity and meaning hero",
+        1200,
+        1000
+      ],
+      [
+        "O03-identity-relationships",
+        "Plant, part, lot, operation and machine relationships",
+        1000,
+        900
+      ],
+      [
+        "O04-manufacturing-relationships",
+        "Requirements, processes, equipment, inspection and evidence",
+        1000,
+        900
+      ]
+    ],
+    "note": ""
+  },
+  {
+    "folder": "04-intelligence",
+    "title": "Intelligence",
+    "route": "/intelligence",
+    "assets": [
+      [
+        "I01-intelligence-hero",
+        "Connected quality evidence, intelligence and human judgment",
+        1200,
+        1000
+      ],
+      [
+        "I04-point-of-work",
+        "Operator at the point of work",
+        1200,
+        900
+      ]
+    ],
+    "note": "QMS source selection, specialist agents and human review remain native interactive UI. Do not bake those controls into artwork."
+  },
+  {
+    "folder": "05-manufacturing",
+    "title": "Manufacturing",
+    "route": "/manufacturing",
+    "assets": [
+      [
+        "M01-manufacturing-hero",
+        "Surface-treatment process concept",
+        1400,
+        900
+      ],
+      [
+        "M02-phosphating",
+        "Phosphating process",
+        800,
+        700
+      ],
+      [
+        "M02-ced",
+        "CED process",
+        800,
+        700
+      ],
+      [
+        "M02-powder-coating",
+        "Powder coating process",
+        800,
+        700
+      ],
+      [
+        "M04-process-variation",
+        "Material and part variation",
+        600,
+        600
+      ],
+      [
+        "M04-equipment-constraints",
+        "Equipment constraints",
+        600,
+        600
+      ],
+      [
+        "M04-quality-evidence",
+        "Inspection evidence",
+        600,
+        600
+      ],
+      [
+        "M04-human-decisions",
+        "Human judgment on the shopfloor",
+        600,
+        600
+      ]
+    ],
+    "note": "Mark conceptual imagery as conceptual. Upload operational photographs only when verified and cleared for publication. Home Alpha remains text-only."
+  },
+  {
+    "folder": "06-network",
+    "title": "Network",
+    "route": "/network",
+    "assets": [
+      [
+        "N01-network-hero",
+        "Connected plants sharing one architecture",
+        1200,
+        1000
+      ],
+      [
+        "N04-compounding-network",
+        "Learning across a governed network",
+        1200,
+        900
+      ],
+      [
+        "N05-industrial-products",
+        "Industrial products as a future direction",
+        1200,
+        900
+      ]
+    ],
+    "note": ""
+  },
+  {
+    "folder": "07-about",
+    "title": "About",
+    "route": "/about",
+    "assets": [
+      [
+        "A01-about-hero",
+        "Voltron identity and industrial purpose",
+        1200,
+        1000
+      ],
+      [
+        "H02-execution",
+        "Execution illustration reused on About",
+        700,
+        700
+      ],
+      [
+        "H02-context",
+        "Manufacturing context illustration reused on About",
+        700,
+        700
+      ],
+      [
+        "H02-intelligence",
+        "Intelligence illustration reused on About",
+        700,
+        700
+      ],
+      [
+        "A03-people-lattice",
+        "People connected through shared purpose",
+        1200,
+        900
+      ],
+      [
+        "A05-people-culture",
+        "People Culture preview",
+        1000,
+        700
+      ],
+      [
+        "A05-voltron-commons",
+        "Commons preview",
+        1000,
+        700
+      ]
+    ],
+    "note": "Existing Home system PNG files can be reused by changing these manifest image paths; do not duplicate source files unnecessarily."
+  },
+  {
+    "folder": "08-people-culture",
+    "title": "People Culture",
+    "route": "/about/people-culture",
+    "assets": [
+      [
+        "P03-individual-whole",
+        "Individual within a larger whole",
+        1200,
+        900
+      ],
+      [
+        "P04-responsibility",
+        "Growth through responsibility",
+        1200,
+        900
+      ],
+      [
+        "P05-perspectives",
+        "Distinct perspectives",
+        600,
+        600
+      ],
+      [
+        "P05-shared-purpose",
+        "Shared purpose",
+        600,
+        600
+      ],
+      [
+        "P05-mutual-growth",
+        "Mutual growth",
+        600,
+        600
+      ]
+    ],
+    "note": "The animated hero reuses ../voltron people culture/ hand artwork and its foreground mask; keep those files in place."
+  },
+  {
+    "folder": "09-commons",
+    "title": "Voltron Commons",
+    "route": "/about/voltron-commons",
+    "assets": [
+      [
+        "C03-learning-nature",
+        "Learning, reflection and nature",
+        1200,
+        900
+      ],
+      [
+        "C04-participation",
+        "Participation and collaboration",
+        1200,
+        900
+      ]
+    ],
+    "note": "The animated hero reuses ../voltron commons/ and the supplied emblem. No replacement Three.js cube artwork is needed."
+  },
+  {
+    "folder": "10-partner",
+    "title": "Partner",
+    "route": "/partner",
+    "assets": [
+      [
+        "F01-partner-hero",
+        "Two connected partners",
+        1200,
+        900
+      ]
+    ],
+    "note": "Production and partnership forms stay native HTML, not an uploaded image."
+  }
+]

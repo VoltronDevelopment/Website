@@ -1,0 +1,14 @@
+.human-hero-art { position:relative; width:100%; height:490px; isolation:isolate; overflow:hidden; }
+.human-hero-art canvas,.human-hero-art > svg { display:block; width:100%; height:100%; }
+.human-hero-art canvas[hidden] { display:none; }
+.human-hero-art > svg { position:absolute; inset:0; }
+.human-story-hero { position:relative; isolation:isolate; }
+.human-story-hero .hero-grid > div:last-child { min-width:0; }
+@media (max-width:1099px) { .human-hero-art { height:430px; } }
+@media (max-width:767px) {
+  .human-hero-art { height:390px; width:calc(100% + 24px); margin-inline:-12px; }
+  .human-story-hero .hero-grid { gap:24px; }
+  .human-story-hero .hero-copy h1 { font-size:25px; line-height:33px; }
+  .human-story-hero .hero-copy > p:not(.eyebrow) { font-size:14px; line-height:23px; }
+}
+@media (max-width:359px) { .human-hero-art { height:350px; } }

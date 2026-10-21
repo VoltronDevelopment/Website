@@ -1,0 +1,60 @@
+{
+  "page": "Network",
+  "route": "/network",
+  "assets": [
+    {
+      "family": "N01-network-hero",
+      "theme": "light",
+      "svg": "N01-network-hero-light.svg",
+      "image": "N01-network-hero-light.webp",
+      "description": "Connected plants sharing one architecture",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "N01-network-hero",
+      "theme": "dark",
+      "svg": "N01-network-hero-dark.svg",
+      "image": "N01-network-hero-dark.webp",
+      "description": "Connected plants sharing one architecture",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "N04-compounding-network",
+      "theme": "light",
+      "svg": "N04-compounding-network-light.svg",
+      "image": "N04-compounding-network-light.webp",
+      "description": "Learning across a governed network",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "N04-compounding-network",
+      "theme": "dark",
+      "svg": "N04-compounding-network-dark.svg",
+      "image": "N04-compounding-network-dark.webp",
+      "description": "Learning across a governed network",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "N05-industrial-products",
+      "theme": "light",
+      "svg": "N05-industrial-products-light.svg",
+      "image": "N05-industrial-products-light.webp",
+      "description": "Industrial products as a future direction",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "N05-industrial-products",
+      "theme": "dark",
+      "svg": "N05-industrial-products-dark.svg",
+      "image": "N05-industrial-products-dark.webp",
+      "description": "Industrial products as a future direction",
+      "width": 1200,
+      "height": 900
+    }
+  ]
+}

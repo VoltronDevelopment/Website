@@ -1,0 +1,96 @@
+{
+  "page": "People Culture",
+  "route": "/about/people-culture",
+  "assets": [
+    {
+      "family": "P03-individual-whole",
+      "theme": "light",
+      "svg": "P03-individual-whole-light.svg",
+      "image": "P03-individual-whole-light.webp",
+      "description": "Individual within a larger whole",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "P03-individual-whole",
+      "theme": "dark",
+      "svg": "P03-individual-whole-dark.svg",
+      "image": "P03-individual-whole-dark.webp",
+      "description": "Individual within a larger whole",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "P04-responsibility",
+      "theme": "light",
+      "svg": "P04-responsibility-light.svg",
+      "image": "P04-responsibility-light.webp",
+      "description": "Growth through responsibility",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "P04-responsibility",
+      "theme": "dark",
+      "svg": "P04-responsibility-dark.svg",
+      "image": "P04-responsibility-dark.webp",
+      "description": "Growth through responsibility",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "P05-perspectives",
+      "theme": "light",
+      "svg": "P05-perspectives-light.svg",
+      "image": "P05-perspectives-light.webp",
+      "description": "Distinct perspectives",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "P05-perspectives",
+      "theme": "dark",
+      "svg": "P05-perspectives-dark.svg",
+      "image": "P05-perspectives-dark.webp",
+      "description": "Distinct perspectives",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "P05-shared-purpose",
+      "theme": "light",
+      "svg": "P05-shared-purpose-light.svg",
+      "image": "P05-shared-purpose-light.webp",
+      "description": "Shared purpose",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "P05-shared-purpose",
+      "theme": "dark",
+      "svg": "P05-shared-purpose-dark.svg",
+      "image": "P05-shared-purpose-dark.webp",
+      "description": "Shared purpose",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "P05-mutual-growth",
+      "theme": "light",
+      "svg": "P05-mutual-growth-light.svg",
+      "image": "P05-mutual-growth-light.webp",
+      "description": "Mutual growth",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "P05-mutual-growth",
+      "theme": "dark",
+      "svg": "P05-mutual-growth-dark.svg",
+      "image": "P05-mutual-growth-dark.webp",
+      "description": "Mutual growth",
+      "width": 600,
+      "height": 600
+    }
+  ]
+}

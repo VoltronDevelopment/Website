@@ -1,4 +1,8 @@
 .next
+.next-design-build
+.next-*/
+.audit-logs/
+recordings/
 node_modules
 data
 .env.local

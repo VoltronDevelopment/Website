@@ -1,0 +1,60 @@
+{
+  "page": "Manufacturing Ontology",
+  "route": "/ontology",
+  "assets": [
+    {
+      "family": "O01-ontology-hero",
+      "theme": "light",
+      "svg": "O01-ontology-hero-light.svg",
+      "image": "O01-ontology-hero-light.webp",
+      "description": "Manufacturing identity and meaning hero",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "O01-ontology-hero",
+      "theme": "dark",
+      "svg": "O01-ontology-hero-dark.svg",
+      "image": "O01-ontology-hero-dark.webp",
+      "description": "Manufacturing identity and meaning hero",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "O03-identity-relationships",
+      "theme": "light",
+      "svg": "O03-identity-relationships-light.svg",
+      "image": "O03-identity-relationships-light.webp",
+      "description": "Plant, part, lot, operation and machine relationships",
+      "width": 1000,
+      "height": 900
+    },
+    {
+      "family": "O03-identity-relationships",
+      "theme": "dark",
+      "svg": "O03-identity-relationships-dark.svg",
+      "image": "O03-identity-relationships-dark.webp",
+      "description": "Plant, part, lot, operation and machine relationships",
+      "width": 1000,
+      "height": 900
+    },
+    {
+      "family": "O04-manufacturing-relationships",
+      "theme": "light",
+      "svg": "O04-manufacturing-relationships-light.svg",
+      "image": "O04-manufacturing-relationships-light.webp",
+      "description": "Requirements, processes, equipment, inspection and evidence",
+      "width": 1000,
+      "height": 900
+    },
+    {
+      "family": "O04-manufacturing-relationships",
+      "theme": "dark",
+      "svg": "O04-manufacturing-relationships-dark.svg",
+      "image": "O04-manufacturing-relationships-dark.webp",
+      "description": "Requirements, processes, equipment, inspection and evidence",
+      "width": 1000,
+      "height": 900
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "page": "Intelligence",
+  "route": "/intelligence",
+  "assets": [
+    {
+      "family": "I01-intelligence-hero",
+      "theme": "light",
+      "svg": "I01-intelligence-hero-light.svg",
+      "image": "I01-intelligence-hero-light.webp",
+      "description": "Connected quality evidence, intelligence and human judgment",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "I01-intelligence-hero",
+      "theme": "dark",
+      "svg": "I01-intelligence-hero-dark.svg",
+      "image": "I01-intelligence-hero-dark.webp",
+      "description": "Connected quality evidence, intelligence and human judgment",
+      "width": 1200,
+      "height": 1000
+    },
+    {
+      "family": "I04-point-of-work",
+      "theme": "light",
+      "svg": "I04-point-of-work-light.svg",
+      "image": "I04-point-of-work-light.webp",
+      "description": "Operator at the point of work",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "I04-point-of-work",
+      "theme": "dark",
+      "svg": "I04-point-of-work-dark.svg",
+      "image": "I04-point-of-work-dark.webp",
+      "description": "Operator at the point of work",
+      "width": 1200,
+      "height": 900
+    }
+  ]
+}

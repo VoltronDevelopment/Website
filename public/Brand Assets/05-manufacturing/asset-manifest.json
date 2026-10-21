@@ -1,0 +1,150 @@
+{
+  "page": "Manufacturing",
+  "route": "/manufacturing",
+  "assets": [
+    {
+      "family": "M01-manufacturing-hero",
+      "theme": "light",
+      "svg": "M01-manufacturing-hero-light.svg",
+      "image": "M01-manufacturing-hero-light.webp",
+      "description": "Surface-treatment process concept",
+      "width": 1400,
+      "height": 900
+    },
+    {
+      "family": "M01-manufacturing-hero",
+      "theme": "dark",
+      "svg": "M01-manufacturing-hero-dark.svg",
+      "image": "M01-manufacturing-hero-dark.webp",
+      "description": "Surface-treatment process concept",
+      "width": 1400,
+      "height": 900
+    },
+    {
+      "family": "M02-phosphating",
+      "theme": "light",
+      "svg": "M02-phosphating-light.svg",
+      "image": "M02-phosphating-light.webp",
+      "description": "Phosphating process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M02-phosphating",
+      "theme": "dark",
+      "svg": "M02-phosphating-dark.svg",
+      "image": "M02-phosphating-dark.webp",
+      "description": "Phosphating process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M02-ced",
+      "theme": "light",
+      "svg": "M02-ced-light.svg",
+      "image": "M02-ced-light.webp",
+      "description": "CED process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M02-ced",
+      "theme": "dark",
+      "svg": "M02-ced-dark.svg",
+      "image": "M02-ced-dark.webp",
+      "description": "CED process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M02-powder-coating",
+      "theme": "light",
+      "svg": "M02-powder-coating-light.svg",
+      "image": "M02-powder-coating-light.webp",
+      "description": "Powder coating process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M02-powder-coating",
+      "theme": "dark",
+      "svg": "M02-powder-coating-dark.svg",
+      "image": "M02-powder-coating-dark.webp",
+      "description": "Powder coating process",
+      "width": 800,
+      "height": 700
+    },
+    {
+      "family": "M04-process-variation",
+      "theme": "light",
+      "svg": "M04-process-variation-light.svg",
+      "image": "M04-process-variation-light.webp",
+      "description": "Material and part variation",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-process-variation",
+      "theme": "dark",
+      "svg": "M04-process-variation-dark.svg",
+      "image": "M04-process-variation-dark.webp",
+      "description": "Material and part variation",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-equipment-constraints",
+      "theme": "light",
+      "svg": "M04-equipment-constraints-light.svg",
+      "image": "M04-equipment-constraints-light.webp",
+      "description": "Equipment constraints",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-equipment-constraints",
+      "theme": "dark",
+      "svg": "M04-equipment-constraints-dark.svg",
+      "image": "M04-equipment-constraints-dark.webp",
+      "description": "Equipment constraints",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-quality-evidence",
+      "theme": "light",
+      "svg": "M04-quality-evidence-light.svg",
+      "image": "M04-quality-evidence-light.webp",
+      "description": "Inspection evidence",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-quality-evidence",
+      "theme": "dark",
+      "svg": "M04-quality-evidence-dark.svg",
+      "image": "M04-quality-evidence-dark.webp",
+      "description": "Inspection evidence",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-human-decisions",
+      "theme": "light",
+      "svg": "M04-human-decisions-light.svg",
+      "image": "M04-human-decisions-light.webp",
+      "description": "Human judgment on the shopfloor",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "M04-human-decisions",
+      "theme": "dark",
+      "svg": "M04-human-decisions-dark.svg",
+      "image": "M04-human-decisions-dark.webp",
+      "description": "Human judgment on the shopfloor",
+      "width": 600,
+      "height": 600
+    }
+  ]
+}

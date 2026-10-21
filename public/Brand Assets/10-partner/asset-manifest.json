@@ -1,0 +1,24 @@
+{
+  "page": "Partner",
+  "route": "/partner",
+  "assets": [
+    {
+      "family": "F01-partner-hero",
+      "theme": "light",
+      "svg": "F01-partner-hero-light.svg",
+      "image": "F01-partner-hero-light.webp",
+      "description": "Two connected partners",
+      "width": 1200,
+      "height": 900
+    },
+    {
+      "family": "F01-partner-hero",
+      "theme": "dark",
+      "svg": "F01-partner-hero-dark.svg",
+      "image": "F01-partner-hero-dark.webp",
+      "description": "Two connected partners",
+      "width": 1200,
+      "height": 900
+    }
+  ]
+}

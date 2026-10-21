@@ -1,8 +1,9 @@
 "use client";
 import { useId, useState, type CSSProperties } from "react";
+import { SmallCube } from "./SmallCube";
 
 export function Cube({ active = false }: { active?: boolean }) {
-  return <span className="flow-cube" aria-hidden="true"><svg viewBox="0 0 80 90" fill="none"><path className="cube-top" d="M40 4 75 24 40 44 5 24Z" fill="var(--cube-top)" stroke="currentColor"/><path d="M5 24 40 44V84L5 64Z" fill="var(--cube-left)" stroke="currentColor"/><path d="m40 44 35-20v40L40 84Z" fill="var(--cube-right)" stroke="currentColor"/><path d="M40 4v40" stroke="currentColor" opacity=".22"/><circle cx="40" cy="25" r={active ? 5 : 3} fill={active ? "var(--blue)" : "var(--cyan)"}/></svg></span>;
+  return <SmallCube active={active}/>;
 }
 export type Stage = { title: string; record: string; detail: string };
 export const lotStages: Stage[] = [

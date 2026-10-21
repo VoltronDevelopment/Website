@@ -1,0 +1,10 @@
+.technology-hero { position:relative; isolation:isolate; }
+.technology-hero::before { content:none; }
+.technology-lattice-art { position:relative; width:100%; height:470px; }
+.technology-lattice-art canvas,.technology-lattice-art .fallback { display:block; position:absolute; inset:0; width:100%; height:100%; }
+.technology-lattice-art canvas[hidden] { display:none; }
+@media (max-width:1099px) { .technology-lattice-art { height:390px; } }
+@media (max-width:767px) {
+  .technology-lattice-art { height:clamp(310px,43svh,380px); max-width:440px; margin-inline:auto; }
+  .technology-hero::before { background-size:32px 32px; }
+}

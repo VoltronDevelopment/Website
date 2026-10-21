@@ -1,0 +1,114 @@
+{
+  "page": "Technology",
+  "route": "/technology",
+  "assets": [
+    {
+      "family": "T02-architecture-composition",
+      "theme": "light",
+      "svg": "T02-architecture-composition-light.svg",
+      "image": "T02-architecture-composition-light.webp",
+      "description": "Execution, shared meaning and intelligence in one connected architecture",
+      "width": 1600,
+      "height": 700
+    },
+    {
+      "family": "T02-architecture-composition",
+      "theme": "dark",
+      "svg": "T02-architecture-composition-dark.svg",
+      "image": "T02-architecture-composition-dark.webp",
+      "description": "Execution, shared meaning and intelligence in one connected architecture",
+      "width": 1600,
+      "height": 700
+    },
+    {
+      "family": "T03-voltron-core",
+      "theme": "light",
+      "svg": "T03-voltron-core-light.svg",
+      "image": "T03-voltron-core-light.webp",
+      "description": "Common model and runtime",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-voltron-core",
+      "theme": "dark",
+      "svg": "T03-voltron-core-dark.svg",
+      "image": "T03-voltron-core-dark.webp",
+      "description": "Common model and runtime",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-capability-modules",
+      "theme": "light",
+      "svg": "T03-capability-modules-light.svg",
+      "image": "T03-capability-modules-light.webp",
+      "description": "Quality, maintenance and traceability modules",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-capability-modules",
+      "theme": "dark",
+      "svg": "T03-capability-modules-dark.svg",
+      "image": "T03-capability-modules-dark.webp",
+      "description": "Quality, maintenance and traceability modules",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-process-packs",
+      "theme": "light",
+      "svg": "T03-process-packs-light.svg",
+      "image": "T03-process-packs-light.webp",
+      "description": "Reusable process layers",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-process-packs",
+      "theme": "dark",
+      "svg": "T03-process-packs-dark.svg",
+      "image": "T03-process-packs-dark.webp",
+      "description": "Reusable process layers",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-plant-configuration",
+      "theme": "light",
+      "svg": "T03-plant-configuration-light.svg",
+      "image": "T03-plant-configuration-light.webp",
+      "description": "Factory configuration",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-plant-configuration",
+      "theme": "dark",
+      "svg": "T03-plant-configuration-dark.svg",
+      "image": "T03-plant-configuration-dark.webp",
+      "description": "Factory configuration",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-voltron-ai",
+      "theme": "light",
+      "svg": "T03-voltron-ai-light.svg",
+      "image": "T03-voltron-ai-light.webp",
+      "description": "Manufacturing intelligence",
+      "width": 600,
+      "height": 600
+    },
+    {
+      "family": "T03-voltron-ai",
+      "theme": "dark",
+      "svg": "T03-voltron-ai-dark.svg",
+      "image": "T03-voltron-ai-dark.webp",
+      "description": "Manufacturing intelligence",
+      "width": 600,
+      "height": 600
+    }
+  ]
+}
