@@ -32,7 +32,8 @@ body:has(.brand-entry) .lattice-atmosphere { display:block; }
 }
 .atmosphere-lattice {
   position:absolute; width:min(980px,82vw); height:auto; right:-5vw; top:-4vh;
-  filter:blur(1px); opacity:1;
+  color:#287fd0;
+  filter:blur(.6px) drop-shadow(0 0 5px rgba(36,132,224,.45)); opacity:1;
 }
 .atmosphere-top { fill:rgba(163,207,240,.36); }
 .atmosphere-side { fill:rgba(58,115,165,.3); }
@@ -50,7 +51,7 @@ body:has(.brand-entry) .lattice-atmosphere { display:block; }
 :root[data-theme="dark"] .atmosphere-cyan { background:radial-gradient(circle,rgba(54,190,218,.3),transparent 68%); }
 :root[data-theme="dark"] .atmosphere-deep { background:radial-gradient(circle,rgba(18,58,112,.7),transparent 72%); }
 :root[data-theme="dark"] .atmosphere-reflection { background:radial-gradient(ellipse at center,rgba(112,181,227,.14),rgba(55,127,180,.08) 56%,transparent 74%); }
-:root[data-theme="dark"] .atmosphere-lattice { opacity:.95; }
+:root[data-theme="dark"] .atmosphere-lattice { color:#68b5ef; filter:blur(.6px) drop-shadow(0 0 6px rgba(54,190,218,.5)); opacity:.95; }
 
 @keyframes atmosphere-drift {
   from { transform:translate3d(var(--route-nudge),0,0); }
@@ -64,7 +65,7 @@ body:has(.brand-entry) .lattice-atmosphere { display:block; }
 @media (max-width:767px) {
   .atmosphere-cyan,.atmosphere-deep { display:none; }
   .atmosphere-motion,.atmosphere-wash,.atmosphere-reflection { animation:none; }
-  .atmosphere-lattice { width:min(580px,124vw); right:-16vw; top:18svh; filter:blur(1px); }
+  .atmosphere-lattice { width:min(580px,124vw); right:-16vw; top:18svh; }
   .atmosphere-wash { width:min(420px,88vw); right:-12vw; top:26svh; }
   .atmosphere-reflection { right:2vw; top:38svh; }
 }

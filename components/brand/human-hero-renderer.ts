@@ -20,6 +20,7 @@ type Node={mesh:THREE.Mesh<THREE.SphereGeometry,THREE.MeshBasicMaterial>;halo:TH
 type Cell={group:THREE.Group;panes:Pane[];arrival:THREE.Group;arrivalMaterials:THREE.Material[];arrivalNodes:THREE.Mesh[];spec:HeroCell;shadow:THREE.Mesh<THREE.PlaneGeometry,THREE.MeshBasicMaterial>};
 
 export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HumanHeroKind){
+  const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   const cells=heroCells(kind),duration=durations[kind],culture=kind==="culture";
   const resources:{dispose:()=>void}[]=[];
   const track=<T extends {dispose:()=>void}>(r:T):T=>{resources.push(r);return r;};
@@ -224,7 +225,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
     for(const layer of [1,2,3]){camera.layers.set(layer);renderer.render(scene,camera);}camera.layers.enableAll();
     canvas.dataset.ready=String(sized);canvas.dataset.theme=dark()?"dark":"light";
     canvas.dataset.frames=String(Number(canvas.dataset.frames??0)+1);
-    if(sized&&canvas.dataset.settled==="true"&&!canvas.dataset.nonblankSamples){
+    if(pixelProof&&sized&&canvas.dataset.settled==="true"&&!canvas.dataset.nonblankSamples){
       const gl=renderer.getContext(),pixels=new Uint8Array(canvas.width*canvas.height*4);gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       let n=0;for(let i=3;i<pixels.length;i+=64)if(pixels[i]>20)n++;canvas.dataset.nonblankSamples=String(n);
     }

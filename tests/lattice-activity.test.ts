@@ -45,4 +45,11 @@ describe("shared idle and pointer controller",()=>{
     activity.setVisible(true);activity.setEnabled(false);vi.advanceTimersByTime(10000);expect(host.dataset.lightMode).toBe("rest");
     expect(vi.getTimerCount()).toBe(0);activity.setEnabled(true);activity.dispose();expect(vi.getTimerCount()).toBe(0);
   });
+  it("does not redraw or restart timers when the enabled state is unchanged",()=>{
+    const {activity,onFrame}=setup();activity.arm();activity.setEnabled(false);
+    onFrame.mockClear();activity.setEnabled(false);activity.setEnabled(false);
+    expect(onFrame).not.toHaveBeenCalled();expect(vi.getTimerCount()).toBe(0);
+    activity.setEnabled(true);vi.advanceTimersByTime(7000);activity.setEnabled(true);
+    vi.advanceTimersByTime(1200);expect(onFrame).toHaveBeenCalled();activity.dispose();
+  });
 });

@@ -63,7 +63,7 @@ export function createLatticeActivity({host,points,links,project,onFrame}:Option
     arm(){if(armed)return;armed=true;schedule();},
     restart(){armed=false;reset();},
     setVisible(value:boolean){if(value===visible)return;visible=value;if(!value){reset();onFrame();}else schedule();},
-    setEnabled(value:boolean){enabled=value;if(!value){reset();onFrame();}else schedule();},
+    setEnabled(value:boolean){if(value===enabled)return;enabled=value;if(!value){reset();onFrame();}else schedule();},
     strength(point:Point){let value=0;points.forEach((p,index)=>{value=Math.max(value,values[index]*Math.max(0,1-distance(point,p)/.85));});return value;},
     nodeStrength(index:number){return values[index]??0;},
     dispose(){disposed=true;reset();host.removeEventListener("pointermove",move);host.removeEventListener("pointerleave",leave);},

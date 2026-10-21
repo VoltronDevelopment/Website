@@ -1,0 +1,89 @@
+.lot-story { margin:0; min-width:0; }
+.lot-story-art { position:relative; isolation:isolate; }
+.lot-story-canvas { position:absolute; inset:0; display:block; width:100%; height:100%; opacity:0; pointer-events:none; z-index:1; }
+.lot-story-art[data-renderer="webgl"] .lot-story-canvas { opacity:1; }
+.lot-story-canvas[hidden] { display:none; }
+.lot-story-snapshots { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:24px; }
+.lot-snapshot { min-width:0; text-align:center; }
+.lot-snapshot h3 { position:relative; z-index:2; margin:0; }
+.lot-snapshot h3 button { display:block; width:100%; min-height:44px; padding:6px 4px; color:var(--ink); background:transparent; border:0; font:inherit; font-size:18px; font-weight:500; cursor:pointer; overflow-wrap:anywhere; }
+.lot-snapshot[data-active="true"] h3 button { color:var(--cyan); }
+.lot-snapshot h3 button[aria-pressed="true"] { text-decoration:underline; text-underline-offset:6px; text-decoration-color:var(--cyan); }
+.lot-snapshot-anchor { position:relative; height:280px; }
+.lot-identity { position:absolute; z-index:2; top:46px; left:18%; color:var(--ink); font-size:11px; line-height:16px; font-weight:500; pointer-events:none; }
+.lot-snapshot-symbol { position:absolute; z-index:2; top:85px; right:17%; display:flex; align-items:center; gap:3px; color:var(--cube-outline); pointer-events:none; }
+.lot-snapshot[data-active="true"] .lot-snapshot-symbol { color:var(--cyan); }
+.lot-snapshot-symbol > svg { width:23px; height:23px; stroke-width:1.25; }
+.lot-snapshot-symbol > svg + svg { width:13px; height:13px; }
+.lot-snapshot-fallback { position:absolute; inset:0; display:block; width:100%; height:100%; }
+.lot-story-art[data-renderer="webgl"] .lot-snapshot-fallback { visibility:hidden; }
+.lot-static-rear { stroke:var(--cyan); stroke-width:1.1; opacity:.7; filter:drop-shadow(0 0 2px color-mix(in srgb,var(--cyan) 40%,transparent)); }
+.lot-static-front { stroke:var(--cube-outline); stroke-width:.8; opacity:.5; }
+.lot-snapshot-caption { position:relative; z-index:2; margin:0; min-height:48px; padding:0 4px; font-size:14px; line-height:24px; color:var(--muted); }
+.lot-story-detail { min-height:92px; max-width:730px; margin:20px auto 24px; text-align:center; }
+.lot-story-detail h4 { margin:0 0 7px; color:var(--ink); font-size:15px; line-height:24px; font-weight:500; }
+.lot-story-detail p { margin:0; color:var(--muted); font-size:14px; line-height:23px; }
+.lot-evidence-panel { padding:24px; border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb,var(--surface) 35%,transparent); }
+.lot-evidence-intro { margin:0 0 22px; color:var(--ink); font-size:16px; line-height:26px; }
+.lot-evidence-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.35fr) minmax(0,1fr); gap:20px; margin:0; padding:0; list-style:none; }
+.lot-evidence-list li { position:relative; min-width:0; }
+.lot-evidence-list li:not(:last-child)::after { content:""; position:absolute; left:calc(100% - 5px); top:24px; width:20px; height:1px; background:var(--line); }
+.lot-evidence-list li[data-complete="true"]::after { background:var(--cyan); }
+.lot-evidence-list button { display:flex; flex-direction:column; align-items:flex-start; gap:8px; width:100%; min-height:120px; padding:8px; border:1px solid transparent; border-radius:5px; background:transparent; color:var(--muted); font:inherit; text-align:left; cursor:pointer; }
+.lot-evidence-list li[data-gate="true"] button { border-color:var(--line); }
+.lot-evidence-list li[data-active="true"] button { background:var(--hover); border-color:var(--cube-outline); color:var(--ink); }
+.lot-evidence-icon { position:relative; display:inline-flex; align-items:center; height:31px; color:var(--cube-outline); }
+.lot-evidence-check { position:absolute; right:-9px; bottom:0; display:grid; place-items:center; width:15px; height:15px; border-radius:50%; background:var(--cyan); color:var(--surface); }
+.lot-evidence-title { font-size:13px; line-height:20px; overflow-wrap:anywhere; }
+.lot-evidence-status { margin-top:auto; font-size:11px; line-height:18px; }
+.lot-evidence-list li[data-complete="true"] .lot-evidence-icon { color:var(--cyan); }
+.lot-evidence-mobile,.lot-mobile-navigation,.lot-mobile-progress { display:none; }
+.lot-story-footer { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:44px; margin-top:24px; }
+.lot-story-footer > p { margin:0; color:var(--muted); font-size:11px; line-height:18px; }
+.lot-story-controls[hidden] { display:none; }
+.lot-story-controls button,.lot-mobile-navigation button { display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:44px; padding:8px 10px; border:1px solid transparent; border-radius:4px; background:transparent; color:var(--ink); font:inherit; font-size:12px; cursor:pointer; }
+.lot-story button:hover:not(:disabled),.lot-story summary:hover { background:var(--hover); color:var(--ink); }
+.lot-story button:focus-visible,.lot-story summary:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+.lot-story button:active:not(:disabled) { border-color:var(--cube-outline); }
+.lot-story button:disabled { opacity:.4; cursor:default; }
+@media(max-width:1099px) and (min-width:768px) {
+  .lot-story-snapshots { gap:12px; }
+  .lot-snapshot-anchor { height:240px; }
+  .lot-snapshot h3 button { font-size:16px; }
+  .lot-evidence-panel { padding:18px; }
+  .lot-evidence-list { gap:10px; }
+  .lot-evidence-list li:not(:last-child)::after { width:10px; }
+}
+@media(max-width:767px) {
+  .lot-story-snapshots { grid-template-columns:minmax(0,1fr); gap:0; }
+  .lot-snapshot { grid-area:1 / 1; visibility:hidden; max-width:420px; width:100%; margin-inline:auto; }
+  .lot-snapshot[data-active="true"] { visibility:visible; }
+  .lot-snapshot-anchor { height:300px; }
+  .lot-snapshot-caption { min-height:28px; font-size:14px; }
+  .lot-identity { top:48px; font-size:12px; }
+  .lot-snapshot-symbol { top:95px; right:20%; }
+  .lot-mobile-progress { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:6px; margin-top:12px; }
+  .lot-mobile-progress button { min-height:44px; padding:8px 2px; border:0; border-bottom:2px solid var(--line); background:transparent; color:var(--muted); font:inherit; font-size:11px; line-height:18px; cursor:pointer; }
+  .lot-mobile-progress button[aria-pressed="true"] { border-bottom-color:var(--cyan); color:var(--ink); }
+  .lot-mobile-navigation { display:flex; align-items:center; justify-content:space-between; gap:6px; margin:12px 0; }
+  .lot-mobile-navigation > span { color:var(--muted); font-size:11px; line-height:18px; text-align:center; }
+  .lot-mobile-navigation button { padding-inline:5px; }
+  .lot-story-detail { text-align:left; min-height:124px; margin:16px 0 20px; }
+  .lot-evidence-panel { padding:18px; }
+  .lot-evidence-intro { font-size:15px; line-height:24px; margin-bottom:16px; }
+  .lot-evidence-desktop { display:none; }
+  .lot-evidence-mobile { display:block; }
+  .lot-current-record { display:flex; flex-direction:column; gap:5px; margin:0 0 16px; color:var(--ink); font-size:14px; line-height:22px; }
+  .lot-current-record strong { font-size:12px; font-weight:500; color:var(--muted); }
+  .lot-evidence-mobile summary { min-height:44px; padding:12px 0; cursor:pointer; font-size:13px; line-height:20px; color:var(--blue); }
+  .lot-evidence-list { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+  .lot-evidence-list li:not(:last-child)::after { left:23px; top:calc(100% - 3px); width:1px; height:12px; }
+  .lot-evidence-list button { min-height:78px; display:grid; grid-template-columns:34px minmax(0,1fr); column-gap:12px; row-gap:2px; }
+  .lot-evidence-icon { grid-column:1; grid-row:1 / 3; align-self:center; }
+  .lot-evidence-title { grid-column:2; align-self:end; }
+  .lot-evidence-status { grid-column:2; align-self:start; margin:0; }
+  .lot-story-footer { gap:8px; }
+  .lot-story-footer > p { max-width:205px; }
+}
+@media(prefers-reduced-transparency:reduce) { .lot-evidence-panel { background:var(--surface); } }
+@media(forced-colors:active) { .lot-evidence-panel,.lot-evidence-list li[data-gate="true"] button { border-color:CanvasText; } }

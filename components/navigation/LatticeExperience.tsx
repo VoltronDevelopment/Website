@@ -88,6 +88,8 @@ export function LatticeExperience({children}:{children:ReactNode}){
       await new Promise<void>(resolve=>requestAnimationFrame(()=>resolve()));
       if(token!==generation.current)return;
       const from=request.rect,start=performance.now();
+      const bounds=value.node.getBoundingClientRect();
+      controller.current!.beginMorph(Math.max(from.width,bounds.width),Math.max(from.height,bounds.height));
       layer.current!.dataset.transition="morph";
       const tick=(now:number)=>{
         if(token!==generation.current)return;

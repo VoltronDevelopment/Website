@@ -2,6 +2,11 @@ export type Point=readonly number[];
 export const clamp=(value:number)=>Math.max(0,Math.min(1,value));
 const smooth=(value:number)=>{const t=clamp(value);return t*t*(3-2*t);};
 
+export function contactShadow(progress:number,lift:number){
+  const height=Math.max(0,lift);
+  return {opacity:smooth(progress/.18)/(1+height*2.2),scale:1+height*.55};
+}
+
 export function junctionPulse(time:number,start:number,rise=.12,fade=.45){
   const age=time-start;
   if(age<0 || age>rise+fade)return 0;

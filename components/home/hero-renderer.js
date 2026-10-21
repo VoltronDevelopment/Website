@@ -3,8 +3,9 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import * as homeTimeline from "./hero-timeline";
 import * as technologyTimeline from "./technology-hero-timeline";
 import {glassFace,setGlass,strokeMaterial,stroke} from "./lattice-materials";
-import {alignmentLight,junctionPulse} from "./lattice-lighting";
+import {alignmentLight,junctionPulse,contactShadow} from "./lattice-lighting";
 import {createLatticeActivity} from "./lattice-activity";
+import {sizeHeroSurface} from "./hero-surface";
 import {homeCells,cellsAt} from "../navigation/lattice-transition";
 const {smooth,gridOpacityAt}=homeTimeline;
 
@@ -34,6 +35,7 @@ const edges = new Map(), vertices = new Map(), surfaces = new Set();
 const edgeCounts = new Map(), nodeCounts = new Map(), faceCounts = new Map();
 const resources = [], groundMaterials = [], materialGroups = {};
 const groundObjects=[];
+let floorReflection;
 const arrivals = [], arrivalMaterials = [];
 const illuminatedMaterials=[];
 const nodeAccents=[],connectionHighlights=[];
@@ -51,8 +53,10 @@ let fallback = false, disposed = false, observer, visibilityObserver, themeObser
 let inView = true;
 let activity;
 let morphState=null;
+let morphSurface=null;
 const markUrl = "/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png";
 const reduceMotion=()=>motionPreference.matches || new URLSearchParams(location.search).get("motion")==="reduced";
+const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
 canvas.dataset.composition=variant;
 
 function surfaceKind(cell,face) {
@@ -214,14 +218,16 @@ function radialTexture(stops) {
 
 function createGround() {
   const texture = radialTexture([[0,"rgba(22,61,91,.65)"],[.25,"rgba(36,91,133,.4)"],[.65,"rgba(57,124,174,.07)"],[1,"rgba(57,124,174,0)"]]);
-  for (const cell of cells.filter(cell=>cell[1]===.5)) {
+  for (const [cellIndex,cell] of cells.entries()) {
+    if(cell[1]!==.5)continue;
     const material = tracked(new THREE.MeshBasicMaterial({map:texture,transparent:true,opacity:.48,depthWrite:false,toneMapped:false}));
     const mesh = new THREE.Mesh(tracked(new THREE.PlaneGeometry(1.08,1.08)),material);
-    mesh.rotation.x = -Math.PI/2; mesh.position.set(cell[0],-.018,cell[2]); scene.add(mesh); groundMaterials.push(material);groundObjects.push(mesh);
+    mesh.rotation.x = -Math.PI/2; mesh.position.set(cell[0],-.018,cell[2]);mesh.userData.cellIndex=cellIndex; scene.add(mesh); groundMaterials.push(material);groundObjects.push(mesh);
   }
   const reflectionTexture = radialTexture([[0,"rgba(56,174,238,.25)"],[.4,"rgba(78,182,241,.1)"],[1,"rgba(78,182,241,0)"]]);
   const material = tracked(new THREE.MeshBasicMaterial({map:reflectionTexture,transparent:true,opacity:.55,depthWrite:false,toneMapped:false}));
   const floor = new THREE.Mesh(tracked(new THREE.PlaneGeometry(2.7,2.7)),material);
+  floorReflection=floor;
   floor.rotation.x = -Math.PI/2; floor.position.y = -.025; scene.add(floor); groundMaterials.push(material);
 }
 
@@ -353,7 +359,7 @@ function palette() {
     else {setGlass(material,faceKind,dark);material.userData.restOpacity*=diagnostic?.2:1;}
   }
   keyLight.intensity=dark ? 1.35 : 2.5;hemisphere.intensity=dark ? 1.2 : 1.8;
-  edgeFront.color.setHex(dark ? 0x71bbff : 0x3284e8);
+  edgeFront.color.setHex(dark ? 0x579acb : 0x2468aa);
   edgeRear.color.setHex(dark ? 0x40769d : 0x619bc5);
   nodeFront.color.setHex(dark ? 0x78b0ff : 0x246bd4);
   nodeRear.color.setHex(dark ? 0x3e7caa : 0x45bafa);
@@ -361,7 +367,7 @@ function palette() {
     coreEdge.material.color.setHex(dark ? 0x66b6e8 : 0x299bdd);
     coreConnection.material.color.setHex(dark ? 0x66b6e8 : 0x299bdd);
   }
-  for(const [material,opacity] of [[edgeFront,.8],[edgeRear,.3],[nodeFront,.98],[nodeRear,dark ? .32 : .4]]) material.userData.restOpacity=opacity;
+  for(const [material,opacity] of [[edgeFront,.88],[edgeRear,.3],[nodeFront,.98],[nodeRear,dark ? .32 : .4]]) material.userData.restOpacity=opacity;
   for(const record of arrivalMaterials) record.material.copy(record.base);
   for(const record of illuminatedMaterials) record.material.copy(record.base);
   applyState(currentTime);
@@ -377,19 +383,20 @@ function applyState(seconds) {
   const materials=[...Object.values(materialGroups),edgeFront,edgeRear,nodeFront,nodeRear];
   for(const material of materials) material.opacity=weightedOpacity(material.userData.restOpacity,state.resolve);
   let maximumWave=0;
-  const blue=new THREE.Color(0x3eafff);
-  const pulseAt=point=>reduceMotion()?0:Math.max(alignmentLight(seconds,point.toArray(),cells,(technology?technologyTimeline:homeTimeline).starts),...logoJunctions.map((node,index)=>junctionPulse(seconds,(technology?6.9:5.6)+index*.12,.14,.65)*Math.max(0,1-point.distanceTo(node)/.85)),activity?.strength(point.toArray())??0);
+  const blue=new THREE.Color(dark?0x48cfea:0x32adff);
+  const timeline=technology?technologyTimeline:homeTimeline;
+  const pulseAt=point=>reduceMotion()?0:Math.max(alignmentLight(seconds,point.toArray(),cells,timeline.starts),timeline.latticeWaveAt(seconds,point.distanceTo(logoRegion))*Math.max(.22,1-point.distanceTo(logoRegion)/3),...logoJunctions.map((node,index)=>junctionPulse(seconds,(technology?6.9:5.6)+index*.12,.14,.65)*Math.max(0,1-point.distanceTo(node)/.85)),activity?.strength(point.toArray())??0);
   for(const {material,base,distance,position,kind} of illuminatedMaterials) {
     const wave=diagnostic ? 0 : pulseAt(position);
     maximumWave=Math.max(maximumWave,wave);
-    material.color.copy(base.color).lerp(blue,wave*(kind==="face" ? .15 : .5));
+    material.color.copy(base.color).lerp(blue,wave*(kind==="face" ? .2 : .72));
     const resting=base.userData.restOpacity;
     const inner=base===materialGroups["core-top"] || base===materialGroups["core-side"] || base===materialGroups["core-front"];
     const reveal=inner ? (state.core??0) : state.resolve;
     if(inner)material.depthWrite=state.core===1;
-    material.opacity=weightedOpacity(kind==="face" ? Math.min(1,resting*(1+wave*.18)) : resting+(1-resting)*wave*.45,reveal);
+    material.opacity=weightedOpacity(kind==="face" ? Math.min(1,resting*(1+wave*.22)) : resting+(1-resting)*wave*.65,reveal);
     if(kind==="face") {
-      material.emissive.copy(base.emissive);material.emissiveIntensity=base.emissiveIntensity+wave*(dark ? .35 : .2);
+      material.emissive.copy(base.emissive);material.emissiveIntensity=base.emissiveIntensity+wave*(dark ? .5 : .3);
     }
   }
   assembled.visible=state.resolve>0;arrivalRoot.visible=state.resolve<1;
@@ -406,7 +413,7 @@ function applyState(seconds) {
     material.color.copy(base.color).lerp(blue,wave*.3);
   }
   for(const {mesh,highlight,halo,point,front} of nodeAccents){
-    const pulse=pulseAt(point);halo.visible=pulse>.001;halo.material.opacity=pulse*(dark?.36:.22)*state.resolve;
+    const pulse=pulseAt(point);halo.visible=pulse>.001;halo.material.opacity=pulse*(dark?.55:.38)*state.resolve;
     highlight.material.opacity=(front?.7:.25)*state.resolve;
   }
   for(const {line,from,to,index} of connectionHighlights){
@@ -434,10 +441,22 @@ function applyState(seconds) {
   }
   logo.material.depthWrite=state.logo===1;
   hero.style.setProperty("--grid-opacity",String(gridOpacityAt(seconds,dark)));
-  for(const [index,material] of groundMaterials.entries()) {
-    const arrival=technology ? (index<4 ? smooth(state.arrivals[index].progress) : state.arrivals.slice(0,4).reduce((sum,cell)=>sum+smooth(cell.progress),0)/4) : 1;
-    material.opacity=(diagnostic ? .07 : dark ? .24 : .48)*state.ground*arrival;
+  let groundReveal=0,groundX=0,groundZ=0;
+  for(const shadow of groundObjects){
+    const index=shadow.userData.cellIndex,group=arrivals[index];
+    const response=contactShadow(state.arrivals[index].progress,group.position.y-.5);
+    shadow.position.set(group.position.x,-.018,group.position.z);
+    shadow.scale.set(response.scale,response.scale,1);
+    shadow.material.opacity=(diagnostic?.07:dark?.24:.48)*response.opacity;
+    groundReveal+=response.opacity/groundObjects.length;
+    groundX+=group.position.x*response.opacity;groundZ+=group.position.z*response.opacity;
   }
+  const groundWeight=groundReveal*groundObjects.length;
+  floorReflection.position.set(groundWeight?groundX/groundWeight:0,-.025,groundWeight?groundZ/groundWeight:0);
+  groundMaterials.at(-1).opacity=(diagnostic?.07:dark?.24:.48)*groundReveal;
+  canvas.dataset.shadowSync=String(groundObjects.every(shadow=>{const group=arrivals[shadow.userData.cellIndex];return shadow.position.x===group.position.x&&shadow.position.z===group.position.z;}));
+  canvas.dataset.visibleShadows=String(groundObjects.filter(shadow=>shadow.material.opacity>.001).length);
+  canvas.dataset.floorReflection=groundReveal.toFixed(3);
   if(blurMaterial) {
     blurMaterial.uniforms.amount.value=diagnostic ? 0 : state.logo*(technology ? .85 : .98);
     blurMaterial.uniforms.quiet.value=dark ? .055 : .04;
@@ -458,17 +477,21 @@ function render() {
   uniforms.extent.value.set(1.2*logo.scale.x/(camera.right-camera.left),1.2*logo.scale.y/(camera.top-camera.bottom));
   renderer.autoClear=false;
   camera.layers.set(0);renderer.setRenderTarget(blurTarget);renderer.clear();renderer.render(scene,camera);
-  gaussianMaterial.uniforms.source.value=blurTarget.texture;
-  gaussianMaterial.uniforms.stepSize.value.set(1.1*renderer.getPixelRatio()/canvas.width,0);
-  renderer.setRenderTarget(blurX);renderer.clear();renderer.render(gaussianScene,compositeCamera);
-  gaussianMaterial.uniforms.source.value=blurX.texture;
-  gaussianMaterial.uniforms.stepSize.value.set(0,.55*renderer.getPixelRatio()/blurX.height);
-  renderer.setRenderTarget(blurY);renderer.clear();renderer.render(gaussianScene,compositeCamera);
+  if(uniforms.amount.value>.001){
+    gaussianMaterial.uniforms.source.value=blurTarget.texture;
+    gaussianMaterial.uniforms.stepSize.value.set(1.1*renderer.getPixelRatio()/canvas.width,0);
+    renderer.setRenderTarget(blurX);renderer.clear();renderer.render(gaussianScene,compositeCamera);
+    gaussianMaterial.uniforms.source.value=blurX.texture;
+    gaussianMaterial.uniforms.stepSize.value.set(0,.55*renderer.getPixelRatio()/blurX.height);
+    renderer.setRenderTarget(blurY);renderer.clear();renderer.render(gaussianScene,compositeCamera);
+  }
   renderer.setRenderTarget(null);renderer.clear();renderer.render(compositeScene,compositeCamera);
   renderer.clearDepth();camera.layers.set(1);renderer.render(scene,camera);
   camera.layers.set(2);renderer.render(scene,camera);camera.layers.enableAll();
   renderedFrames++;canvas.dataset.renderedFrames=String(renderedFrames);
-  if(!stateAt(currentTime).done || (canvas.dataset.nonblankSamples && canvas.dataset.theme===theme)) return;
+  const checked=canvas.dataset.nonblankSamples&&canvas.dataset.theme===theme;
+  canvas.dataset.view=view;canvas.dataset.theme=theme;
+  if(!pixelProof||!stateAt(currentTime).done||checked)return;
   const gl = renderer.getContext(), pixels = new Uint8Array(canvas.width*canvas.height*4);
   gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
   let visible = 0;
@@ -478,6 +501,7 @@ function render() {
 }
 
 function resize() {
+  if(morphSurface&&morphState){cleanup.morph(...morphState);return;}
   const {width,height} = container.getBoundingClientRect(), aspect = width/height;
   if(!width || !height || !logo)return;
   const artBounds=container.getBoundingClientRect(),heroBounds=hero.getBoundingClientRect();
@@ -493,10 +517,7 @@ function resize() {
   camera.updateMatrixWorld();
   container.dataset.pointerTargets=JSON.stringify(nodeAccents.filter(node=>node.front).map(({point})=>{const p=point.clone().project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2};}));
   if(fallback) {renderFallback();return;}
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.75)); renderer.setSize(width,height,false);
-  blurTarget.setSize(canvas.width,canvas.height);
-  blurX.setSize(Math.max(1,Math.round(canvas.width/2)),Math.max(1,Math.round(canvas.height/2)));
-  blurY.setSize(blurX.width,blurX.height);render();
+  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],width,height,Math.min(devicePixelRatio,1.75));render();
 }
 
 function stopMotion() {cancelAnimationFrame(raf);raf=0;canvas.dataset.continuousRendering="false";}
@@ -507,7 +528,7 @@ function tick(now) {
   if(elapsed<duration) raf=requestAnimationFrame(tick);else {stopMotion();activity?.arm();}
 }
 function play() {
-  morphState=null;
+  morphState=null;morphSurface=null;
   stopMotion();
   activity?.restart();
   if(fallback || reduceMotion() || options.immediate) {applyState(duration);render();activity?.arm();return;}
@@ -634,10 +655,14 @@ async function init() {
 }
 cleanup.ready=init();
 cleanup.pause=()=>{stopMotion();activity?.setEnabled(false);};
+cleanup.beginMorph=(width,height)=>{
+  cleanup.pause();morphSurface={width:Math.ceil(width),height:Math.ceil(height)};
+};
 cleanup.morph=(mix,width,height)=>{
   if(disposed||fallback||!logo||!blurTarget)return;
   morphState=[mix,width,height];
-  stopMotion();activity?.setEnabled(false);currentTime=duration;
+  if(!morphSurface)cleanup.beginMorph(width,height);
+  currentTime=duration;
   assembled.visible=false;arrivalRoot.visible=true;proof.visible=false;
   connectionHighlights.forEach(({line})=>line.visible=false);
   const dark=theme==="dark";
@@ -660,6 +685,7 @@ cleanup.morph=(mix,width,height)=>{
   camera.left=-framing*aspect/2;camera.right=framing*aspect/2;camera.top=framing/2;camera.bottom=-framing/2;camera.updateProjectionMatrix();camera.updateMatrixWorld();
   arrivals.forEach(group=>group.children.forEach(child=>{if(child.geometry?.type==="SphereGeometry"){const front=child.position.clone().add(group.position).sub(aim).dot(direction)>-.1;child.scale.setScalar(framing/height*(front?2.25:1.5)/.029);}}));
   groundObjects.forEach((mesh,index)=>mesh.position.set(positions[index].x,-.018,positions[index].z));
+  floorReflection.position.set(0,-.025,0);
   const bounds=canvas.dataset.logoAlphaBounds.split(",").map(Number),image=logo.material.map.image;
   const alphaWidth=(bounds[2]-bounds[0]+1)/image.width,alphaHeight=(bounds[3]-bounds[1]+1)/image.height;
   const right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),up=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
@@ -674,8 +700,7 @@ cleanup.morph=(mix,width,height)=>{
   const endpoint=anchor.clone().addScaledVector(up,-alphaHeight*scale/2-.045);
   coreConnection.geometry.setFromPoints([coreCentre,coreCentre.clone().lerp(endpoint,smooth((mix-.3)/.6))]);coreConnection.computeLineDistances();coreConnection.material.opacity=coreReveal*.6;
   groundMaterials.forEach(material=>material.opacity=dark?.24:.48);
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer.setSize(width,height,false);
-  blurTarget.setSize(canvas.width,canvas.height);blurX.setSize(Math.max(1,Math.round(canvas.width/2)),Math.max(1,Math.round(canvas.height/2)));blurY.setSize(blurX.width,blurX.height);
+  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],morphSurface.width,morphSurface.height,Math.min(devicePixelRatio,1.75));
   canvas.dataset.transitionMix=mix.toFixed(4);render();
 };
 return cleanup;

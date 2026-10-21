@@ -9,6 +9,7 @@ export type CubeKind = "enclosure" | "lot" | "philosophy";
 type Options = {kind: CubeKind; active: boolean; sequence?:number};
 
 export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options) {
+  const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   canvas.hidden=false;
   const scene=new THREE.Scene();
   const camera=new THREE.OrthographicCamera(-2,2,2,-2,.1,40);
@@ -23,6 +24,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   const duration=options.kind==="philosophy"?5:options.kind==="enclosure"?sequenceDelay+6.5:2.4;
   const ease=(value:number)=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
   let renderer: THREE.WebGLRenderer | undefined;
+  let prepared=false;
   let activity:ReturnType<typeof createLatticeActivity>|undefined;
   let frame=0, elapsed=0, previous=0, visible=false, disposed=false, fallback=false;
   const motion=matchMedia("(prefers-reduced-motion: reduce)");
@@ -72,10 +74,12 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(-4,6,4);scene.add(key);
   const fill=new THREE.DirectionalLight(0x81c9ff,.65);fill.position.set(4,1,3);scene.add(fill);
   let assetMaterial:THREE.MeshBasicMaterial | undefined;
+  let resolveAsset:()=>void=()=>{};
+  const assetReady=new Promise<void>(resolve=>{resolveAsset=resolve;});
   const assetImage=options.kind==="enclosure"?host.querySelector("img"):null;
   if(assetImage){
     new THREE.TextureLoader().load(assetImage.currentSrc || assetImage.src,texture=>{
-      if(disposed){texture.dispose();return;}
+      if(disposed){texture.dispose();resolveAsset();return;}
       track(texture);texture.colorSpace=THREE.SRGBColorSpace;
       assetMaterial=track(new THREE.MeshBasicMaterial({map:texture,transparent:true,opacity:0,alphaTest:.03,depthWrite:true,depthTest:true,toneMapped:false}));
       const source=document.createElement("canvas");source.width=source.height=256;
@@ -91,9 +95,9 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
       artwork.renderOrder=-1;
       camera.updateMatrixWorld();artwork.quaternion.copy(camera.quaternion);
       // Keep the artwork stationary inside the turning enclosure, with real depth occlusion.
-      scene.add(artwork);host.dataset.assetLayer="three";state();render();
-    });
-  }
+      scene.add(artwork);resolveAsset();
+    },undefined,()=>{resolveAsset();});
+  }else resolveAsset();
 
   function palette(){
     for(const {material,role,faceKind} of materials){
@@ -127,11 +131,12 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   function render(){
     if(disposed)return;
     if(fallback){renderFallback();return;}
+    if(!prepared)return;
     renderer?.render(scene,camera);
     canvas.dataset.ready="true";canvas.dataset.theme=dark()?"dark":"light";
     canvas.dataset.animationTime=elapsed.toFixed(2);
     canvas.dataset.settled=String(elapsed>=duration || motion.matches);
-    if(renderer && !canvas.dataset.nonblankSamples && (elapsed>=duration || motion.matches)) {
+    if(pixelProof && renderer && !canvas.dataset.nonblankSamples && (elapsed>=duration || motion.matches)) {
       const gl=renderer.getContext(),pixels=new Uint8Array(canvas.width*canvas.height*4);
       gl.readPixels(0,0,canvas.width,canvas.height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
       let count=0;for(let i=3;i<pixels.length;i+=64)if(pixels[i]>20)count++;
@@ -194,7 +199,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function resume(){
     stop();if(motion.matches){elapsed=duration;state();render();return;}
-    if(visible && !document.hidden && !fallback){if(elapsed<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else activity?.arm();}
+    if(prepared && visible && !document.hidden && !fallback){if(elapsed<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else activity?.arm();}
   }
   function resize(){
     const {width,height}=host.getBoundingClientRect();if(!width || !height)return;
@@ -231,8 +236,23 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);canvas.addEventListener("webglcontextlost",lost);
   canvas.dataset.kind=options.kind;canvas.dataset.cubes=String(cubes.length);state();palette();resize();
   activity?.setEnabled(!motion.matches);
+  let cancelPreparation:()=>void=()=>{};
+  const cancelled=new Promise<void>(resolve=>{cancelPreparation=resolve;});
+  const preparing=(async()=>{
+    await assetReady;if(disposed)return;
+    if(!fallback&&renderer){
+      const visibility=new Map<THREE.Object3D,boolean>();scene.traverse(object=>{visibility.set(object,object.visible);object.visible=true;});
+      try{await renderer.compileAsync(scene,camera);}catch{fallback=true;}
+      finally{visibility.forEach((value,object)=>{object.visible=value;});}
+    }
+    if(disposed)return;prepared=true;
+    if(assetMaterial&&!fallback)host.dataset.assetLayer="three";
+    state();render();resume();
+  })();
+  const ready=Promise.race([preparing,cancelled]);
   return {
+    ready,
     setActive(value: boolean){active=value;palette();},
-    dispose(){disposed=true;stop();activity?.dispose();sizing.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",lost);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();},
+    dispose(){disposed=true;cancelPreparation();resolveAsset();stop();activity?.dispose();sizing.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",lost);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();},
   };
 }
