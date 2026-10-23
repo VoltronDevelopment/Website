@@ -1,3 +1,4 @@
+import {optimizedAsset} from "./optimized-assets";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import measuredBounds from "./brand-art-bounds.json";
@@ -33,7 +34,7 @@ function findAsset(family:string,theme:"light"|"dark") {
 
 export function readBrandImage(family:string,theme:"light"|"dark"="light"):string|null {
   const asset=findAsset(family,theme);
-  return asset&&!asset.filename.toLowerCase().endsWith(".svg")?asset.url:null;
+  return asset&&!asset.filename.toLowerCase().endsWith(".svg")?optimizedAsset(asset.url):null;
 }
 
 // Discover supplied batches by manifest so subsequent artwork can be added without a new registry.

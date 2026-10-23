@@ -1,3 +1,5 @@
+import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
+import {optimizedAsset} from "@/lib/optimized-assets";
 import * as THREE from "three";
 import {RoomEnvironment} from "three/addons/environments/RoomEnvironment.js";
 import {LineMaterial} from "three/addons/lines/LineMaterial.js";
@@ -6,7 +8,7 @@ import {createLatticeActivity} from "../home/lattice-activity";
 import {junctionPulse} from "../home/lattice-lighting";
 import {commonsRoot,cultureCarryHeight,cultureDestination,cultureSize,durations,handContacts,heroCells,humanHeroState,smooth,type HeroCell,type HumanHeroKind} from "./human-hero-timeline";
 
-const assetPaths={commons:"/Brand%20Assets/voltron%20commons/Frosted%20leaf%20circuit%20emblem.png",culture:"/Brand%20Assets/voltron%20people%20culture/Frosted%20hand%20corrected%20grip%20v2.png"};
+const assetPaths={commons:optimizedAsset("/Brand%20Assets/voltron%20commons/Frosted%20leaf%20circuit%20emblem.png"),culture:optimizedAsset("/Brand%20Assets/voltron%20people%20culture/Frosted%20hand%20corrected%20grip%20v2.png")};
 const pairs=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
 const faces:{indices:number[];normal:number[];kind:GlassFace}[]=[
   {indices:[1,3,7,5],normal:[1,0,0],kind:"side"},{indices:[0,4,6,2],normal:[-1,0,0],kind:"rear"},
@@ -20,6 +22,7 @@ type Node={mesh:THREE.Mesh<THREE.SphereGeometry,THREE.MeshBasicMaterial>;halo:TH
 type Cell={group:THREE.Group;panes:Pane[];arrival:THREE.Group;arrivalMaterials:THREE.Material[];arrivalNodes:THREE.Mesh[];spec:HeroCell;shadow:THREE.Mesh<THREE.PlaneGeometry,THREE.MeshBasicMaterial>};
 
 export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HumanHeroKind){
+  const quality=createRenderQuality(canvas,1.75);
   const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   const cells=heroCells(kind),duration=durations[kind],culture=kind==="culture";
   const resources:{dispose:()=>void}[]=[];
@@ -237,12 +240,13 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
     const pixel=extent/height;
     nodeMap.forEach(({mesh,halo,front})=>{mesh.scale.setScalar(pixel*(front?2.25:1.5));halo.scale.setScalar(pixel*17);});
     [...cellRenders,...(held?[held]:[])].forEach(cell=>cell.arrivalNodes.forEach(node=>node.scale.setScalar(pixel*2.1)));
-    renderer?.setPixelRatio(Math.min(devicePixelRatio,1.75));renderer?.setSize(width,height,false);blurTarget?.setSize(canvas.width,canvas.height);
+    renderer?.setPixelRatio(quality.ratio);renderer?.setSize(width,height,false);blurTarget?.setSize(canvas.width,canvas.height);
     if(composite)((composite.material as THREE.ShaderMaterial).uniforms.pixel.value as THREE.Vector2).set(1/canvas.width,1/canvas.height);
     sized=true;render();
   }
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function tick(now:number){
+    if(quality.sample(now))resize();
     if(disposed||!visible||document.hidden){stop();return;}
     time=Math.min(duration,time+(previous?(now-previous)/1000:0));previous=now;state();render();
     if(time<duration)frame=requestAnimationFrame(tick);else{stop();activity?.arm();}
@@ -269,8 +273,13 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
       artworkTexture.colorSpace=THREE.SRGBColorSpace;makeArtwork(artworkTexture);
       if(new URLSearchParams(location.search).get("renderer")==="static")throw new Error("Static artwork requested");
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
+      await yieldToBrowser();if(disposed)return;
       const environment=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);scene.environment=track(pmrem.fromScene(environment,.12)).texture;environment.dispose();pmrem.dispose();
+      await yieldToBrowser();if(disposed)return;
       createComposite();
+      camera.layers.enableAll();await renderer.compileAsync(scene,camera);
+      if(compositeScene&&compositeCamera)await renderer.compileAsync(compositeScene,compositeCamera);
+      if(disposed)return;
       const nodes=[...nodeMap.values()],indices=new Map(nodes.map((n,i)=>[key(n.point),i]));
       const links=[...edgeMap.values()].map(({a,b})=>[indices.get(key(a))!,indices.get(key(b))!] as [number,number]);
       if(culture){const box=corners(cultureSize).map(p=>p.add(new THREE.Vector3(...cultureDestination)));pairs.forEach(([a,b])=>links.push([indices.get(key(box[a]))!,indices.get(key(box[b]))!]));}

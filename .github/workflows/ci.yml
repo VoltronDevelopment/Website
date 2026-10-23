@@ -42,6 +42,29 @@ jobs:
         env:
           NEXT_PUBLIC_SITE_URL: https://www.voltronlattice.com
 
+      - name: Performance asset and bundle budgets
+        run: node scripts/check-performance-budgets.mjs
+
+      - name: Install performance browser
+        run: |
+          npm install --no-save --package-lock=false playwright@1.62.1
+          npx playwright install --with-deps chromium
+
+      - name: Browser performance regression checks
+        run: node scripts/performance-audit-20261023.cjs
+        env:
+          AUDIT_CI: "1"
+          AUDIT_BROWSER: chromium
+          AUDIT_DIST_DIR: .next
+          AUDIT_OUTPUT_DIR: .audit-logs/performance-ci
+
+      - name: Save performance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-evidence
+          path: .audit-logs/performance-ci
+
   website-dependency-audit:
     name: Website dependency audit
     runs-on: ubuntu-latest

@@ -23,7 +23,7 @@ function fixture(initialTime: number | null = null) {
   const rect = (x: number, width: number) => ({ left: x, top: 44, width, height: 280, right: x + width, bottom: 324 });
   const anchors = [0, 1, 2, 3].map(index => ({ getBoundingClientRect: () => rect(narrow ? 0 : index * 290, narrow ? 320 : 250) }));
   const canvas = { dataset: {} as Record<string, string>, hidden: false, addEventListener: (name: string, cb: (event: Event) => void) => listeners.set(name, cb), removeEventListener: (name: string) => listeners.delete(name) };
-  const host = { dataset: {} as Record<string, string>, querySelectorAll: () => anchors, getBoundingClientRect: () => ({ left: 0, top: 0, width: narrow ? 320 : 1120, height: 372 }) };
+  const host = { dataset: {} as Record<string, string>, querySelectorAll: () => anchors, getBoundingClientRect: () => ({ left: 0, top: 0, width: narrow ? 320 : 1120, height: narrow ? 372 : 768 }) };
   const onState = vi.fn(), onReady = vi.fn();
   controller = mountLotStory(canvas as unknown as HTMLCanvasElement, host as unknown as HTMLDivElement, { initialTime, onState, onReady });
   return { canvas, host, onState, onReady, scene: controller };
@@ -53,6 +53,25 @@ beforeEach(() => {
 afterEach(() => { controller?.dispose(); vi.unstubAllGlobals(); });
 
 describe("synchronized lot scene controller", () => {
+  it("keeps stations and conveyor on shared world axes with diagonal recession", async () => {
+    const { scene } = fixture(); await scene.ready;
+    const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;
+    const camera = gpu.render.mock.lastCall?.[1] as THREE.OrthographicCamera;
+    const groups = rendered.children.filter(child => child instanceof THREE.Group);
+    const stations = groups.slice(0, 4);
+    expect(groups[4].quaternion.toArray()).toEqual([0, 0, 0, 1]);
+    for (let i = 1; i < 4; i++) {
+      expect(stations[i].position.y).toBeCloseTo(stations[0].position.y);
+      expect(stations[i].position.z).toBeCloseTo(stations[0].position.z);
+      expect(stations[i].position.x).toBeGreaterThan(stations[i - 1].position.x);
+    }
+    const first = stations[0].position.clone().project(camera), last = stations[3].position.clone().project(camera);
+    expect(last.x).toBeGreaterThan(first.x); expect(last.y).toBeGreaterThan(first.y + .1);
+    for (const station of stations) for (let corner = 0; corner < 8; corner++) {
+      const p = station.position.clone().add(new THREE.Vector3(corner & 1 ? .825 : -.825, corner & 2 ? .825 : -.825, corner & 4 ? .825 : -.825)).project(camera);
+      expect(Math.abs(p.x)).toBeLessThan(.99); expect(Math.abs(p.y)).toBeLessThan(.99);
+    }
+  });
   it("plays once, keeps all four snapshots stationary and stops at the completed view", async () => {
     const { scene, canvas, onState } = fixture(); await scene.ready;
     const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;

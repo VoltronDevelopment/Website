@@ -1,3 +1,6 @@
+import {optimizedAsset} from "@/lib/optimized-assets";
+import {updateLineDistance} from "../performance/line-distance";
+import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import * as homeTimeline from "./hero-timeline";
@@ -10,6 +13,7 @@ import {homeCells,cellsAt} from "../navigation/lattice-transition";
 const {smooth,gridOpacityAt}=homeTimeline;
 
 export function mountHero(canvas, container, hero, variant="home", options={}) {
+const quality=createRenderQuality(canvas,1.75);
 const technology=variant==="technology";
 const {duration,offsets,stateAt}=technology ? technologyTimeline : homeTimeline;
 canvas.hidden=false;
@@ -54,7 +58,7 @@ let inView = true;
 let activity;
 let morphState=null;
 let morphSurface=null;
-const markUrl = "/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png";
+const markUrl = optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png");
 const reduceMotion=()=>motionPreference.matches || new URLSearchParams(location.search).get("motion")==="reduced";
 const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
 canvas.dataset.composition=variant;
@@ -436,7 +440,7 @@ function applyState(seconds) {
     const endpoint=coreCentre.clone().lerp(connectionEnd,state.connection);
     const positions=coreConnection.geometry.attributes.position;
     positions.setXYZ(1,endpoint.x,endpoint.y,endpoint.z);positions.needsUpdate=true;
-    coreConnection.computeLineDistances();coreConnection.geometry.computeBoundingSphere();
+    updateLineDistance(coreConnection.geometry);coreConnection.geometry.computeBoundingSphere();
     canvas.dataset.coreOpacity=state.core.toFixed(3);canvas.dataset.connectionProgress=state.connection.toFixed(3);
   }
   logo.material.depthWrite=state.logo===1;
@@ -517,11 +521,12 @@ function resize() {
   camera.updateMatrixWorld();
   container.dataset.pointerTargets=JSON.stringify(nodeAccents.filter(node=>node.front).map(({point})=>{const p=point.clone().project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2};}));
   if(fallback) {renderFallback();return;}
-  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],width,height,Math.min(devicePixelRatio,1.75));render();
+  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],width,height,quality.ratio,quality.blurScale);render();
 }
 
 function stopMotion() {cancelAnimationFrame(raf);raf=0;canvas.dataset.continuousRendering="false";}
 function tick(now) {
+  if(quality.sample(now))resize();
   if(disposed || !inView || document.hidden) {stopMotion();return;}
   const elapsed=Math.min(duration,(now-startTime)/1000);
   applyState(elapsed);render();
@@ -531,7 +536,7 @@ function play() {
   morphState=null;morphSurface=null;
   stopMotion();
   activity?.restart();
-  if(fallback || reduceMotion() || options.immediate) {applyState(duration);render();activity?.arm();return;}
+  if(fallback || reduceMotion() || options.immediate || performance.now()>2000) {applyState(duration);render();activity?.arm();return;}
   applyState(0);render();startTime=performance.now();canvas.dataset.continuousRendering="true";raf=requestAnimationFrame(tick);
 }
 
@@ -630,7 +635,7 @@ async function init() {
     hemisphere=new THREE.HemisphereLight(0xe7f4ff,0x7192b3,1.8);scene.add(hemisphere);
     keyLight=new THREE.DirectionalLight(0xffffff,2.5);keyLight.position.set(-3,6,5);scene.add(keyLight);
     const fill=new THREE.DirectionalLight(0xb5dfff,.7);fill.position.set(4,3,-2);scene.add(fill);
-    createGeometry();createGround();createArrivals();createCore();
+    createGeometry();await yieldToBrowser();if(disposed)return;createGround();createArrivals();await yieldToBrowser();if(disposed)return;createCore();
     scene.traverse(object=>{if(object.isLight)object.layers.enableAll();});
     const texture=options.shared?.texture ?? tracked(await new THREE.TextureLoader().loadAsync(markUrl));
     if(disposed)return;
@@ -644,7 +649,7 @@ async function init() {
     activity=createLatticeActivity({host:container,points:nodePoints.map(p=>p.toArray()),links:[...edges.values()].map(([a,b])=>[nodeKeys.get(pointKey(a)),nodeKeys.get(pointKey(b))]),
       project:index=>{const p=nodePoints[index].clone().project(camera),bounds=container.getBoundingClientRect();return {x:(p.x+1)*bounds.width/2,y:(1-p.y)*bounds.height/2,visible:nodePoints[index].clone().sub(target).dot(direction)>-.1};},
       onFrame:()=>{if(disposed)return;applyState(currentTime);render();}});
-    activity.setEnabled(!reduceMotion());palette();resize();bindControls();canvas.dataset.ready="true";play();
+    activity.setEnabled(!reduceMotion());palette();await yieldToBrowser();if(disposed)return;camera.layers.enableAll();await renderer.compileAsync(scene,camera);await yieldToBrowser();if(disposed)return;await renderer.compileAsync(compositeScene,compositeCamera);await renderer.compileAsync(gaussianScene,compositeCamera);if(disposed)return;resize();bindControls();canvas.dataset.ready="true";play();
   } catch(error) {
     if(disposed)return;
     fallback=true;stopMotion();canvas.dataset.fallbackReason=error.message;
@@ -698,9 +703,9 @@ cleanup.morph=(mix,width,height)=>{
   for(const {material,base}of illuminatedMaterials)if(Object.keys(materialGroups).some(key=>key.startsWith("core-")&&materialGroups[key]===base))material.opacity=coreReveal*.96;
   coreEdge.material.opacity=coreReveal*.8;coreConnection.visible=mix>.25;
   const endpoint=anchor.clone().addScaledVector(up,-alphaHeight*scale/2-.045);
-  coreConnection.geometry.setFromPoints([coreCentre,coreCentre.clone().lerp(endpoint,smooth((mix-.3)/.6))]);coreConnection.computeLineDistances();coreConnection.material.opacity=coreReveal*.6;
+  coreConnection.geometry.setFromPoints([coreCentre,coreCentre.clone().lerp(endpoint,smooth((mix-.3)/.6))]);updateLineDistance(coreConnection.geometry);coreConnection.material.opacity=coreReveal*.6;
   groundMaterials.forEach(material=>material.opacity=dark?.24:.48);
-  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],morphSurface.width,morphSurface.height,Math.min(devicePixelRatio,1.75));
+  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],morphSurface.width,morphSurface.height,quality.ratio);
   canvas.dataset.transitionMix=mix.toFixed(4);render();
 };
 return cleanup;

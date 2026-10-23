@@ -1,4 +1,5 @@
 "use client";
+import {optimizedAsset} from "@/lib/optimized-assets";
 
 import Image from "next/image";
 import { LockKeyhole, X } from "lucide-react";
@@ -150,8 +151,8 @@ function AnimatedBrandMark({ onClockVisible }: { onClockVisible: (visible: boole
       <div className={`hero-orbit ${phase >= 1 ? "orbiting" : ""}`}>
         <div className="hero-rings" aria-hidden="true"><span/><span/><span/></div>
         <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
-          <Image className="theme-logo-light hero-logo-img" src="/Brand%20Assets/logo/light%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
-          <Image className="theme-logo-dark hero-logo-img" src="/Brand%20Assets/logo/dark%20rectangle.png" alt="" width={120} height={120} priority unoptimized/>
+          <Image className="theme-logo-light hero-logo-img" src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} alt="" width={120} height={120} unoptimized/>
+          <Image className="theme-logo-dark hero-logo-img" src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} alt="" width={120} height={120} unoptimized/>
           <span className="hero-logo-pulse" aria-hidden="true"/><span className="hero-logo-glow" aria-hidden="true"/>
         </div>
         <div className="orbit-spinner">

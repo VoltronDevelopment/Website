@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Activity, Award, CheckCircle2, FileSearch, FileText, FlaskConical, Gauge, GitBranch, Search, Settings2, ShieldCheck, UserRound, Wrench } from "lucide-react";
 import { Cube, ProcessFlow } from "./ProcessFlow";
+import { EvidenceConnections } from "./EvidenceConnections";
 const sources = [
   { title: "SCADA evidence", icon: Activity, detail: "Process readings and timestamps are associated with the equipment and lot that produced them." },
   { title: "Inspection", icon: FileSearch, detail: "Inspection results retain their requirements, method and inspection context." },
@@ -15,7 +16,7 @@ const sources = [
 export function EvidenceComposer() {
   const [selected, setSelected] = useState(0);
   const sourceButtons = (start: number, end: number) => <div className="evidence-sources">{sources.slice(start, end).map((source, index) => { const Icon = source.icon; return <button key={source.title} type="button" aria-pressed={selected === start + index} onClick={() => setSelected(start + index)}><Icon size={22} aria-hidden="true"/>{source.title}</button>; })}</div>;
-  return <><div className="evidence-layout">{sourceButtons(0, 4)}<div className="evidence-core"><Cube active/><h3>Part + Lot Context</h3><p>Quality evidence, connected.</p></div>{sourceButtons(4, 8)}</div><p className="evidence-detail" aria-live="polite">{sources[selected].detail}</p><p className="caption centered">Smart at the core. Compatible at the edges.</p></>;
+  return <><div className="evidence-layout"><EvidenceConnections selected={selected}/>{sourceButtons(0, 4)}<div className="evidence-core"><Cube active/><h3>Part + Lot Context</h3><p>Quality evidence, connected.</p></div>{sourceButtons(4, 8)}</div><p className="evidence-detail" aria-live="polite">{sources[selected].detail}</p><p className="caption centered">Smart at the core. Compatible at the edges.</p></>;
 }
 const agents = [
   { name: "KAVO", role: "Operator", icon: UserRound, text: "Helps operators with work instructions, checks and next steps.", example: "Which checks apply before this lot can enter the next operation?" },

@@ -1,3 +1,4 @@
+import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -9,12 +10,14 @@ import {
   alphaStateAt, alphaUnloadY, alphaUnloadingX, type AlphaState,
 } from "./alpha-process-timeline";
 
-type Options = { paused: boolean; onStage: (stage: number) => void; onReady: () => void };
+type Options = { paused: boolean; onStage: (stage: number) => void; onReady: () => void; onEnded?:()=>void };
 export type AlphaProcessController = { setPaused: (paused: boolean) => void; replay: () => void; dispose: () => void };
 const liquidY = 1.82;
 const railY = 5.28;
 
-export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): AlphaProcessController {
+export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): Promise<AlphaProcessController> {
+  const quality=createRenderQuality(canvas);
+  await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
   try {
     if (new URLSearchParams(location.search).get("renderer") === "static") throw new Error("Static illustration requested");
@@ -293,6 +296,7 @@ export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElemen
   const savingData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
   let paused = options.paused, visible = false, disposed = false, lostContext = false;
   let elapsed = 0, previous = 0, frame = 0, lastStage = -2, ready = false;
+  let revealFrame = 0;
   let pixelWidth = 0, pixelHeight = 0, lastDpr = 0;
   const silver = new THREE.Color(0xc9d4db), graphite = new THREE.Color(0x29343e);
   const isDark = () => document.documentElement.dataset.theme === "dark";
@@ -349,7 +353,7 @@ export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElemen
     wheels.forEach(wheel => { wheel.rotation.z = state.x * 2; });
     jaws.forEach((jaw, i) => { jaw.rotation.z = (i === 0 ? -1 : 1) * state.jawOpen * .42; });
     baths.forEach((bath, i) => {
-      bath.surface.uniforms.uTime.value = still ? 0 : elapsed;
+      bath.surface.uniforms.uTime.value = !still && state.stage === i + 1 ? elapsed : 0;
       bath.surface.uniforms.uImpact.value = !still && state.stage === i + 1 ? state.ripple : 0;
     });
     droplets.forEach((drop, i) => {
@@ -375,29 +379,40 @@ export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElemen
     if (disposed || lostContext || !pixelWidth || !pixelHeight) return;
     apply(alphaStateAt(elapsed));
     renderer.render(scene, camera);
-    if (!ready) { ready = true; options.onReady(); }
+    if (!ready && !revealFrame) {
+      // Commit the fitted first frame before revealing it or advancing the clock.
+      revealFrame = requestAnimationFrame(() => {
+        revealFrame = 0;
+        if (disposed || lostContext) return;
+        ready = true;
+        options.onReady();
+        resume();
+      });
+    }
   }
   function stop() {
     cancelAnimationFrame(frame); frame = 0; previous = 0;
     canvas.dataset.running = "false";
   }
   function tick(now: number) {
+    if(quality.sample(now)){renderer.shadowMap.enabled=quality.shadows;resize();}
     frame = 0;
     if (disposed || !visible || document.hidden || paused || isStatic() || lostContext) { stop(); return; }
-    elapsed += previous ? Math.min((now - previous) / 1000, .1) : 0;
+    elapsed = Math.min(alphaDuration,elapsed+(previous ? Math.min((now - previous) / 1000, .1) : 0));
     previous = now;
     render();
+    if(elapsed>=alphaDuration){paused=true;stop();options.onEnded?.();return;}
     canvas.dataset.running = "true";
     frame = requestAnimationFrame(tick);
   }
   function resume() {
     stop(); render();
-    if (!disposed && visible && !document.hidden && !paused && !isStatic() && !lostContext) frame = requestAnimationFrame(tick);
+    if (ready && !disposed && visible && !document.hidden && !paused && !isStatic() && !lostContext) frame = requestAnimationFrame(tick);
   }
   function resize() {
-    const { width, height } = host.getBoundingClientRect();
+    const width = host.clientWidth, height = host.clientHeight;
     if (!width || !height) return;
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const dpr = quality.ratio;
     const w = Math.round(width), h = Math.round(height);
     if (w !== pixelWidth || h !== pixelHeight || dpr !== lastDpr) {
       pixelWidth = w; pixelHeight = h; lastDpr = dpr;
@@ -426,6 +441,8 @@ export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElemen
     positionAlphaLabels(host, [alphaLoadingX, ...alphaStations, alphaUnloadingX].map(x => alphaStationPosition(camera, x)));
     palette(); resume();
   }
+  await yieldToBrowser();
+  await renderer.compileAsync(scene,camera);
   const resizing = new ResizeObserver(resize); resizing.observe(host);
   const themes = new MutationObserver(onTheme); themes.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   const view = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; resume(); }, { threshold: .08 }); view.observe(host);
@@ -439,7 +456,7 @@ export function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElemen
     setPaused(value) { paused = value; resume(); },
     replay() { paused = false; elapsed = 0; resume(); },
     dispose() {
-      disposed = true; stop(); resizing.disconnect(); themes.disconnect(); view.disconnect();
+      disposed = true; stop(); cancelAnimationFrame(revealFrame); resizing.disconnect(); themes.disconnect(); view.disconnect();
       motion.removeEventListener("change", resume); document.removeEventListener("visibilitychange", onVisibility);
       canvas.removeEventListener("webglcontextlost", onContextLost); canvas.removeEventListener("webglcontextrestored", onContextRestored);
       geometries.forEach(value => value.dispose()); materials.forEach(value => value.dispose()); textures.forEach(value => value.dispose());

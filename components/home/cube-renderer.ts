@@ -1,3 +1,4 @@
+import {createRenderQuality} from "../performance/scene-policy";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
@@ -9,6 +10,7 @@ export type CubeKind = "enclosure" | "lot" | "philosophy";
 type Options = {kind: CubeKind; active: boolean; sequence?:number};
 
 export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options) {
+  const quality=createRenderQuality(canvas,1.5);
   const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   canvas.hidden=false;
   const scene=new THREE.Scene();
@@ -191,6 +193,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     });
   }
   function tick(now: number){
+    if(quality.sample(now))resize();
     if(!visible || document.hidden || disposed){stop();return;}
     const asset=host.querySelector("img");
     if(options.kind==="enclosure" && asset && !asset.complete){previous=0;frame=requestAnimationFrame(tick);return;}
@@ -209,7 +212,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     nodeAccents.forEach(({node,halo})=>{node.scale.setScalar(extent/height*2.25/.026);halo.scale.setScalar(extent/height*17);});
     camera.updateMatrixWorld();
     host.dataset.pointerTargets=JSON.stringify(nodeAccents.filter(({point})=>point.dot(camera.position)>.1).map(({point})=>{const p=point.clone().project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2};}));
-    renderer?.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer?.setSize(width,height,false);render();
+    renderer?.setPixelRatio(quality.ratio);renderer?.setSize(width,height,false);render();
   }
   function preference(){activity?.setEnabled(!motion.matches);if(motion.matches){elapsed=duration;state();}resume();render();}
   function visibility(){activity?.setVisible(visible&&!document.hidden);if(document.hidden)stop();else resume();}

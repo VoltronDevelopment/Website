@@ -1,4 +1,6 @@
+import {createRenderQuality} from "../performance/scene-policy";
 import * as THREE from "three";
+import { capabilityCubeCamera, capabilityGlassVisibility as glassVisibility, capabilityEdgeWidth } from "./capability-cube-style";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createFactoryHousing, createHousingParticles } from "./factory-housing";
 import { factorySystemsDuration, factorySystemsStateAt, type FactoryPhase } from "./factory-systems-timeline";
@@ -18,9 +20,9 @@ type Cube = {
   artwork?: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>;
 };
 
-const glassVisibility = (kind: GlassFace) => kind === "front" ? .26 : kind === "rear" || kind === "bottom" ? .3 : .36;
 
 export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): FactorySystemsController {
+  const quality=createRenderQuality(canvas,1.5);
   const cards = Array.from(host.querySelectorAll<HTMLElement>(".factory-system"));
   const anchors = Array.from(host.querySelectorAll<HTMLElement>("[data-system-anchor]"));
   const images = Array.from(host.querySelectorAll<HTMLImageElement>(".factory-system-fallback img"));
@@ -42,7 +44,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
 
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-5, 5, 3, -3, .1, 100);
-  camera.position.set(12, 9.6, 14); camera.lookAt(0, 0, 0); camera.updateMatrixWorld();
+  camera.position.set(...capabilityCubeCamera); camera.lookAt(0, 0, 0); camera.updateMatrixWorld();
   const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0);
   const up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1);
   const forward = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2);
@@ -79,10 +81,10 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   metal.customProgramCacheKey = () => "factory-housing-dissolve-v1";
   const housingGeometry = geometry(createFactoryHousing());
   const housing = new THREE.Mesh(housingGeometry, metal); scene.add(housing);
-  const particleGeometry = geometry(createHousingParticles(housingGeometry));
+  const particleGeometry = geometry(createHousingParticles(housingGeometry, 1400));
   const particleUniforms = {
     uScan: scan, uSeparate: { value: 0 }, uOpacity: { value: 1 }, uGhost: { value: 0 }, uSourceScale: { value: 1 },
-    uPointSize: { value: 2.5 }, uSource: { value: source },
+    uPointSize: { value: 8 }, uGlow: { value: 0 }, uSource: { value: source },
     uDest0: { value: destinations[0] }, uDest1: { value: destinations[1] }, uDest2: { value: destinations[2] },
     uRight: { value: right }, uUp: { value: up }, uForward: { value: forward },
     uColor: { value: new THREE.Color(0x3284d7) },
@@ -106,11 +108,20 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
         gl_PointSize=uPointSize*(.72+aSeed*.48);
       }`,
-    fragmentShader: `uniform vec3 uColor; varying float vAlpha; varying float vSeed;
-      void main(){float distanceToCentre=length(gl_PointCoord-.5);
-        float alpha=(1.-smoothstep(.19,.5,distanceToCentre))*vAlpha*(.52+vSeed*.48);
+    fragmentShader: `uniform vec3 uColor; uniform float uGlow; uniform float uSeparate; varying float vAlpha; varying float vSeed;
+      void main(){
+        vec2 p=gl_PointCoord-.5;
+        float angle=sin(uSeparate*3.14159265)*(vSeed-.5)*.7;
+        p=mat2(cos(angle),-sin(angle),sin(angle),cos(angle))*p;
+        float hex=max(abs(p.x)/.28,(abs(p.x)*.57735+abs(p.y))/.3233);
+        float core=1.-smoothstep(.9,1.,hex);
+        float halo=exp(-dot(p,p)*22.)*.32*uGlow;
+        float top=step(p.y,-abs(p.x)*.57735);
+        vec3 face=mix(uColor*.68,uColor,step(0.,p.x));
+        face=mix(face,mix(uColor,vec3(.87,.96,1.),.68),top);
+        float alpha=max(core,halo)*vAlpha*(.72+vSeed*.28);
         if(alpha<.015) discard;
-        gl_FragColor=vec4(mix(uColor,vec3(.8,.95,1.),vSeed*.35),alpha);
+        gl_FragColor=vec4(mix(uColor,face,core),alpha);
         #include <colorspace_fragment>
       }`,
   }));
@@ -154,9 +165,9 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
       // With this fixed camera, the three hidden edges meet at the far negative corner.
       const front = a !== 0 && b !== 0;
       const mat = material(strokeMaterial(front));
-      mat.userData.cssWidth = front ? .85 : 1.15;
+      mat.userData.cssWidth = front ? capabilityEdgeWidth.front : capabilityEdgeWidth.rear;
       const line = stroke([from, to], mat); geometry(line.geometry); line.renderOrder = front ? 6 : 2; root.add(line);
-      const glows = front ? [] : [5.5, 2.8].map((width, index) => {
+      const glows = front ? [] : capabilityEdgeWidth.glow.map((width, index) => {
         const glowMaterial = material(strokeMaterial(false));
         glowMaterial.userData.cssWidth = width;
         const glow = stroke([from, to], glowMaterial);
@@ -220,11 +231,12 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     key.position.x = -4 + Math.min(1, state.time / 1.2) * 5;
     particles.visible = state.time >= 1.2 && state.particles > 0;
     particleUniforms.uSeparate.value = state.separate;
+    particleUniforms.uGlow.value = .7 + Math.sin(Math.PI * Math.min(1, state.dissolve)) * .8 + Math.sin(Math.PI * state.separate) * .65;
     particleUniforms.uOpacity.value = state.particles;
     ghost.visible = state.ghost > 0;
     ghostMaterial.uniforms.uSource.value.copy(source);
     ghostMaterial.uniforms.uScan.value = scan.value;
-    ghostMaterial.uniforms.uOpacity.value = state.ghost * .23;
+    ghostMaterial.uniforms.uOpacity.value = state.ghost * .14;
     shadow.position.copy(source).addScaledVector(up, mobile ? -1.3 : -.91).addScaledVector(forward, -.9);
     shadow.material.opacity = (dark() ? .38 : .6) * (1 - state.dissolve);
     atmosphere.position.copy(source).addScaledVector(forward, -2);
@@ -287,7 +299,6 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         .addScaledVector(up, (height / 2 - (target.top - bounds.top + target.height / 2)) / unitPixels);
     });
     source.copy(destinations[1]);
-    if (mobile) source.addScaledVector(right, (width / 2 - (targets[1].left - bounds.left + targets[1].width / 2)) / unitPixels);
     connections.forEach((connection, index) => {
       connection.from.copy(destinations[index]); connection.to.copy(destinations[index + 1]);
       if (mobile) {
@@ -298,9 +309,9 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         connection.from.addScaledVector(right, gap); connection.to.addScaledVector(right, -gap);
       }
     });
-    const density = Math.min(devicePixelRatio, 1.5);
+    const density = quality.ratio;
     renderer.setPixelRatio(density); renderer.setSize(width, height, false);
-    particleUniforms.uPointSize.value = (mobile ? 1.65 : 2.2) * density;
+    particleUniforms.uPointSize.value = (mobile ? 6.8 : 8.2) * density;
     particleUniforms.uSourceScale.value = mobile ? 1.45 : 1;
     ghostMaterial.uniforms.uSourceScale.value = particleUniforms.uSourceScale.value;
     ghostMaterial.uniforms.uPointSize.value = particleUniforms.uPointSize.value;
@@ -309,8 +320,12 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   }
   function palette() {
     if (disposed || failed) return;
-    particleUniforms.uColor.value.setHex(dark() ? 0x69caff : 0x1975bc);
+    particleUniforms.uColor.value.setHex(dark() ? 0x78b0ff : 0x246bd4);
     ghostMaterial.uniforms.uColor.value.copy(particleUniforms.uColor.value);
+    connections.forEach(({ line, pulse }) => {
+      line.material.color.setHex(dark() ? 0x78b0ff : 0x246bd4);
+      pulse.material.color.setHex(dark() ? 0x92d6ff : 0x246bd4);
+    });
     cubes.forEach(cube => {
       cube.faces.forEach(face => {
         const kind = face.material.userData.factoryFace as GlassFace;
@@ -319,14 +334,15 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         face.base = face.material.opacity * glassVisibility(kind);
       });
       cube.edges.forEach(({ line, glows, front }) => {
-        line.material.color.setHex(front ? dark() ? 0x6092b3 : 0x526f87 : dark() ? 0x73ceff : 0x2894bc);
-        glows.forEach(glow => glow.material.color.setHex(dark() ? 0x58bfff : 0x2894bc));
+        line.material.color.setHex(front ? dark() ? 0x6092b3 : 0x397cae : dark() ? 0x78b0ff : 0x246bd4);
+        glows.forEach(glow => glow.material.color.setHex(dark() ? 0x78b0ff : 0x246bd4));
       });
       cube.nodes.forEach(({ mesh }) => mesh.material.color.setHex(dark() ? 0x92d6ff : 0x3284d7));
     });
     if (prepared) { apply(); render(); }
   }
   function tick(now: number) {
+    if(quality.sample(now))resize();
     if (disposed || failed || paused || !visible || document.hidden) { stop(); return; }
     elapsed = Math.min(factorySystemsDuration, elapsed + (previous ? Math.min(.1, (now - previous) / 1000) : 0));
     previous = now; apply(); render();
@@ -359,7 +375,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   canvas.addEventListener("webglcontextlost", contextLost);
 
   async function loadArtwork(image: HTMLImageElement, index: number) {
-    const texture = await new THREE.TextureLoader().loadAsync(image.currentSrc || image.src);
+    const texture = await new THREE.TextureLoader().loadAsync(image.currentSrc || image.getAttribute?.("src") || image.dataset?.sceneSrc || image.src);
     if (disposed || failed) { texture.dispose(); return; }
     textures.add(texture); texture.colorSpace = THREE.SRGBColorSpace;
     const scratch = document.createElement("canvas"); scratch.width = scratch.height = 256;
@@ -374,6 +390,15 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     texture.repeat.set(visibleWidth / 256, visibleHeight / 256); texture.offset.set(minX / 256, 1 - (maxY + 1) / 256);
     const aspect = visibleWidth / visibleHeight;
     const mat = material(new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0, alphaTest: .015, depthWrite: false, toneMapped: false }));
+    // Preserve alpha and the source object's lighting while bringing all three assets
+    // into the hero's silver / cobalt / ice-blue material family.
+    mat.onBeforeCompile = shader => {
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+        float value=clamp(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)),0.,1.);
+        vec3 blue=mix(vec3(.025,.10,.24),vec3(.16,.43,.78),smoothstep(.0,.48,value));
+        diffuseColor.rgb=mix(blue,vec3(.83,.94,1.),smoothstep(.38,1.,value));`);
+    };
+    mat.customProgramCacheKey = () => 'factory-hero-artwork-v1';
     const artwork = new THREE.Mesh(geometry(new THREE.PlaneGeometry(1.68 * Math.min(aspect, 1.08), 1.68 / Math.max(aspect / 1.08, 1))), mat);
     artwork.quaternion.copy(camera.quaternion); artwork.renderOrder = 3; cubes[index].root.add(artwork); cubes[index].artwork = artwork;
   }

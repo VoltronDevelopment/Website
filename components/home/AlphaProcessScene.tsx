@@ -1,4 +1,5 @@
 "use client";
+import {prefersStaticScene} from "@/components/performance/scene-policy";
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
@@ -34,22 +35,30 @@ export function AlphaProcessScene() {
       readiness.observe(host.current, { attributes: true, attributeFilter: ["data-ready"] });
     }
     const observer = new IntersectionObserver(async ([entry]) => {
-      if (!entry.isIntersecting) return;
+      if (!entry.isIntersecting || prefersStaticScene()) return;
       observer.disconnect();
       try {
         const { mountAlphaProcess } = await import("./alpha-process-renderer");
         if (disposed || !canvas.current || !host.current) return;
-        controller.current = mountAlphaProcess(canvas.current, host.current, {
+        controller.current = await mountAlphaProcess(canvas.current, host.current, {
           paused: pausedRef.current,
-          onStage: setStage,
+          onStage: value=>{if(!disposed)setStage(value);},
+          onEnded:()=>{if(!disposed){pausedRef.current=true;setPaused(true);}},
           onReady: () => { if (!disposed) setReady(true); },
         });
+        if(disposed){controller.current.dispose();controller.current=null;return;}
+        controller.current.setPaused(pausedRef.current);
       } catch {
+        if (!disposed && host.current) host.current.dataset.fallback = "true";
         // The initial SVG remains a complete illustration if WebGL or the chunk is unavailable.
       }
     }, { rootMargin: "160px" });
     if (host.current) observer.observe(host.current);
+    const sceneMotionPreference=matchMedia("(prefers-reduced-motion: reduce)");
+    const retryScene=()=>{if(!prefersStaticScene()&&!controller.current&&host.current){observer.unobserve(host.current);observer.observe(host.current);}};
+    sceneMotionPreference.addEventListener("change",retryScene);
     return () => {
+      sceneMotionPreference.removeEventListener("change",retryScene);
       disposed = true;
       observer.disconnect();
       sizing.disconnect();
@@ -61,6 +70,7 @@ export function AlphaProcessScene() {
   }, []);
 
   function toggle() {
+    if(Number(canvas.current?.dataset.animationTime)>=28){pausedRef.current=false;setPaused(false);controller.current?.replay();return;}
     const value = !paused;
     pausedRef.current = value;
     setPaused(value);

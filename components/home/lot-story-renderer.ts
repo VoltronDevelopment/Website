@@ -1,4 +1,6 @@
+import {createRenderQuality} from "../performance/scene-policy";
 import * as THREE from "three";
+import { capabilityGlassVisibility, capabilityEdgeWidth } from "./capability-cube-style";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { createFactoryHousing } from "./factory-housing";
 import { glassFace, setGlass, nodeHaloTexture, stroke, strokeMaterial, type GlassFace } from "./lattice-materials";
@@ -11,6 +13,7 @@ type Line = ReturnType<typeof stroke>;
 
 /** Four stationary snapshots. A single clock drives the physical actions and evidence UI. */
 export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): LotStoryController {
+  const quality=createRenderQuality(canvas,1.5);
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const params = new URLSearchParams(location.search);
   const previewTime = params.has("lot-time") ? Number(params.get("lot-time")) : NaN;
@@ -30,7 +33,8 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   renderer.setClearColor(0, 0); renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1;
   const scene = new THREE.Scene(), camera = new THREE.OrthographicCamera(-6, 6, 2, -2, .1, 100);
-  camera.position.set(12, 9.6, 14); camera.lookAt(0, 0, 0); camera.updateMatrixWorld();
+  // Alpha's viewing direction, relative to its look-at point; materials stay shared.
+  camera.position.set(-8, 6, 16); camera.lookAt(0, 0, 0); camera.updateMatrixWorld();
   const right = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 1), forward = new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld, 2);
   const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), textures = new Set<THREE.Texture>();
   const geometry = <T extends THREE.BufferGeometry>(value: T) => { geometries.add(value); return value; };
@@ -39,10 +43,15 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   let unitPixels = 80, mobile = false, width = 0, height = 0, lastSignature = "";
   const anchors = Array.from(host.querySelectorAll<HTMLElement>("[data-lot-story-anchor]"));
   const destinations = Array.from({ length: 4 }, () => new THREE.Vector3());
-  const metal = material(new THREE.MeshPhysicalMaterial({ color: 0xc4d3df, metalness: .82, roughness: .3, clearcoat: .25, envMapIntensity: 1 }));
+  // On the front rail, with the projected node centred under its station.
+  const historyOffset = new THREE.Vector3(-right.z / right.x * 1.22, -.94, 1.22);
+  const metal = material(new THREE.MeshPhysicalMaterial({ color: 0xaabac7, metalness: .86, roughness: .28, clearcoat: .18, envMapIntensity: .8 }));
   const steel = material(new THREE.MeshStandardMaterial({ color: 0x7895a9, metalness: .7, roughness: .34 }));
   const darkSteel = material(new THREE.MeshStandardMaterial({ color: 0x325168, metalness: .65, roughness: .4 }));
+  const supportGlass = material(glassFace("side")); supportGlass.userData.glassConveyor = true;
+  const frameEdge = material(new THREE.LineBasicMaterial({ color: 0x397cae, transparent: true, opacity: .38, depthWrite: false }));
   const housingGeometry = geometry(createFactoryHousing()), boxGeometry = geometry(new THREE.BoxGeometry(1, 1, 1));
+  const frameGeometry = geometry(new THREE.EdgesGeometry(boxGeometry));
   const sphereGeometry = geometry(new THREE.SphereGeometry(1, 8, 6));
   const haloTexture = nodeHaloTexture(); textures.add(haloTexture);
   const shadowCanvas = document.createElement("canvas"); shadowCanvas.width = shadowCanvas.height = 128;
@@ -53,14 +62,16 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   const shadowMat = material(new THREE.MeshBasicMaterial({ map: shadowTexture, transparent: true, depthWrite: false, opacity: .6 }));
   const shadowGeometry = geometry(new THREE.PlaneGeometry(1.25, .9));
   function box(parent: THREE.Group, size: number[], position: number[], mat: THREE.Material) {
-    const mesh = new THREE.Mesh(boxGeometry, mat); mesh.scale.fromArray(size); mesh.position.fromArray(position); parent.add(mesh); return mesh;
+    const mesh = new THREE.Mesh(boxGeometry, mat); mesh.scale.fromArray(size); mesh.position.fromArray(position);
+    if (mat.userData.glassConveyor) mesh.add(new THREE.LineSegments(frameGeometry, frameEdge));
+    parent.add(mesh); return mesh;
   }
   const half = .825;
   const corners = Array.from({ length: 8 }, (_, i) => new THREE.Vector3(i & 1 ? half : -half, i & 2 ? half : -half, i & 4 ? half : -half));
   const pairs = [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
   const faces: { kind: GlassFace; p: number[]; r: number[]; front: boolean }[] = [
-    { kind: "side", p: [half, 0, 0], r: [0, Math.PI / 2, 0], front: true },
-    { kind: "rear", p: [-half, 0, 0], r: [0, -Math.PI / 2, 0], front: false },
+    { kind: "rear", p: [half, 0, 0], r: [0, Math.PI / 2, 0], front: false },
+    { kind: "side", p: [-half, 0, 0], r: [0, -Math.PI / 2, 0], front: true },
     { kind: "top", p: [0, half, 0], r: [-Math.PI / 2, 0, 0], front: true },
     { kind: "bottom", p: [0, -half, 0], r: [Math.PI / 2, 0, 0], front: false },
     { kind: "front", p: [0, 0, half], r: [0, 0, 0], front: true },
@@ -75,27 +86,28 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
       return { mat, kind: spec.kind, base: 0 };
     });
     const edges = pairs.map(([a, b]) => {
-      const front = a !== 0 && b !== 0;
-      const mat = material(strokeMaterial(front)); mat.userData.cssWidth = front ? .8 : 1.1;
+      const front = a !== 1 && b !== 1;
+      const mat = material(strokeMaterial(front)); mat.userData.cssWidth = front ? capabilityEdgeWidth.front : capabilityEdgeWidth.rear;
       const line = stroke([corners[a], corners[b]], mat); geometry(line.geometry); line.renderOrder = front ? 6 : 2; root.add(line);
-      const glows: Line[] = front ? [] : [5, 2.7].map((size, layer) => {
+      const glows: Line[] = front ? [] : capabilityEdgeWidth.glow.map((size, layer) => {
         const glowMat = material(strokeMaterial(false)); glowMat.userData.cssWidth = size;
         const glow = stroke([corners[a], corners[b]], glowMat); glow.geometry.dispose(); glow.geometry = line.geometry; glow.renderOrder = layer ? 1.5 : .5; root.add(glow); return glow;
       });
       return { line, glows, front };
     });
-    const housing = new THREE.Mesh(housingGeometry, metal); housing.scale.setScalar(.75); housing.position.set(-.03, -.03, .07); housing.renderOrder = 3; root.add(housing);
+    const housing = new THREE.Mesh(housingGeometry, metal); housing.scale.setScalar(.64); housing.position.set(-.03, -.12, .07); housing.renderOrder = 3; root.add(housing);
     // A stable locating plate and two jaws support the part during the conceptual process action.
-    box(root, [1.28, .09, .93], [0, -.72, .02], steel).renderOrder = 3;
-    for (const z of [-.3, .3]) box(root, [1.04, .07, .12], [0, -.795, z], steel).renderOrder = 3;
+    const plate = box(root, [1.38, .045, 1.04], [0, -.70, .02], supportGlass); plate.renderOrder = 3;
+    plate.rotation.y = 0;
+    for (const z of [-.3, .3]) box(root, [1.04, .1, .12], [0, -.775, z], supportGlass).renderOrder = 3;
     const shadow = new THREE.Mesh(shadowGeometry, shadowMat); shadow.rotation.x = -Math.PI / 2; shadow.position.y = -.672; shadow.renderOrder = 3; root.add(shadow);
     if (index === 1) for (const x of [-.63, .63]) box(root, [.14, .17, .52], [x, -.61, .05], darkSteel).renderOrder = 3;
     const nodes = corners.map((point, corner) => {
       const mat = material(new THREE.MeshBasicMaterial({ color: 0x65caff, transparent: true, depthWrite: false, toneMapped: false }));
-      const mesh = new THREE.Mesh(sphereGeometry, mat); mesh.position.copy(point); mesh.renderOrder = corner ? 7 : 2; root.add(mesh); return { mesh, front: corner !== 0 };
+      const mesh = new THREE.Mesh(sphereGeometry, mat); mesh.position.copy(point); mesh.renderOrder = corner !== 1 ? 7 : 2; root.add(mesh); return { mesh, front: corner !== 1 };
     });
     const halo = new THREE.Sprite(material(new THREE.SpriteMaterial({ map: haloTexture, transparent: true, depthWrite: false, opacity: .1, toneMapped: false })));
-    halo.position.copy(corners[0]); halo.renderOrder = 2; root.add(halo);
+    halo.position.copy(corners[1]); halo.renderOrder = 2; root.add(halo);
     return { root, panes, edges, nodes, halo };
   });
   const tool = new THREE.Group(); snapshots[1].root.add(tool);
@@ -104,22 +116,23 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   const bit = new THREE.Mesh(geometry(new THREE.CylinderGeometry(.018, .035, .18, 12)), metal); bit.position.y = -.24; tool.add(bit);
   const mark = box(tool, [.018, .22, .015], [.13, .12, .025], darkSteel);
   mark.renderOrder = 3; spindle.renderOrder = collar.renderOrder = bit.renderOrder = 3;
-  tool.position.set(.25, .99, .08);
+  tool.position.set(.25, .89, .08);
   const scanMaterial = material(new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, side: THREE.DoubleSide, uniforms: { uOpacity: { value: .1 } },
     vertexShader: "varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}",
     fragmentShader: `varying vec2 vUv;uniform float uOpacity;void main(){
-      vec2 grid=abs(fract(vUv*12.)-.5);float line=1.-smoothstep(.025,.07,min(grid.x,grid.y));
       float edge=1.-smoothstep(.01,.04,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));
-      gl_FragColor=vec4(.12,.73,.95,uOpacity*(.16+line*.45+edge*.5));
+      float beam=1.-smoothstep(.015,.075,abs(vUv.x-.5));
+      float falloff=smoothstep(0.,.12,vUv.y)*smoothstep(0.,.12,1.-vUv.y);
+      gl_FragColor=vec4(.14,.60,.94,uOpacity*(.08+beam*.32*falloff+edge*.5));
       #include <colorspace_fragment>
     }`,
   }));
   const scan = new THREE.Mesh(geometry(new THREE.PlaneGeometry(1.43, 1.25)), scanMaterial); scan.rotation.x = -Math.PI / 2; scan.position.y = -.12; scan.renderOrder = 4; snapshots[2].root.add(scan);
   const conveyor = new THREE.Group(); scene.add(conveyor);
   const conveyorGeometry: THREE.BufferGeometry[] = [];
-  const railMat = material(new THREE.MeshStandardMaterial({ color: 0x7393aa, metalness: .62, roughness: .37 }));
-  const beltMat = material(new THREE.MeshStandardMaterial({ color: 0x456478, metalness: .45, roughness: .45 }));
+  const railMat = material(glassFace("side")); railMat.userData.glassConveyor = true;
+  const beltMat = material(glassFace("top")); beltMat.userData.glassConveyor = true;
   const connectionMat = material(new THREE.LineBasicMaterial({ color: 0x2894bc, transparent: true, opacity: .25, depthWrite: false, depthTest: false }));
   const recordedMat = material(new THREE.LineBasicMaterial({ color: 0x2894bc, transparent: true, opacity: .6, depthWrite: false, depthTest: false }));
   const historyRoot = new THREE.Group(); scene.add(historyRoot);
@@ -135,7 +148,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   historyPulse.material.depthTest = false; historyPulse.renderOrder = 6; historyRoot.add(historyPulse);
   const atmosphere = new THREE.Sprite(material(new THREE.SpriteMaterial({ map: haloTexture, transparent: true, depthWrite: false, opacity: .1, toneMapped: false })));
   atmosphere.renderOrder = -2; scene.add(atmosphere);
-  scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x40596e, 1.8));
+  scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x26394b, .95));
   const key = new THREE.DirectionalLight(0xffffff, 2.8); key.position.set(-4, 6, 5); scene.add(key);
   const rim = new THREE.DirectionalLight(0x7fcfff, 1.8); rim.position.set(4, 2, -3); scene.add(rim);
   const dark = () => document.documentElement.dataset.theme === "dark";
@@ -157,26 +170,28 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
       const active = state.stage === index, completed = state.stage > index;
       snapshot.root.position.copy(destinations[index]); snapshot.root.visible = !mobile || active;
       snapshot.edges.forEach(({ line, glows, front }) => {
-        line.material.opacity = front ? dark() ? .36 : .43 : active ? .88 : completed ? .49 : .28;
-        glows.forEach((glow, layer) => { glow.material.opacity = (layer ? .14 : .055) * (active ? 1.3 : completed ? .55 : .25); });
+        line.material.opacity = front ? dark() ? .38 : .42 : (dark() ? .78 : .65) * (active ? 1.15 : completed ? 1 : .8);
+        glows.forEach((glow, layer) => { glow.material.opacity = (layer ? dark() ? .15 : .08 : dark() ? .07 : .035) * (active ? 1.25 : 1); });
       });
       snapshot.panes.forEach(({ mat, base }) => { mat.opacity = base; mat.emissiveIntensity = active ? .025 : .006; });
-      snapshot.nodes.forEach(({ mesh, front }) => { mesh.scale.setScalar((front ? 1.2 : 1.8) / unitPixels); mesh.material.opacity = front ? .42 : active ? .95 : .38; });
+      snapshot.nodes.forEach(({ mesh, front }) => { mesh.scale.setScalar((front ? 1.2 : 1.6) / unitPixels); mesh.material.opacity = front ? .42 : .85; });
       snapshot.halo.scale.setScalar((active ? 20 : 13) / unitPixels); snapshot.halo.material.opacity = active ? .25 : .06;
     });
     const working = state.phase === "process";
-    tool.position.y = .99 - (working ? Math.sin(Math.PI * state.process) * .13 : 0);
+    tool.position.y = .89 - (working ? Math.sin(Math.PI * state.process) * .13 : 0);
     tool.rotation.y = working ? state.process * Math.PI * 12 : 0;
-    scan.position.y = state.phase === "verify" && !motion.matches ? -.67 + state.inspection * 1.33 : -.12;
-    scanMaterial.uniforms.uOpacity.value = state.phase === "verify" ? .18 + Math.sin(state.inspection * Math.PI) * .28 : .08;
+    const inspecting = state.phase === "verify" && !motion.matches;
+    const sweep = state.inspection * state.inspection * (3 - 2 * state.inspection);
+    scan.position.y = inspecting ? -.67 + sweep * 1.33 : -.12;
+    scanMaterial.uniforms.uOpacity.value = inspecting ? .23 + Math.sin(state.inspection * Math.PI) * .32 : .23;
     historyRoot.visible = !mobile;
     recordedHistory.geometry.setDrawRange(0, Math.floor(state.history) * 2);
     historyStations.forEach(({ node, leader }, index) => {
-      node.position.copy(destinations[index]).addScaledVector(up, -1.29); leader.position.copy(node.position);
+      node.position.copy(destinations[index]).add(historyOffset); leader.position.copy(node.position);
       node.scale.setScalar((state.stage === index ? 2.8 : 1.8) / unitPixels); node.material.opacity = index <= state.stage ? .85 : .3;
     });
     const pulseAt = Math.min(2.9999, state.history), segment = Math.floor(pulseAt), fraction = pulseAt - segment;
-    historyPulse.position.lerpVectors(destinations[segment], destinations[segment + 1], fraction).addScaledVector(up, -1.29).addScaledVector(forward, .03);
+    historyPulse.position.lerpVectors(destinations[segment], destinations[segment + 1], fraction).add(historyOffset).addScaledVector(forward, .03);
     historyPulse.scale.setScalar(18 / unitPixels); historyPulse.material.opacity = fraction > .01 && fraction < .99 ? Math.sin(fraction * Math.PI) * .85 : 0;
     atmosphere.position.copy(destinations[mobile ? state.stage : 1]).addScaledVector(forward, -2); atmosphere.scale.set(mobile ? 3.4 : 8, 3.2, 1); atmosphere.material.opacity = dark() ? .1 : .025;
     const signature = `${state.phase}:${state.evidence.join("")}`;
@@ -185,13 +200,18 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   }
   function palette() {
     snapshots.forEach(snapshot => {
-      snapshot.panes.forEach(face => { setGlass(face.mat, face.kind, dark()); face.base = face.mat.opacity * (face.kind === "front" ? .22 : .32); });
+      snapshot.panes.forEach(face => {
+        setGlass(face.mat, face.kind, dark());
+        face.base = face.mat.opacity * capabilityGlassVisibility(face.kind);
+      });
       snapshot.edges.forEach(({ line, glows, front }) => {
         line.material.color.setHex(front ? dark() ? 0x6092b3 : 0x526f87 : dark() ? 0x73ceff : 0x2894bc);
         glows.forEach(glow => glow.material.color.setHex(dark() ? 0x58bfff : 0x2894bc));
       });
     });
-    railMat.color.setHex(dark() ? 0x496c83 : 0xa5bdcc); beltMat.color.setHex(dark() ? 0x203d50 : 0x8fa7b6);
+    setGlass(railMat, "side", dark()); setGlass(beltMat, "top", dark()); setGlass(supportGlass, "side", dark());
+    railMat.opacity = dark() ? .28 : .32; beltMat.opacity = dark() ? .15 : .2; supportGlass.opacity = .3;
+    frameEdge.color.setHex(dark() ? 0x73ceff : 0x397cae);
     const connectionColor = dark() ? 0x36beda : 0x2894bc;
     connectionMat.color.setHex(connectionColor); recordedMat.color.setHex(connectionColor);
     historyStations.forEach(({ node }) => node.material.color.setHex(connectionColor));
@@ -201,20 +221,22 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
     conveyor.clear(); conveyorGeometry.forEach(value => value.dispose()); conveyorGeometry.length = 0;
     const centre = mobile ? destinations[0].clone() : destinations[0].clone().add(destinations[3]).multiplyScalar(.5);
     const length = mobile ? 2.8 : destinations[0].distanceTo(destinations[3]) + 3;
-    const vertical = new THREE.Vector3(0, 1, 0), depthAxis = new THREE.Vector3().crossVectors(right, vertical);
-    const basis = new THREE.Matrix4().makeBasis(right, vertical, depthAxis); conveyor.quaternion.setFromRotationMatrix(basis);
+    const vertical = new THREE.Vector3(0, 1, 0);
+    conveyor.quaternion.identity();
     conveyor.position.copy(centre).addScaledVector(vertical, -.94);
     box(conveyor, [length, .15, 2.25], [0, 0, 0], beltMat);
+    // A continuous front fascia gives the rollers a supporting frame and visible thickness.
+    box(conveyor, [length, .22, .075], [0, -.035, 1.14], railMat);
     for (const depth of [-1.14, 1.14]) box(conveyor, [length, .12, .055], [0, .06, depth], railMat);
     const rollerGeo = new THREE.CylinderGeometry(.025, .025, 2.2, 8); conveyorGeometry.push(rollerGeo);
-    for (let x = -length / 2 + .12; x < length / 2; x += .24) { const roller = new THREE.Mesh(rollerGeo, steel); roller.rotation.x = Math.PI / 2; roller.position.set(x, .09, 0); conveyor.add(roller); }
+    for (let x = -length / 2 + .12; x < length / 2; x += .24) { const roller = new THREE.Mesh(rollerGeo, supportGlass); roller.rotation.x = Math.PI / 2; roller.position.set(x, .09, 0); conveyor.add(roller); }
     for (const x of mobile ? [-.9, .9] : [-length * .4, 0, length * .4]) box(conveyor, [.09, .39, .12], [x, -.25, .23], railMat);
     const positions = history.geometry.getAttribute("position") as THREE.BufferAttribute;
-    destinations.forEach((p, i) => positions.setXYZ(i, p.x - up.x * 1.29, p.y - up.y * 1.29, p.z - up.z * 1.29)); positions.needsUpdate = true;
+    destinations.forEach((p, i) => positions.setXYZ(i, p.x + historyOffset.x, p.y + historyOffset.y, p.z + historyOffset.z)); positions.needsUpdate = true;
     const recordedPositions = recordedHistory.geometry.getAttribute("position") as THREE.BufferAttribute;
     for (let i = 0; i < 6; i++) {
       const point = destinations[Math.floor(i / 2) + i % 2];
-      recordedPositions.setXYZ(i, point.x - up.x * 1.29, point.y - up.y * 1.29, point.z - up.z * 1.29);
+      recordedPositions.setXYZ(i, point.x + historyOffset.x, point.y + historyOffset.y, point.z + historyOffset.z);
     }
     recordedPositions.needsUpdate = true;
   }
@@ -227,11 +249,20 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
     const projectedHeight = 1.65 * (Math.abs(up.x) + Math.abs(up.y) + Math.abs(up.z));
     unitPixels = Math.min(...targets.map(target => Math.min(target.width * .88 / projectedWidth, target.height * .73 / projectedHeight)));
     camera.left = -width / unitPixels / 2; camera.right = -camera.left; camera.top = height / unitPixels / 2; camera.bottom = -camera.top; camera.updateProjectionMatrix();
-    targets.forEach((target, index) => destinations[index].copy(right).multiplyScalar((target.left - bounds.left + target.width / 2 - width / 2) / unitPixels).addScaledVector(up, (height / 2 - target.top + bounds.top - target.height * .43) / unitPixels));
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); renderer.setSize(width, height, false); host.dataset.layout = mobile ? "single" : "four";
+    const rise = mobile ? 0 : Math.abs(up.x / right.x) * (targets[3].left - targets[0].left) / 2;
+    host.style?.setProperty("--lot-rise", `${rise}px`);
+    const baseline = mobile ? 44 + targets[0].height * .43 : rise + 16 + 44 + targets[0].height * .43;
+    targets.forEach((target, index) => {
+      const worldX = mobile ? 0 : (target.left - bounds.left + target.width / 2 - width / 2) / (unitPixels * right.x);
+      destinations[index].copy(up).multiplyScalar((height / 2 - baseline) / unitPixels).add(new THREE.Vector3(worldX, 0, 0));
+      const offset = -worldX * up.x * unitPixels;
+      anchors[index].parentElement?.style.setProperty("--lot-station-offset", `${offset}px`);
+    });
+    renderer.setPixelRatio(quality.ratio); renderer.setSize(width, height, false); host.dataset.layout = mobile ? "single" : "four";
     rebuildConveyor(); if (prepared) { apply(); render(); }
   }
   function tick(now: number) {
+    if(quality.sample(now))resize();
     if (disposed || failed || !visible || document.hidden || paused) { stop(); return; }
     elapsed = Math.min(lotStoryDuration, elapsed + (previous ? Math.min(.1, (now - previous) / 1000) : 0)); previous = now; apply(); render();
     if (elapsed < lotStoryDuration) frame = requestAnimationFrame(tick); else stop();

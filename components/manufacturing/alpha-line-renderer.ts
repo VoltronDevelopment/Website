@@ -1,3 +1,6 @@
+import {batchStaticMeshes} from "../performance/static-batching";
+import { alphaLineShotAt, alphaTourStateAt, alphaPlaybackDuration } from "./alpha-line-tour";
+import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
@@ -17,7 +20,7 @@ import {
   type AlphaLineState,
 } from "./alpha-line-timeline";
 
-type Mode = "route" | "journey" | "deviation";
+type Mode = "route" | "journey" | "tour" | "deviation";
 type Options = {
   paused: boolean;
   onState: (state: AlphaLineState) => void;
@@ -29,6 +32,7 @@ export type AlphaLineController = {
   setPaused: (paused: boolean) => void;
   seek: (mode: Mode, time: number) => void;
   setExplore: (enabled: boolean) => void;
+  setGuided: (enabled: boolean) => void;
   resetView: () => void;
   orbit: (horizontal: number, vertical: number, magnification: number) => void;
   focusStation: (id: string | null) => void;
@@ -38,14 +42,16 @@ export type AlphaLineController = {
 const railY = 5.28;
 const liquidY = 1.82;
 
-export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): AlphaLineController {
+export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): Promise<AlphaLineController> {
+  const quality=createRenderQuality(canvas);
+  await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
   } catch {
     canvas.hidden = true;
     host.dataset.fallback = "true";
-    return { setPaused() {}, seek() {}, setExplore() {}, resetView() {}, orbit() {}, focusStation() {}, dispose() {} };
+    return { setPaused() {}, seek() {}, setExplore() {}, setGuided() {}, resetView() {}, orbit() {}, focusStation() {}, dispose() {} };
   }
   renderer.setClearColor(0, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -176,7 +182,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     const yaw = Math.atan2(-dz, dx);
     const px = -dz / length;
     const pz = dx / length;
-    const startTrim = a.corner ? 1.05 : 0;
+    const startTrim = a.corner ? 1.05 : a.stationId === "LOAD" ? -1.5 : 0;
     const endTrim = b.corner ? 1.05 : 0;
     const railLength = length - startTrim - endTrim;
     const midpoint = (startTrim - endTrim) / 2;
@@ -185,6 +191,16 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       rail.rotation.y = yaw;
       const cap = box(equipment, [railLength, 0.045, 0.2], [(a.x + b.x) / 2 + dx / length * midpoint + px * side, railY + 0.08, (a.z + b.z) / 2 + dz / length * midpoint + pz * side], polished);
       cap.rotation.y = yaw;
+    }
+    if (a.stationId && a.stationId !== "LOAD") {
+      const joint = new THREE.Group();
+      joint.position.set(a.x,railY, a.z);
+      joint.rotation.y = yaw;
+      equipment.add(joint);
+      for (const side of [-.72,.72]) {
+        box(joint,[.28,.03,.32],[0,.11,side],steelDark);
+        for (const x of [-.08,.08]) box(joint,[.045,.035,.045],[x,.14,side],polished);
+      }
     }
     const route = box(equipment, [length, 0.03, 0.055], [(a.x + b.x) / 2, 0.46, (a.z + b.z) / 2], routeMaterial);
     route.rotation.y = yaw;
@@ -217,16 +233,17 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       transparent: true,
       depthWrite: false,
       side: THREE.DoubleSide,
-      uniforms: { uTime: { value: 0 }, uImpact: { value: 0 }, uDark: { value: 0 }, uTone: { value: tone } },
+      uniforms: { uTime: { value: 0 }, uImpact: { value: 0 }, uDark: { value: 0 }, uTone: { value: tone }, uOpacity: {value:.78} },
       vertexShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact;
         void main(){vUv=uv; vec3 p=position; p.z+=sin(p.x*7.+uTime*.8)*cos(p.y*6.-uTime*.6)*(.0015+uImpact*.01); gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
-      fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact; uniform float uDark; uniform float uTone;
+      fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact; uniform float uDark; uniform float uTone; uniform float uOpacity;
         void main(){vec2 p=(vUv-.5)*vec2(1.28,1.); float r=length(p);
           float ring=pow(sin(r*48.-uTime*5.)*.5+.5,7.)*exp(-r*5.5)*uImpact;
           float wave=sin(p.x*11.+sin(p.y*6.)*.4+uTime*.35)*cos(p.y*9.-uTime*.3);
-          float reflection=pow(clamp(.52+wave*.25,0.,1.),6.);
+          float reflection=pow(clamp(.52+wave*.25+sin(p.x*4.-p.y*3.)*.12,0.,1.),6.);
+          float edge=1.-smoothstep(0.,.035,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));
           vec3 base=mix(vec3(.025,.38,.62),vec3(.025,.19,.32),uDark)*uTone;
-          gl_FragColor=vec4(base+vec3(.32,.34,.34)*(reflection*.22+ring*.6),.78);
+          gl_FragColor=vec4(base+vec3(.32,.34,.34)*(reflection*.32+ring*.6+edge*.2),uOpacity);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
         }`,
@@ -238,6 +255,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     tank.rotation.y = station.yaw;
     equipment.add(tank);
     box(tank, [3.13, 0.16, 2.63], [0, 0.38, 0], metal, true);
+    box(tank, [3.13, .055, .08], [0,.29,1.29],steelDark);
     box(tank, [3.04, 1.57, 0.07], [0, 1.22, -1.19], tankBack);
     const front = box(tank, [3.04, 1.57, 0.035], [0, 1.22, 1.21], glass);
     front.renderOrder = 5;
@@ -253,8 +271,10 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       fastener.position.set(x, y, 1.24);
       tank.add(fastener);
     }
+    for (const x of [-1.36,1.36]) for(const z of [-1.05,1.05]) box(tank,[.18,.12,.22],[x,.24,z],steelDark,true);
     const coated = station.id === alphaLineCoatId;
-    const volume = box(tank, [2.93, 1.34, 2.29], [0, liquidY - 0.67, 0], coated ? coatLiquid : liquidMaterial);
+    const volumeMaterial = material((coated ? coatLiquid : liquidMaterial).clone());
+    const volume = box(tank, [2.93, 1.34, 2.29], [0, liquidY - 0.67, 0], volumeMaterial);
     volume.renderOrder = 2;
     const surfaceMaterial = waterMaterial(coated ? 0.48 : 1);
     const surface = new THREE.Mesh(geometry(new THREE.PlaneGeometry(2.94, 2.3, 10, 8)), surfaceMaterial);
@@ -270,7 +290,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     hit.userData.stationId = station.id;
     tank.add(hit);
     pickables.push(hit);
-    baths.push({ id: station.id, surface: surfaceMaterial, volume: coated ? coatLiquid : liquidMaterial });
+    baths.push({ id: station.id, surface: surfaceMaterial, volume: volumeMaterial });
   }
   function addBay(station: AlphaLineStation) {
     const bay = new THREE.Group();
@@ -279,6 +299,10 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     box(bay, [1.68, 0.12, 1.75], [0, 0.63, 0], bayMaterial, true);
     box(bay, [1.56, 0.045, 1.65], [0, 0.71, 0], polished);
     for (const x of [-0.62, 0.62]) for (const z of [-0.65, 0.65]) box(bay, [0.075, 0.33, 0.075], [x, 0.435, z], steelDark);
+    for (const x of [-.48,.48]) {
+      box(bay,[.07,.35,.09],[x,.9,-.12],steelDark);
+      box(bay,[.18,.06,.24],[x,.76,0],polished);
+    }
     const hit = new THREE.Mesh(unit, hitMaterial);
     hit.scale.set(1.8, 0.8, 1.9);
     hit.position.y = 0.7;
@@ -287,6 +311,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     pickables.push(hit);
   }
   for (const station of alphaLineStations) {
+    await yieldToBrowser();
     if (station.kind === "tank") addTank(station);
     else addBay(station);
   }
@@ -310,6 +335,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   scene.add(carrier);
   box(carrier, [0.64, 0.16, 1.65], [0, 5.48, 0], metal, true);
   box(carrier, [0.44, 0.32, 0.43], [0, 5.29, 0], steelDark, true);
+  box(carrier, [.49,.17,.47], [0,5.23,0],polished,true);
   const wheelGeometry = geometry(new THREE.CylinderGeometry(0.13, 0.13, 0.09, 16));
   const wheels: THREE.Mesh[] = [];
   for (const x of [-0.23, 0.23]) for (const z of [-0.69, 0.69]) {
@@ -322,11 +348,17 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   const fixture = new THREE.Group();
   carrier.add(fixture);
   box(fixture, [0.97, 0.07, 0.11], [0, 0, 0], polished, true);
+  const hookGeometry = geometry(new THREE.TorusGeometry(.085,.018,6,20,Math.PI*1.75));
+  const topHook = new THREE.Mesh(hookGeometry,metal);
+  topHook.position.y = .1;
+  fixture.add(topHook);
   const jaws = [-0.34, 0.34].map(x => {
     const jaw = new THREE.Group();
     jaw.position.set(x, -0.02, 0);
     fixture.add(jaw);
     rod(jaw, [0, 0, 0], [0, -0.18, 0], 0.018);
+    const hook = new THREE.Mesh(hookGeometry,polished);
+    hook.scale.setScalar(.55); hook.position.y=-.15; jaw.add(hook);
     return jaw;
   });
   const cables = [-0.12, 0.12].map(z => rod(carrier, [0, railY - 0.18, z], [0, alphaLineRaisedY + 0.14, z], 0.012, steelDark));
@@ -362,7 +394,14 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   const unload = alphaLineStation("UNLOAD");
   const finished = new THREE.Mesh(panelGeometry, finishedMaterial);
   finished.position.set(unload.x, alphaLineUnloadY - 0.83, unload.z);
+  finished.rotation.y = Math.PI;
   scene.add(finished);
+  const loadingMaterial = panelMaterial();
+  const loading = new THREE.Mesh(panelGeometry, loadingMaterial);
+  loading.position.set(0, alphaLineUnloadY - .83, alphaLineFarZ);
+  loading.castShadow = true;
+  scene.add(loading);
+  for (const part of [carried,finished,loading]) box(part,[.065,1.24,.16],[.445,0,.065],part.material);
 
   const dropMaterial = material(new THREE.MeshBasicMaterial({ color: visual.liquid, transparent: true, opacity: .72 }));
   const dropGeometry = geometry(new THREE.SphereGeometry(.024, 6, 5));
@@ -381,6 +420,8 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   let elapsed = reviewTime !== null ? Math.max(0, Number(reviewTime) || 0) : 0;
   let paused = options.paused;
   let explore = false;
+  let guided = true;
+  let manualShot: ReturnType<typeof alphaLineShotAt> | null = null;
   let focusId: string | null = null;
   let framedId: string | null = null;
   let focusBlend = 0;
@@ -392,6 +433,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   let visible = false;
   let frame = 0;
   let previous = 0;
+  const disposeBatches=batchStaticMeshes(equipment,new Set<THREE.Object3D>([...turntables,...droplets]));
   let signature = "";
   let ended = false;
   let pixelWidth = 0;
@@ -406,7 +448,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
 
   function palette() {
     const colors = alphaVisualColors(isDark());
-    metal.color.set(colors.metal);
+    metal.color.set(colors.metal).multiplyScalar(.92);
     polished.color.set(colors.polished);
     steelDark.color.set(colors.steelDark);
     foundation.color.set(colors.foundation);
@@ -416,7 +458,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     glassSide.color.copy(glass.color);
     glassSide.opacity = colors.glassOpacity + 0.07;
     tankBack.color.set(colors.tankBack);
-    liquidMaterial.color.set(colors.liquid);
+    liquidMaterial.color.set(colors.liquid).multiplyScalar(.8);
     coatLiquid.color.set(colors.liquidCoat);
     dropMaterial.color.set(colors.liquid);
     hemisphere.intensity = colors.hemisphere;
@@ -425,21 +467,27 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     scene.environmentIntensity = colors.environment;
     (shadow.material as THREE.ShadowMaterial).opacity = colors.shadowOpacity;
     (shadow.material as THREE.ShadowMaterial).color.set(colors.shadowColor);
-    baths.forEach(bath => { bath.surface.uniforms.uDark.value = colors.liquidDark; });
+    baths.forEach(bath => {
+      bath.surface.uniforms.uDark.value = colors.liquidDark;
+      bath.volume.color.set(bath.id === alphaLineCoatId ? colors.liquidCoat : colors.liquid).multiplyScalar(.8);
+    });
     canvas.dataset.theme = isDark() ? "dark" : "light";
   }
   function currentState() {
     if (mode === "route") return alphaLineRouteState();
     if (mode === "deviation") return alphaLineDeviationStateAt(elapsed);
-    return alphaLineStateAt(elapsed);
+    return mode === "tour" ? alphaTourStateAt(elapsed) : alphaLineStateAt(elapsed);
   }
   function publish(state: AlphaLineState) {
-    const next = `${state.mode}|${state.chapter}|${state.phase}|${state.stationId}|${state.deviationStep}|${state.attached}|${Math.floor(state.time * 4)}`;
+    const complete = state.time >= (state.mode === "deviation" ? alphaLineDeviationDuration : alphaPlaybackDuration(state.mode));
+    const next = `${state.mode}|${state.chapter}|${state.phase}|${state.stationId}|${state.deviationStep}|${state.attached}|${Math.floor(state.time * 4)}|${complete}`;
     if (next === signature) return;
     signature = next;
     options.onState(state);
   }
   function apply(state: AlphaLineState) {
+    loading.visible = state.loadingOpacity > .001;
+    loadingMaterial.opacity = state.loadingOpacity;
     carrier.visible = state.carrierVisible;
     carrier.position.set(state.x, 0, state.z);
     carrier.rotation.y = state.yaw;
@@ -475,8 +523,12 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     else active.visible = false;
     immersion.level.value = state.carrierVisible && (state.phase === "lower" || state.phase === "hold" || state.phase === "raise") ? liquidY : -20;
     baths.forEach(bath => {
-      bath.surface.uniforms.uTime.value = elapsed;
+      const immersed = state.stationId === bath.id && ["lower","hold","raise"].includes(state.phase);
+      const reveal = immersed ? THREE.MathUtils.smoothstep(3.45-state.y,0,1) : 0;
+      bath.surface.uniforms.uTime.value = immersed ? elapsed : 0;
       bath.surface.uniforms.uImpact.value = state.stationId === bath.id ? state.ripple : 0;
+      bath.surface.uniforms.uOpacity.value = .78 - reveal * .36;
+      bath.volume.opacity = THREE.MathUtils.lerp(bath.id === alphaLineCoatId ? .64 : .48,.2,reveal);
     });
     if (state.amberStationId) placeMarker(amber, state.amberStationId);
     else amber.visible = false;
@@ -484,20 +536,26 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     canvas.dataset.phase = state.phase;
     canvas.dataset.time = state.time.toFixed(3);
     canvas.dataset.attached = String(state.attached);
-    canvas.dataset.duration = String(state.mode === "deviation" ? alphaLineDeviationDuration : alphaLineDuration);
+    canvas.dataset.duration = String(state.mode === "deviation" ? alphaLineDeviationDuration : alphaPlaybackDuration(state.mode));
     host.dataset.activeStation = state.carrierVisible ? state.stationId : "";
     canvas.dataset.station = state.stationId;
     publish(state);
   }
+  let labelSignature="";
   function placeLabels() {
+    const stamp=[pixelWidth,pixelHeight,currentState().stationId,currentState().carrierVisible,...camera.projectionMatrix.elements,...camera.matrixWorld.elements].join("|");
+    if(stamp===labelSignature)return;labelSignature=stamp;
     const nodes = Array.from(host.querySelectorAll<HTMLElement>(".alpha-line-numbers [data-station]"));
+    const state = currentState();
     const positions = nodes.map(node => {
       const station = alphaLineStation(node.dataset.station!);
       const offset = station.kind === "tank" ? 1.26 : 0;
-      const projected = new THREE.Vector3(station.x + Math.sin(station.yaw) * offset, station.kind === "tank" ? 1.4 : .55, station.z + Math.cos(station.yaw) * offset).project(camera);
+      const labelShift = station.kind === "tank" && state.carrierVisible && state.stationId === station.id ? -.95 : 0;
+      const projected = new THREE.Vector3(station.x + Math.sin(station.yaw) * offset + Math.cos(station.yaw) * labelShift, station.kind === "tank" ? 1.4 : .55, station.z + Math.cos(station.yaw) * offset - Math.sin(station.yaw) * labelShift).project(camera);
       return { x: (projected.x + 1) / 2 * pixelWidth, y: (1 - projected.y) / 2 * pixelHeight, width: node.offsetWidth, height: node.offsetHeight, visible: Math.abs(projected.x) <= .96 && Math.abs(projected.y) <= .96 };
     });
-    const positionsWithSpacing = pixelWidth < 600 && !focusId && focusBlend < .001 ? spaceAlphaLineLabels(positions, pixelWidth, pixelHeight) : positions;
+    const overview = canvas.dataset.cameraZoom === undefined || Number(canvas.dataset.cameraZoom) < 1.1;
+    const positionsWithSpacing = pixelWidth < 600 && overview && !focusId && focusBlend < .001 ? spaceAlphaLineLabels(positions, pixelWidth, pixelHeight) : positions;
     nodes.forEach((node, index) => {
       node.style.left = `${positionsWithSpacing[index].x / pixelWidth * 100}%`;
       node.style.top = `${positionsWithSpacing[index].y / pixelHeight * 100}%`;
@@ -518,7 +576,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       framingBounds = alphaViewBounds([equipment], camera);
       const position = carrier.position.clone(); const rotation = carrier.rotation.clone(); const lift = fixture.position.y;
       fixture.position.y = alphaLineRaisedY;
-      for (const point of points) {
+      for (const point of [...points, {x:-1.5,z:alphaLineFarZ}]) {
         carrier.position.set(point.x, 0, point.z);
         for (const angle of [0, Math.PI / 4, Math.PI / 2, Math.PI]) {
           carrier.rotation.y = angle;
@@ -544,15 +602,29 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     camera.top = cy + height / 2;
     camera.bottom = cy - height / 2;
     camera.updateProjectionMatrix();
+    const directed = guided && mode !== "route" && mode !== "deviation";
+    const shot = directed ? alphaLineShotAt(currentState(),pixelWidth < 600) : manualShot;
+    if (shot) {
+      const point = new THREE.Vector3(shot.x, 2.85, shot.z).applyMatrix4(camera.matrixWorldInverse);
+      const centreX = cx + (point.x - cx) * shot.detail;
+      const centreY = cy + (point.y - cy) * shot.detail;
+      const detailZoom = shot.zoom * (pixelWidth < 600 ? 1 + shot.detail * .45 : 1);
+      camera.left = centreX - width / detailZoom / 2; camera.right = centreX + width / detailZoom / 2;
+      camera.top = centreY + height / detailZoom / 2; camera.bottom = centreY - height / detailZoom / 2;
+      camera.updateProjectionMatrix();
+      canvas.dataset.camera = directed ? shot.detail < .05 ? "overview" : "guided" : "manual";
+      canvas.dataset.cameraZoom = detailZoom.toFixed(3);
+    } else { canvas.dataset.camera = focusId ? "station" : "overview"; canvas.dataset.cameraZoom = zoom.toFixed(3); }
     if (focusId) framedId = focusId;
     if (framedId && focusBlend > 0.001) {
       const station = alphaLineStation(framedId);
-      frameAlphaLineStation(camera, new THREE.Vector3(station.x, 1.3, station.z), 1 + focusBlend * 1.15);
+      frameAlphaLineStation(camera, new THREE.Vector3(station.x, 2.8, station.z), 1 + focusBlend * (pixelWidth < 600 ? 2.1 : 1.15));
       placeMarker(selection, framedId);
     } else {
       selection.visible = false;
     }
     placeLabels();
+    host.dataset.detail = String(Number(canvas.dataset.cameraZoom ?? 1) > 1.15 || !!focusId);
   }
   function render() {
     if (disposed || lostContext || !pixelWidth) return;
@@ -571,14 +643,15 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     previous = 0;
   }
   function tick(now: number) {
+    if(quality.sample(now)){renderer.shadowMap.enabled=quality.shadows;resize();}
     frame = 0;
     if (disposed || lostContext) return;
     const playing = visible && !document.hidden && !paused && !motion.matches;
     if (playing) {
       elapsed += previous ? Math.min((now - previous) / 1000, 0.1) : 0;
       previous = now;
-      if (mode === "journey" && elapsed >= alphaLineDuration) {
-        elapsed = alphaLineDuration;
+      if ((mode === "journey" || mode === "tour") && elapsed >= alphaPlaybackDuration(mode)) {
+        elapsed = alphaPlaybackDuration(mode);
         paused = true;
         if (!ended) { ended = true; options.onEnded(); }
       } else if (mode === "deviation" && elapsed >= alphaLineDeviationDuration) {
@@ -599,10 +672,10 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
   function resize() {
     const { width, height } = host.getBoundingClientRect();
     if (!width || !height) return;
-    const dpr = Math.min(devicePixelRatio || 1, 1.5);
+    const dpr = quality.ratio;
     const w = Math.round(width);
     const h = Math.round(height);
-    if (w !== pixelWidth || h !== pixelHeight) {
+    if (w !== pixelWidth || h !== pixelHeight || renderer.getPixelRatio() !== dpr) {
       pixelWidth = w;
       pixelHeight = h;
       boundsKey = "";
@@ -670,6 +743,8 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
     lostContext = false; canvas.hidden = false; host.dataset.fallback = "false"; host.dataset.ready = "true";
     palette(); resize(); resume();
   }
+  await yieldToBrowser();
+  await renderer.compileAsync(scene,camera);
   const resizing = new ResizeObserver(resize);
   resizing.observe(host);
   const themes = new MutationObserver(() => { palette(); render(); });
@@ -699,6 +774,12 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       signature = "";
       resume();
     },
+    setGuided(enabled) {
+      if (!enabled && guided && mode !== "route" && mode !== "deviation") manualShot = alphaLineShotAt(currentState(),pixelWidth < 600);
+      guided = enabled;
+      if (enabled) { manualShot=null; focusId=null; framedId=null; focusBlend=0; azimuth=0; polar=0; zoom=1; }
+      resume();
+    },
     setExplore(enabled) { explore = enabled; canvas.style.cursor = enabled ? "grab" : "pointer"; canvas.style.touchAction = enabled ? "none" : "pan-y"; },
     orbit(horizontal, vertical, magnification) { azimuth += horizontal; polar += vertical; zoom += magnification; boundsKey = ""; resume(); },
     resetView() {
@@ -706,10 +787,13 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       polar = 0;
       zoom = 1;
       focusId = null;
+      framedId = null;
+      focusBlend = 0;
+      manualShot = null;
       boundsKey = "";
       resume();
     },
-    focusStation(id) { focusId = id; resume(); },
+    focusStation(id) { focusId = id; manualShot = null; resume(); },
     dispose() {
       disposed = true;
       stop();
@@ -725,6 +809,7 @@ export function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, 
       canvas.removeEventListener("webglcontextrestored", onContextRestored);
       canvas.removeEventListener("pointerleave", onPointerLeave);
       document.removeEventListener("visibilitychange", onVisibility);
+      disposeBatches();
       geometries.forEach(value => value.dispose());
       materials.forEach(value => value.dispose());
       environment.dispose();

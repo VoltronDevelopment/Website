@@ -1,0 +1,13 @@
+import {describe,it,expect} from "vitest";
+import {alphaLineShotAt,alphaTourDuration,alphaTourSegments,alphaTourStateAt,alphaTourTimeAt} from "../components/manufacturing/alpha-line-tour";
+import {alphaLineDuration,alphaLineSchedule,alphaLineStateAt} from "../components/manufacturing/alpha-line-timeline";
+import {alphaLineStation} from "../components/manufacturing/alpha-line-config";
+describe("Alpha guided camera and time compression",()=>{
+ it("offers a short overview while preserving the complete route",()=>{expect(alphaTourDuration).toBeGreaterThan(35);expect(alphaTourDuration).toBeLessThan(46);expect(alphaLineDuration).toBeGreaterThan(85);});
+ it("retains full holds for representative immersions",()=>{for(const id of ["T01","T07","T13"]){const s=alphaTourSegments.find(s=>s.event.stationId===id&&s.event.kind==="hold")!;expect(s.end-s.start).toBeCloseTo(2);expect(s.compressed).toBe(false);}});
+ it("marks accelerated repeated operations and never releases quality",()=>{for(const e of alphaTourSegments){const s=alphaTourStateAt((e.start+e.end)/2);expect(s.stationId).toBe(e.event.stationId);expect(s.qualityReleased).toBe(false);expect(s.dispatched).toBe(false);expect(s.compressed).toBe(e.compressed);}});
+ it("converts chapter time without losing physical state",()=>{for(const e of alphaLineSchedule){const t=(e.t0+e.t1)/2;const full=alphaLineStateAt(t),short=alphaTourStateAt(alphaTourTimeAt(t));expect(short.phase).toBe(full.phase);expect(short.y).toBeCloseTo(full.y);expect(short.attached).toBe(full.attached);}});
+ it("opens on an overview, zooms into pickup, then returns to the entire line",()=>{expect(alphaLineShotAt(alphaTourStateAt(0)).detail).toBe(0);const pick=alphaLineSchedule.find(e=>e.kind==="attach")!;expect(alphaLineShotAt(alphaTourStateAt(alphaTourTimeAt(pick.t0))).zoom).toBeGreaterThan(1.8);expect(alphaLineShotAt(alphaTourStateAt(alphaTourDuration)).zoom).toBe(1);expect(alphaLineShotAt(alphaTourStateAt(alphaTourDuration)).detail).toBe(0);});
+ it("holds the camera still through every featured immersion",()=>{for(const id of ["T01","T07","T13"]){const e=alphaLineSchedule.find(e=>e.kind==="hold"&&e.stationId===id)!;const a=alphaLineShotAt(alphaTourStateAt(alphaTourTimeAt(e.t0+.1))),b=alphaLineShotAt(alphaTourStateAt(alphaTourTimeAt(e.t1-.1)));expect(a).toEqual(b);}});
+ it("centres each featured immersion on narrow screens",()=>{for(const id of ["T01","T07","T13"]){const event=alphaLineSchedule.find(e=>e.kind==="hold"&&e.stationId===id)!;const shot=alphaLineShotAt(alphaTourStateAt(alphaTourTimeAt((event.t0+event.t1)/2)),true);expect(shot.x).toBeCloseTo(alphaLineStation(id).x);expect(shot.z).toBeCloseTo(alphaLineStation(id).z);}});
+});

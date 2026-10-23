@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import {DeferredArtwork} from "../performance/DeferredArtwork";
 import { Pause, Play, RotateCcw } from "lucide-react";
+import {prefersStaticScene} from "../performance/scene-policy";
 import { canPrepareHomeScene, prepareScene } from "./scene-preparation";
 import type { FactorySystemsController } from "./factory-systems-renderer";
 import type { FactoryPhase } from "./factory-systems-timeline";
 
+import {optimizedAsset} from "@/lib/optimized-assets";
+import componentPoster from "@/lib/component-poster.json";
 const assetRoot = "/Brand%20Assets/voltron%20brand%20page/voltron-factory-systems/";
 const systems = [
   { title: "Execution", image: "Robot arm and cube conveyor-1.png", text: "Physical production on the factory floor." },
@@ -29,7 +33,7 @@ export function FactorySystems() {
     let disposed = false, nearby = false, scheduled = false, cancel: (() => void) | undefined;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     function prepare() {
-      if (!nearby || scheduled || motion.matches || disposed) return;
+      if (!nearby || scheduled || prefersStaticScene() || disposed) return;
       scheduled = true;
       cancel = prepareScene(async () => {
         try {
@@ -55,7 +59,7 @@ export function FactorySystems() {
     motion.addEventListener("change", preference);
     const observer = new IntersectionObserver(([entry]) => {
       nearby = entry.isIntersecting; prepare();
-    }, { rootMargin: "650px 0px" });
+    }, { rootMargin: "160px 0px" });
     if (host.current) observer.observe(host.current);
     return () => {
       disposed = true; cancel?.(); observer.disconnect();
@@ -74,9 +78,10 @@ export function FactorySystems() {
     <div className="factory-systems-stage" ref={host}>
       <canvas className="factory-systems-canvas" ref={canvas} aria-hidden="true" />
       <div className="factory-systems-grid">
-        {systems.map(system => <article className="factory-system" key={system.title}>
+        {systems.map((system, index) => <article className="factory-system" key={system.title}>
           <h3>{system.title}</h3>
           <div className="factory-system-anchor" data-system-anchor aria-hidden="true">
+            {index === 1 && <div className="factory-component-poster"><img src={componentPoster.url} width="300" height="280" alt="" decoding="async" /></div>}
             <div className="factory-system-fallback">
               <svg viewBox="0 0 300 280" fill="none" aria-hidden="true">
                 <path className="factory-cube-rear" d="M150 24v138M30 208l120-46 120 46" />
@@ -86,7 +91,7 @@ export function FactorySystems() {
                 <path className="factory-cube-edge" d="m30 70 120-46 120 46v138l-120 48-120-48V70l120 48 120-48M150 118v138" />
                 {[ [30, 70], [150, 24], [270, 70], [30, 208], [150, 256], [270, 208] ].map(([cx, cy]) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="1.8" fill="var(--blue)" />)}
               </svg>
-              <img src={assetRoot + encodeURIComponent(system.image)} alt="" width="1280" height="1280" loading="lazy" decoding="async" />
+              <DeferredArtwork src={optimizedAsset(assetRoot + encodeURIComponent(system.image))}/>
             </div>
           </div>
           <p>{system.text}</p>

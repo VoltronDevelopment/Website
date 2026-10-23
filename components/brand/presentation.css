@@ -65,8 +65,7 @@ body:has(.site-presentation) {
   border-radius:6px;
   background:color-mix(in srgb,var(--surface) 45%,transparent);
 }
-.site-presentation .brand-mark { background:url("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png") center/contain no-repeat; }
-.site-presentation .brand-mark img { visibility:hidden; }
+.site-presentation .brand-mark { background:none; }
 .site-presentation .artwork-slot {
   border:1px solid color-mix(in srgb,var(--line) 55%,transparent);
   border-radius:8px;
@@ -122,4 +121,18 @@ body:has(.site-presentation) {
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more) {
   .site-presentation,:root[data-theme="dark"] .site-presentation { background:var(--canvas); backdrop-filter:none; -webkit-backdrop-filter:none; }
   .site-presentation .site-header,.site-presentation .site-footer { background:var(--canvas); backdrop-filter:none; -webkit-backdrop-filter:none; }
+}
+
+/* Artwork exists in the first HTML response, independently of JavaScript or WebGL. */
+[data-lattice-slot],.human-hero-art { position:relative; }
+.scene-poster { position:absolute; inset:0; display:block; pointer-events:none; }
+.scene-poster img { width:100%; height:100%; object-fit:contain; }
+.home-cube-scene .philosophy-still { position:absolute; inset:0; width:100%; height:100%; }
+.home-cube-scene:has(canvas[data-ready="true"]) .philosophy-still { visibility:hidden; }
+[data-lattice-slot][data-live="true"] > .scene-poster,
+.human-hero-art:has(> canvas[data-ready="true"]) > .scene-poster,
+.human-hero-art:has(> svg) > .scene-poster { visibility:hidden; }
+@supports (backdrop-filter:blur(1px)) {
+  body:has(canvas[data-render-quality="balanced"]) .site-presentation { backdrop-filter:blur(20px) saturate(var(--glass-sat)); }
+  body:has(canvas[data-render-quality="lightweight"]) .site-presentation { backdrop-filter:blur(14px) saturate(var(--glass-sat)); }
 }

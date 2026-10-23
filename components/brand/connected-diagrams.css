@@ -1,0 +1,29 @@
+.architecture-network { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin:32px 0 24px; padding:0 12px; }
+.architecture-branch { position:relative; padding:28px 16px 8px; border-top:1px solid var(--line); color:var(--muted); }
+.architecture-junction { position:absolute; top:-4px; left:calc(50% - 4px); width:7px; height:7px; border:1px solid var(--cube-outline); background:var(--surface); border-radius:50%; }
+.architecture-junction::after { content:""; position:absolute; top:7px; left:2px; height:16px; border-left:1px solid var(--line); }
+.architecture-systems { display:flex; flex-wrap:wrap; justify-content:center; gap:12px 20px; font-size:13px; line-height:1.6; }
+.architecture-branch[data-active="true"] { color:var(--ink); border-color:var(--blue); }
+.architecture-branch[data-active="true"] .architecture-junction { background:var(--blue); border-color:var(--blue); }
+.architecture-branch[data-active="true"] .architecture-junction::after { border-color:var(--blue); }
+.architecture-branch[data-active="true"]::after { content:""; position:absolute; top:-1px; left:0; width:100%; height:1px; background:var(--blue); transform-origin:center; animation:architecture-connect .55s cubic-bezier(.16,1,.3,1) both; }
+.evidence-layout { position:relative; }
+.evidence-connections { position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+.evidence-connections path { fill:none; stroke:var(--line); stroke-width:1; }
+.evidence-connections .is-selected { stroke:var(--blue); }
+.evidence-connections .evidence-signal { stroke:var(--blue); stroke-width:2; stroke-linecap:round; stroke-dasharray:.12 1; animation:evidence-connect .75s cubic-bezier(.16,1,.3,1) both; }
+.evidence-sources,.evidence-core { position:relative; }
+@keyframes architecture-connect { from { transform:scaleX(.05); opacity:.3; } to { transform:scaleX(1); opacity:1; } }
+@keyframes evidence-connect { from { stroke-dashoffset:.12; opacity:1; } 85% { opacity:1; } to { stroke-dashoffset:-1; opacity:0; } }
+@media(max-width:767px) {
+  .architecture-network { grid-template-columns:1fr; gap:12px; margin:20px 0; padding:0; }
+  .architecture-branch { padding:16px 8px; }
+  .architecture-systems { gap:8px 20px; }
+  .architecture-junction::after { height:8px; }
+  .evidence-connections { display:none; }
+  .evidence-sources button[aria-pressed="true"] { border-color:var(--blue); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .architecture-branch[data-active="true"]::after,.evidence-connections .evidence-signal { animation:none; }
+  .evidence-connections .evidence-signal { display:none; }
+}

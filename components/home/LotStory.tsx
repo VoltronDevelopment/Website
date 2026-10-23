@@ -2,12 +2,15 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, ClipboardList, FileText, Pause, Play, RotateCcw, ScanLine, Settings2, Shield, ShieldCheck, UserRound } from "lucide-react";
+import {prefersStaticScene} from "../performance/scene-policy";
 import { canPrepareHomeScene, prepareScene } from "./scene-preparation";
 import { lotEvidence, lotStageTimes, lotStoryDuration, lotStoryStages, lotStoryStateAt, type LotStoryState } from "./lot-story-timeline";
 import type { LotStoryController } from "./lot-story-renderer";
 import "./lot-story.css";
 
 const icons = [ClipboardList, Settings2, Shield, UserRound, FileText];
+const tileMessages = ["Lot identified. Requirements linked.", "Execution recorded. Process history connected.", "Inspection evidence linked to the lot.", "Released lot. Connected history preserved."];
+const tilePendingMessages = ["Identifying the lot and requirements.", "Recording process execution.", "Connecting inspection evidence.", "Preparing the released lot record."];
 
 export function HomeLotFlow() {
   const host = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null);
@@ -20,7 +23,7 @@ export function HomeLotFlow() {
     let disposed = false, nearby = false, scheduled = false, cancel: (() => void) | undefined;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     function prepare() {
-      if (disposed || scheduled || !nearby || motion.matches) return;
+      if (disposed || scheduled || !nearby || prefersStaticScene()) return;
       scheduled = true;
       cancel = prepareScene(async () => {
         try {
@@ -62,11 +65,9 @@ export function HomeLotFlow() {
         {lotStoryStages.map((stage, index) => <article className="lot-snapshot" key={stage.title} data-active={state.stage === index}>
           <h3><button type="button" onClick={() => selectTime(lotStageTimes[index])} aria-pressed={state.stage === index} aria-controls={`${id}-detail`}>{stage.title}</button></h3>
           <div className="lot-snapshot-anchor" data-lot-story-anchor aria-hidden="true">
-            <span className="lot-identity">VL-001</span>
             <LotSnapshotFallback stage={index} />
-            <span className="lot-snapshot-symbol">{index === 0 ? <ClipboardList /> : index === 1 ? <Settings2 /> : index === 2 ? state.released ? <ShieldCheck /> : <ScanLine /> : <FileText />}{index === 3 && state.evidence[4] && <Check size={13} />}</span>
           </div>
-          <p className="lot-snapshot-caption">{stage.caption}</p>
+          <p className="lot-snapshot-caption"><span className="lot-snapshot-symbol" aria-hidden="true">{index === 0 ? <ClipboardList /> : index === 1 ? <Settings2 /> : index === 2 ? state.released ? <ShieldCheck /> : <ScanLine /> : <FileText />}</span>{stage.caption}</p>
         </article>)}
       </div>
     </div>
@@ -78,14 +79,25 @@ export function HomeLotFlow() {
       <span aria-live="polite">{state.stage + 1} of 4 · {lotStoryStages[state.stage].title}</span>
       <button type="button" onClick={() => selectTime(lotStageTimes[state.stage + 1])} disabled={state.stage === 3}>Next<ChevronRight size={16} aria-hidden="true" /></button>
     </div>
-    <div className="lot-story-detail" id={`${id}-detail`} aria-live="polite" aria-atomic="true"><h4>{activeTitle}</h4><p>{detail}</p></div>
-    <section className="lot-evidence-panel" aria-label="VOS evidence history">
-      <p className="lot-evidence-intro">VOS connects what happens, what it means and what can happen next.</p>
-      <div className="lot-evidence-desktop"><EvidenceList state={state} selectTime={selectTime} /></div>
+    <section className="lot-story-evidence" aria-label="VOS evidence history">
+      <p className="lot-evidence-intro">VOS <span aria-hidden="true">·</span> Demo lot VL-001</p>
+      <ol className="lot-story-tiles" aria-label="Lot story records">
+        {lotStoryStages.map((stage, index) => {
+          const record = index === 3 ? 4 : index, complete = state.evidence[record], revealed = index <= state.stage;
+          const Icon = icons[record];
+          return <li key={stage.title} data-active={index === state.stage} data-revealed={revealed} data-complete={complete}>
+            <button type="button" onClick={() => selectTime(lotStageTimes[index])} aria-pressed={index === state.stage} aria-label={`View ${stage.title}: ${complete ? "recorded" : "pending"}`}>
+              <span className="lot-tile-title"><Icon size={17} aria-hidden="true" />{stage.title}{complete && <Check size={13} aria-hidden="true" />}</span>
+              <span className="lot-tile-message" key={`${index}-${complete}`}>{revealed ? complete ? tileMessages[index] : tilePendingMessages[index] : "Record pending."}</span>
+            </button>
+          </li>;
+        })}
+      </ol>
+      <button className="lot-release-gate" type="button" data-active={state.phase === "review"} data-complete={state.released} onClick={() => selectTime(9)}><UserRound size={15} aria-hidden="true" />{state.released ? "Human release recorded" : state.phase === "review" ? "Human review in progress" : "Human review before dispatch"}{state.released && <Check size={13} aria-hidden="true" />}</button>
       <div className="lot-evidence-mobile">
-        <p className="lot-current-record"><span>{lotEvidence[state.activeEvidence]}</span><strong>{state.evidence[state.activeEvidence] ? state.activeEvidence === 3 ? "Human release recorded" : "Recorded" : state.phase === "review" ? "Reviewing evidence" : "Pending"}</strong></p>
         <details><summary>Explore the connected history</summary><EvidenceList state={state} selectTime={selectTime} /></details>
       </div>
+    <p className="sr-only" id={`${id}-detail`} aria-live="polite" aria-atomic="true">{activeTitle}: {detail}</p>
     </section>
     <figcaption className="lot-story-footer"><p id={`${id}-description`}>Four snapshots of one lot · Illustrative sequence</p><div className="lot-story-controls" hidden={!ready || reduced}>
       <button type="button" onClick={playback} aria-label={state.settled ? "Replay lot journey" : paused ? "Resume lot journey" : "Pause lot journey"}>
@@ -104,7 +116,7 @@ function EvidenceList({ state, selectTime }: { state: LotStoryState; selectTime:
       return <li key={label} data-complete={complete} data-active={active} data-gate={index === 3}>
         <button type="button" onClick={() => selectTime(index === 3 ? 9 : lotStageTimes[index === 4 ? 3 : index])} aria-label={`View ${label.toLowerCase()}: ${status.toLowerCase()}`} aria-current={active ? "step" : undefined}>
           <span className="lot-evidence-icon"><Icon size={29} aria-hidden="true" />{complete && <span className="lot-evidence-check"><Check size={11} aria-hidden="true" /></span>}</span>
-          <span className="lot-evidence-title">{label}</span><span className="lot-evidence-status">{status}</span>
+          <span className="lot-evidence-title">{index === 3 ? "Human release" : label}</span><span className="lot-evidence-status">{status}</span>
         </button>
       </li>;
     })}
@@ -120,7 +132,7 @@ function LotSnapshotFallback({ stage }: { stage: number }) {
     <path d="m30 70 120 48v138L30 208Z" fill="var(--cube-left)" fillOpacity=".035" />
     <path d="m150 118 120-48v138l-120 48Z" fill="var(--cube-right)" fillOpacity=".045" />
     <ellipse cx="144" cy="214" rx="57" ry="8" fill="var(--ink)" opacity=".12" />
-    <g transform="translate(101 103) skewY(15)" stroke="var(--cube-outline)" strokeWidth=".8">
+    <g transform="translate(108 116) skewY(15) scale(.86)" stroke="var(--cube-outline)" strokeWidth=".8">
       <rect x="0" y="0" width="87" height="94" rx="8" fill={`url(#${id}-metal)`} />
       {[[10, 11], [76, 11], [10, 82], [76, 82]].map(([cx, cy]) => <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="4" fill="var(--cube-right)" />)}
       <path d="M14 48c0-19 13-33 29-33h14c17 0 29 14 29 33S74 81 57 81H43C27 81 14 67 14 48Z" fill={`url(#${id}-metal)`} />

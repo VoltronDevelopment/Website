@@ -21,7 +21,7 @@ describe("Alpha square-U guided plant", () => {
     expect(holds).toHaveLength(13);
     holds.forEach(e => expect(e.t1-e.t0).toBeCloseTo(2));
     expect(alphaLineSchedule.filter(e => e.kind === "drain")).toHaveLength(13);
-    expect(alphaLineDuration).toBeGreaterThan(70); expect(alphaLineDuration).toBeLessThan(85);
+    expect(alphaLineDuration).toBeGreaterThan(70); expect(alphaLineDuration).toBeLessThan(100);
   });
   it("stops above both square corners and rotates before continuing", () => {
     const turns = alphaLineSchedule.filter(e => e.kind === "turn"); expect(turns).toHaveLength(2);
@@ -83,4 +83,21 @@ describe("Alpha narrow overview labels", () => {
     const labels=[{x:30,y:30,width:18,height:17},{x:70,y:40,width:18,height:17},{x:110,y:50,width:18,height:17}];
     expect(spaceAlphaLineLabels(labels,318,265)).toEqual(labels);
   });
+});
+
+
+describe("Alpha directed presentation",()=>{
+ it("picks a supported part up without teleporting at attachment",()=>{
+   const attach=alphaLineSchedule.find(e=>e.kind==="attach")!;
+   const before=alphaLineStateAt(attach.t1-.0001),after=alphaLineStateAt(attach.t1+.0001);
+   expect(before.loadingOpacity).toBe(1); expect(before.attached).toBe(false);
+   expect(after.loadingOpacity).toBe(0); expect(after.attached).toBe(true);
+   expect(before.y).toBe(alphaLineUnloadY); expect(after.y).toBeCloseTo(before.y,6);
+   expect(alphaLineStateAt(0).partOpacity).toBe(0);
+ });
+ it("holds the supported component before unloading release",()=>{
+   const support=alphaLineSchedule.find(e=>e.kind==="support")!;
+   const s=alphaLineStateAt((support.t0+support.t1)/2);
+   expect(s.y).toBe(alphaLineUnloadY); expect(s.attached).toBe(true);
+ });
 });

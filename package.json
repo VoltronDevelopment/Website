@@ -12,7 +12,10 @@
     "secret-scan": "node scripts/secret-scan.mjs",
     "test": "vitest run --configLoader runner",
     "test:watch": "vitest --configLoader runner",
-    "optimize-images": "node scripts/optimize-images.mjs"
+    "optimize-images": "node scripts/optimize-images.mjs",
+    "optimize-brand-assets": "node scripts/build-performance-assets.mjs",
+    "performance:budget": "node scripts/check-performance-budgets.mjs",
+    "performance:browser": "node scripts/performance-audit-20261023.cjs"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1042.0",

@@ -1,4 +1,6 @@
 "use client";
+import {prefersStaticScene} from "@/components/performance/scene-policy";
+import {PhilosophyStill} from "../performance/PhilosophyStill";
 
 import { useEffect, useRef } from "react";
 import type { CubeKind, mountCubes } from "./cube-renderer";
@@ -11,7 +13,7 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
   useEffect(()=>{
     let disposed=false,cancel:(()=>void)|undefined;
     const observer=new IntersectionObserver(([entry])=>{
-      if(!entry.isIntersecting)return;
+      if(!entry.isIntersecting||prefersStaticScene())return;
       observer.disconnect();
       cancel=prepareScene(async()=>{
         try{
@@ -23,10 +25,13 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
       },canPrepareHomeScene);
     },{rootMargin:kind==="enclosure"?"700px 0px":"300px 0px"});
     if(host.current)observer.observe(host.current);
-    return ()=>{disposed=true;cancel?.();observer.disconnect();controller.current?.dispose();controller.current=null;};
+    const sceneMotionPreference=matchMedia("(prefers-reduced-motion: reduce)");
+    const retryScene=()=>{if(!prefersStaticScene()&&!controller.current&&host.current){observer.unobserve(host.current);observer.observe(host.current);}};
+    sceneMotionPreference.addEventListener("change",retryScene);
+    return ()=>{sceneMotionPreference.removeEventListener("change",retryScene);disposed=true;cancel?.();observer.disconnect();controller.current?.dispose();controller.current=null;};
   },[kind,sequence]);
   useEffect(()=>{controller.current?.setActive(active);},[active]);
-  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true"><canvas ref={canvas}/>{children}</div>;
+  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true">{kind==="philosophy"&&<PhilosophyStill/>}<canvas ref={canvas}/>{children}</div>;
 }
 
 export { FactorySystems } from "./FactorySystems";

@@ -1,0 +1,81 @@
+{
+  "/Brand Assets/logo/dark circular.png": {
+    "url": "/optimized/dark-circular-32f78ec186e04efd.webp",
+    "width": 384,
+    "bytes": 12702,
+    "sourceBytes": 1259785
+  },
+  "/Brand Assets/logo/dark rectangle.png": {
+    "url": "/optimized/dark-rectangle-ff81291114bd6d35.webp",
+    "width": 384,
+    "bytes": 12888,
+    "sourceBytes": 1260578
+  },
+  "/Brand Assets/logo/light circular.png": {
+    "url": "/optimized/light-circular-f1782a68ea69816a.webp",
+    "width": 384,
+    "bytes": 12084,
+    "sourceBytes": 1180447
+  },
+  "/Brand Assets/logo/light rectangle.png": {
+    "url": "/optimized/light-rectangle-051d373a561ee770.webp",
+    "width": 384,
+    "bytes": 12952,
+    "sourceBytes": 1220016
+  },
+  "/Brand Assets/voltron brand page/voltron-factory-systems/Floating Powder-Blue Brain Sculpture.png": {
+    "url": "/optimized/floating-powder-blue-brain-sculpture-96bc81a21b1492bd.webp",
+    "width": 1024,
+    "bytes": 148582,
+    "sourceBytes": 1235561
+  },
+  "/Brand Assets/voltron brand page/voltron-factory-systems/Pastel display with floating checklists.png": {
+    "url": "/optimized/pastel-display-with-floating-checklists-66323abaa04437c1.webp",
+    "width": 1024,
+    "bytes": 90276,
+    "sourceBytes": 978164
+  },
+  "/Brand Assets/voltron brand page/voltron-factory-systems/Robot arm and cube conveyor-1.png": {
+    "url": "/optimized/robot-arm-and-cube-conveyor-1-2c1b54bf454d19c3.webp",
+    "width": 1024,
+    "bytes": 109386,
+    "sourceBytes": 849097
+  },
+  "/Brand Assets/voltron brand page/voltron-hero-assets/hero-static-preview.png": {
+    "url": "/optimized/hero-static-preview-3e4b4117122a07e3.webp",
+    "width": 640,
+    "bytes": 12298,
+    "sourceBytes": 65396
+  },
+  "/Brand Assets/voltron brand page/voltron-hero-assets/voltron-mark-original.png": {
+    "url": "/optimized/voltron-mark-original-e705f2836b1c0976.webp",
+    "width": 500,
+    "bytes": 36670,
+    "sourceBytes": 84196,
+    "smallUrl": "/optimized/header-mark-e61abc4c97bcd865.webp"
+  },
+  "/Brand Assets/voltron brand page/voltron-surface-treatment/Glassmorphic isometric process line.png": {
+    "url": "/optimized/glassmorphic-isometric-process-line-644266787f83bf1a.webp",
+    "width": 1024,
+    "bytes": 121534,
+    "sourceBytes": 1199861
+  },
+  "/Brand Assets/voltron commons/Frosted leaf circuit emblem.png": {
+    "url": "/optimized/frosted-leaf-circuit-emblem-3e9c7dc5a2ca3563.webp",
+    "width": 1024,
+    "bytes": 127892,
+    "sourceBytes": 645578
+  },
+  "/Brand Assets/voltron people culture/Frosted hand corrected grip v2.png": {
+    "url": "/optimized/frosted-hand-corrected-grip-v2-9fad3e95ea545b9f.webp",
+    "width": 1024,
+    "bytes": 59952,
+    "sourceBytes": 1229019
+  },
+  "/Brand Assets/voltron people culture/Frosted hand pinching empty space.png": {
+    "url": "/optimized/frosted-hand-pinching-empty-space-6d1cbbcd47758bdd.webp",
+    "width": 1024,
+    "bytes": 71626,
+    "sourceBytes": 1090263
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "home": {
+    "light": "/optimized/poster-home-light-f4eed3776289e8c4.webp",
+    "dark": "/optimized/poster-home-dark-58d18c90c8df729b.webp"
+  },
+  "technology": {
+    "light": "/optimized/poster-technology-light-f52a229d98718287.webp",
+    "dark": "/optimized/poster-technology-dark-437bfcbae5251f02.webp"
+  },
+  "culture": {
+    "light": "/optimized/poster-culture-light-fd2f05c37a6cc763.webp",
+    "dark": "/optimized/poster-culture-dark-6cbd5aed48eecd22.webp"
+  },
+  "commons": {
+    "light": "/optimized/poster-commons-light-8d25eb7fba149441.webp",
+    "dark": "/optimized/poster-commons-dark-be21bcf49acf4b2f.webp"
+  }
+}

@@ -12,7 +12,8 @@ export function alphaViewBounds(objects: readonly THREE.Object3D[], camera: THRE
       if (!(child instanceof THREE.Mesh)) return;
       const geometry = child.geometry;
       if (!geometry.boundingBox) geometry.computeBoundingBox();
-      const box = geometry.boundingBox;
+      if(child instanceof THREE.InstancedMesh)child.computeBoundingBox();
+      const box = child instanceof THREE.InstancedMesh ? child.boundingBox : geometry.boundingBox;
       if (!box) return;
       transform.multiplyMatrices(camera.matrixWorldInverse, child.matrixWorld);
       for (let corner = 0; corner < 8; corner++) {

@@ -57,31 +57,25 @@ function stationName(id: string) {
 function operation(state: AlphaLineState) {
   const name = stationName(state.stationId);
   if (state.chapter === "route") return "Complete route";
+  if (state.phase === "overview") return "Complete plant overview";
+  if (state.phase === "pickup-lower") return "Lowering the empty fixture";
+  if (state.phase === "attach") return "Attaching the component";
+  if (state.phase === "pickup-raise") return "Lifting from the loading support";
   if (state.chapter === "loading") return `${name} · Receiving the lot`;
   if (state.chapter === "verification") return `${name} · Quality checkpoint`;
-  if (state.chapter === "unloading" && (state.phase === "descend" || state.phase === "release")) return `${name} · Processing complete`;
+  if (state.phase === "descend") return "Lowering onto the receiving support";
+  if (state.phase === "support") return "Component supported · Releasing next";
+  if (state.phase === "release") return "Releasing and raising the empty fixture";
+  if (state.phase === "finished") return "Finished component on the receiving support";
   if (state.chapter === "unloading") return `${name} · Moving toward unloading`;
   if (state.chapter === "review") return `${name} · Lot remaining for review`;
   if (state.phase === "turn") return "Corner transfer · Aligning the carrier";
   if (state.phase === "drain") return `${name} · Draining above the bath`;
   if (state.phase === "travel") return `${name} · Travelling`;
-  if (state.phase === "lower" || state.phase === "hold" || state.phase === "raise") return `${name} · Processing`;
+  if (state.phase === "lower") return "Lowering into the bath";
+  if (state.phase === "hold") return "Immersed · Treatment in progress";
+  if (state.phase === "raise") return "Raising from the bath";
   return name;
-}
-
-function equipment(state: AlphaLineState) {
-  if (state.chapter === "route") return "The line is shown. A carrier has not entered.";
-  if (state.phase === "receive") return "The carrier is receiving the selected part.";
-  if (state.phase === "turn") return "The trolley is stopped on the corner transfer while its rail bridge aligns with the next straight run.";
-  if (state.phase === "drain") return "The raised part drains over the same tank before transfer.";
-  if (state.phase === "verify") return "The raised carrier waits while inspection evidence is reviewed.";
-  if (state.phase === "travel") return "The hoist is travelling along the gantry at clearance height.";
-  if (state.phase === "lower") return "The hoist is lowering the carrier.";
-  if (state.phase === "hold") return "The carrier is dwelling in the tank.";
-  if (state.phase === "raise") return "The hoist is raising the carrier.";
-  if (state.phase === "descend" || state.phase === "release") return "The carrier is at the unloading position.";
-  if (state.phase === "review") return "The empty hoist is waiting. The part is on the unloading platform.";
-  return "The hoist is holding.";
 }
 
 function evidence(state: AlphaLineState) {
@@ -100,7 +94,7 @@ export function alphaLineStory(state: AlphaLineState, view: AlphaLineView): { ro
         { label: "Operation", value: step ? step.operation : operation(state).replace(`${stationName(state.stationId)} · `, "") },
         { label: "Route", value: state.chapter === "route" ? "13 treatment stations" : state.stationId.startsWith("T") ? `${Number(state.stationId.slice(1))} of 13` : state.stationId === "LOAD" ? "Receiving the lot" : "13 of 13 · Complete" },
         { label: "Quality", value: "Inspection pending" },
-        { label: "Equipment", value: step ? step.equipment : equipment(state) },
+
       ],
     };
   }

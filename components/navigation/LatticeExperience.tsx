@@ -1,6 +1,8 @@
 "use client";
 
 import {createContext,useCallback,useContext,useEffect,useLayoutEffect,useRef,useState,type ReactNode} from "react";
+import {prefersStaticScene,yieldToBrowser} from "../performance/scene-policy";
+import {ScenePoster} from "../performance/ScenePoster";
 import {usePathname,useRouter} from "next/navigation";
 import type {HeroController,SharedHeroResources} from "../home/hero-renderer";
 import {canMorph,mixForView,transitionMix,viewForPath,type LatticeView} from "./lattice-transition";
@@ -14,7 +16,7 @@ const SlotContext=createContext<((node:HTMLDivElement,kind:LatticeView)=>()=>voi
 export function LatticeSlot({kind,className,label}:{kind:LatticeView;className:string;label?:string}){
   const node=useRef<HTMLDivElement>(null),register=useContext(SlotContext);
   useLayoutEffect(()=>{if(node.current&&register)return register(node.current,kind);},[kind,register]);
-  return <div ref={node} className={className} data-lattice-slot={kind} role={label?"img":undefined} aria-label={label} aria-hidden={label?undefined:true}/>;
+  return <div ref={node} className={className} data-lattice-slot={kind} role={label?"img":undefined} aria-label={label} aria-hidden={label?undefined:true}><ScenePoster kind={kind}/></div>;
 }
 
 export function LatticeExperience({children}:{children:ReactNode}){
@@ -34,6 +36,7 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const activateRef=useRef<(value:Slot,request?:Pending)=>void>(()=>{});
 
   const position=useCallback((rect?:SceneRect)=>{
+    if(prefersStaticScene()){if(layer.current)layer.current.style.visibility="hidden";return;}
     const target=rect??slot.current?.node.getBoundingClientRect();if(!target||!layer.current)return;
     const panel=slot.current?.node.closest(".site-presentation")?.getBoundingClientRect();
     const header=document.querySelector(".site-header")?.getBoundingClientRect();
@@ -65,14 +68,18 @@ export function LatticeExperience({children}:{children:ReactNode}){
 
   const mount=useCallback(async(value:Slot,immediate:boolean,token:number)=>{
     if(!canvas.current)return;
+    if(prefersStaticScene()){controller.current?.pause();value.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";return;}
+    await yieldToBrowser();if(token!==generation.current)return;
     resources.current??=import("./lattice-resources").then(module=>module.createLatticeResources(canvas.current!));
-    const [common,module]=await Promise.all([resources.current,import("../home/hero-renderer")]);
+    const prepared=await Promise.all([resources.current,import("../home/hero-renderer")]).catch(()=>null);
+    if(!prepared){unavailable.current=true;value.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";return;}
+    const [common,module]=prepared;
     if(token!==generation.current||!value.node.isConnected)return;
     shared.current=common;controller.current?.();
-    const next=module.mountHero(canvas.current,value.node,value.hero,value.kind,{shared:unavailable.current?undefined:common,immediate,static:unavailable.current});controller.current=next;
+    const next=module.mountHero(canvas.current,value.node,value.hero,value.kind,{shared:unavailable.current?undefined:common,immediate:immediate||performance.now()>2000,static:unavailable.current});controller.current=next;
     canvas.current.dataset.persistentLattice="true";
     await next.ready;if(token!==generation.current)return;
-    mix.current=mixForView(value.kind);position();
+    value.node.dataset.live="true";mix.current=mixForView(value.kind);position();
   },[position]);
 
   const activate=useCallback(async(value:Slot,request?:Pending)=>{
@@ -152,7 +159,7 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(url.pathname===currentPath.current&&slot.current)void activateRef.current(slot.current,request);
     };
     const pop=()=>{generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;clearState();};
-    const simplify=()=>{if(pending.current&&slot.current){pending.current.rich=false;void activateRef.current(slot.current,pending.current);}else move();};
+    const simplify=()=>{if(prefersStaticScene()){controller.current?.pause();if(slot.current)slot.current.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";clearState();return;}if(slot.current&&!pending.current){void activateRef.current(slot.current);return;}if(pending.current&&slot.current){pending.current.rich=false;void activateRef.current(slot.current,pending.current);}else move();};
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
     const lost=()=>{unavailable.current=true;};const surface=canvas.current;surface?.addEventListener("webglcontextlost",lost);
     const panels=new MutationObserver(()=>position(animation.current&&layer.current?layer.current.getBoundingClientRect():undefined));panels.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-expanded"]});
