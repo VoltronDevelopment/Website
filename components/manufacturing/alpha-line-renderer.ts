@@ -6,6 +6,7 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { alphaViewBounds, fitAlphaCamera } from "../home/alpha-process-framing";
 import { alphaVisualColors } from "../home/alpha-visual-palette";
+import { alphaBathColor } from "./alpha-line-bath-palette";
 import { alphaLineCoatId, alphaLineEndX, alphaLineFarZ, alphaLineNearZ, alphaLinePath, alphaLineStation, alphaLineStations, type AlphaLineStation } from "./alpha-line-config";
 import { alphaLineCameraOffset, alphaLineLookTarget, clampAlphaLineOrbit, frameAlphaLineStation, spaceAlphaLineLabels } from "./alpha-line-framing";
 import {
@@ -72,7 +73,8 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   const materials = new Set<THREE.Material>();
   const geometry = <T extends THREE.BufferGeometry>(value: T) => { geometries.add(value); return value; };
   const material = <T extends THREE.Material>(value: T) => { materials.add(value); return value; };
-  const visual = alphaVisualColors(false);
+  const isDark = () => document.documentElement.dataset.theme === "dark";
+  const visual = alphaVisualColors(isDark());
   const metal = material(new THREE.MeshStandardMaterial({ color: visual.metal, metalness: 0.8, roughness: 0.29, envMapIntensity: 1 }));
   const polished = material(new THREE.MeshStandardMaterial({ color: visual.polished, metalness: 0.86, roughness: 0.2, envMapIntensity: 1.1 }));
   const steelDark = material(new THREE.MeshStandardMaterial({ color: visual.steelDark, metalness: 0.7, roughness: 0.36 }));
@@ -228,21 +230,21 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
 
   type Bath = { id: string; surface: THREE.ShaderMaterial; volume: THREE.MeshBasicMaterial };
   const baths: Bath[] = [];
-  function waterMaterial(tone: number) {
+  function waterMaterial(color: number) {
     return material(new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
       side: THREE.DoubleSide,
-      uniforms: { uTime: { value: 0 }, uImpact: { value: 0 }, uDark: { value: 0 }, uTone: { value: tone }, uOpacity: {value:.78} },
+      uniforms: { uTime: { value: 0 }, uImpact: { value: 0 }, uColor: { value: new THREE.Color(color) }, uOpacity: {value:.78} },
       vertexShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact;
         void main(){vUv=uv; vec3 p=position; p.z+=sin(p.x*7.+uTime*.8)*cos(p.y*6.-uTime*.6)*(.0015+uImpact*.01); gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
-      fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact; uniform float uDark; uniform float uTone; uniform float uOpacity;
+      fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact; uniform vec3 uColor; uniform float uOpacity;
         void main(){vec2 p=(vUv-.5)*vec2(1.28,1.); float r=length(p);
           float ring=pow(sin(r*48.-uTime*5.)*.5+.5,7.)*exp(-r*5.5)*uImpact;
           float wave=sin(p.x*11.+sin(p.y*6.)*.4+uTime*.35)*cos(p.y*9.-uTime*.3);
           float reflection=pow(clamp(.52+wave*.25+sin(p.x*4.-p.y*3.)*.12,0.,1.),6.);
           float edge=1.-smoothstep(0.,.035,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));
-          vec3 base=mix(vec3(.025,.38,.62),vec3(.025,.19,.32),uDark)*uTone;
+          vec3 base=uColor;
           gl_FragColor=vec4(base+vec3(.32,.34,.34)*(reflection*.32+ring*.6+edge*.2),uOpacity);
           #include <tonemapping_fragment>
           #include <colorspace_fragment>
@@ -274,9 +276,10 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     for (const x of [-1.36,1.36]) for(const z of [-1.05,1.05]) box(tank,[.18,.12,.22],[x,.24,z],steelDark,true);
     const coated = station.id === alphaLineCoatId;
     const volumeMaterial = material((coated ? coatLiquid : liquidMaterial).clone());
+    volumeMaterial.color.setHex(alphaBathColor(station.id, isDark())).multiplyScalar(.8);
     const volume = box(tank, [2.93, 1.34, 2.29], [0, liquidY - 0.67, 0], volumeMaterial);
     volume.renderOrder = 2;
-    const surfaceMaterial = waterMaterial(coated ? 0.48 : 1);
+    const surfaceMaterial = waterMaterial(alphaBathColor(station.id, isDark()));
     const surface = new THREE.Mesh(geometry(new THREE.PlaneGeometry(2.94, 2.3, 10, 8)), surfaceMaterial);
     surface.rotation.x = -Math.PI / 2;
     surface.position.y = liquidY;
@@ -444,7 +447,6 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   const pointer = new THREE.Vector2();
   const silver = new THREE.Color(0xc9d4db);
   const graphite = new THREE.Color(0x29343e);
-  const isDark = () => document.documentElement.dataset.theme === "dark";
 
   function palette() {
     const colors = alphaVisualColors(isDark());
@@ -468,8 +470,8 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     (shadow.material as THREE.ShadowMaterial).opacity = colors.shadowOpacity;
     (shadow.material as THREE.ShadowMaterial).color.set(colors.shadowColor);
     baths.forEach(bath => {
-      bath.surface.uniforms.uDark.value = colors.liquidDark;
-      bath.volume.color.set(bath.id === alphaLineCoatId ? colors.liquidCoat : colors.liquid).multiplyScalar(.8);
+      bath.surface.uniforms.uColor.value.setHex(alphaBathColor(bath.id, isDark()));
+      bath.volume.color.setHex(alphaBathColor(bath.id, isDark())).multiplyScalar(.8);
     });
     canvas.dataset.theme = isDark() ? "dark" : "light";
   }
@@ -552,14 +554,24 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
       const offset = station.kind === "tank" ? 1.26 : 0;
       const labelShift = station.kind === "tank" && state.carrierVisible && state.stationId === station.id ? -.95 : 0;
       const projected = new THREE.Vector3(station.x + Math.sin(station.yaw) * offset + Math.cos(station.yaw) * labelShift, station.kind === "tank" ? 1.4 : .55, station.z + Math.cos(station.yaw) * offset - Math.sin(station.yaw) * labelShift).project(camera);
-      return { x: (projected.x + 1) / 2 * pixelWidth, y: (1 - projected.y) / 2 * pixelHeight, width: node.offsetWidth, height: node.offsetHeight, visible: Math.abs(projected.x) <= .96 && Math.abs(projected.y) <= .96 };
+      const anchorX = (projected.x + 1) / 2 * pixelWidth, anchorY = (1 - projected.y) / 2 * pixelHeight;
+      const bay = station.kind !== "tank";
+      return { x: anchorX - (bay ? 22 : 0), y: anchorY + (bay ? 25 : 0), anchorX, anchorY, width: node.offsetWidth, height: node.offsetHeight, visible: Math.abs(projected.x) <= .96 && Math.abs(projected.y) <= .96 && projected.z > -1 && projected.z < 1 };
     });
-    const overview = canvas.dataset.cameraZoom === undefined || Number(canvas.dataset.cameraZoom) < 1.1;
-    const positionsWithSpacing = pixelWidth < 600 && overview && !focusId && focusBlend < .001 ? spaceAlphaLineLabels(positions, pixelWidth, pixelHeight) : positions;
+    const visibleIndices = positions.flatMap((p, index) => p.visible ? [index] : []);
+    const positionsWithSpacing = positions.map(p => ({x:p.x,y:p.y,width:p.width,height:p.height}));
+    spaceAlphaLineLabels(visibleIndices.map(index => positions[index]), pixelWidth, pixelHeight).forEach((p, index) => { positionsWithSpacing[visibleIndices[index]] = p; });
+    host.querySelector(".alpha-line-leaders")?.setAttribute("viewBox", `0 0 ${pixelWidth} ${pixelHeight}`);
     nodes.forEach((node, index) => {
       node.style.left = `${positionsWithSpacing[index].x / pixelWidth * 100}%`;
       node.style.top = `${positionsWithSpacing[index].y / pixelHeight * 100}%`;
       node.style.visibility = positions[index].visible ? "" : "hidden";
+      const leader = host.querySelector<SVGLineElement>(`[data-bay="${node.dataset.station}"]`);
+      if (leader) {
+        leader.style.visibility = positions[index].visible ? "" : "hidden";
+        leader.setAttribute("x1", String(positions[index].anchorX)); leader.setAttribute("y1", String(positions[index].anchorY));
+        leader.setAttribute("x2", String(positionsWithSpacing[index].x)); leader.setAttribute("y2", String(positionsWithSpacing[index].y - positions[index].height / 2));
+      }
     });
   }
   function applyCamera(forceBounds = false) {

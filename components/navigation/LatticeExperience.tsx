@@ -36,7 +36,8 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const activateRef=useRef<(value:Slot,request?:Pending)=>void>(()=>{});
 
   const position=useCallback((rect?:SceneRect)=>{
-    if(prefersStaticScene()){if(layer.current)layer.current.style.visibility="hidden";return;}
+    const presentation=slot.current?.node.dataset.renderer;
+    if(prefersStaticScene()||presentation!=="live"&&presentation!=="morph"){if(layer.current)layer.current.style.visibility="hidden";return;}
     const target=rect??slot.current?.node.getBoundingClientRect();if(!target||!layer.current)return;
     const panel=slot.current?.node.closest(".site-presentation")?.getBoundingClientRect();
     const header=document.querySelector(".site-header")?.getBoundingClientRect();
@@ -68,24 +69,25 @@ export function LatticeExperience({children}:{children:ReactNode}){
 
   const mount=useCallback(async(value:Slot,immediate:boolean,token:number)=>{
     if(!canvas.current)return;
-    if(prefersStaticScene()){controller.current?.pause();value.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";return;}
+    if(prefersStaticScene()){controller.current?.pause();value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}
     await yieldToBrowser();if(token!==generation.current)return;
     resources.current??=import("./lattice-resources").then(module=>module.createLatticeResources(canvas.current!));
     const prepared=await Promise.all([resources.current,import("../home/hero-renderer")]).catch(()=>null);
-    if(!prepared){unavailable.current=true;value.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";return;}
+    if(!prepared){unavailable.current=true;value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}
     const [common,module]=prepared;
     if(token!==generation.current||!value.node.isConnected)return;
     shared.current=common;controller.current?.();
     const next=module.mountHero(canvas.current,value.node,value.hero,value.kind,{shared:unavailable.current?undefined:common,immediate:immediate||performance.now()>2000,static:unavailable.current});controller.current=next;
     canvas.current.dataset.persistentLattice="true";
     await next.ready;if(token!==generation.current)return;
-    value.node.dataset.live="true";mix.current=mixForView(value.kind);position();
+    if(prefersStaticScene()){next.pause();value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}
+    value.node.dataset.live="true";value.node.dataset.renderer=canvas.current.hidden?"fallback":"live";mix.current=mixForView(value.kind);position();
   },[position]);
 
   const activate=useCallback(async(value:Slot,request?:Pending)=>{
     const token=++generation.current;cancelAnimationFrame(animation.current);
     const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const rich=request?.rich&&controller.current&&shared.current&&!reduced;
+    const rich=request?.rich&&controller.current&&shared.current&&!prefersStaticScene();
     if(request){
       if(request.copy){outgoingCopy.current?.remove();outgoingCopy.current=request.copy;value.node.closest(".site-presentation")?.append(request.copy);setTimeout(()=>request.copy?.remove(),160);}
       document.documentElement.dataset.routeState="incoming";clearTimeout(loadingTimer.current);setLoading("");
@@ -125,9 +127,13 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const register=useCallback((node:HTMLDivElement,kind:LatticeView)=>{
     const value={node,kind,hero:node.closest<HTMLElement>(".hero")!};slot.current=value;
     const request=pending.current;
+    // A route owns either its poster or the shared canvas, including the morph frames.
+    node.dataset.renderer=request?.rich&&controller.current&&shared.current&&!prefersStaticScene()&&!canvas.current?.hidden?"morph":"poster";
+    node.dataset.live="false";
+    position();
     queueMicrotask(()=>{if(slot.current===value&&node.isConnected)void activateRef.current(value,request?.path===(kind==="home"?"/":"/technology")?request:undefined);});
     return ()=>{if(slot.current?.node===node){slot.current=null;controller.current?.pause();if(!pending.current&&layer.current)layer.current.style.visibility="hidden";}};
-  },[]);
+  },[position]);
 
   useEffect(()=>{
     const move=()=>{if(animation.current||positionFrame.current)return;positionFrame.current=requestAnimationFrame(()=>{positionFrame.current=0;position();});};
@@ -159,7 +165,7 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(url.pathname===currentPath.current&&slot.current)void activateRef.current(slot.current,request);
     };
     const pop=()=>{generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;clearState();};
-    const simplify=()=>{if(prefersStaticScene()){controller.current?.pause();if(slot.current)slot.current.node.dataset.live="false";if(layer.current)layer.current.style.visibility="hidden";clearState();return;}if(slot.current&&!pending.current){void activateRef.current(slot.current);return;}if(pending.current&&slot.current){pending.current.rich=false;void activateRef.current(slot.current,pending.current);}else move();};
+    const simplify=()=>{if(prefersStaticScene()){generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;controller.current?.pause();if(slot.current){slot.current.node.dataset.live="false";slot.current.node.dataset.renderer="poster";}if(layer.current)layer.current.style.visibility="hidden";clearState();return;}if(slot.current&&!pending.current&&slot.current.node.dataset.renderer==="poster"){void activateRef.current(slot.current);return;}if(pending.current&&slot.current){pending.current.rich=false;slot.current.node.dataset.renderer="poster";position();void activateRef.current(slot.current,pending.current);}else move();};
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
     const lost=()=>{unavailable.current=true;};const surface=canvas.current;surface?.addEventListener("webglcontextlost",lost);
     const panels=new MutationObserver(()=>position(animation.current&&layer.current?layer.current.getBoundingClientRect():undefined));panels.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-expanded"]});

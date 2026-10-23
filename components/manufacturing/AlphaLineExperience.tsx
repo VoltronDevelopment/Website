@@ -1,7 +1,8 @@
 "use client";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
+import { alphaBathTone } from "./alpha-line-bath-palette";
 import { ArrowDownToLine, ArrowRight, ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
 import { alphaLineChapters, alphaLineConnections, alphaLineDemo, alphaLineEndX, alphaLineFarZ, alphaLineNearZ, alphaLinePath, alphaLineStation, alphaLineStations, type AlphaLineJourneyChapter } from "./alpha-line-config";
 import { alphaTourStateAt, alphaTourTimeAt, alphaPlaybackDuration, alphaTourDuration } from "./alpha-line-tour";
@@ -147,21 +148,26 @@ export function AlphaLineExperience() {
   const activeStation = alphaLineStation(playback.stationId);
   const completed = playback.processingComplete;
   const ended = playback.mode !== "route" && playback.time >= duration;
+  const milestones = playback.mode === "deviation" ? [] : ["processing", "unloading"].map(chapter => {
+    const source = alphaLineChapterStart(chapter as AlphaLineJourneyChapter);
+    return (fullRoute ? source : alphaTourTimeAt(source)) / duration * 100;
+  });
 
   return <div className="alpha-line">
     <div className="alpha-line-layout">
       <div className="alpha-line-stage">
-        <div className="alpha-line-stage-heading"><span>13-tank process line</span><span>{playback.chapter === "route" ? "Plant overview" : `${paused || !ready || reduced ? "Paused" : "Following lot"} · ${activeStation.name}`}</span></div>
+        <div className="alpha-line-stage-heading"><span>13-tank process line</span><span>{playback.chapter === "route" ? "Plant overview" : paused || !ready || reduced ? "Paused" : "Following lot"}</span></div>
         <div className="alpha-line-art" ref={host} data-ready={ready} role="group" aria-label="Interactive thirteen-tank square-U treatment line" aria-describedby={description}>
           <AlphaLineFallback state={playback} selected={selectedId}/>
           <canvas ref={canvas} aria-hidden="true"/>
-          <div className="alpha-line-numbers" aria-hidden="true">{alphaLineStations.map(station => <span key={station.id} data-station={station.id} data-active={playback.carrierVisible && playback.stationId === station.id} data-selected={selectedId === station.id}>{station.number}{station.kind !== "tank" && <small>{station.name}</small>}</span>)}</div>
+          <svg className="alpha-line-leaders" aria-hidden="true">{["LOAD", "UNLOAD"].map(id => <line key={id} data-bay={id}/>)}</svg>
+          <div className="alpha-line-numbers" aria-hidden="true">{alphaLineStations.map(station => <span key={station.id} data-station={station.id} data-kind={station.kind} data-active={playback.carrierVisible && playback.stationId === station.id} data-selected={selectedId === station.id}>{station.kind === "tank" ? station.number : station.name}</span>)}</div>
           {playback.chapter === "route" && <button type="button" className="button alpha-line-follow" onClick={follow}>Follow a lot <ArrowRight size={16} aria-hidden="true"/></button>}
           {selected && <button type="button" className="alpha-line-complete" onClick={showLine}><Maximize2 size={14} aria-hidden="true"/>Complete line</button>}
         </div>
         <p className="alpha-operation">{playback.compressed ? "Repeated operations · Accelerated playback" : playback.chapter === "route" ? "One component. A complete manufacturing journey." : story.rows.find(row=>row.label === "Operation")?.value ?? activeStation.name}</p>
         <ol className="alpha-line-chapters" aria-label="Guided chapters">{alphaLineChapters.filter(c=>["loading","processing","unloading"].includes(c.id)).map((chapter, index) => <li key={chapter.id}><button type="button" aria-current={playback.chapter === chapter.id ? "step" : undefined} aria-label={chapter.label} onClick={() => goTo(chapter.id)}><span className="alpha-chapter-full" aria-hidden="true">{chapter.label}</span><span className="alpha-chapter-compact" aria-hidden="true">{compactChapters[index]}</span></button></li>)}</ol>
-        <div className="alpha-line-progress"><label className="sr-only" htmlFor={`${tabsId}-progress`}>Journey position in seconds</label><input id={`${tabsId}-progress`} type="range" min="0" max={duration} step=".1" value={Math.min(duration, playback.time)} aria-valuetext={`${clock(playback.time)} of ${clock(duration)}`} onChange={event => { autoStopAtRef.current = null; remember(true); seek(playback.mode === "deviation" ? "deviation" : fullRoute ? "journey" : "tour", Number(event.target.value)); }}/><span>{clock(playback.time)} / {clock(duration)}</span></div>
+        <div className="alpha-line-progress"><label className="sr-only" htmlFor={`${tabsId}-progress`}>Journey position in seconds</label><div className="alpha-timeline-track" data-playing={!paused && ready} style={{"--alpha-progress": `${Math.min(100, playback.time / duration * 100)}%`} as CSSProperties}><input id={`${tabsId}-progress`} type="range" min="0" max={duration} step=".1" value={Math.min(duration, playback.time)} aria-valuetext={`${clock(playback.time)} of ${clock(duration)}`} onChange={event => { autoStopAtRef.current = null; remember(true); seek(playback.mode === "deviation" ? "deviation" : fullRoute ? "journey" : "tour", Number(event.target.value)); }}/><div className="alpha-timeline-milestones" aria-hidden="true">{milestones.map((position, index) => <i key={index} style={{left:`${position}%`}}/>)}</div></div><span>{clock(playback.time)} / {clock(duration)}</span></div>
         <div className="alpha-line-controls">
           {ready && !reduced && <button type="button" className="alpha-play" onClick={togglePlay} aria-label={paused ? ended ? "Replay the lot" : "Play the lot" : "Pause the lot"}>{paused ? <Play size={15} aria-hidden="true"/> : <Pause size={15} aria-hidden="true"/>}{paused ? ended ? "Replay" : "Play" : "Pause"}</button>}
           <button type="button" onClick={() => step(-1)} disabled={playback.chapter === "route"} aria-label="Previous stage"><ChevronLeft size={15} aria-hidden="true"/><span className="alpha-control-label">Previous</span></button>
@@ -210,7 +216,7 @@ function AlphaLineFallback({ state, selected }: { state: AlphaLineState; selecte
   const path = alphaLinePath().map(p => project(p.x, p.z));
   const part = project(state.x, state.z);
   return <svg className="alpha-line-fallback" viewBox="0 0 600 380" aria-hidden="true"><polyline points={path.map(p => `${p.x},${p.y - 37}`).join(" ")} fill="none" stroke="var(--cube-outline)" strokeWidth="4"/><polyline points={path.map(p => `${p.x},${p.y - 43}`).join(" ")} fill="none" stroke="var(--cube-outline)" strokeWidth="2"/>
-    {alphaLineStations.map(station => { const p = project(station.x, station.z); const tank = station.kind === "tank"; return <g key={station.id} transform={`translate(${p.x} ${p.y})`}><path d="M-25,-14 L22,-9 L22,18 L-25,13Z" fill="var(--cube-selected)" stroke={station.id === selected || state.carrierVisible && station.id === state.stationId ? "var(--blue)" : "var(--cube-outline)"} strokeWidth="1.3"/><path d="M-25,-14 L-18,-20 L29,-15 L22,-9Z" fill="var(--cube-top)" stroke="var(--cube-outline)"/>{tank && <path d="M-20,-14 L-16,-17 L23,-13 L20,-11Z" fill="var(--cyan)" opacity=".7"/>}<text x="-1" y="6" textAnchor="middle" fill="var(--ink)" fontSize="11">{station.number}</text>{!tank && <text y="36" textAnchor="middle" fill="var(--ink)" fontSize="10">{station.name}</text>}</g>; })}
+    {alphaLineStations.map(station => { const p = project(station.x, station.z); const tank = station.kind === "tank"; return <g key={station.id} transform={`translate(${p.x} ${p.y})`}><path d="M-25,-14 L22,-9 L22,18 L-25,13Z" fill="var(--cube-selected)" stroke={station.id === selected || state.carrierVisible && station.id === state.stationId ? "var(--blue)" : "var(--cube-outline)"} strokeWidth="1.3"/><path d="M-25,-14 L-18,-20 L29,-15 L22,-9Z" fill="var(--cube-top)" stroke="var(--cube-outline)"/>{tank && <path d="M-20,-14 L-16,-17 L23,-13 L20,-11Z" fill={`var(--alpha-bath-${alphaBathTone(station.id)})`} opacity=".7"/>}<text x="-1" y="6" textAnchor="middle" fill="var(--ink)" fontSize="9">{tank ? station.number : ""}</text>{!tank && <text y="36" textAnchor="middle" fill="var(--ink)" fontSize="10">{station.name}</text>}</g>; })}
     {state.loadingOpacity > 0 && <rect x={project(0,alphaLineFarZ).x-7} y={project(0,alphaLineFarZ).y-20} width="14" height="22" fill="var(--muted)"/>}
     {state.finishedOpacity > 0 && <rect x={project(0,alphaLineNearZ).x-7} y={project(0,alphaLineNearZ).y-20} width="14" height="22" fill="var(--ink)"/>}
     {state.carrierVisible && <g transform={`translate(${part.x} ${part.y - 43})`}><rect x="-8" y="-4" width="16" height="6" fill="var(--muted)"/><path d="M0,2V24" stroke="var(--ink)"/>{state.attached && <rect x="-7" y="24" width="14" height="18" fill={state.coating > .5 ? "var(--ink)" : "var(--muted)"}/>}</g>}

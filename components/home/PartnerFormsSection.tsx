@@ -1,8 +1,9 @@
 "use client";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
 import { partnerIntents, productionIntents } from "@/lib/inquiry-intents";
+import "./partner-forms.css";
 
 type Values = Record<string, string>;
 type FieldSpec = { key: string; label: string; required?: boolean; type?: string; options?: readonly string[]; multiline?: boolean; placeholder?: string; autoComplete?: string };
@@ -30,8 +31,11 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
   const [errors, setErrors] = useState<Values>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [inquiryId, setInquiryId] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
+  const receiptRef = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
+  useEffect(() => { if (status === "success") receiptRef.current?.focus(); }, [status]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy.current) return;
@@ -46,6 +50,7 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) {
       setStatus("idle");
+      setMessage("");
       formRef.current?.querySelector<HTMLElement>(`[name="${Object.keys(nextErrors)[0]}"]`)?.focus();
       return;
     }
@@ -65,20 +70,25 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
       const result = await response.json();
       if (!response.ok || result.ok !== true || typeof result.inquiryId !== "string" || !result.inquiryId) throw new Error(result.message || "Unable to submit. Please try again.");
       setStatus("success");
+      setInquiryId(result.inquiryId);
       setMessage("Your inquiry has been received. We will review the details and contact you about the next step.");
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error && error.name !== "AbortError" ? error.message : "The request timed out. Your details are still here; please try again.");
+      setMessage(error instanceof Error && error.name === "AbortError" ? "The request timed out. Your details are still here; please try again." : error instanceof TypeError ? "Unable to connect. Your details are still here; check your connection and try again." : error instanceof Error ? error.message : "Unable to submit. Your details are still here; please try again.");
     } finally { clearTimeout(timeout); busy.current = false; }
   }
-  return <form ref={formRef} className="inquiry-form" onSubmit={submit} noValidate aria-label={kind === "production" ? "Production inquiry" : "Partnership inquiry"} aria-busy={status === "sending"}>
+  const errorCount = Object.values(errors).filter(Boolean).length;
+  return <><p className="sr-only" role="status">{status === "sending" ? "Submitting your inquiry. Please wait." : ""}</p><form ref={formRef} className="inquiry-form" data-state={status} onSubmit={submit} noValidate aria-label={kind === "production" ? "Production inquiry" : "Partnership inquiry"} aria-busy={status === "sending"}>
+    <p className="inquiry-guidance">Fields marked optional can be left blank.</p>
+    {errorCount > 0 && <div className="inquiry-corrections"><p>Check {errorCount === 1 ? "the highlighted field" : `the ${errorCount} highlighted fields`} before submitting.</p><ul>{fields.filter(field => errors[field.key]).map(field => <li key={field.key}><a href={`#${kind}-${field.key}`} onClick={event => { event.preventDefault(); formRef.current?.querySelector<HTMLElement>(`[name="${field.key}"]`)?.focus(); }}>{field.label}</a></li>)}</ul></div>}
     {fields.map(field => {
       const id = `${kind}-${field.key}`;
-      const inputProps = { id, name: field.key, value: values[field.key] || "", required: field.required, "aria-invalid": !!errors[field.key], "aria-describedby": errors[field.key] ? `${id}-error` : undefined, disabled: status === "sending" || status === "success", onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { setValues(current => ({ ...current, [field.key]: event.target.value })); setErrors(current => ({ ...current, [field.key]: "" })); } };
-      return <div className="field" key={field.key}><label htmlFor={id}>{field.label} {!field.required && <span>(optional)</span>}</label>{field.options ? <select {...inputProps}><option value="">Select {kind === "production" ? "a process" : "an interest"}</option>{field.options.map(option => <option key={option} value={option}>{option.replace(/^Production — /, "")}</option>)}</select> : field.multiline ? <textarea {...inputProps} rows={5} maxLength={800} placeholder={field.placeholder}/> : <input {...inputProps} type={field.type || "text"} maxLength={800} autoComplete={field.autoComplete} placeholder={field.placeholder}/>} {errors[field.key] && <p className="field-error" id={`${id}-error`}>{errors[field.key]}</p>}</div>;
+      const describedBy = [field.multiline ? `${id}-hint` : "", errors[field.key] ? `${id}-error` : ""].filter(Boolean).join(" ") || undefined;
+      const inputProps = { id, name: field.key, value: values[field.key] || "", required: field.required, "aria-invalid": !!errors[field.key], "aria-describedby": describedBy, disabled: status === "sending" || status === "success", onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { setValues(current => ({ ...current, [field.key]: event.target.value })); setErrors(current => ({ ...current, [field.key]: "" })); } };
+      return <div className="field" key={field.key}><label htmlFor={id}>{field.label} {!field.required && <span>(optional)</span>}</label>{field.options ? <select {...inputProps}><option value="">Select {kind === "production" ? "a process" : "an interest"}</option>{field.options.map(option => <option key={option} value={option}>{option.replace(/^Production — /, "")}</option>)}</select> : field.multiline ? <textarea {...inputProps} rows={5} maxLength={800} placeholder={field.placeholder}/> : <input {...inputProps} type={field.type || "text"} maxLength={800} autoComplete={field.autoComplete} placeholder={field.placeholder}/>} {field.multiline && <p className="inquiry-field-hint" id={`${id}-hint`}><span>Up to 800 characters.</span><span>{(values[field.key] || "").length} / 800</span></p>}{errors[field.key] && <p className="field-error" id={`${id}-error`}>{errors[field.key]}</p>}</div>;
     })}
-    {status === "success" ? <div className="form-status form-success" role="status"><CheckCircle2 size={18} aria-hidden="true"/><p>{message}</p></div> : <><button className="button" type="submit" disabled={status === "sending"}>{status === "sending" ? <><LoaderCircle className="spinner" size={18} aria-hidden="true"/>Submitting...</> : <>Submit {kind === "production" ? "production" : "partnership"} inquiry<ArrowRight size={16} aria-hidden="true"/></>}</button>{status === "error" && <p className="form-error" role="alert">{message}</p>}</>}
-  </form>;
+    {status === "success" ? <div ref={receiptRef} tabIndex={-1} className="form-status form-success inquiry-receipt" role="status"><CheckCircle2 size={20} aria-hidden="true"/><div><h3>Inquiry received</h3><p>{message}</p><p className="inquiry-reference">Reference: <strong>{inquiryId}</strong></p></div></div> : <><button className="button inquiry-submit" type="submit" disabled={status === "sending"}>{status === "sending" ? <><LoaderCircle className="spinner" size={18} aria-hidden="true"/>Submitting...</> : <>Submit {kind === "production" ? "production" : "partnership"} inquiry<ArrowRight size={16} aria-hidden="true"/></>}</button>{status === "error" && <div className="form-error inquiry-failure" role="alert"><strong>Inquiry not confirmed</strong><p>{message}</p><p>Your entries are retained. You can try submitting again.</p></div>}</>}
+  </form></>;
 }
 export function PartnerFormsSection() {
   const params = useSearchParams();

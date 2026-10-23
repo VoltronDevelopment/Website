@@ -8,9 +8,10 @@ import { verifyFounderTokenEdge } from "@/lib/founder-session-edge";
 import { isPrelaunch } from "@/lib/launch";
 import { BrandLogo } from "./BrandLogo";
 import "./presentation.css";
+import "./interaction-finish.css";
 
 export function Action({ href, children, secondary = false, text = false }: { href: string; children: React.ReactNode; secondary?: boolean; text?: boolean }) {
-  return <Link className={text ? "text-action" : `button ${secondary ? "button-outline" : ""}`} href={href}>{children}<ArrowRight size={16} aria-hidden="true" /></Link>;
+  return <Link className={`directional-action ${text ? "text-action" : `button ${secondary ? "button-outline" : ""}`}`} href={href}>{children}<ArrowRight size={16} aria-hidden="true" /></Link>;
 }
 export function Logo({ footer = false }: { footer?: boolean }) {
   return <BrandLogo footer={footer}/>;

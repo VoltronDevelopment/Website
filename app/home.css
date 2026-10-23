@@ -93,6 +93,9 @@
   .alpha-process-fallback { visibility:hidden; }
   .alpha-process-art[data-fallback="true"] .alpha-process-fallback { visibility:visible; }
 }
+@media (prefers-reduced-motion:reduce) {
+  .alpha-process-art:not([data-ready="true"]) .alpha-process-fallback { visibility:visible; }
+}
 .alpha-process-stages { position:relative; height:36px; padding:0; margin:0; list-style:none; }
 .alpha-process-stages li { position:absolute; top:0; left:var(--alpha-station-x); transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:10px; width:max-content; font-size:13px; line-height:20px; white-space:nowrap; color:var(--muted); transition:color .25s ease; }
 .alpha-process-stages li:nth-child(1) { --alpha-station-x:17%; }

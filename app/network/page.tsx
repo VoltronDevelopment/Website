@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { BrandArt } from "@/components/brand/BrandArt";
 import { Hero } from "@/components/brand/Hero";
 import { ProcessFlow } from "@/components/brand/ProcessFlow";
-import { ContextSelector } from "@/components/brand/ContextSelector";
+import { NetworkConnections } from "@/components/brand/NetworkConnections";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 export const metadata: Metadata = { title: "Network", description: "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships." };
 export default function NetworkPage() {
@@ -17,11 +17,7 @@ export default function NetworkPage() {
       { title: "Partner brings", items: [["Capital", "Investment for factory setup and operations."], ["Assets", "Land, existing infrastructure or facilities."], ["Market access", "Customer relationships and local market knowledge."]] },
       { title: "Voltron brings", items: [["Technology", "V-MO and manufacturing intelligence."], ["Engineering", "Factory design and process engineering."], ["Automation", "Connected systems and data architecture."], ["Operations", "Operational know-how and continuous improvement."]] },
     ].map(group => <div key={group.title}><h3>{group.title}</h3><ul className="plain-list">{group.items.map(([title, text]) => <li key={title}><strong>{title}</strong><p>{text}</p></li>)}</ul></div>)}</div></div></Section>
-    <Section white><div className="split"><div className="split-copy"><h2>A network that compounds.</h2><p>Validated learning becomes reusable capability. Plant and customer information remains governed within its permitted context.</p></div><div><BrandArt family="N04-compounding-network" className="split-art" crop/><ContextSelector label="Network focus" choices={[
-      { title: "Direct manufacturing", detail: "Direct manufacturing environments provide a place to develop and validate reusable capability." },
-      { title: "Factory partnerships", detail: "Future factory partnerships can apply reviewed capabilities while retaining their own plant configuration." },
-      { title: "Shared architecture", detail: "A shared architecture carries validated learning, not unrestricted plant or customer data." },
-    ]}/></div></div></Section>
+    <Section white><div className="split"><div className="split-copy"><h2>A network that compounds.</h2><p>Validated learning becomes reusable capability. Plant and customer information remains governed within its permitted context.</p></div><NetworkConnections/></div></Section>
     <Section><div className="split"><div className="split-copy"><h2>Industrial products. A separate development direction.</h2><p>Recurring industrial problems can inform proprietary product development alongside manufacturing expansion.</p><Action href="/partner#partnership" text>Discuss a factory partnership</Action></div><div><BrandArt family="N05-industrial-products" className="split-art" crop/><p className="caption centered">Industrial products / Future direction</p></div></div></Section>
   </SiteShell>;
 }

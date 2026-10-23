@@ -22,7 +22,10 @@ export function AlphaProcessScene() {
   useEffect(() => {
     let disposed = false;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotion = () => setReduced(motion.matches);
+    const updateMotion = () => {
+      setReduced(motion.matches);
+      if (prefersStaticScene() && !controller.current && host.current) host.current.dataset.fallback = "true";
+    };
     updateMotion();
     motion.addEventListener("change", updateMotion);
     const fallbackLayout = () => {
@@ -44,7 +47,7 @@ export function AlphaProcessScene() {
           paused: pausedRef.current,
           onStage: value=>{if(!disposed)setStage(value);},
           onEnded:()=>{if(!disposed){pausedRef.current=true;setPaused(true);}},
-          onReady: () => { if (!disposed) setReady(true); },
+          onReady: () => { if (!disposed) { if(host.current) delete host.current.dataset.fallback; setReady(true); } },
         });
         if(disposed){controller.current.dispose();controller.current=null;return;}
         controller.current.setPaused(pausedRef.current);

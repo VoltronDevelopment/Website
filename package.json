@@ -15,7 +15,8 @@
     "optimize-images": "node scripts/optimize-images.mjs",
     "optimize-brand-assets": "node scripts/build-performance-assets.mjs",
     "performance:budget": "node scripts/check-performance-budgets.mjs",
-    "performance:browser": "node scripts/performance-audit-20261023.cjs"
+    "performance:browser": "node scripts/performance-audit-20261023.cjs",
+    "quality:browser": "node scripts/site-quality-audit.cjs"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.1042.0",
@@ -34,6 +35,8 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@types/three": "^0.183.1",
+    "axe-core": "4.14.0",
+    "playwright": "1.62.1",
     "sharp": "^0.35.5",
     "typescript": "5.8.3",
     "vitest": "^4.1.11"

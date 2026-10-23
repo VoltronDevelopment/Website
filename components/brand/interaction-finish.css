@@ -1,0 +1,45 @@
+/* Shared marketing navigation and links. Labels and hit areas stay stationary. */
+.site-presentation .directional-action > svg {
+  transition:transform 180ms cubic-bezier(.16,1,.3,1);
+}
+.site-presentation .directional-action:focus-visible > svg { transform:translateX(3px); }
+.site-presentation .directional-action:focus-visible {
+  outline:2px solid var(--blue);
+  outline-offset:5px;
+}
+.site-presentation .site-nav > a:not(.nav-partner)::after,
+.site-presentation .about-disclosure > button::after {
+  content:""; position:absolute; bottom:6px; left:0; right:0; height:1px;
+  background:var(--blue); transform:scaleX(0); transform-origin:left;
+  transition:transform 180ms cubic-bezier(.16,1,.3,1);
+}
+.site-presentation .site-nav > a[aria-current="page"]::after,
+.site-presentation .site-nav > a:focus-visible::after,
+.site-presentation .about-disclosure > button:is(.current,:focus-visible,[aria-expanded="true"])::after { transform:scaleX(1); }
+.site-presentation .about-disclosure > button > svg { transition:transform 180ms cubic-bezier(.16,1,.3,1); }
+.site-presentation .about-disclosure > button[aria-expanded="true"] > svg { transform:rotate(180deg); }
+.site-presentation .site-nav > a,
+.site-presentation .about-disclosure > button,
+.site-presentation .about-links a,
+.site-presentation .header-actions .icon-button {
+  transition:color 150ms ease,background-color 150ms ease,border-color 150ms ease;
+}
+.site-presentation .about-links a:focus-visible { background:var(--hover); outline-offset:-2px; }
+.site-presentation .nav-partner:focus-visible,
+.site-presentation .header-actions .icon-button:focus-visible { border-color:var(--blue); background:var(--hover); }
+/* Override the older button-wide press shift; only the arrow responds. */
+.site-presentation .directional-action.button:active { transform:none; }
+.site-presentation .directional-action:active > svg { transform:translateX(1px); }
+@media(hover:hover) and (pointer:fine) {
+  .site-presentation .directional-action:hover > svg { transform:translateX(3px); }
+  .site-presentation .site-nav > a:not(.nav-partner):hover::after,
+  .site-presentation .about-disclosure > button:hover::after { transform:scaleX(1); }
+  .site-presentation .nav-partner:hover { background:var(--hover); border-color:var(--blue); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .site-presentation .directional-action > svg,
+  .site-presentation .about-disclosure > button > svg,
+  .site-presentation .site-nav > a::after,
+  .site-presentation .about-disclosure > button::after { transition:none; }
+  .site-presentation .directional-action:is(:hover,:focus-visible,:active) > svg { transform:none; }
+}

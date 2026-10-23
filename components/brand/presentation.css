@@ -130,6 +130,7 @@ body:has(.site-presentation) {
 .home-cube-scene .philosophy-still { position:absolute; inset:0; width:100%; height:100%; }
 .home-cube-scene:has(canvas[data-ready="true"]) .philosophy-still { visibility:hidden; }
 [data-lattice-slot][data-live="true"] > .scene-poster,
+[data-lattice-slot][data-renderer="morph"] > .scene-poster,
 .human-hero-art:has(> canvas[data-ready="true"]) > .scene-poster,
 .human-hero-art:has(> svg) > .scene-poster { visibility:hidden; }
 @supports (backdrop-filter:blur(1px)) {

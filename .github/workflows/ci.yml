@@ -46,9 +46,7 @@ jobs:
         run: node scripts/check-performance-budgets.mjs
 
       - name: Install performance browser
-        run: |
-          npm install --no-save --package-lock=false playwright@1.62.1
-          npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium
 
       - name: Browser performance regression checks
         run: node scripts/performance-audit-20261023.cjs
@@ -64,6 +62,21 @@ jobs:
         with:
           name: performance-evidence
           path: .audit-logs/performance-ci
+
+      - name: Page consistency and hero regression checks
+        run: node scripts/site-quality-audit.cjs
+        env:
+          SITE_AUDIT_CI: "1"
+          SITE_AUDIT_PHASE: verified
+          SITE_AUDIT_BROWSER: chromium
+          SITE_AUDIT_DIST: .next
+
+      - name: Save page consistency evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: page-quality-evidence
+          path: .audit-logs/site-quality-20261024/verified
 
   website-dependency-audit:
     name: Website dependency audit

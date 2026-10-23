@@ -55,17 +55,23 @@ export function frameAlphaLineStation(camera: THREE.OrthographicCamera, world: T
 }
 
 export type AlphaLineLabel = { x: number; y: number; width: number; height: number };
-/** Keep overview numbers readable where the short leg compresses in projection. */
+/** Fit complete labels in the frame, choosing the nearest free position. */
 export function spaceAlphaLineLabels(labels: readonly AlphaLineLabel[], width: number, height: number) {
   const placed: AlphaLineLabel[] = [];
   for (const label of labels) {
     const next = { ...label, x: Math.min(width - label.width / 2 - 4, Math.max(label.width / 2 + 4, label.x)) };
-    for (let pass = 0; pass < labels.length; pass++) {
-      const collision = placed.find(p => Math.abs(p.x - next.x) < (p.width + next.width) / 2 + 2 && Math.abs(p.y - next.y) < (p.height + next.height) / 2 + 2);
-      if (!collision) break;
-      next.y = collision.y + (collision.height + next.height) / 2 + 2;
-    }
     next.y = Math.min(height - next.height / 2 - 4, Math.max(next.height / 2 + 4, next.y));
+    const origin = {...next};
+    const collides = () => placed.some(p => Math.abs(p.x - next.x) < (p.width + next.width) / 2 + 4 && Math.abs(p.y - next.y) < (p.height + next.height) / 2 + 4);
+    let found = !collides();
+    for (let ring = 1; ring <= labels.length && !found; ring++) {
+      for (const direction of [1, -1]) {
+        next.y = origin.y + direction * ring * (next.height + 4);
+        if (next.y < next.height / 2 + 4 || next.y > height - next.height / 2 - 4) continue;
+        if (!collides()) { found = true; break; }
+      }
+    }
+    if (!found) next.y = origin.y;
     placed.push(next);
   }
   return placed;
