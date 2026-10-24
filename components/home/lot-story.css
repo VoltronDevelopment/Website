@@ -1,5 +1,12 @@
 .lot-story { margin:0; min-width:0; }
-.lot-story-art { position:relative; isolation:isolate; container-type:inline-size; --lot-rise:6.2cqw; }
+.lot-story-art { position:relative; isolation:isolate; container-type:inline-size; --lot-rise:calc(5.962488cqw + 1.430997px); }
+.lot-story-posters { position:absolute; inset:0; pointer-events:none; }
+.lot-story-posters > div,.lot-story-posters picture,.lot-story-posters img { position:absolute; inset:0; display:block; width:100%; height:100%; }
+.lot-story-posters img { object-fit:contain; }
+.lot-story-posters [data-poster-theme="dark"] { display:none; }
+:root[data-theme="dark"] .lot-story-posters [data-poster-theme="light"] { display:none; }
+:root[data-theme="dark"] .lot-story-posters [data-poster-theme="dark"] { display:block; }
+.lot-story-art[data-renderer="webgl"] .lot-story-posters { visibility:hidden; }
 .lot-story-canvas { position:absolute; inset:0; display:block; width:100%; height:100%; opacity:0; pointer-events:none; z-index:1; }
 .lot-story-art[data-renderer="webgl"] .lot-story-canvas { opacity:1; }
 .lot-story-canvas[hidden] { display:none; }
@@ -18,10 +25,6 @@
 .lot-snapshot[data-active="true"] .lot-snapshot-symbol { color:var(--cyan); }
 .lot-snapshot-symbol > svg { width:15px; height:15px; stroke-width:1.5; }
 .lot-snapshot-symbol > svg + svg { width:13px; height:13px; }
-.lot-snapshot-fallback { position:absolute; inset:0; display:block; width:100%; height:100%; }
-.lot-story-art[data-renderer="webgl"] .lot-snapshot-fallback { visibility:hidden; }
-.lot-static-rear { stroke:var(--cyan); stroke-width:1.1; opacity:.7; filter:drop-shadow(0 0 2px color-mix(in srgb,var(--cyan) 40%,transparent)); }
-.lot-static-front { stroke:var(--cube-outline); stroke-width:.8; opacity:.5; }
 .lot-snapshot-caption { position:relative; z-index:2; margin:0; min-height:48px; padding:0 4px; font-size:14px; line-height:24px; color:var(--muted); }
 .lot-story-detail { min-height:20px; margin:6px 0 0; text-align:left; color:var(--muted); font-size:12px; line-height:20px; }
 .lot-story-detail h4 { margin:0 0 7px; color:var(--ink); font-size:15px; line-height:24px; font-weight:500; }
@@ -56,6 +59,7 @@
 .lot-story button:active:not(:disabled) { border-color:var(--cube-outline); }
 .lot-story button:disabled { opacity:.4; cursor:default; }
 @media(max-width:1099px) and (min-width:768px) {
+  .lot-story-art { --lot-rise:calc(5.962488cqw + .715499px); }
   .lot-story-snapshots { gap:12px; }
   .lot-snapshot-anchor { height:240px; }
   .lot-snapshot h3 button { font-size:16px; }
@@ -111,16 +115,19 @@
 /* Evidence is a sequence of small records, without a surrounding text window. */
 .lot-story-evidence { margin-top:8px; }
 .lot-story-evidence .lot-evidence-intro { min-height:24px; margin-bottom:10px; }
-.lot-story-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; padding:0; margin:0; list-style:none; }
-.lot-story-tiles li { min-width:0; border-top:1px solid var(--line); }
-.lot-story-tiles li[data-active="true"] { border-top-color:var(--cyan); }
-.lot-story-tiles button { width:100%; min-height:90px; padding:12px 0; border:0; background:transparent; color:var(--muted); text-align:left; font:inherit; cursor:pointer; }
+.lot-story-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding:0; margin:0; list-style:none; }
+.lot-story-tiles li { display:flex; min-width:0; }
+.lot-story-tiles button { width:100%; min-height:104px; height:100%; padding:14px 16px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb,var(--surface) 58%,transparent); color:var(--muted); text-align:left; font:inherit; cursor:pointer; transition:border-color .15s ease,background-color .15s ease; }
+.lot-story-tiles li[data-active="true"] button { border-color:var(--blue); background:color-mix(in srgb,var(--selection) 40%,var(--surface)); }
+.lot-story-tiles li[data-active="true"] .lot-tile-title > svg:first-child { color:var(--blue); }
+.lot-story-tiles button:hover { border-color:var(--cube-outline); background:var(--hover); }
+.lot-story-tiles button:focus-visible { outline-offset:3px; }
 .lot-tile-title { display:flex; align-items:center; gap:8px; font-size:14px; line-height:22px; color:var(--ink); }
 .lot-tile-title > svg:last-child:not(:first-child) { margin-left:auto; color:var(--cyan); }
 .lot-tile-message { display:block; min-height:40px; margin-top:6px; font-size:12px; line-height:20px; }
 .lot-story-tiles li[data-revealed="true"] .lot-tile-message { animation:lot-record-reveal .22s ease-out both; }
 .lot-story-tiles li[data-revealed="false"] .lot-tile-message { opacity:.65; }
-.lot-release-gate { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; width:calc(50% - 10px); margin:0 0 0 auto; padding:6px 10px; border:1px solid var(--line); border-radius:4px; background:transparent; color:var(--muted); font:inherit; font-size:12px; cursor:pointer; }
+.lot-release-gate { display:flex; align-items:center; justify-content:center; gap:7px; min-height:44px; width:calc(50% - 8px); margin:12px 0 0 auto; padding:8px 12px; border:1px solid var(--line); border-radius:6px; background:transparent; color:var(--muted); font:inherit; font-size:12px; cursor:pointer; }
 .lot-release-gate[data-active="true"],.lot-release-gate[data-complete="true"] { border-color:var(--cube-outline); color:var(--ink); }
 .lot-release-gate::before { content:""; width:18px; height:1px; background:var(--cyan); }
 @keyframes lot-record-reveal { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
@@ -132,5 +139,6 @@
   .lot-story-tiles button { min-height:78px; }
   .lot-release-gate { width:100%; }
 }
-@media(prefers-reduced-motion:reduce) { .lot-tile-message { animation:none!important; } }
-@media(forced-colors:active) { .lot-story-tiles li,.lot-release-gate { border-color:CanvasText; } }
+@media(prefers-reduced-motion:reduce) { .lot-tile-message { animation:none!important; } .lot-story-tiles button { transition:none; } }
+@media(prefers-reduced-transparency:reduce) { .lot-story-tiles button { background:var(--surface); } }
+@media(forced-colors:active) { .lot-story-tiles button,.lot-release-gate { border-color:CanvasText; } .lot-story-tiles button[aria-pressed="true"] { border-color:Highlight; } }

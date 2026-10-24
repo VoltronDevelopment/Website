@@ -1,0 +1,26 @@
+{
+  "desktop": {
+    "light": [
+      "/optimized/lot-desktop-light-0-5374f655ac784007.webp",
+      "/optimized/lot-desktop-light-14-01b0852f811abcc3.webp"
+    ],
+    "dark": [
+      "/optimized/lot-desktop-dark-0-de4c1998d8188d65.webp",
+      "/optimized/lot-desktop-dark-14-4ad26e829caf9c02.webp"
+    ]
+  },
+  "mobile": {
+    "light": [
+      "/optimized/lot-mobile-light-0-6cc729ac9b2a521e.webp",
+      "/optimized/lot-mobile-light-4.9-0bdb4ee7698ca632.webp",
+      "/optimized/lot-mobile-light-7.9-8af6082b59841e96.webp",
+      "/optimized/lot-mobile-light-14-6cc729ac9b2a521e.webp"
+    ],
+    "dark": [
+      "/optimized/lot-mobile-dark-0-cc486e52349f7640.webp",
+      "/optimized/lot-mobile-dark-4.9-c324a0c4f0b614ed.webp",
+      "/optimized/lot-mobile-dark-7.9-69e23f0563f8f235.webp",
+      "/optimized/lot-mobile-dark-14-cc486e52349f7640.webp"
+    ]
+  }
+}

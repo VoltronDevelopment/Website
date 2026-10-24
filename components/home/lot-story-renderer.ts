@@ -25,7 +25,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   let renderer: THREE.WebGLRenderer;
   try {
     if (params.get("renderer") === "static") throw new Error("Static artwork requested");
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power", preserveDrawingBuffer: params.get("lot-poster") === "1" });
   } catch {
     host.dataset.renderer = "fallback"; canvas.hidden = true; options.onState(lotStoryStateAt(options.initialTime ?? 14)); options.onReady(false);
     return { ready: Promise.resolve(), select() {}, replay() {}, setPaused() {}, dispose() {} };

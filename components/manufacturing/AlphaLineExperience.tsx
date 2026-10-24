@@ -1,10 +1,10 @@
 "use client";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
+import { AlphaPlantPoster } from "./AlphaPlantPoster";
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
-import { alphaBathTone } from "./alpha-line-bath-palette";
 import { ArrowDownToLine, ArrowRight, ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
-import { alphaLineChapters, alphaLineConnections, alphaLineDemo, alphaLineEndX, alphaLineFarZ, alphaLineNearZ, alphaLinePath, alphaLineStation, alphaLineStations, type AlphaLineJourneyChapter } from "./alpha-line-config";
+import { alphaLineChapters, alphaLineConnections, alphaLineDemo, alphaLineStation, alphaLineStations, type AlphaLineJourneyChapter } from "./alpha-line-config";
 import { alphaTourStateAt, alphaTourTimeAt, alphaPlaybackDuration, alphaTourDuration } from "./alpha-line-tour";
 import type { AlphaLineController } from "./alpha-line-renderer";
 import { alphaLineStory, type AlphaLineView } from "./alpha-line-story";
@@ -64,6 +64,7 @@ export function AlphaLineExperience() {
         const { mountAlphaLine } = await import("./alpha-line-renderer");
         if (disposed || !canvas.current || !host.current) return;
         controller.current = await mountAlphaLine(canvas.current, host.current, {
+          initialState: playbackRef.current,
           paused: pausedRef.current,
           onState: next => {
             if (disposed || preparing) return;
@@ -158,7 +159,7 @@ export function AlphaLineExperience() {
       <div className="alpha-line-stage">
         <div className="alpha-line-stage-heading"><span>13-tank process line</span><span>{playback.chapter === "route" ? "Plant overview" : paused || !ready || reduced ? "Paused" : "Following lot"}</span></div>
         <div className="alpha-line-art" ref={host} data-ready={ready} role="group" aria-label="Interactive thirteen-tank square-U treatment line" aria-describedby={description}>
-          <AlphaLineFallback state={playback} selected={selectedId}/>
+          <AlphaPlantPoster/>
           <canvas ref={canvas} aria-hidden="true"/>
           <svg className="alpha-line-leaders" aria-hidden="true">{["LOAD", "UNLOAD"].map(id => <line key={id} data-bay={id}/>)}</svg>
           <div className="alpha-line-numbers" aria-hidden="true">{alphaLineStations.map(station => <span key={station.id} data-station={station.id} data-kind={station.kind} data-active={playback.carrierVisible && playback.stationId === station.id} data-selected={selectedId === station.id}>{station.kind === "tank" ? station.number : station.name}</span>)}</div>
@@ -209,16 +210,4 @@ export function AlphaLineExperience() {
     </div>
     <section className="alpha-decision" aria-labelledby="alpha-decision-title"><ArrowDownToLine size={24} aria-hidden="true"/><div><p className="eyebrow">An exception, with context</p><h2 id="alpha-decision-title">A decision with evidence.</h2><p>Follow a condition outside its configured requirement. See the evidence, a proposed hold and the recorded human decision—all connected to this same lot.</p></div><button type="button" className="button button-outline" onClick={deviate}>Explore a process deviation<ArrowRight size={16} aria-hidden="true"/></button></section>
   </div>;
-}
-
-function AlphaLineFallback({ state, selected }: { state: AlphaLineState; selected: string | null }) {
-  const project = (x: number, z: number) => ({ x: 65 + x / alphaLineEndX * 460 + (z - alphaLineFarZ) / (alphaLineNearZ - alphaLineFarZ) * -32, y: 68 + x / alphaLineEndX * 50 + (z - alphaLineFarZ) / (alphaLineNearZ - alphaLineFarZ) * 220 });
-  const path = alphaLinePath().map(p => project(p.x, p.z));
-  const part = project(state.x, state.z);
-  return <svg className="alpha-line-fallback" viewBox="0 0 600 380" aria-hidden="true"><polyline points={path.map(p => `${p.x},${p.y - 37}`).join(" ")} fill="none" stroke="var(--cube-outline)" strokeWidth="4"/><polyline points={path.map(p => `${p.x},${p.y - 43}`).join(" ")} fill="none" stroke="var(--cube-outline)" strokeWidth="2"/>
-    {alphaLineStations.map(station => { const p = project(station.x, station.z); const tank = station.kind === "tank"; return <g key={station.id} transform={`translate(${p.x} ${p.y})`}><path d="M-25,-14 L22,-9 L22,18 L-25,13Z" fill="var(--cube-selected)" stroke={station.id === selected || state.carrierVisible && station.id === state.stationId ? "var(--blue)" : "var(--cube-outline)"} strokeWidth="1.3"/><path d="M-25,-14 L-18,-20 L29,-15 L22,-9Z" fill="var(--cube-top)" stroke="var(--cube-outline)"/>{tank && <path d="M-20,-14 L-16,-17 L23,-13 L20,-11Z" fill={`var(--alpha-bath-${alphaBathTone(station.id)})`} opacity=".7"/>}<text x="-1" y="6" textAnchor="middle" fill="var(--ink)" fontSize="9">{tank ? station.number : ""}</text>{!tank && <text y="36" textAnchor="middle" fill="var(--ink)" fontSize="10">{station.name}</text>}</g>; })}
-    {state.loadingOpacity > 0 && <rect x={project(0,alphaLineFarZ).x-7} y={project(0,alphaLineFarZ).y-20} width="14" height="22" fill="var(--muted)"/>}
-    {state.finishedOpacity > 0 && <rect x={project(0,alphaLineNearZ).x-7} y={project(0,alphaLineNearZ).y-20} width="14" height="22" fill="var(--ink)"/>}
-    {state.carrierVisible && <g transform={`translate(${part.x} ${part.y - 43})`}><rect x="-8" y="-4" width="16" height="6" fill="var(--muted)"/><path d="M0,2V24" stroke="var(--ink)"/>{state.attached && <rect x="-7" y="24" width="14" height="18" fill={state.coating > .5 ? "var(--ink)" : "var(--muted)"}/>}</g>}
-  </svg>;
 }

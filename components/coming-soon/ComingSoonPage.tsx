@@ -1,19 +1,11 @@
 "use client";
-import {optimizedAsset} from "@/lib/optimized-assets";
-
-import Image from "next/image";
-import { LockKeyhole, X } from "lucide-react";
-import { type FormEvent, useEffect, useRef, useState } from "react";
-import { ThemeToggle } from "@/components/brand/ThemeToggle";
-import { IntroAudio } from "@/components/coming-soon/IntroAudio";
-import { launchAt } from "@/lib/launch";
-
-const pillars = [
-  { above: "Human", below: "ingenuity.", id: "tech" },
-  { above: "Connected", below: "intelligence.", id: "infra" },
-  { above: "Manufacturing", below: "possibilities.", id: "ops" }
-] as const;
-
+import Link from "next/link";
+import {LockKeyhole,X} from "lucide-react";
+import {type FormEvent,useEffect,useRef,useState} from "react";
+import {BrandEntry} from "../entry/BrandEntry";
+import {launchAt} from "@/lib/launch";
+import "@/app/enter/entry.css";
+import "./coming-entry.css";
 function FounderLogin() {
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("omkar");
@@ -80,110 +72,22 @@ function Countdown() {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
-    let reloaded = false;
     const update = () => {
       const next = Math.max(0, launchAt - Date.now());
       setRemaining(next);
-      if (next === 0 && !reloaded) { reloaded = true; window.location.reload(); }
     };
     update();
     const timer = window.setInterval(update, 1000);
     return () => window.clearInterval(timer);
   }, []);
 
+  if(remaining===0)return <div className="coming-live"><p>Voltron Lattice is live.</p><Link className="button button-outline" href="/">Enter Lattice →</Link></div>;
   const totalSeconds = Math.floor((remaining ?? 0) / 1000);
   const values = [Math.floor(totalSeconds / 86400), Math.floor(totalSeconds / 3600) % 24, Math.floor(totalSeconds / 60) % 60, totalSeconds % 60];
   const labels = ["Days", "Hours", "Minutes", "Seconds"];
   return <div className="launch-countdown" aria-label={`${values[0]} days, ${values[1]} hours, ${values[2]} minutes and ${values[3]} seconds until launch`}>
-    {values.map((value, index) => <div className="countdown-unit" key={labels[index]}><span>{String(value).padStart(2, "0")}</span><small>{labels[index]}</small></div>)}
+    {values.map((value, index) => <div className="countdown-unit" key={labels[index]}><span>{remaining===null?"--":String(value).padStart(2, "0")}</span><small>{labels[index]}</small></div>)}
   </div>;
 }
 
-function AnimatedBrandMark({ onClockVisible }: { onClockVisible: (visible: boolean) => void }) {
-  const [phase, setPhase] = useState(1);
-  const [activeLine, setActiveLine] = useState(-1);
-  const [copyStep, setCopyStep] = useState(0);
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setPhase(3);
-      setActiveLine(3);
-      return;
-    }
-    const mobile = window.matchMedia("(max-width: 768px)").matches;
-    const timers = mobile
-      ? [
-          window.setTimeout(() => { setPhase(2); setActiveLine(0); }, 450),
-          window.setTimeout(() => setActiveLine(1), 1250),
-          window.setTimeout(() => setActiveLine(2), 2050),
-          window.setTimeout(() => { setActiveLine(3); setPhase(3); }, 2850)
-        ]
-      : [
-          window.setTimeout(() => { setPhase(2); setActiveLine(0); }, 900),
-          window.setTimeout(() => setActiveLine(1), 2300),
-          window.setTimeout(() => setActiveLine(2), 3700),
-          window.setTimeout(() => { setActiveLine(3); setPhase(3); }, 5100)
-        ];
-    return () => timers.forEach(window.clearTimeout);
-  }, []);
-
-  useEffect(() => {
-    if (phase < 3) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setCopyStep(4);
-      return;
-    }
-    const timers = [5000, 6500, 8500, 10500].map((delay, index) => window.setTimeout(() => setCopyStep(index + 1), delay));
-    return () => timers.forEach(window.clearTimeout);
-  }, [phase]);
-
-  useEffect(() => {
-    if (copyStep < 4) return;
-    const revealDuration = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 1500;
-    const timer = window.setTimeout(() => onClockVisible(true), revealDuration);
-    return () => window.clearTimeout(timer);
-  }, [copyStep, onClockVisible]);
-
-  return <div className="hero-intro" data-phase={phase} data-active-line={activeLine >= 0 ? activeLine : undefined} data-copy-step={copyStep}>
-    <div className="hero-nebula" aria-hidden="true"/><div className="hero-grid-bg" aria-hidden="true"/>
-    <div className="hero-stage">
-      <p className={`hero-tagline ${copyStep >= 1 ? "visible" : ""}`} aria-hidden={copyStep < 1}>Building India&apos;s Intelligent Manufacturing Backbone.</p>
-      <div className={`hero-orbit ${phase >= 1 ? "orbiting" : ""}`}>
-        <div className="hero-rings" aria-hidden="true"><span/><span/><span/></div>
-        <div className={`hero-logo-wrap ${phase >= 1 ? "assembled" : ""} ${phase >= 3 ? "connected" : ""}`}>
-          <Image className="theme-logo-light hero-logo-img" src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} alt="" width={120} height={120} unoptimized/>
-          <Image className="theme-logo-dark hero-logo-img" src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} alt="" width={120} height={120} unoptimized/>
-          <span className="hero-logo-pulse" aria-hidden="true"/><span className="hero-logo-glow" aria-hidden="true"/>
-        </div>
-        <div className="orbit-spinner">
-          {pillars.map(pillar => (
-            <div key={pillar.id} className={`pillar-node node-${pillar.id}`} aria-label={`${pillar.above} ${pillar.below}`}>
-              <div className="pillar-counter">
-                <div className="pillar-seat">
-                  <span className="pillar-head">{pillar.above}</span>
-                  <span className="pillar-rule" aria-hidden="true"/>
-                  <span className="pillar-head">{pillar.below}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className={`hero-below ${copyStep >= 2 ? "visible" : ""}`} aria-hidden={copyStep < 2}>
-        <div className="hero-brand-copy"><h1><span className="hero-word-voltron">VOLTRON</span>{" "}<span className="hero-word-lattice">LATTICE</span></h1></div>
-        <div className="launch-announcement">
-          <div className={`launch-copy ${copyStep >= 3 ? "is-visible" : ""}`} aria-hidden={copyStep < 3}><p className="eyebrow">Coming this Diwali</p><p className="launch-date">8 November 2026 <span>·</span> 12:00 AM IST</p></div>
-          <div className={`launch-countdown-reveal ${copyStep >= 4 ? "is-visible" : ""}`} aria-hidden={copyStep < 4}><Countdown/></div>
-        </div>
-      </div>
-    </div>
-  </div>;
-}
-
-export function ComingSoonPage() {
-  const [clockVisible, setClockVisible] = useState(false);
-  return <main id="main-content" className="coming-soon-page">
-    <div className="coming-soon-controls"><IntroAudio/><ThemeToggle autoCycle autoCycleComplete={clockVisible}/><FounderLogin/></div>
-    <AnimatedBrandMark onClockVisible={setClockVisible}/>
-  </main>;
-}
+export function ComingSoonPage(){return <BrandEntry comingSoon extraControls={<FounderLogin/>}><section className="coming-launch" aria-label="Voltron Lattice launch"><p className="coming-launch-tagline">Building India's Intelligent Manufacturing Backbone.</p><p className="coming-launch-date">8 November 2026 · 12:00 AM IST</p><Countdown/></section></BrandEntry>;}

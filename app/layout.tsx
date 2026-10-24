@@ -1,3 +1,4 @@
+import {DiwaliCelebration} from "@/components/coming-soon/DiwaliCelebration";
 import type { Metadata } from "next";
 import { siteUrl } from "@/lib/assets";
 import { themeBootstrap } from "@/lib/theme";
@@ -21,5 +22,5 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/></head><body><PerformanceMonitor/><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience>{children}</LatticeExperience></body></html>;
+  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/></head><body><PerformanceMonitor/><DiwaliCelebration/><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience>{children}</LatticeExperience></body></html>;
 }

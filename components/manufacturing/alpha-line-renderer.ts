@@ -23,6 +23,7 @@ import {
 
 type Mode = "route" | "journey" | "tour" | "deviation";
 type Options = {
+  initialState?: AlphaLineState;
   paused: boolean;
   onState: (state: AlphaLineState) => void;
   onSelect: (id: string) => void;
@@ -419,8 +420,8 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
 
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const reviewTime = new URLSearchParams(location.search).get("alpha-time");
-  let mode: Mode = reviewTime !== null ? "journey" : "route";
-  let elapsed = reviewTime !== null ? Math.max(0, Number(reviewTime) || 0) : 0;
+  let mode: Mode = options.initialState?.mode ?? (reviewTime !== null ? "journey" : "route");
+  let elapsed = options.initialState?.time ?? (reviewTime !== null ? Math.max(0, Number(reviewTime) || 0) : 0);
   let paused = options.paused;
   let explore = false;
   let guided = true;

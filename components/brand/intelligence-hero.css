@@ -1,0 +1,38 @@
+.intelligence-face-stage { position:relative; width:100%; height:580px; }
+.intelligence-face-stage canvas,.intelligence-face-stage > img,.intelligence-face-poster { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
+.intelligence-face-poster img { width:100%; height:100%; object-fit:contain; }
+.intelligence-face-stage canvas { opacity:0; pointer-events:none; }
+.intelligence-face-stage[data-live="true"] canvas { opacity:1; }
+.intelligence-face-stage[data-live="true"] > img,.intelligence-face-stage[data-live="true"] .intelligence-face-poster { visibility:hidden; }
+.face-poster-light,.face-poster-dark { display:none; }
+:root[data-theme="light"] .face-poster-light,:root[data-theme="dark"] .face-poster-dark { display:block; }
+:root[data-theme] .intelligence-face-poster { display:none; }
+.intelligence-face-controls { min-height:44px; display:flex; justify-content:flex-end; }
+.intelligence-face-controls button { min-height:44px; padding:8px 12px; background:transparent; color:var(--muted); border:1px solid transparent; border-radius:4px; font:inherit; font-size:12px; }
+.intelligence-face-controls button:hover { background:var(--hover); color:var(--ink); }
+@media(max-width:1099px) { .intelligence-face-stage { height:480px; } }
+@media(max-width:767px) { .intelligence-face-stage { height:clamp(300px,43svh,380px); } }
+
+.intelligence-intro { position:relative; isolation:isolate; overflow:hidden; }
+.intelligence-intro:before { content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 78% 32%,#24699924,transparent 55%),radial-gradient(ellipse at 70% 76%,#2a91c51a,transparent 40%); }
+.intelligence-sculpture-hero .hero-grid { grid-template-columns:minmax(0,.43fr) minmax(0,.57fr);gap:20px; }
+.intelligence-sculpture-hero .hero-copy h1 { font-size:clamp(30px,2.6vw,38px);line-height:1.2;max-width:470px; }
+.intelligence-sculpture-hero .hero-copy > p:not(.eyebrow) { font-size:16px; }
+.intelligence-hero-artwork { position:relative; }
+.intelligence-hero-artwork:before { content:"";position:absolute;left:14%;right:8%;bottom:65px;height:24px;background:#3da4df30;filter:blur(18px);border-radius:50%;pointer-events:none; }
+.intelligence-face-controls { gap:8px; }
+.intelligence-face-controls button:focus-visible { outline:2px solid var(--accent);outline-offset:2px; }
+.intelligence-face-controls button:disabled { opacity:.4;cursor:default; }
+.intelligence-principles { display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);padding-block:30px; }
+.intelligence-principles > div { display:flex;align-items:center;justify-content:center;gap:20px;font-size:14px;color:var(--muted);min-height:40px; }
+.intelligence-principles > div + div { border-left:1px solid var(--line); }
+.intelligence-principles svg { color:var(--accent);flex-shrink:0; }
+@media(max-width:900px){.intelligence-sculpture-hero .hero-grid{grid-template-columns:1fr;gap:20px}.intelligence-face-stage{height:420px}}
+@media(max-width:600px){.intelligence-face-stage{height:360px}.intelligence-principles{grid-template-columns:1fr;padding-block:16px}.intelligence-principles > div{justify-content:flex-start;padding:12px 0}.intelligence-principles > div + div{border-left:0;border-top:1px solid var(--line)}}
+
+/* Directional atmosphere protects the copy while grounding the sculpture. */
+:root[data-theme="dark"] .intelligence-intro:before { background:linear-gradient(90deg,#080f15c9,transparent 58%),radial-gradient(ellipse at 83% 25%,#27689538,transparent 48%),radial-gradient(ellipse at 67% 73%,#2877a223,transparent 33%); }
+.intelligence-sculpture-hero { padding-block:24px 8px; }
+.intelligence-hero-artwork:after { content:"";position:absolute;left:19%;right:12%;bottom:57px;height:8px;background:linear-gradient(90deg,transparent,#67c5f063,transparent);filter:blur(7px);pointer-events:none; }
+.intelligence-face-stage canvas { transition:opacity .45s ease; }
+@media(prefers-reduced-motion:reduce){.intelligence-face-stage canvas{transition:none}}

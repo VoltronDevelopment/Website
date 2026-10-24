@@ -3,13 +3,15 @@ import { Box, FileText, ScanSearch } from "lucide-react";
 import { BrandArt } from "@/components/brand/BrandArt";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 import { AlphaLineExperience } from "@/components/manufacturing/AlphaLineExperience";
+import { AlphaPlantPoster } from "@/components/manufacturing/AlphaPlantPoster";
+import { Hero } from "@/components/brand/Hero";
 import "./alpha.css";
 
 export const metadata: Metadata = { title: "Manufacturing / Voltron Alpha", description: "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation." };
 export default function ManufacturingPage() {
   return <SiteShell><div className="alpha-page">
-    <header className="alpha-intro alpha-container"><p className="eyebrow">Surface treatment / Alpha</p><h1>Voltron Alpha.<span>Where the architecture meets production.</span></h1><p>Follow a lot through the plant—and discover the context behind each operation.</p></header>
-    <section id="explore-alpha" className="alpha-explore alpha-container" aria-label="Explore the Alpha treatment line"><AlphaLineExperience/></section>
+    <Hero className="alpha-hero" eyebrow="Surface treatment / Voltron Alpha" title="Where the architecture meets production." illustration={<AlphaPlantPoster hero/>} primary="Explore the treatment line" href="#explore-alpha" secondary="Discuss a production requirement" secondaryHref="/partner#production">Voltron Alpha brings physical execution, manufacturing context and intelligence together on the factory floor.</Hero>
+    <section id="explore-alpha" className="alpha-explore alpha-container" aria-label="Explore the Alpha treatment line"><Intro eyebrow="Explore Voltron Alpha" title="Follow one lot through the plant.">Loading, thirteen treatment tanks and unloading—with the context behind each operation.</Intro><AlphaLineExperience/></section>
     <section className="alpha-architecture alpha-container" aria-labelledby="alpha-architecture-title"><h2 id="alpha-architecture-title">One lot. A connected manufacturing story.</h2><div className="alpha-architecture-grid">
       <div><Box size={28} aria-hidden="true"/><div><h3>Execution</h3><p>The physical process, equipment and current operation.</p></div></div>
       <div><FileText size={28} aria-hidden="true"/><div><h3>Context</h3><p>The requirements, records and evidence belonging to this lot.</p></div></div>

@@ -81,10 +81,10 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   metal.customProgramCacheKey = () => "factory-housing-dissolve-v1";
   const housingGeometry = geometry(createFactoryHousing());
   const housing = new THREE.Mesh(housingGeometry, metal); scene.add(housing);
-  const particleGeometry = geometry(createHousingParticles(housingGeometry, 1400));
+  const particleGeometry = geometry(createHousingParticles(housingGeometry, 3600));
   const particleUniforms = {
     uScan: scan, uSeparate: { value: 0 }, uOpacity: { value: 1 }, uGhost: { value: 0 }, uSourceScale: { value: 1 },
-    uPointSize: { value: 8 }, uGlow: { value: 0 }, uSource: { value: source },
+    uPointSize: { value: 4.2 }, uGlow: { value: 0 }, uPass: { value: 0 }, uTrailLag: { value: 0 }, uTime: { value: 0 }, uSource: { value: source },
     uDest0: { value: destinations[0] }, uDest1: { value: destinations[1] }, uDest2: { value: destinations[2] },
     uRight: { value: right }, uUp: { value: up }, uForward: { value: forward },
     uColor: { value: new THREE.Color(0x3284d7) },
@@ -94,34 +94,38 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     vertexShader: `attribute vec3 aTarget; attribute float aGroup; attribute float aSeed;
       uniform vec3 uSource; uniform vec3 uDest0; uniform vec3 uDest1; uniform vec3 uDest2;
       uniform vec3 uRight; uniform vec3 uUp; uniform vec3 uForward;
-      uniform float uSeparate; uniform float uScan; uniform float uOpacity; uniform float uGhost; uniform float uPointSize; uniform float uSourceScale;
+      uniform float uSeparate; uniform float uScan; uniform float uOpacity; uniform float uGhost; uniform float uPointSize; uniform float uSourceScale; uniform float uPass; uniform float uTrailLag; uniform float uTime;
       varying float vAlpha; varying float vSeed;
       void main(){
         vec3 destination=aGroup<.5?uDest0:(aGroup<1.5?uDest1:uDest2);
         vec3 target=destination+uRight*aTarget.x+uUp*aTarget.y+uForward*aTarget.z;
-        float progress=uSeparate*(1.-uGhost);
+        float motion=sin(uSeparate*3.14159265);
+        float progress=max(0.,uSeparate-uTrailLag*motion)*(1.-uGhost);
         vec3 p=mix(position*uSourceScale+uSource,target,progress);
         p+=uUp*sin(progress*3.14159265)*(.22+aSeed*.28);
+        p+=(uRight*sin(uTime*1.7+aSeed*31.)+uUp*cos(uTime*1.3+aSeed*23.))*motion*.008;
         float scanAt=dot(position,vec3(.65,.28,.2));
         vAlpha=(1.-smoothstep(uScan-.035,uScan+.035,scanAt))*uOpacity;
         vSeed=aSeed;
         gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
-        gl_PointSize=uPointSize*(.72+aSeed*.48);
+        gl_PointSize=uPointSize*(.76+aSeed*.4)*(uPass>.5?2.:1.);
       }`,
-    fragmentShader: `uniform vec3 uColor; uniform float uGlow; uniform float uSeparate; varying float vAlpha; varying float vSeed;
+    fragmentShader: `uniform vec3 uColor; uniform float uGlow; uniform float uPass; varying float vAlpha; varying float vSeed;
       void main(){
         vec2 p=gl_PointCoord-.5;
-        float angle=sin(uSeparate*3.14159265)*(vSeed-.5)*.7;
-        p=mat2(cos(angle),-sin(angle),sin(angle),cos(angle))*p;
-        float hex=max(abs(p.x)/.28,(abs(p.x)*.57735+abs(p.y))/.3233);
-        float core=1.-smoothstep(.9,1.,hex);
-        float halo=exp(-dot(p,p)*22.)*.32*uGlow;
-        float top=step(p.y,-abs(p.x)*.57735);
-        vec3 face=mix(uColor*.68,uColor,step(0.,p.x));
-        face=mix(face,mix(uColor,vec3(.87,.96,1.),.68),top);
-        float alpha=max(core,halo)*vAlpha*(.72+vSeed*.28);
-        if(alpha<.015) discard;
-        gl_FragColor=vec4(mix(uColor,face,core),alpha);
+        float radius=length(p);
+        // Fine luminous points, with a few crisp pixel flecks. No faceted faces.
+        float distanceToCore=vSeed>.84?max(abs(p.x),abs(p.y)):radius;
+        float core=1.-smoothstep(.12,.26,distanceToCore);
+        vec3 color=mix(uColor,vec3(.77,.91,1.),smoothstep(.72,1.,vSeed)*.46);
+        float alpha=core*vAlpha*(.65+vSeed*.35);
+        if(uPass>.5){
+          // Sparse tight accents carry glow without turning the whole cloud into haze.
+          alpha=exp(-radius*radius*38.)*(1.-smoothstep(.35,.5,radius))*vAlpha*uGlow*step(.72,vSeed);
+          color=mix(uColor,vec3(.7,.89,1.),.25);
+        }
+        if(alpha<.008)discard;
+        gl_FragColor=vec4(color,alpha);
         #include <colorspace_fragment>
       }`,
   }));
@@ -131,6 +135,23 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   ghostMaterial.uniforms.uGhost.value = 1;
   const ghost = new THREE.Points(particleGeometry, ghostMaterial);
   ghost.frustumCulled = false; ghost.renderOrder = 2; scene.add(ghost);
+
+  const glowMaterial = material(particleMaterial.clone());
+  glowMaterial.uniforms.uPass.value = 1;
+  glowMaterial.blending = THREE.AdditiveBlending;
+  const particleGlow = new THREE.Points(particleGeometry, glowMaterial);
+  particleGlow.frustumCulled = false; particleGlow.renderOrder = 2; scene.add(particleGlow);
+  const particleTrails = [.004, .009].map(lag => {
+    const mat = material(particleMaterial.clone()); mat.uniforms.uTrailLag.value = lag;
+    const points = new THREE.Points(particleGeometry, mat);
+    points.frustumCulled = false; points.renderOrder = 2; scene.add(points);
+    return {points, mat};
+  });
+  function syncParticleLayer(mat: THREE.ShaderMaterial, opacity: number) {
+    for (const key of ['uSource','uDest0','uDest1','uDest2'] as const) mat.uniforms[key].value.copy(particleUniforms[key].value);
+    for (const key of ['uScan','uSeparate','uTime','uPointSize','uSourceScale','uGlow'] as const) mat.uniforms[key].value = particleUniforms[key].value;
+    mat.uniforms.uOpacity.value = opacity;
+  }
 
   scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x40596e, 2));
   const key = new THREE.DirectionalLight(0xffffff, 3.1); key.position.set(-4, 6, 6); scene.add(key);
@@ -231,12 +252,18 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     key.position.x = -4 + Math.min(1, state.time / 1.2) * 5;
     particles.visible = state.time >= 1.2 && state.particles > 0;
     particleUniforms.uSeparate.value = state.separate;
-    particleUniforms.uGlow.value = .7 + Math.sin(Math.PI * Math.min(1, state.dissolve)) * .8 + Math.sin(Math.PI * state.separate) * .65;
+    particleUniforms.uTime.value = state.time;
+    particleUniforms.uGlow.value = (dark() ? .44 : .16) * (.65 + Math.sin(Math.PI * state.separate) * .35);
     particleUniforms.uOpacity.value = state.particles;
     ghost.visible = state.ghost > 0;
-    ghostMaterial.uniforms.uSource.value.copy(source);
-    ghostMaterial.uniforms.uScan.value = scan.value;
-    ghostMaterial.uniforms.uOpacity.value = state.ghost * .14;
+    syncParticleLayer(ghostMaterial, state.ghost * .09);
+    syncParticleLayer(glowMaterial, state.particles);
+    particleGlow.visible = particles.visible;
+    const moving = Math.sin(Math.PI * state.separate);
+    particleTrails.forEach(({points,mat}, index) => {
+      points.visible = particles.visible && moving > .01;
+      syncParticleLayer(mat, state.particles * moving * (index ? .05 : .11));
+    });
     shadow.position.copy(source).addScaledVector(up, mobile ? -1.3 : -.91).addScaledVector(forward, -.9);
     shadow.material.opacity = (dark() ? .38 : .6) * (1 - state.dissolve);
     atmosphere.position.copy(source).addScaledVector(forward, -2);
@@ -311,7 +338,8 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     });
     const density = quality.ratio;
     renderer.setPixelRatio(density); renderer.setSize(width, height, false);
-    particleUniforms.uPointSize.value = (mobile ? 6.8 : 8.2) * density;
+    particleUniforms.uPointSize.value = (mobile ? 3.8 : 4.2) * density;
+    particleGeometry.setDrawRange(0, mobile ? 2160 : 3600);
     particleUniforms.uSourceScale.value = mobile ? 1.45 : 1;
     ghostMaterial.uniforms.uSourceScale.value = particleUniforms.uSourceScale.value;
     ghostMaterial.uniforms.uPointSize.value = particleUniforms.uPointSize.value;
@@ -321,7 +349,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   function palette() {
     if (disposed || failed) return;
     particleUniforms.uColor.value.setHex(dark() ? 0x78b0ff : 0x246bd4);
-    ghostMaterial.uniforms.uColor.value.copy(particleUniforms.uColor.value);
+    for (const mat of [ghostMaterial,glowMaterial,...particleTrails.map(layer=>layer.mat)]) mat.uniforms.uColor.value.copy(particleUniforms.uColor.value);
     connections.forEach(({ line, pulse }) => {
       line.material.color.setHex(dark() ? 0x78b0ff : 0x246bd4);
       pulse.material.color.setHex(dark() ? 0x92d6ff : 0x246bd4);
