@@ -79,6 +79,9 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     function preference(){resume();}
     motionControl.current=resume;
     root.dataset.celebrating="false";
+    // Replay remounts the face nodes; repaint their visibility even when reduced
+    // motion jumps straight back to the same final face.
+    faceRef.current=-1;
     time=reduced()?duration:0;paint();
     motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);
     resume();
