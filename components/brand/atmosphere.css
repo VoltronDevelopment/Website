@@ -66,8 +66,10 @@ body:has(.brand-entry) .lattice-atmosphere { display:block; }
   .atmosphere-cyan,.atmosphere-deep { display:none; }
   .atmosphere-motion,.atmosphere-wash,.atmosphere-reflection { animation:none; }
   .atmosphere-lattice { width:min(580px,124vw); right:-16vw; top:18svh; }
+  /* Avoid filtered SVG/glass compositing seams on mobile GPUs. The cube colours remain blue. */
+  .atmosphere-lattice,:root[data-theme="dark"] .atmosphere-lattice { filter:none; }
   .atmosphere-wash { width:min(420px,88vw); right:-12vw; top:26svh; }
-  .atmosphere-reflection { right:2vw; top:38svh; }
+  .atmosphere-reflection { right:2vw; top:38svh; filter:none; }
 }
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more) {
   .lattice-atmosphere { display:none; }
