@@ -1,0 +1,27 @@
+# Home selective lattice reveal
+
+Implemented from the user's supplied mockup and attached animation brief on 26 October 2026. The mockup describes the middle of the sequence; the settled scene intentionally has no floating fragments.
+
+| Time | State |
+| --- | --- |
+| 0–2.2s | Seven original grid cells arrive over short, eased paths; rear base precedes front base and upper cells. |
+| 2.2–2.4s | The complete lattice holds in alignment. |
+| 2.4–2.95s | Only the three departing upper cells catch a local light response and faint subdivision lines. |
+| 2.95s | Parent surfaces disappear and twenty-four half-size children become visible. Each group of eight exactly tiles its parent's volume at the exchange. |
+| 2.95–5.1s | Children separate slightly and withdraw upward/rear-right through bounded, staggered paths. Small rotations and a late 16% scale reduction preserve lattice identity. Depth-weighted fade and a soft protected-area fade prevent a uniformly bright trail. |
+| 3.8–4.4s | A thin glowing connector grows from the four-cell central meeting point to the measured bottom tip of the mark. A narrow core and two restrained halos provide the glow. |
+| 4.4–5.3s | After the connector reaches the tip, the original transparent Voltron mark fades in at its fixed final position. It is never moved, blurred or stretched during the reveal. |
+| 4.85–5.85s | One restrained junction/selected-base-edge response and nearby ground light rise and decay. |
+| 5.85–6.8s | All fragments are gone; the four base cells hold with the exact mark. Rendering stops. |
+
+The existing camera direction, page layout, heading, navigation and actions are retained. The latest user correction also removes the upper shoulder. Cells 4, 5 and 6 depart; cells 0–3 remain. The mark sits centrally above the four-cell base, with its elevation calculated from the actual base silhouette, ink bounds and protected margin. The preceding three-light/four-dark assignment is used for the seven starting cells, with face-specific glass variation. A dedicated Home renderer lets exposed faces, rails and reflections withdraw together instead of leaving the old assembled wireframe behind.
+
+The latest correction lowers the mark: its bottom sits 16% of its ink width above the base's projected top silhouette. Horizontal/top protection remains 22.5%; bottom protection is 14%, with only the explicitly requested central connector entering that lower gap. Clearance uses the same fixed camera-board axes for every viewport. Nearby fragments fade smoothly before entering that region; the surviving structure lies outside it. Parent/child visibility is mutually exclusive at the exchange. The camera does not orbit, animate its zoom, or follow departing pieces. Responsive fitting changes only when the viewport changes.
+
+The logo texture now uses the exact lossless original PNG instead of the lossy WebP derivative. Mipmap minification is disabled for the thin mark, linear filtering/anisotropy retain clean edges, and the Home rendering-quality ceiling supports device pixel ratios up to 2. The supplied source is 500×500; this improves faithful presentation without inventing vector detail. Home stills are captured at 1440×960 with high-quality encoding and the existing 200KB limit. The final connector remains as a quiet static line; its growth and travelling tip finish before the mark appears.
+
+Glass retains studio lighting, geometric rims, selective reflection gradients, clear fronts and deeper sides. Soft base contact shadows and faded geometric floor echoes anchor the foundation. These are authored WebGL materials and geometric approximations, not a raster mockup background or ray-traced floor. No physics engine, global bloom or extra rendering library was added. Optional selected-side transmission is a query-gated authoring experiment, disabled by default.
+
+Verification covers exact subdivision origins, exclusive exchange, retained topology, bounded deterministic motion, finite response and clamped final state. The final regression suite passes 213 tests across 38 files, including connector completion before logo appearance. Production browser keyframes at 2.4, 2.8, 2.95, 3.4, 4, 4.45, 5.3 and 6.8 seconds pass topology and clear-space assertions in both themes, alongside desktop/mobile playback, finite settlement and reduced-motion checks (20 state checks). The higher-resolution completed poster matches the live final pose at desktop/mobile sizes in both themes, within the original colour/alpha thresholds. The four-base production site audit passed 24 route/theme/layout cases with no automated accessibility violations, missing resources or browser errors. Production compilation and TypeScript pass. All four Home stills remain below 200KB (approximately 167–186KB). A later global budget run flags two concurrently updated Technology stills above 200KB; those files were not changed by the Home pass. No deployment was performed.
+
+Final beam/logo evidence is under `.audit-logs/home-four-base/beam-hd-production/` and `.audit-logs/home-four-base/beam-hd-continuity/`. The four-base site audit is under `.audit-logs/home-four-base/site-quality/`; earlier shoulder-retaining experiments remain under `.audit-logs/home-selective-reveal/`. Renderer-captured opening and final posters replace the previous seven-cell still. Software WebGL checks establish rendering/state correctness; representative-device GPU profiling remains separate.

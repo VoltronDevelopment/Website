@@ -1,0 +1,19 @@
+/* Opening artwork is selected before paint. Without JS, completed artwork remains usable. */
+.scene-pose-opening { display:none; }
+:root[data-scene-motion="motion"] .scene-pose-opening { display:block; }
+:root[data-scene-motion="motion"] .scene-pose-complete { display:none; }
+[data-scene-pose="complete"] .scene-pose-opening { display:none!important; }
+[data-scene-pose="complete"] .scene-pose-complete { display:block!important; }
+.scene-poster > span { position:absolute; inset:0; }
+.scene-poster { container-type:size; overflow:hidden; }
+.scene-poster img { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); }
+[data-scene-state] canvas { transition:none; }
+/* Visibility and opacity during the handoff are owned by one clock, not :has() selectors. */
+[data-scene-state="poster"] > .scene-poster,
+[data-scene-state="handoff"] > .scene-poster { visibility:visible; }
+[data-scene-state="live"] > .scene-poster { visibility:hidden; }
+:root[data-route-state="incoming"] .hero-grid > div:has([data-scene-state]) { animation:none; }
+
+/* More specific than page-level image rules: exactly one theme is ever painted. */
+:root:not([data-theme="dark"]) .scene-poster .art-theme-dark,:root[data-theme="dark"] .scene-poster .art-theme-light { display:none; }
+:root:not([data-theme="dark"]) .scene-poster .art-theme-light,:root[data-theme="dark"] .scene-poster .art-theme-dark { display:block; }

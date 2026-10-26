@@ -78,6 +78,19 @@ jobs:
           name: page-quality-evidence
           path: .audit-logs/site-quality-20261024/verified
 
+      - name: Static-to-live artwork continuity
+        run: node scripts/verify-scene-continuity.cjs
+        env:
+          SCENE_DIST: .next
+          SCENE_BROWSER: chromium
+
+      - name: Save artwork continuity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artwork-continuity-evidence
+          path: .audit-logs/scene-continuity/verification
+
   website-dependency-audit:
     name: Website dependency audit
     runs-on: ubuntu-latest

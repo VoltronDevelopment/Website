@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "assets": {
+    "head": {
+      "source": "public/brain-in-head/source/Brain In Head.glb",
+      "vertices": 4005,
+      "triangles": 7916,
+      "particles": 20000,
+      "stride": 8
+    },
+    "arm": {
+      "source": "public/arm__hand_sculpting/scene.gltf",
+      "vertices": 9002,
+      "triangles": 18000,
+      "particles": 22000,
+      "stride": 8,
+      "orientation": "original-y-up"
+    },
+    "dosti": {
+      "source": "public/rrrs-dosti-symbol/source/#DostiSymbol.fbx",
+      "vertices": 7764,
+      "triangles": 2588,
+      "particles": 20000,
+      "stride": 8,
+      "referenceView": {
+        "direction": [
+          0.8128681525246377,
+          0.2403194946389327,
+          -0.5305581090772911
+        ],
+        "up": [
+          0.06394555599635271,
+          0.9979533886250987,
+          0
+        ]
+      },
+      "authoredNormals": true,
+      "sourceTriangles": 2588,
+      "poseLocked": true
+    },
+    "planes": {
+      "source": "public/planes-of-the-head/source/planes of the head_DECIM.zip",
+      "vertices": 11002,
+      "triangles": 22000,
+      "particles": 32000,
+      "stride": 8
+    }
+  },
+  "credits": [
+    {
+      "asset": "arm",
+      "title": "Arm & Hand sculpting",
+      "author": "alfance",
+      "url": "https://sketchfab.com/3d-models/arm-hand-sculpting-e97f3be309ce4907afbcfa672832808d",
+      "license": "CC BY 4.0"
+    }
+  ]
+}

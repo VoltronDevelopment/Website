@@ -17,6 +17,7 @@ const reportVital:Parameters<typeof useReportWebVitals>[0]=metric=>publish(metri
 export function PerformanceMonitor() {
   const pathname=usePathname(),previous=useRef<string|null>(null);
   useReportWebVitals(reportVital);
+  useEffect(()=>{const motion=matchMedia("(prefers-reduced-motion: reduce)");const update=()=>{document.documentElement.dataset.sceneMotion=motion.matches||!!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData?"static":"motion";};motion.addEventListener("change",update);return()=>motion.removeEventListener("change",update);},[]);
   useEffect(()=>{
     const started=previous.current===null?0:performance.now();previous.current=pathname;
     const seen=new WeakSet<Element>();

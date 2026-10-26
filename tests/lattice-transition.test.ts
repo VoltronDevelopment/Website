@@ -17,7 +17,7 @@ describe("Persistent lattice transition",()=>{
     expect(canMorph(ready)).toBe(true);
     for(const change of [{width:390},{reduced:true},{saveData:true},{visible:.2},{settled:false},{fallback:true}])expect(canMorph({...ready,...change})).toBe(false);
   });
-  it("limits shared geometry to the approved route pair",()=>{
-    expect(viewForPath("/")).toBe("home");expect(viewForPath("/technology")).toBe("technology");expect(viewForPath("/enter")).toBeNull();expect(viewForPath("/ontology")).toBeNull();
+  it("does not morph the Home lattice into the new object-based Technology scene",()=>{
+    expect(viewForPath("/")).toBe("home");expect(viewForPath("/technology")).toBeNull();expect(viewForPath("/enter")).toBeNull();expect(viewForPath("/ontology")).toBeNull();
   });
 });

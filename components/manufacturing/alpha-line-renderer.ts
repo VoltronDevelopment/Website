@@ -1,8 +1,10 @@
+import {createSceneHandoff} from "../performance/scene-handoff";
 import {batchStaticMeshes} from "../performance/static-batching";
 import { alphaLineShotAt, alphaTourStateAt, alphaPlaybackDuration } from "./alpha-line-tour";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { createAlphaStackLight } from "../home/alpha-stack-light";
+import {createArtworkEnvironment} from "../brand/artwork-studio";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { alphaViewBounds, fitAlphaCamera } from "../home/alpha-process-framing";
 import { alphaVisualColors } from "../home/alpha-visual-palette";
@@ -17,6 +19,7 @@ import {
   alphaLineRaisedY,
   alphaLineRouteState,
   alphaLineStateAt,
+  alphaLineStationDistance,
   alphaLineUnloadY,
   type AlphaLineState,
 } from "./alpha-line-timeline";
@@ -45,6 +48,7 @@ const railY = 5.28;
 const liquidY = 1.82;
 
 export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): Promise<AlphaLineController> {
+  const handoff=createSceneHandoff(host,canvas);
   const quality=createRenderQuality(canvas);
   await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
@@ -52,7 +56,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
   } catch {
     canvas.hidden = true;
-    host.dataset.fallback = "true";
+    handoff.fallback();host.dataset.fallback = "true";
     return { setPaused() {}, seek() {}, setExplore() {}, setGuided() {}, resetView() {}, orbit() {}, focusStation() {}, dispose() {} };
   }
   renderer.setClearColor(0, 0);
@@ -72,11 +76,12 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
 
   const geometries = new Set<THREE.BufferGeometry>();
   const materials = new Set<THREE.Material>();
+  const signTextures: THREE.Texture[] = [];
   const geometry = <T extends THREE.BufferGeometry>(value: T) => { geometries.add(value); return value; };
   const material = <T extends THREE.Material>(value: T) => { materials.add(value); return value; };
   const isDark = () => document.documentElement.dataset.theme === "dark";
   const visual = alphaVisualColors(isDark());
-  const metal = material(new THREE.MeshStandardMaterial({ color: visual.metal, metalness: 0.8, roughness: 0.29, envMapIntensity: 1 }));
+  const metal = material(new THREE.MeshStandardMaterial({ color: visual.metal, metalness: 0.8, roughness: 0.25, envMapIntensity: 1.1 }));
   const polished = material(new THREE.MeshStandardMaterial({ color: visual.polished, metalness: 0.86, roughness: 0.2, envMapIntensity: 1.1 }));
   const steelDark = material(new THREE.MeshStandardMaterial({ color: visual.steelDark, metalness: 0.7, roughness: 0.36 }));
   const foundation = material(new THREE.MeshStandardMaterial({ color: visual.foundation, metalness: 0.32, roughness: 0.38 }));
@@ -92,11 +97,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   const selectMaterial = material(new THREE.LineBasicMaterial({ color: 0x2894bc }));
   const hitMaterial = material(new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
 
-  const room = new RoomEnvironment();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(room, 0.04);
-  room.dispose();
-  pmrem.dispose();
+  const environment = createArtworkEnvironment(renderer);
   scene.environment = environment.texture;
   scene.environmentIntensity = visual.environment;
   const hemisphere = new THREE.HemisphereLight(0xeaf6ff, 0x718ba0, visual.hemisphere);
@@ -227,10 +228,38 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     const z = point.z + dz / length * 1.85;
     box(equipment, [0.16, 5.05, 0.16], [x, 2.75, z], metal, true);
     rod(equipment, [x, 5.15, z], [point.x, railY, point.z], 0.045);
+    if (point === points[0] || point === points[points.length - 1]) {
+      const label = document.createElement("canvas"); label.width = 512; label.height = 112;
+      const context = label.getContext("2d")!;
+      context.fillStyle = "#edf5fa"; context.fillRect(0, 0, 512, 112);
+      context.strokeStyle = "#9ab5ca"; context.lineWidth = 8; context.strokeRect(4, 4, 504, 104);
+      context.fillStyle = "#174b80"; context.font = "500 48px Montserrat, sans-serif";
+      context.textAlign = "center"; context.textBaseline = "middle";
+      context.fillText(point === points[0] ? "LOADING" : "UNLOADING", 256, 58);
+      const texture = new THREE.CanvasTexture(label); texture.colorSpace = THREE.SRGBColorSpace; signTextures.push(texture);
+      // Fixed vertical sign panels, elevated above the complete trolley/rail envelope.
+      const sign = new THREE.Group(); sign.position.set(x, 6.75, z); sign.rotation.y = -.4;
+      equipment.add(sign);
+      box(sign, [2.7, .68, .14], [0, 0, 0], metal, true);
+      const board = new THREE.Mesh(geometry(new THREE.PlaneGeometry(2.54, .54)), material(new THREE.MeshStandardMaterial({map:texture, roughness:.5, metalness:.08})));
+      board.position.z = .076; sign.add(board);
+      // Twin rear brackets and a crossbar connect the framed panel to its extended pole.
+      for (const side of [-.72, .72]) {
+        box(sign, [.09, .72, .1], [side, -.55, -.11], steelDark);
+        rod(sign, [0, -.89, -.11], [side, -.57, -.11], .032);
+        const fastener = new THREE.Mesh(cylinder, polished);
+        fastener.scale.set(.026, .025, .026); fastener.rotation.x = Math.PI / 2;
+        fastener.position.set(side, -.2, .087); sign.add(fastener);
+      }
+      box(sign, [1.62, .1, .14], [0, -.89, -.11], polished);
+      box(equipment, [.25, .18, .25], [x, 5.24, z], steelDark, true);
+      rod(equipment, [x, 5.275, z], [x, 5.91, z], .065);
+    }
   }
 
   type Bath = { id: string; surface: THREE.ShaderMaterial; volume: THREE.MeshBasicMaterial };
   const baths: Bath[] = [];
+  const stackLights: { id: string; lamp: ReturnType<typeof createAlphaStackLight> }[] = [];
   function waterMaterial(color: number) {
     return material(new THREE.ShaderMaterial({
       transparent: true,
@@ -257,6 +286,9 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     tank.position.set(station.x, 0, station.z);
     tank.rotation.y = station.yaw;
     equipment.add(tank);
+    const lamp = createAlphaStackLight(geometry, material, polished);
+    lamp.group.position.set(-1.39, 2.12, 1.12); tank.add(lamp.group);
+    stackLights.push({ id: station.id, lamp });
     box(tank, [3.13, 0.16, 2.63], [0, 0.38, 0], metal, true);
     box(tank, [3.13, .055, .08], [0,.29,1.29],steelDark);
     box(tank, [3.04, 1.57, 0.07], [0, 1.22, -1.19], tankBack);
@@ -420,6 +452,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
 
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const reviewTime = new URLSearchParams(location.search).get("alpha-time");
+  const reviewFraming = new URLSearchParams(location.search).has("artwork-review");
   let mode: Mode = options.initialState?.mode ?? (reviewTime !== null ? "journey" : "route");
   let elapsed = options.initialState?.time ?? (reviewTime !== null ? Math.max(0, Number(reviewTime) || 0) : 0);
   let paused = options.paused;
@@ -437,7 +470,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   let visible = false;
   let frame = 0;
   let previous = 0;
-  const disposeBatches=batchStaticMeshes(equipment,new Set<THREE.Object3D>([...turntables,...droplets]));
+  const disposeBatches=batchStaticMeshes(equipment,new Set<THREE.Object3D>([...turntables,...droplets,...stackLights.map(item => item.lamp.group)]));
   let signature = "";
   let ended = false;
   let pixelWidth = 0;
@@ -450,6 +483,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   const graphite = new THREE.Color(0x29343e);
 
   function palette() {
+    graphite.setHex(isDark() ? 0x465d72 : 0x29343e);
     const colors = alphaVisualColors(isDark());
     metal.color.set(colors.metal).multiplyScalar(.92);
     polished.color.set(colors.polished);
@@ -489,6 +523,11 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     options.onState(state);
   }
   function apply(state: AlphaLineState) {
+    stackLights.forEach(({ id, lamp }) => {
+      const active = state.carrierVisible && state.stationId === id && ["lower", "hold", "raise", "drain", "verify"].includes(state.phase);
+      const complete = state.mode !== "route" && (state.processingComplete || state.distance > alphaLineStationDistance(id) + .01);
+      lamp.setState(state.amberStationId === id ? "attention" : active ? "active" : complete ? "complete" : "idle");
+    });
     loading.visible = state.loadingOpacity > .001;
     loadingMaterial.opacity = state.loadingOpacity;
     carrier.visible = state.carrierVisible;
@@ -576,11 +615,13 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     });
   }
   function applyCamera(forceBounds = false) {
+    const directed = guided && mode !== "route" && mode !== "deviation";
+    const shot = directed ? alphaLineShotAt(currentState(),pixelWidth < 600) : manualShot;
     const orbit = clampAlphaLineOrbit(azimuth, polar, zoom);
     azimuth = orbit.azimuth;
     polar = orbit.polar;
     zoom = orbit.zoom;
-    const offset = alphaLineCameraOffset(azimuth, polar);
+    const offset = alphaLineCameraOffset(azimuth + (directed && shot && "azimuth" in shot ? Number(shot.azimuth) : 0), polar);
     camera.position.set(look.x + offset.x, look.y + offset.y, look.z + offset.z);
     camera.lookAt(look.x, look.y, look.z);
     camera.updateMatrixWorld();
@@ -615,8 +656,6 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     camera.top = cy + height / 2;
     camera.bottom = cy - height / 2;
     camera.updateProjectionMatrix();
-    const directed = guided && mode !== "route" && mode !== "deviation";
-    const shot = directed ? alphaLineShotAt(currentState(),pixelWidth < 600) : manualShot;
     if (shot) {
       const point = new THREE.Vector3(shot.x, 2.85, shot.z).applyMatrix4(camera.matrixWorldInverse);
       const centreX = cx + (point.x - cx) * shot.detail;
@@ -648,6 +687,10 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     else if (Math.abs(focusBlend - target) > 0.001) focusBlend += (target - focusBlend) * 0.2;
     else focusBlend = target;
     applyCamera();
+    if (reviewFraming) {
+      const tracked = new THREE.Vector3(state.x, state.y - .83, state.z).project(camera);
+      canvas.dataset.carrierFrame = JSON.stringify({x:tracked.x,y:tracked.y,phase:state.phase});
+    }
     renderer.render(scene, camera);
   }
   function stop() {
@@ -678,6 +721,8 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     if (visible && !document.hidden && (playing || focusing)) frame = requestAnimationFrame(tick);
   }
   function resume() {
+    if(host.dataset.sceneState!=="live")return;
+    if(reviewTime!==null){stop();render();return;}
     stop();
     render();
     if (!disposed && visible && !document.hidden && !lostContext) frame = requestAnimationFrame(tick);
@@ -747,14 +792,14 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     lostContext = true;
     stop();
     canvas.hidden = true;
-    host.dataset.fallback = "true";
+    handoff.fallback();host.dataset.fallback = "true";
     host.dataset.ready = "false";
   }
   function onPointerLeave(event: PointerEvent) { if (!canvas.hasPointerCapture(event.pointerId)) dragging = false; }
   function onVisibility() { if (document.hidden) stop(); else resume(); }
   function onContextRestored() {
     lostContext = false; canvas.hidden = false; host.dataset.fallback = "false"; host.dataset.ready = "true";
-    palette(); resize(); resume();
+    palette();resize();void handoff.reveal().then(resume);
   }
   await yieldToBrowser();
   await renderer.compileAsync(scene,camera);
@@ -776,8 +821,10 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   canvas.dataset.kind = "alpha-line";
   palette();
   resize();
+  await handoff.reveal();
   host.dataset.ready = "true";
   options.onReady();
+  resume();
   return {
     setPaused(value) { paused = value; if (!value) ended = false; resume(); },
     seek(nextMode, time) {
@@ -809,7 +856,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     focusStation(id) { focusId = id; manualShot = null; resume(); },
     dispose() {
       disposed = true;
-      stop();
+      handoff.dispose();stop();
       resizing.disconnect();
       themes.disconnect();
       view.disconnect();
@@ -825,6 +872,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
       disposeBatches();
       geometries.forEach(value => value.dispose());
       materials.forEach(value => value.dispose());
+      signTextures.forEach(value => value.dispose());
       environment.dispose();
       key.shadow.dispose();
       renderer.dispose();

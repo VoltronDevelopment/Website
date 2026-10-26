@@ -2,6 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { mountLotStory, type LotStoryController } from "../components/home/lot-story-renderer";
 
+// The DOM dissolve is covered separately in scene-handoff.test.ts; keep GPU/controller tests deterministic.
+vi.mock("../components/performance/scene-handoff",()=>({createSceneHandoff:(host:HTMLElement)=>({
+  async reveal(){host.dataset.sceneState="live";},
+  fallback(){host.dataset.sceneState="fallback";},dispose(){},
+})}));
+
 const gpu = vi.hoisted(() => ({ compile: vi.fn(), render: vi.fn(), dispose: vi.fn(), lose: vi.fn() }));
 vi.mock("three", async original => {
   const actual = await original<typeof import("three")>();
@@ -57,9 +63,8 @@ describe("synchronized lot scene controller", () => {
     const { scene } = fixture(); await scene.ready;
     const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;
     const camera = gpu.render.mock.lastCall?.[1] as THREE.OrthographicCamera;
-    const groups = rendered.children.filter(child => child instanceof THREE.Group);
-    const stations = groups.slice(0, 4);
-    expect(groups[4].quaternion.toArray()).toEqual([0, 0, 0, 1]);
+    const stations = Array.from({length:4},(_,i)=>rendered.getObjectByName('lot-station-'+i)!);
+    expect(rendered.getObjectByName('lot-conveyor')!.quaternion.toArray()).toEqual([0, 0, 0, 1]);
     for (let i = 1; i < 4; i++) {
       expect(stations[i].position.y).toBeCloseTo(stations[0].position.y);
       expect(stations[i].position.z).toBeCloseTo(stations[0].position.z);
@@ -72,15 +77,24 @@ describe("synchronized lot scene controller", () => {
       expect(Math.abs(p.x)).toBeLessThan(.99); expect(Math.abs(p.y)).toBeLessThan(.99);
     }
   });
-  it("plays once, keeps all four snapshots stationary and stops at the completed view", async () => {
+  it("moves one carrier through fixed stations and stops after particle dispatch", async () => {
     const { scene, canvas, onState } = fixture(); await scene.ready;
     const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;
-    const snapshotGroups = rendered.children.filter(child => child instanceof THREE.Group).slice(0, 4);
+    const snapshotGroups = Array.from({length:4},(_,i)=>rendered.getObjectByName('lot-station-'+i)!);
     const positions = snapshotGroups.map(group => group.position.toArray());
+    const carrier=rendered.getObjectByName('lot-carrier')!,start=carrier.position.x;
+    expect(rendered.children.filter(o=>o.name==='lot-carrier')).toHaveLength(1);
+    intersect(true);advance(35);expect(carrier.position.x).toBeGreaterThan(start);
     intersect(true); advance(155);
     expect(canvas.dataset.settled).toBe("true"); expect(canvas.dataset.running).toBe("false"); expect(frames.size).toBe(0);
     expect(snapshotGroups.map(group => group.position.toArray())).toEqual(positions);
+    expect(canvas.dataset.departure).toBe('1.0000');expect(canvas.dataset.particles).toBe('false');
     expect(onState.mock.lastCall?.[0].evidence).toEqual([true, true, true, true, true]);
+  });
+  it('keeps one mobile carrier centred while conveyor travel advances',async()=>{
+    narrow=true;const {scene,canvas}=fixture();await scene.ready;
+    scene.select(1.8);const first=canvas.dataset.carrierPosition,belt=Number(canvas.dataset.beltTravel);
+    scene.select(2.2);expect(canvas.dataset.carrierPosition).toBe(first);expect(Number(canvas.dataset.beltTravel)).toBeGreaterThan(belt);expect(canvas.dataset.mobileConveyor).toBe('true');expect(canvas.dataset.carrierCount).toBe('1');
   });
   it("pauses, suspends offscreen, resumes and replays without losing coherence", async () => {
     const { scene, canvas } = fixture(); await scene.ready; intersect(true); advance(12);
@@ -104,19 +118,19 @@ describe("synchronized lot scene controller", () => {
     listeners.get("visibilitychange")?.(new Event("visibilitychange")); advance(4);
     expect(Number(canvas.dataset.animationTime)).toBeGreaterThan(Number(time));
   });
-  it("shows only the selected mobile snapshot while preserving its lot placement", async () => {
+  it("reuses the same mobile carrier across stage selections", async () => {
     narrow = true;
     const { scene, host } = fixture(); await scene.ready;
     const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;
-    const snapshots = rendered.children.filter(child => child instanceof THREE.Group).slice(0, 4);
-    expect(host.dataset.layout).toBe("single"); expect(snapshots.filter(group => group.visible)).toEqual([snapshots[0]]);
-    const initial = snapshots[0].position.toArray(); scene.select(14);
-    expect(snapshots.filter(group => group.visible)).toEqual([snapshots[3]]); expect(snapshots[3].position.toArray()).toEqual(initial);
+    const carrier=rendered.getObjectByName('lot-carrier')!,initial=carrier.position.toArray();
+    expect(host.dataset.layout).toBe("single");scene.select(7.7);expect(carrier.position.toArray()).toEqual(initial);
+    scene.select(12.4);expect(carrier.position.toArray()).toEqual(initial);expect(rendered.children.filter(o=>o.name==='lot-carrier')).toHaveLength(1);
   });
   it("settles immediately on reduced motion and supports still snapshot selection", async () => {
     const { scene, canvas } = fixture(); await scene.ready; intersect(true); advance(4);
     motion.matches = true; changeMotion(); expect(canvas.dataset.settled).toBe("true"); expect(frames.size).toBe(0);
     scene.select(8); expect(canvas.dataset.phase).toBe("review"); expect(frames.size).toBe(0);
+    const rendered=gpu.render.mock.lastCall?.[0] as THREE.Scene;expect(rendered.getObjectByName('lot-carrier')!.position.toArray()).toEqual(rendered.getObjectByName('lot-station-2')!.position.toArray());
   });
   it("restores the completed fallback and releases preparation on context loss during compile", async () => {
     gpu.compile.mockImplementation(() => new Promise(() => {}));

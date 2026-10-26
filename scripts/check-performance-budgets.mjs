@@ -5,7 +5,10 @@ import crypto from 'node:crypto';
 const assets=JSON.parse(fs.readFileSync('lib/optimized-assets.json','utf8'));
 const failures=[];
 const posters=JSON.parse(fs.readFileSync('lib/scene-posters.json','utf8'));
+const opening=JSON.parse(fs.readFileSync('lib/scene-opening-posters.json','utf8'));
+for(const [kind,themes] of Object.entries(opening))posters[kind+'-opening']=themes;
 posters.component = JSON.parse(fs.readFileSync('lib/component-poster.json','utf8'));
+const component=JSON.parse(fs.readFileSync('lib/component-scene-poster.json','utf8'));posters['component-matched']={light:component.light,dark:component.dark};
 for(const themes of Object.values(posters))for(const url of Object.values(themes)) {
   const buffer=fs.readFileSync('public'+url),hash=crypto.createHash('sha256').update(buffer).digest('hex').slice(0,16);
   if(!url.includes(hash))failures.push('Poster content hash mismatch: '+url);

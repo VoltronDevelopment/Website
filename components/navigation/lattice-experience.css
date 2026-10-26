@@ -2,7 +2,7 @@
 .persistent-lattice-stage canvas { display:block; width:100%; height:100%; }
 .persistent-lattice-stage canvas[hidden] { display:none; }
 [data-lattice-slot] { position:relative; }
-.persistent-lattice-stage[data-transition="fade"] { animation:lattice-route-fade .18s ease-out both; }
+.persistent-lattice-stage[data-transition="fade"] { animation:none; }
 :root[data-route-state="incoming"] .site-presentation .hero-copy:not(.route-copy-snapshot) { animation:lattice-copy-enter .35s .08s ease-out both; }
 :root[data-route-state="incoming"] .site-presentation .hero-grid > div:last-child:not([data-lattice-slot]) { animation:lattice-route-fade .24s ease-out both; }
 .route-copy-snapshot { z-index:3; pointer-events:none; overflow:hidden; animation:lattice-copy-exit .15s ease-out both; }

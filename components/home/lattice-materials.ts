@@ -2,26 +2,47 @@ import * as THREE from "three";
 import { LineSegments2 } from "three/addons/lines/LineSegments2.js";
 import { LineSegmentsGeometry } from "three/addons/lines/LineSegmentsGeometry.js";
 import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+import {addHomePaneReflections,tuneHomeGlass,type PaneRole} from "./home-glass";
+export type GlassProfile="home"|"display"|"portrait"|"process"|"commons";
 
 export type GlassFace="top"|"side"|"front"|"rear"|"bottom"|"internal";
 const light={top:0xf8fcff,side:0x91c7ec,front:0xc7e8fa,rear:0xc5dcee,bottom:0x9abfdc,internal:0xc4e0f4};
+const studioLight={top:0xe9f5ff,side:0x6e9fc5,front:0xd6eafa,rear:0x8ba9c6,bottom:0x628bad,internal:0xc4e0f4};
 const night={top:0x6596bd,side:0x23567d,front:0x397da8,rear:0x16364e,bottom:0x123044,internal:0x193e58};
 const lightOpacity={top:.3,side:.3,front:.14,rear:.045,bottom:.09,internal:.02};
 const darkOpacity={top:.24,side:.24,front:.13,rear:.04,bottom:.075,internal:.02};
+const studioLightOpacity={top:.38,side:.46,front:.13,rear:.18,bottom:.17,internal:.014};
+const studioDarkOpacity={top:.25,side:.29,front:.10,rear:.12,bottom:.10,internal:.012};
 
 export function setGlass(material:THREE.MeshPhysicalMaterial,kind:GlassFace,dark:boolean){
-  material.color.setHex((dark?night:light)[kind]);
-  material.opacity=(dark?darkOpacity:lightOpacity)[kind];
-  material.roughness=kind==="top"?.23:.34;
-  material.clearcoat=dark?.5:.65;
-  material.clearcoatRoughness=.2;
-  material.envMapIntensity=kind==="top"?.55:dark?.32:.38;
+  const studio=material.userData.artworkStudio===true;
+  material.color.setHex((dark?night:studio?studioLight:light)[kind]);
+  material.opacity=(studio?(dark?studioDarkOpacity:studioLightOpacity):(dark?darkOpacity:lightOpacity))[kind];
+  material.roughness=studio?(kind==="internal"?.3:kind==="top"?.09:.13):(kind==="top"?.23:.34);
+  material.ior=studio?1.46:1.5;
+  material.clearcoat=studio?.95:dark?.5:.65;
+  material.clearcoatRoughness=studio?.08:.2;
+  material.envMapIntensity=studio?(kind==="internal"?.15:dark?.85:1.15):(kind==="top"?.55:dark?.32:.38);
   material.emissive.setHex(0x246bd4);material.emissiveIntensity=.012;
+  if(material.userData.glassProfile==="home")tuneHomeGlass(material,kind,dark);
+  else if(material.userData.glassProfile){
+    const portrait=material.userData.glassProfile==="portrait",process=material.userData.glassProfile==="process";
+    material.color.setHex((dark?{top:0x85b1d1,side:0x3b729b,front:0xabcde4,rear:0x244e73,bottom:0x315d7c,internal:0x193e58}:studioLight)[kind]);
+    material.opacity=(dark?{top:.38,side:.40,front:.065,rear:.16,bottom:.12,internal:.012}:{top:.30,side:.30,front:.075,rear:.12,bottom:.10,internal:.014})[kind];
+    if(portrait)material.opacity*=kind==="front"?.22:kind==="rear"?.45:.55;
+    if(process)material.opacity*=.65;
+    material.roughness=kind==="top"?.10:.16;material.envMapIntensity=dark?1.05:1.25;
+  }
+  material.userData.faceKind=kind;
   material.userData.restOpacity=material.opacity;
 }
 
-export function glassFace(kind:GlassFace,dark=false){
+export function glassFace(kind:GlassFace,dark=false,studio=false,profile?:GlassProfile,role?:PaneRole){
   const material=new THREE.MeshPhysicalMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,metalness:0});
+  material.userData.artworkStudio=studio;
+  material.userData.glassProfile=profile;
+  material.userData.paneRole=role;
+  if(profile)addHomePaneReflections(material,kind);
   setGlass(material,kind,dark);return material;
 }
 

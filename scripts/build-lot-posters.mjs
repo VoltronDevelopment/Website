@@ -4,10 +4,10 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import sharp from 'sharp';
 const cache='node_modules/.cache/lot-posters', output='public/optimized';
-const manifest={desktop:{},mobile:{}};
+const manifest={desktop:{},mobile:{},opening:{desktop:{},mobile:{}}};
 await fs.mkdir(output,{recursive:true});
 for(const layout of ['desktop','mobile'])for(const theme of ['light','dark']){
-  const times=layout==='desktop'?[0,14]:[0,4.9,7.9,14];
+  const times=[0,1.9,4.4,7.7,12.4];
   manifest[layout][theme]=[];
   for(const time of times){
     const prefix=`${cache}/${layout}-${theme}-${time}`;
@@ -24,7 +24,7 @@ for(const layout of ['desktop','mobile'])for(const theme of ['light','dark']){
     }
     const image=await sharp(rgba,{raw:{width:white.info.width,height:white.info.height,channels:4}}).webp({lossless:true}).toBuffer();
     const hash=crypto.createHash('sha256').update(image).digest('hex').slice(0,16), url=`/optimized/lot-${layout}-${theme}-${time}-${hash}.webp`;
-    await fs.writeFile('public'+url,image);manifest[layout][theme].push(url);
+    await fs.writeFile('public'+url,image);if(time===0)manifest.opening[layout][theme]=url;else manifest[layout][theme].push(url);
   }
 }
 await fs.writeFile('lib/lot-posters.json',JSON.stringify(manifest,null,2)+'\n');

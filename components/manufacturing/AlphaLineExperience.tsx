@@ -157,16 +157,15 @@ export function AlphaLineExperience() {
   return <div className="alpha-line">
     <div className="alpha-line-layout">
       <div className="alpha-line-stage">
-        <div className="alpha-line-stage-heading"><span>13-tank process line</span><span>{playback.chapter === "route" ? "Plant overview" : paused || !ready || reduced ? "Paused" : "Following lot"}</span></div>
+        <div className="alpha-line-stage-heading"><span>V-Twin <i aria-hidden="true">/</i> Alpha · 13-tank line</span><span>Demo · {playback.chapter === "route" ? "Plant overview" : paused || !ready || reduced ? "Paused" : "Following lot"}</span></div>
         <div className="alpha-line-art" ref={host} data-ready={ready} role="group" aria-label="Interactive thirteen-tank square-U treatment line" aria-describedby={description}>
           <AlphaPlantPoster/>
           <canvas ref={canvas} aria-hidden="true"/>
-          <svg className="alpha-line-leaders" aria-hidden="true">{["LOAD", "UNLOAD"].map(id => <line key={id} data-bay={id}/>)}</svg>
-          <div className="alpha-line-numbers" aria-hidden="true">{alphaLineStations.map(station => <span key={station.id} data-station={station.id} data-kind={station.kind} data-active={playback.carrierVisible && playback.stationId === station.id} data-selected={selectedId === station.id}>{station.kind === "tank" ? station.number : station.name}</span>)}</div>
           {playback.chapter === "route" && <button type="button" className="button alpha-line-follow" onClick={follow}>Follow a lot <ArrowRight size={16} aria-hidden="true"/></button>}
           {selected && <button type="button" className="alpha-line-complete" onClick={showLine}><Maximize2 size={14} aria-hidden="true"/>Complete line</button>}
         </div>
-        <p className="alpha-operation">{playback.compressed ? "Repeated operations · Accelerated playback" : playback.chapter === "route" ? "One component. A complete manufacturing journey." : story.rows.find(row=>row.label === "Operation")?.value ?? activeStation.name}</p>
+        <div className="alpha-twin-status"><p className="alpha-operation">{playback.compressed ? "Repeated operations · Accelerated playback" : playback.chapter === "route" ? "One component. A complete manufacturing journey." : story.rows.find(row=>row.label === "Operation")?.value ?? activeStation.name}</p><div className="alpha-lamp-legend" aria-label="Tank light states"><span><i data-lamp="active"/>Active</span><span><i data-lamp="complete"/>Complete</span><span><i data-lamp="idle"/>Idle</span></div></div>
+        <div className="alpha-twin-transport">
         <ol className="alpha-line-chapters" aria-label="Guided chapters">{alphaLineChapters.filter(c=>["loading","processing","unloading"].includes(c.id)).map((chapter, index) => <li key={chapter.id}><button type="button" aria-current={playback.chapter === chapter.id ? "step" : undefined} aria-label={chapter.label} onClick={() => goTo(chapter.id)}><span className="alpha-chapter-full" aria-hidden="true">{chapter.label}</span><span className="alpha-chapter-compact" aria-hidden="true">{compactChapters[index]}</span></button></li>)}</ol>
         <div className="alpha-line-progress"><label className="sr-only" htmlFor={`${tabsId}-progress`}>Journey position in seconds</label><div className="alpha-timeline-track" data-playing={!paused && ready} style={{"--alpha-progress": `${Math.min(100, playback.time / duration * 100)}%`} as CSSProperties}><input id={`${tabsId}-progress`} type="range" min="0" max={duration} step=".1" value={Math.min(duration, playback.time)} aria-valuetext={`${clock(playback.time)} of ${clock(duration)}`} onChange={event => { autoStopAtRef.current = null; remember(true); seek(playback.mode === "deviation" ? "deviation" : fullRoute ? "journey" : "tour", Number(event.target.value)); }}/><div className="alpha-timeline-milestones" aria-hidden="true">{milestones.map((position, index) => <i key={index} style={{left:`${position}%`}}/>)}</div></div><span>{clock(playback.time)} / {clock(duration)}</span></div>
         <div className="alpha-line-controls">
@@ -174,6 +173,7 @@ export function AlphaLineExperience() {
           <button type="button" onClick={() => step(-1)} disabled={playback.chapter === "route"} aria-label="Previous stage"><ChevronLeft size={15} aria-hidden="true"/><span className="alpha-control-label">Previous</span></button>
           <button type="button" onClick={() => step(1)} disabled={playback.chapter === "review"} aria-label="Next stage"><span className="alpha-control-label">Next</span><ChevronRight size={15} aria-hidden="true"/></button>
           {ready && <button type="button" onClick={overview} aria-label="Overview"><Maximize2 size={14} aria-hidden="true"/><span className="alpha-overview-full">Overview</span><span className="alpha-overview-compact">View</span></button>}
+        </div>
         </div>
         <details className="alpha-options"><summary>Inspect &amp; explore</summary><div className="alpha-secondary"><label>Inspect station<select value={selectedId ?? ""} onChange={event=>choose(event.target.value)}><option value="">Complete line</option>{alphaLineStations.map(station=><option key={station.id} value={station.id}>{station.name}</option>)}</select></label>
           <button type="button" aria-pressed={fullRoute} onClick={()=>{remember(true); overview(); setFullRoute(!fullRoute); seek("route",0);}}>{fullRoute ? "Full route selected" : "Watch full route"}</button>
@@ -186,7 +186,7 @@ export function AlphaLineExperience() {
         {(!ready || reduced) && <p className="alpha-line-static-note">{reduced ? "Reduced motion: " : "Static overview: "}use the chapters and journey control to inspect each stage.</p>}
       </div>
       <aside className="alpha-line-panel" aria-labelledby={panelTitle}>
-        <p className="eyebrow">Selected lot</p><h2 id={panelTitle}>Demonstration lot</h2><p className="alpha-line-lot">Carrier 03 · Inspection pending</p>
+        <p className="eyebrow">Lot inspector</p><h2 id={panelTitle}>Demo lot / Carrier 03</h2><p className="alpha-line-lot">Inspection pending</p>
         <div className="alpha-line-tabs" role="tablist" aria-label="VOS views">{views.map((item, index) => <button key={item.id} id={`${tabsId}-${item.id}`} type="button" role="tab" tabIndex={view === item.id ? 0 : -1} aria-selected={view === item.id} aria-controls={`${tabsId}-panel`} onClick={() => setView(item.id)} onKeyDown={event => {
           let next = index; if (event.key === "ArrowRight") next = (index + 1) % 3; else if (event.key === "ArrowLeft") next = (index + 2) % 3; else if (event.key === "Home") next = 0; else if (event.key === "End") next = 2; else return;
           event.preventDefault(); setView(views[next].id); document.getElementById(`${tabsId}-${views[next].id}`)?.focus();

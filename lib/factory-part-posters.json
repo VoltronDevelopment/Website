@@ -1,0 +1,12 @@
+{
+  "light": [
+    "/optimized/factory-part-light-0-d07a3c845443586b.webp",
+    "/optimized/factory-part-light-1-ca36d2e6bfe5087f.webp",
+    "/optimized/factory-part-light-2-81c0c9133b8e87b2.webp"
+  ],
+  "dark": [
+    "/optimized/factory-part-dark-0-d0fe260b90141157.webp",
+    "/optimized/factory-part-dark-1-b60df192cfac0d61.webp",
+    "/optimized/factory-part-dark-2-d9fcdb7ad9af33b1.webp"
+  ]
+}

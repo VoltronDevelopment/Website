@@ -1,6 +1,8 @@
+import {createSceneHandoff} from "../performance/scene-handoff";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { createAlphaStackLight } from "./alpha-stack-light";
+import {createArtworkEnvironment} from "../brand/artwork-studio";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { alphaStationPosition, alphaViewBounds, fitAlphaCamera } from "./alpha-process-framing";
 import { positionAlphaLabels } from "./alpha-process-layout";
@@ -16,6 +18,7 @@ const liquidY = 1.82;
 const railY = 5.28;
 
 export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): Promise<AlphaProcessController> {
+  const handoff=createSceneHandoff(host,canvas);
   const quality=createRenderQuality(canvas);
   await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
@@ -24,7 +27,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
   } catch {
     canvas.hidden = true;
-    host.dataset.fallback = "true";
+    handoff.fallback();host.dataset.fallback = "true";
     return { setPaused() {}, replay() {}, dispose() {} };
   }
   renderer.setClearColor(0, 0);
@@ -46,15 +49,12 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
   const material = <T extends THREE.Material>(value: T) => { materials.add(value); return value; };
   const equipment = new THREE.Group();
   scene.add(equipment);
-  const room = new RoomEnvironment();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environment = pmrem.fromScene(room, .04);
-  room.dispose(); pmrem.dispose();
+  const environment = createArtworkEnvironment(renderer);
   scene.environment = environment.texture;
   scene.environmentIntensity = .75;
 
   const visual = alphaVisualColors(false);
-  const metal = material(new THREE.MeshStandardMaterial({ color: visual.metal, metalness: .8, roughness: .29, envMapIntensity: 1 }));
+  const metal = material(new THREE.MeshStandardMaterial({ color: visual.metal, metalness: .8, roughness: .25, envMapIntensity: 1.1 }));
   const polished = material(new THREE.MeshStandardMaterial({ color: visual.polished, metalness: .86, roughness: .2, envMapIntensity: 1.1 }));
   const steelDark = material(new THREE.MeshStandardMaterial({ color: visual.steelDark, metalness: .7, roughness: .36 }));
   const railEdge = material(new THREE.MeshStandardMaterial({ color: visual.railEdge, metalness: .68, roughness: .34 }));
@@ -152,8 +152,11 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
 
   type Bath = { surface: THREE.ShaderMaterial; front: THREE.MeshPhysicalMaterial; side: THREE.MeshPhysicalMaterial; volume: THREE.MeshBasicMaterial; back: THREE.MeshStandardMaterial };
   const baths: Bath[] = [];
+  const stackLights: ReturnType<typeof createAlphaStackLight>[] = [];
   for (const [index, x] of alphaStations.entries()) {
     const tank = new THREE.Group(); tank.position.x = x; equipment.add(tank);
+    const lamp = createAlphaStackLight(geometry, material, polished);
+    lamp.group.position.set(-1.39, 2.12, 1.12); tank.add(lamp.group); stackLights.push(lamp);
     box(tank, [3.13, .16, 2.63], [0, .38, 0], metal, true);
     const back = material(new THREE.MeshStandardMaterial({ color: visual.tankBack, metalness: .38, roughness: .31 }));
     box(tank, [3.04, 1.57, .07], [0, 1.22, -1.19], back);
@@ -295,7 +298,9 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const savingData = Boolean((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
   let paused = options.paused, visible = false, disposed = false, lostContext = false;
-  let elapsed = 0, previous = 0, frame = 0, lastStage = -2, ready = false;
+  const review=new URLSearchParams(location.search).get("process-time");
+  let revealing=false;
+  let elapsed = review!==null?Number(review)||0:0, previous = 0, frame = 0, lastStage = -2, ready = false;
   let revealFrame = 0;
   let pixelWidth = 0, pixelHeight = 0, lastDpr = 0;
   const silver = new THREE.Color(0xc9d4db), graphite = new THREE.Color(0x29343e);
@@ -354,6 +359,9 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     jaws.forEach((jaw, i) => { jaw.rotation.z = (i === 0 ? -1 : 1) * state.jawOpen * .42; });
     baths.forEach((bath, i) => {
       bath.surface.uniforms.uTime.value = !still && state.stage === i + 1 ? elapsed : 0;
+      const active = !still && state.stage === i + 1 && ["lower", "hold", "raise", "drain"].includes(state.phase);
+      const complete = !still && (state.stage > i + 1 || state.stage === i + 1 && state.phase === "travel" || state.phase === "return");
+      stackLights[i].setState(active ? "active" : complete ? "complete" : "idle");
       bath.surface.uniforms.uImpact.value = !still && state.stage === i + 1 ? state.ripple : 0;
     });
     droplets.forEach((drop, i) => {
@@ -379,14 +387,13 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     if (disposed || lostContext || !pixelWidth || !pixelHeight) return;
     apply(alphaStateAt(elapsed));
     renderer.render(scene, camera);
-    if (!ready && !revealFrame) {
+    if (!ready && !revealing) {
+      revealing=true;
       // Commit the fitted first frame before revealing it or advancing the clock.
       revealFrame = requestAnimationFrame(() => {
         revealFrame = 0;
         if (disposed || lostContext) return;
-        ready = true;
-        options.onReady();
-        resume();
+        render();void handoff.reveal().then(()=>{if(disposed)return;ready = true;options.onReady();resume();});
       });
     }
   }
@@ -406,6 +413,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     frame = requestAnimationFrame(tick);
   }
   function resume() {
+    if(review!==null){if(ready)render();return;}
     stop(); render();
     if (ready && !disposed && visible && !document.hidden && !paused && !isStatic() && !lostContext) frame = requestAnimationFrame(tick);
   }
@@ -433,7 +441,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
   function onVisibility() { if (document.hidden) stop(); else resume(); }
   function onContextLost(event: Event) {
     event.preventDefault(); lostContext = true; stop(); canvas.hidden = true;
-    host.dataset.fallback = "true"; host.dataset.ready = "false";
+    handoff.fallback();host.dataset.fallback = "true"; host.dataset.ready = "false";
   }
   function onContextRestored() {
     lostContext = false; canvas.hidden = false; delete host.dataset.fallback;
@@ -456,7 +464,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     setPaused(value) { paused = value; resume(); },
     replay() { paused = false; elapsed = 0; resume(); },
     dispose() {
-      disposed = true; stop(); cancelAnimationFrame(revealFrame); resizing.disconnect(); themes.disconnect(); view.disconnect();
+      disposed = true;handoff.dispose(); stop(); cancelAnimationFrame(revealFrame); resizing.disconnect(); themes.disconnect(); view.disconnect();
       motion.removeEventListener("change", resume); document.removeEventListener("visibilitychange", onVisibility);
       canvas.removeEventListener("webglcontextlost", onContextLost); canvas.removeEventListener("webglcontextrestored", onContextRestored);
       geometries.forEach(value => value.dispose()); materials.forEach(value => value.dispose()); textures.forEach(value => value.dispose());

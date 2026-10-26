@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BrandArt } from "@/components/brand/BrandArt";
+import {EngineeredHero} from "@/components/brand/EngineeredHero";
 import { Hero } from "@/components/brand/Hero";
 import { ProcessFlow } from "@/components/brand/ProcessFlow";
 import { OntologyRelationships } from "@/components/brand/OntologyRelationships";
@@ -7,7 +8,7 @@ import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell"
 import { artwork as art } from "@/lib/brand-assets";
 export const metadata: Metadata = { title: "Manufacturing Ontology", description: "One manufacturing reality, connected by meaning. Identity, relationships and accountable action." };
 export default function OntologyPage() {
-  return <SiteShell><Hero eyebrow="V-MO / Manufacturing Ontology" title="One manufacturing reality. Connected by meaning." art="O01-ontology-hero">A reading, an inspection and a requirement become more useful when they belong to the same manufacturing situation.</Hero>
+  return <SiteShell><Hero principles={["Shared identity","Meaningful relationships","Accountable action"]} eyebrow="V-MO / Manufacturing Ontology" title="One manufacturing reality. Connected by meaning." illustration={<EngineeredHero kind="ontology"/>}>A reading, an inspection and a requirement become more useful when they belong to the same manufacturing situation.</Hero>
     <Section white><ProcessFlow/></Section>
     <Section white><div className="split ontology-split"><div><Intro title="Give each thing its identity.">Know which plant, part, lot, operation or machine a record describes.</Intro><BrandArt family={art.identity} className="split-art"/><div className="relationship-labels">{["Plant", "Part", "Lot", "Operation", "Machine"].map(word => <span key={word}>{word}</span>)}</div></div><div><Intro title="Connect what matters.">Link requirements, process, equipment, inspection and evidence.</Intro><BrandArt family={art.relationships} className="split-art"/><div className="relationship-labels">{["Requirements", "Processes", "Equipment", "Inspection", "Evidence"].map(word => <span key={word}>{word}</span>)}</div></div></div></Section>
     <Section><Intro title="Relationships in context." centered/><OntologyRelationships/></Section>

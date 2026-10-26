@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "source": "public\\3D hand\\15种手姿势.3dm",
+  "stride": 8,
+  "poseStride": 6,
+  "attributes": [
+    "position.xyz",
+    "normal.xyz",
+    "seed",
+    "finger"
+  ],
+  "handCount": 42000,
+  "gripCount": 32000,
+  "notes": "Rhino P08 pinch and wrist-aligned P15/P11 matching-topology grip. Shared barycentric particle/depth correspondence; reference geometry remains hidden."
+}

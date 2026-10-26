@@ -3,12 +3,15 @@ import { HomeHeroArtwork } from "@/components/home/HomeHeroArtwork";
 import { FactorySystems, HomeLotFlow, PhilosophyScene } from "@/components/home/HomeScenes";
 import { AlphaProcessScene } from "@/components/home/AlphaProcessScene";
 import "./home.css";
+import "./home-surfaces.css";
+import {HeroPrinciples} from "@/components/brand/HeroPrinciples";
+import "@/components/brand/hero-art-direction.css";
 
 export default function HomePage() {
   return <SiteShell presentation><div className="home-page">
     <section className="hero home-hero" aria-labelledby="home-title">
-      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s Intelligent Manufacturing Backbone.</h1><p>Human ingenuity. Connected intelligence. Shared progress.</p></div><HomeHeroArtwork/></div>
-      <div className="home-principles"><div className="container">{["Repeatable","Measurable","Traceable","Scalable","Intelligent"].map(word=><span key={word}>{word}</span>)}</div></div>
+      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s intelligent manufacturing backbone.</h1><p>Human ingenuity. Connected intelligence. Shared progress.</p><div className="hero-actions"><Action href="#factory-systems" secondary>Explore Voltron</Action><Action href="/about" text>Our vision</Action></div></div><HomeHeroArtwork/></div>
+      <HeroPrinciples home labels={["Human ingenuity","Connected intelligence","Shared progress"]}/>
     </section>
     <Section white className="home-systems-section" id="factory-systems"><Intro title="One component. A connected manufacturing story.">Physical execution, manufacturing context and intelligence—working together.</Intro><FactorySystems/><div className="actions centered-actions"><Action href="/technology" text>Explore the architecture</Action></div></Section>
     <Section className="home-lot-section" id="connected-lot"><Intro title="One lot. A connected manufacturing story.">The physical journey and its evidence stay connected.</Intro><HomeLotFlow/></Section>

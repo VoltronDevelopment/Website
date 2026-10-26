@@ -1,15 +1,17 @@
+import {createSceneHandoff} from "../performance/scene-handoff";
 import {createRenderQuality} from "../performance/scene-policy";
 import * as THREE from "three";
 import { capabilityCubeCamera, capabilityGlassVisibility as glassVisibility, capabilityEdgeWidth } from "./capability-cube-style";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { createFactoryHousing, createHousingParticles } from "./factory-housing";
+import {createMachiningView} from "./machining-part";
+import {createFactoryFormation} from './factory-formation';
 import { factorySystemsDuration, factorySystemsStateAt, type FactoryPhase } from "./factory-systems-timeline";
 import { factorySystemsCanStart } from "./factory-systems-visibility";
 import { glassFace, setGlass, nodeHaloTexture, stroke, strokeMaterial, type GlassFace } from "./lattice-materials";
 
-type Options = { onReady: (ready: boolean) => void; onPhase: (phase: FactoryPhase) => void };
+type Options = { onReady: (ready: boolean) => void; onPhase: (phase: FactoryPhase) => void; onFocus?: (index:number)=>void };
 export type FactorySystemsController = {
-  ready: Promise<void>; setPaused: (paused: boolean) => void; replay: () => void; dispose: () => void;
+  ready: Promise<void>; select: (index:number)=>void; setPaused: (paused: boolean) => void; replay: () => void; dispose: () => void;
 };
 type Cube = {
   root: THREE.Group;
@@ -22,10 +24,11 @@ type Cube = {
 
 
 export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): FactorySystemsController {
+  const handoff=createSceneHandoff(host,canvas);
   const quality=createRenderQuality(canvas,1.5);
   const cards = Array.from(host.querySelectorAll<HTMLElement>(".factory-system"));
   const anchors = Array.from(host.querySelectorAll<HTMLElement>("[data-system-anchor]"));
-  const images = Array.from(host.querySelectorAll<HTMLImageElement>(".factory-system-fallback img"));
+  const views=[0,1,2].map(createMachiningView);
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   const params = new URLSearchParams(location.search);
   const previewTime = params.has("factory-time") ? Number(params.get("factory-time")) : NaN;
@@ -34,10 +37,10 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   let renderer: THREE.WebGLRenderer;
   try {
     if (params.get("renderer") === "static") throw new Error("Static illustration requested");
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power",preserveDrawingBuffer:params.has("factory-poster") });
   } catch {
     canvas.hidden = true; host.dataset.renderer = "fallback";
-    return { ready: Promise.resolve(), setPaused() {}, replay() {}, dispose() {} };
+    return { ready: Promise.resolve(), select() {}, setPaused() {}, replay() {}, dispose() {} };
   }
   renderer.setClearColor(0, 0); renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
@@ -55,104 +58,11 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   let disposed = false, failed = false, released = false, prepared = false, visible = false, started = false, paused = false;
   let cancelPreparation: () => void = () => {};
   const cancelled = new Promise<void>(resolve => { cancelPreparation = resolve; });
-  let elapsed = preview ? Math.max(0, Math.min(6, previewTime)) : motion.matches || composition ? 6 : 0;
+  let elapsed = preview ? Math.max(0, Math.min(factorySystemsDuration, previewTime)) : motion.matches || composition ? factorySystemsDuration : 0;
   let frame = 0, previous = 0, lastPhase: FactoryPhase | undefined, mobile = false, unitPixels = 90;
-  let width = 0, height = 0;
+  let width = 0, height = 0, focus=0,manualFocus=false;
   const dark = () => document.documentElement.dataset.theme === "dark";
   const source = new THREE.Vector3(), destinations = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
-  const scan = { value: -1.5 }, sweep = { value: -1.5 };
-  const metal = material(new THREE.MeshPhysicalMaterial({
-    color: 0xd2dce4, metalness: .82, roughness: .28, clearcoat: .25,
-    clearcoatRoughness: .24, envMapIntensity: 1.15,
-  }));
-  metal.onBeforeCompile = shader => {
-    shader.uniforms.uFactoryScan = scan; shader.uniforms.uFactorySweep = sweep;
-    shader.vertexShader = "varying float vFactoryScan;\n" + shader.vertexShader.replace(
-      "#include <begin_vertex>", "#include <begin_vertex>\nvFactoryScan=dot(position,vec3(.65,.28,.2));",
-    );
-    shader.fragmentShader = "varying float vFactoryScan; uniform float uFactoryScan; uniform float uFactorySweep;\n" + shader.fragmentShader.replace(
-      "#include <color_fragment>", `#include <color_fragment>
-        if(vFactoryScan<uFactoryScan) discard;
-        float scanEdge=exp(-abs(vFactoryScan-uFactoryScan)*45.);
-        float lightSweep=exp(-pow((vFactoryScan-uFactorySweep)*3.2,2.));
-        diffuseColor.rgb+=vec3(.17,.28,.36)*lightSweep+vec3(.08,.32,.48)*scanEdge;`,
-    );
-  };
-  metal.customProgramCacheKey = () => "factory-housing-dissolve-v1";
-  const housingGeometry = geometry(createFactoryHousing());
-  const housing = new THREE.Mesh(housingGeometry, metal); scene.add(housing);
-  const particleGeometry = geometry(createHousingParticles(housingGeometry, 3600));
-  const particleUniforms = {
-    uScan: scan, uSeparate: { value: 0 }, uOpacity: { value: 1 }, uGhost: { value: 0 }, uSourceScale: { value: 1 },
-    uPointSize: { value: 4.2 }, uGlow: { value: 0 }, uPass: { value: 0 }, uTrailLag: { value: 0 }, uTime: { value: 0 }, uSource: { value: source },
-    uDest0: { value: destinations[0] }, uDest1: { value: destinations[1] }, uDest2: { value: destinations[2] },
-    uRight: { value: right }, uUp: { value: up }, uForward: { value: forward },
-    uColor: { value: new THREE.Color(0x3284d7) },
-  };
-  const particleMaterial = material(new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, uniforms: particleUniforms,
-    vertexShader: `attribute vec3 aTarget; attribute float aGroup; attribute float aSeed;
-      uniform vec3 uSource; uniform vec3 uDest0; uniform vec3 uDest1; uniform vec3 uDest2;
-      uniform vec3 uRight; uniform vec3 uUp; uniform vec3 uForward;
-      uniform float uSeparate; uniform float uScan; uniform float uOpacity; uniform float uGhost; uniform float uPointSize; uniform float uSourceScale; uniform float uPass; uniform float uTrailLag; uniform float uTime;
-      varying float vAlpha; varying float vSeed;
-      void main(){
-        vec3 destination=aGroup<.5?uDest0:(aGroup<1.5?uDest1:uDest2);
-        vec3 target=destination+uRight*aTarget.x+uUp*aTarget.y+uForward*aTarget.z;
-        float motion=sin(uSeparate*3.14159265);
-        float progress=max(0.,uSeparate-uTrailLag*motion)*(1.-uGhost);
-        vec3 p=mix(position*uSourceScale+uSource,target,progress);
-        p+=uUp*sin(progress*3.14159265)*(.22+aSeed*.28);
-        p+=(uRight*sin(uTime*1.7+aSeed*31.)+uUp*cos(uTime*1.3+aSeed*23.))*motion*.008;
-        float scanAt=dot(position,vec3(.65,.28,.2));
-        vAlpha=(1.-smoothstep(uScan-.035,uScan+.035,scanAt))*uOpacity;
-        vSeed=aSeed;
-        gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
-        gl_PointSize=uPointSize*(.76+aSeed*.4)*(uPass>.5?2.:1.);
-      }`,
-    fragmentShader: `uniform vec3 uColor; uniform float uGlow; uniform float uPass; varying float vAlpha; varying float vSeed;
-      void main(){
-        vec2 p=gl_PointCoord-.5;
-        float radius=length(p);
-        // Fine luminous points, with a few crisp pixel flecks. No faceted faces.
-        float distanceToCore=vSeed>.84?max(abs(p.x),abs(p.y)):radius;
-        float core=1.-smoothstep(.12,.26,distanceToCore);
-        vec3 color=mix(uColor,vec3(.77,.91,1.),smoothstep(.72,1.,vSeed)*.46);
-        float alpha=core*vAlpha*(.65+vSeed*.35);
-        if(uPass>.5){
-          // Sparse tight accents carry glow without turning the whole cloud into haze.
-          alpha=exp(-radius*radius*38.)*(1.-smoothstep(.35,.5,radius))*vAlpha*uGlow*step(.72,vSeed);
-          color=mix(uColor,vec3(.7,.89,1.),.25);
-        }
-        if(alpha<.008)discard;
-        gl_FragColor=vec4(color,alpha);
-        #include <colorspace_fragment>
-      }`,
-  }));
-  const particles = new THREE.Points(particleGeometry, particleMaterial);
-  particles.frustumCulled = false; particles.renderOrder = 3; scene.add(particles);
-  const ghostMaterial = material(particleMaterial.clone());
-  ghostMaterial.uniforms.uGhost.value = 1;
-  const ghost = new THREE.Points(particleGeometry, ghostMaterial);
-  ghost.frustumCulled = false; ghost.renderOrder = 2; scene.add(ghost);
-
-  const glowMaterial = material(particleMaterial.clone());
-  glowMaterial.uniforms.uPass.value = 1;
-  glowMaterial.blending = THREE.AdditiveBlending;
-  const particleGlow = new THREE.Points(particleGeometry, glowMaterial);
-  particleGlow.frustumCulled = false; particleGlow.renderOrder = 2; scene.add(particleGlow);
-  const particleTrails = [.004, .009].map(lag => {
-    const mat = material(particleMaterial.clone()); mat.uniforms.uTrailLag.value = lag;
-    const points = new THREE.Points(particleGeometry, mat);
-    points.frustumCulled = false; points.renderOrder = 2; scene.add(points);
-    return {points, mat};
-  });
-  function syncParticleLayer(mat: THREE.ShaderMaterial, opacity: number) {
-    for (const key of ['uSource','uDest0','uDest1','uDest2'] as const) mat.uniforms[key].value.copy(particleUniforms[key].value);
-    for (const key of ['uScan','uSeparate','uTime','uPointSize','uSourceScale','uGlow'] as const) mat.uniforms[key].value = particleUniforms[key].value;
-    mat.uniforms.uOpacity.value = opacity;
-  }
-
   scene.add(new THREE.HemisphereLight(0xe8f4ff, 0x40596e, 2));
   const key = new THREE.DirectionalLight(0xffffff, 3.1); key.position.set(-4, 6, 6); scene.add(key);
   const rim = new THREE.DirectionalLight(0x8dcfff, 2.2); rim.position.set(4, 2, -3); scene.add(rim);
@@ -161,7 +71,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   const half = .825;
   const corners = Array.from({ length: 8 }, (_, i) => new THREE.Vector3(i & 1 ? half : -half, i & 2 ? half : -half, i & 4 ? half : -half));
   const pairs = [[0, 1], [2, 3], [4, 5], [6, 7], [0, 2], [1, 3], [4, 6], [5, 7], [0, 4], [1, 5], [2, 6], [3, 7]];
-  const cubes: Cube[] = destinations.map(() => {
+  const cubes: Cube[] = destinations.map((_,viewIndex) => {
     const root = new THREE.Group(); scene.add(root);
     const faces: Cube["faces"] = [];
     const faceSpecs: { kind: GlassFace; position: number[]; rotation: number[]; front: boolean }[] = [
@@ -173,7 +83,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
       { kind: "rear", position: [0, 0, -half], rotation: [0, Math.PI, 0], front: false },
     ];
     for (const spec of faceSpecs) {
-      const mat = material(glassFace(spec.kind, dark()));
+      const mat = material(glassFace(spec.kind, dark(),true,"display"));
       mat.forceSinglePass = true;
       mat.userData.factoryFace = spec.kind;
       const base = mat.opacity * glassVisibility(spec.kind);
@@ -206,6 +116,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     });
     const halo = new THREE.Sprite(material(new THREE.SpriteMaterial({ map: haloTexture, transparent: true, depthWrite: false, opacity: 0, toneMapped: false })));
     halo.position.copy(corners[0]); halo.renderOrder = 2; root.add(halo);
+    root.add(views[viewIndex].group);views[viewIndex].group.traverse(o=>{if(o instanceof THREE.Sprite){material(o.material);if(o.material.map)textures.add(o.material.map);}if(o instanceof THREE.Mesh||o instanceof THREE.Points||o instanceof THREE.Line){geometry(o.geometry);for(const m of Array.isArray(o.material)?o.material:[o.material])material(m);}});
     return { root, faces, edges, nodes, halo };
   });
   const connections = [0, 1].map(() => {
@@ -217,6 +128,7 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     return { line, pulse, from: new THREE.Vector3(), to: new THREE.Vector3() };
   });
   const atmosphere = new THREE.Sprite(material(new THREE.SpriteMaterial({ map: haloTexture, transparent: true, opacity: .12, depthWrite: false, toneMapped: false })));
+  const formation=createFactoryFormation(views[0].group.getObjectByName('shared-flange-housing')!,source,destinations,up);scene.add(formation.group);
   atmosphere.renderOrder = -2; scene.add(atmosphere);
   const shadowCanvas = document.createElement("canvas"); shadowCanvas.width = 128; shadowCanvas.height = 64;
   const shadowContext = shadowCanvas.getContext("2d")!;
@@ -231,10 +143,12 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   function release() {
     if (released) return;
     released = true;
+    formation.dispose();
     geometries.forEach(value => value.dispose()); materials.forEach(value => value.dispose()); textures.forEach(value => value.dispose());
     environment?.dispose(); renderer.dispose(); renderer.forceContextLoss();
   }
   function fallback() {
+    handoff.fallback();
     if (disposed || failed) return;
     failed = true; cancelPreparation(); stop(); canvas.hidden = true; host.dataset.renderer = "fallback";
     cards.forEach(card => card.style.removeProperty("--label-reveal"));
@@ -246,35 +160,17 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   }
   function apply() {
     const state = factorySystemsStateAt(elapsed);
-    scan.value = THREE.MathUtils.lerp(-1.5, 1.5, state.dissolve);
-    sweep.value = THREE.MathUtils.lerp(-1.2, 1.25, Math.min(1, state.time / 1.2));
-    housing.visible = state.dissolve < 1; housing.position.copy(source); housing.scale.setScalar(mobile ? 1.45 : 1);
-    key.position.x = -4 + Math.min(1, state.time / 1.2) * 5;
-    particles.visible = state.time >= 1.2 && state.particles > 0;
-    particleUniforms.uSeparate.value = state.separate;
-    particleUniforms.uTime.value = state.time;
-    particleUniforms.uGlow.value = (dark() ? .44 : .16) * (.65 + Math.sin(Math.PI * state.separate) * .35);
-    particleUniforms.uOpacity.value = state.particles;
-    ghost.visible = state.ghost > 0;
-    syncParticleLayer(ghostMaterial, state.ghost * .09);
-    syncParticleLayer(glowMaterial, state.particles);
-    particleGlow.visible = particles.visible;
-    const moving = Math.sin(Math.PI * state.separate);
-    particleTrails.forEach(({points,mat}, index) => {
-      points.visible = particles.visible && moving > .01;
-      syncParticleLayer(mat, state.particles * moving * (index ? .05 : .11));
-    });
-    shadow.position.copy(source).addScaledVector(up, mobile ? -1.3 : -.91).addScaledVector(forward, -.9);
-    shadow.material.opacity = (dark() ? .38 : .6) * (1 - state.dissolve);
-    atmosphere.position.copy(source).addScaledVector(forward, -2);
-    atmosphere.scale.set(mobile ? 3.6 : 6.2, 3.7, 1);
-    atmosphere.material.opacity = dark() ? .12 : .045;
+    if(!manualFocus)focus=state.time<8.5?0:state.time<12?1:2;
+    host.dataset.focus=String(focus);options.onFocus?.(focus);
+    host.style?.setProperty('--context-reveal',String(state.context));host.style?.setProperty('--intelligence-reveal',String(state.intelligence));host.style?.setProperty('--recommendation-reveal',String(state.recommendation));
+    host.style?.setProperty('--card-reveal',String(state.cards));formation.update(state.time,state.dissolve,state.separate,state.particles,dark(),quality.ratio);
+    atmosphere.visible=false;shadow.visible=false;
     cubes.forEach((cube, index) => {
-      const reveal = state.cubes[index], asset = state.artworks[index];
-      cube.root.visible = reveal > 0; cube.root.position.copy(destinations[index]);
+      const reveal = state.cubes[index], energy=state.activity[index];
+      cube.root.visible = reveal > 0&&(!mobile||focus===index); cube.root.position.copy(destinations[index]);
       cube.faces.forEach(face => {
         face.material.opacity = face.base * reveal;
-        face.material.emissiveIntensity = .012 + Math.sin(state.pulse * Math.PI) * .055;
+        face.material.emissiveIntensity = .012 + energy * .13;
       });
       cube.edges.forEach((edge, edgeIndex) => {
         const progress = Math.max(0, Math.min(1, reveal * 1.35 - edgeIndex / 32));
@@ -283,9 +179,10 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         end.data.needsUpdate = true;
         edge.line.visible = progress > 0;
         edge.line.material.opacity = (edge.front ? dark() ? .38 : .42 : dark() ? .78 : .65) * reveal;
+        edge.line.material.opacity+=energy*.16;
         edge.glows.forEach((glow, index) => {
           glow.visible = progress > 0;
-          glow.material.opacity = (index === 0 ? dark() ? .07 : .035 : dark() ? .15 : .08) * reveal;
+          glow.material.opacity = (index === 0 ? dark() ? .07 : .035 : dark() ? .15 : .08) * reveal*(1+energy*2);
         });
       });
       cube.nodes.forEach(({ mesh, front }) => {
@@ -293,8 +190,12 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
         mesh.material.opacity = (front ? .42 : .85) * reveal;
       });
       cube.halo.scale.setScalar(17 / unitPixels);
-      cube.halo.material.opacity = ((dark() ? .13 : .07) + Math.sin(state.pulse * Math.PI) * .18) * reveal;
-      if (cube.artwork) { cube.artwork.visible = asset > 0; cube.artwork.material.opacity = asset; }
+      cube.halo.material.opacity = ((dark() ? .13 : .07) + energy * .28) * reveal;
+      views[index].group.visible=state.models>0;
+      views[index].group.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Points){for(const m of Array.isArray(o.material)?o.material:[o.material]){m.transparent=true;m.opacity=state.models;m.depthWrite=state.models>.99;}}});
+      views[index].update(Math.max(0,state.time-4),state.cut,state.context,state.intelligence);
+      cards[index]?.style.setProperty('--summary-reveal',String(state.summaries[index]));
+      cards[index]?.querySelectorAll?.<HTMLElement>('.factory-records>div').forEach((row,i)=>row.style.setProperty('--record-reveal',String(state.records[index][i])));
       cards[index]?.style.setProperty("--label-reveal", String(state.labels[index]));
     });
     connections.forEach(({ line, pulse, from, to }) => {
@@ -303,12 +204,12 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
       attribute.setXYZ(1, THREE.MathUtils.lerp(from.x, to.x, state.connections), THREE.MathUtils.lerp(from.y, to.y, state.connections), THREE.MathUtils.lerp(from.z, to.z, state.connections));
       attribute.needsUpdate = true; line.computeLineDistances();
       line.material.opacity = (dark() ? .6 : .5) * state.connections;
-      line.visible = state.connections > 0;
+      line.visible = !mobile&&state.connections > 0;
       pulse.position.lerpVectors(from, to, state.pulse);
-      pulse.material.opacity = state.connections * Math.sin(state.pulse * Math.PI) * .85;
+      pulse.material.opacity = mobile?0:state.connections * Math.sin(state.pulse * Math.PI) * .85;
     });
     canvas.dataset.phase = state.phase; canvas.dataset.animationTime = state.time.toFixed(3);
-    canvas.dataset.settled = String(state.settled); canvas.dataset.theme = dark() ? "dark" : "light";
+    canvas.dataset.contextMarks=String(state.time>=7.5&&state.time<11.8);canvas.dataset.inspectionScan=String(state.time>10.25&&state.time<13.8);canvas.dataset.partIdentity='flange-housing';canvas.dataset.partViews='3';canvas.dataset.cutProgress=state.cut.toFixed(4);canvas.dataset.focus=String(focus);canvas.dataset.artworkSource='shared-3d-part';canvas.dataset.settled = String(state.settled); canvas.dataset.theme = dark() ? "dark" : "light";
     if (lastPhase !== state.phase) { lastPhase = state.phase; options.onPhase(state.phase); }
   }
   function resize() {
@@ -338,18 +239,11 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
     });
     const density = quality.ratio;
     renderer.setPixelRatio(density); renderer.setSize(width, height, false);
-    particleUniforms.uPointSize.value = (mobile ? 3.8 : 4.2) * density;
-    particleGeometry.setDrawRange(0, mobile ? 2160 : 3600);
-    particleUniforms.uSourceScale.value = mobile ? 1.45 : 1;
-    ghostMaterial.uniforms.uSourceScale.value = particleUniforms.uSourceScale.value;
-    ghostMaterial.uniforms.uPointSize.value = particleUniforms.uPointSize.value;
     host.dataset.layout = mobile ? "vertical" : "horizontal";
     if (prepared) { apply(); render(); }
   }
   function palette() {
     if (disposed || failed) return;
-    particleUniforms.uColor.value.setHex(dark() ? 0x78b0ff : 0x246bd4);
-    for (const mat of [ghostMaterial,glowMaterial,...particleTrails.map(layer=>layer.mat)]) mat.uniforms.uColor.value.copy(particleUniforms.uColor.value);
     connections.forEach(({ line, pulse }) => {
       line.material.color.setHex(dark() ? 0x78b0ff : 0x246bd4);
       pulse.material.color.setHex(dark() ? 0x92d6ff : 0x246bd4);
@@ -378,16 +272,18 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   }
   function resume() {
     stop();
-    if (!prepared || disposed || failed) return;
-    if (motion.matches || composition) { elapsed = 6; apply(); render(); return; }
+    if (!prepared || disposed || failed || host.dataset.sceneState!=="live") return;
+    if (motion.matches || composition) { elapsed = factorySystemsDuration; apply(); render(); return; }
     if (preview) { apply(); render(); return; }
-    if (started && visible && !document.hidden && !paused && elapsed < 6) {
+    if (started && visible && !document.hidden && !paused && elapsed < factorySystemsDuration) {
       canvas.dataset.running = "true"; frame = requestAnimationFrame(tick);
     }
   }
   function visibility() { resume(); }
-  function preference() { if (motion.matches) elapsed = 6; resume(); }
+  function preference() { if (motion.matches) elapsed = factorySystemsDuration; resume(); }
   function contextLost(event: Event) { event.preventDefault(); fallback(); }
+  function seek(event:Event){const t=Number((event as CustomEvent).detail?.time);if(!preview||!Number.isFinite(t)||!prepared)return;stop();manualFocus=false;paused=true;elapsed=THREE.MathUtils.clamp(t,0,factorySystemsDuration);apply();render();}
+  host.addEventListener?.('factory-control',seek);
   const sizing = new ResizeObserver(resize); sizing.observe(host);
   const themes = new MutationObserver(palette); themes.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   const headerHeight = document.querySelector(".site-header")?.getBoundingClientRect().height ?? 80;
@@ -402,60 +298,34 @@ export function mountFactorySystems(canvas: HTMLCanvasElement, host: HTMLDivElem
   motion.addEventListener("change", preference); document.addEventListener("visibilitychange", visibility);
   canvas.addEventListener("webglcontextlost", contextLost);
 
-  async function loadArtwork(image: HTMLImageElement, index: number) {
-    const texture = await new THREE.TextureLoader().loadAsync(image.currentSrc || image.getAttribute?.("src") || image.dataset?.sceneSrc || image.src);
-    if (disposed || failed) { texture.dispose(); return; }
-    textures.add(texture); texture.colorSpace = THREE.SRGBColorSpace;
-    const scratch = document.createElement("canvas"); scratch.width = scratch.height = 256;
-    const context = scratch.getContext("2d", { willReadFrequently: true })!;
-    context.drawImage(texture.image, 0, 0, 256, 256);
-    const pixels = context.getImageData(0, 0, 256, 256).data;
-    let minX = 256, minY = 256, maxX = 0, maxY = 0;
-    for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) {
-      if (pixels[(y * 256 + x) * 4 + 3] > 16) { minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y); }
-    }
-    const visibleWidth = Math.max(1, maxX - minX + 1), visibleHeight = Math.max(1, maxY - minY + 1);
-    texture.repeat.set(visibleWidth / 256, visibleHeight / 256); texture.offset.set(minX / 256, 1 - (maxY + 1) / 256);
-    const aspect = visibleWidth / visibleHeight;
-    const mat = material(new THREE.MeshBasicMaterial({ map: texture, transparent: true, opacity: 0, alphaTest: .015, depthWrite: false, toneMapped: false }));
-    // Preserve alpha and the source object's lighting while bringing all three assets
-    // into the hero's silver / cobalt / ice-blue material family.
-    mat.onBeforeCompile = shader => {
-      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
-        float value=clamp(dot(diffuseColor.rgb,vec3(.2126,.7152,.0722)),0.,1.);
-        vec3 blue=mix(vec3(.025,.10,.24),vec3(.16,.43,.78),smoothstep(.0,.48,value));
-        diffuseColor.rgb=mix(blue,vec3(.83,.94,1.),smoothstep(.38,1.,value));`);
-    };
-    mat.customProgramCacheKey = () => 'factory-hero-artwork-v1';
-    const artwork = new THREE.Mesh(geometry(new THREE.PlaneGeometry(1.68 * Math.min(aspect, 1.08), 1.68 / Math.max(aspect / 1.08, 1))), mat);
-    artwork.quaternion.copy(camera.quaternion); artwork.renderOrder = 3; cubes[index].root.add(artwork); cubes[index].artwork = artwork;
-  }
   const preparing = (async () => {
     try {
       const room = new RoomEnvironment(), pmrem = new THREE.PMREMGenerator(renderer);
       try { environment = pmrem.fromScene(room, .1); scene.environment = environment.texture; }
       finally { room.dispose(); pmrem.dispose(); }
-      await Promise.all(images.map(loadArtwork));
+
       if (disposed || failed) return;
       resize(); palette();
       // Prepare every material before the reveal, including those hidden at its first frame.
       await renderer.compileAsync(scene, camera);
       if (disposed || failed) return;
       prepared = true; canvas.hidden = false; apply(); render();
-      host.dataset.renderer = "webgl"; canvas.dataset.ready = "true";
+      await handoff.reveal();if(disposed)return;host.dataset.renderer = "webgl"; canvas.dataset.ready = "true";
       options.onReady(true); resume();
     } catch { if (!disposed) fallback(); }
   })();
   const ready = Promise.race([preparing, cancelled]);
   return {
     ready,
+    select(index) {focus=Math.max(0,Math.min(2,index));manualFocus=true;paused=true;elapsed=[6.5,10.5,16][focus];apply();render();stop();},
     setPaused(value) { paused = value; resume(); },
-    replay() { if (disposed || failed) return; elapsed = 0; paused = false; started = true; apply(); render(); resume(); },
+    replay() { if (disposed || failed) return; elapsed = 0; manualFocus=false; paused = false; started = true; apply(); render(); resume(); },
     dispose() {
       if (disposed) return;
-      disposed = true; cancelPreparation(); stop(); sizing.disconnect(); themes.disconnect(); view.disconnect();
+      disposed = true;handoff.dispose(); cancelPreparation(); stop(); sizing.disconnect(); themes.disconnect(); view.disconnect();
       motion.removeEventListener("change", preference); document.removeEventListener("visibilitychange", visibility);
       canvas.removeEventListener("webglcontextlost", contextLost);
+      host.removeEventListener?.('factory-control',seek);
       release();
     },
   };

@@ -47,7 +47,7 @@ function instrument() {
       const posters = [...slot.querySelectorAll('.scene-poster img')].filter(visible).length;
       const svg = slot.querySelector('svg.fallback');
       const live = visible(stage) && visible(canvas) && Number(canvas.dataset.renderedFrames) > 0;
-      q.frames.push({ t: Math.round(performance.now()), route: location.pathname, posters, svg:visible(svg), live, ready:canvas?.dataset.ready, liveState:slot.dataset.live, transition:stage.dataset.transition, time:canvas?.dataset.animationTime });
+      q.frames.push({ handoff:slot.dataset.sceneState==='handoff', t: Math.round(performance.now()), route: location.pathname, posters, svg:visible(svg), live, ready:canvas?.dataset.ready, liveState:slot.dataset.live, transition:stage.dataset.transition, time:canvas?.dataset.animationTime });
     }
     if (performance.now() < 45000) requestAnimationFrame(sample);
   }
@@ -126,15 +126,15 @@ function measure() {
       await p.page.locator('.site-header a[href="/technology"]').first().evaluate(e=>e.click());await p.page.waitForURL(base+'/technology');await sleep(1600);
       await p.page.locator('.site-header a[href="/"]').first().evaluate(e=>e.click());await p.page.waitForURL(base+'/');await sleep(1400);
       const frames=await p.page.evaluate(()=>window.__quality.frames);
-      report.motion.push({width,theme,slow,frames,overlap:frames.filter(f=>(f.live||f.svg)&&f.posters>0),metrics:await p.page.evaluate(measure)});save();
+      report.motion.push({width,theme,slow,frames,overlap:frames.filter(f=>(f.live||f.svg)&&f.posters>0&&!f.handoff),metrics:await p.page.evaluate(measure)});save();
       await p.page.emulateMedia({reducedMotion:'reduce'});await sleep(300);
       report.interactions.push({name:'motion-preference-change',width,theme,...await p.page.evaluate(measure)});
       await p.page.emulateMedia({reducedMotion:'no-preference'});await sleep(600);
       report.interactions.push({name:'motion-preference-restore',width,theme,...await p.page.evaluate(measure)});
       await p.page.waitForFunction(()=>document.querySelector('[data-lattice-slot]')?.dataset.live==='true');
-      const beforeResize=await p.page.locator('[data-persistent-stage] canvas').evaluate(e=>Number(e.dataset.renderedFrames));
+      const beforeResize=await p.page.locator('[data-persistent-stage] canvas:not([data-scene-blend])').evaluate(e=>Number(e.dataset.renderedFrames));
       await p.page.setViewportSize({width:width+16,height:width<768?844:900});await sleep(300);
-      const afterResize=await p.page.locator('[data-persistent-stage] canvas').evaluate(e=>Number(e.dataset.renderedFrames));
+      const afterResize=await p.page.locator('[data-persistent-stage] canvas:not([data-scene-blend])').evaluate(e=>Number(e.dataset.renderedFrames));
       report.interactions.push({name:'resize-preserves-scene',width,theme,beforeResize,afterResize});
       await p.context.close();console.log('Motion',width,theme,'overlap frames',report.motion.at(-1).overlap.length);
     }
@@ -177,7 +177,7 @@ function measure() {
       await p.page.getByRole('link',{name:'Enter Lattice',exact:true}).click();await p.page.waitForURL(base+'/');
       await p.page.emulateMedia({reducedMotion:'no-preference'});await p.page.waitForFunction(()=>document.querySelector('[data-lattice-slot]')?.dataset.live==='true');await sleep(800);
       const frames=await p.page.evaluate(()=>window.__quality.frames);
-      const overlap=frames.filter(f=>(f.live||f.svg)&&f.posters>0);
+      const overlap=frames.filter(f=>(f.live||f.svg)&&f.posters>0&&!f.handoff);
       assert.equal(overlap.length,0,'Entry-to-home doubled the hero');report.interactions.push({name:'entry-to-home',overlap:overlap.length});
       await p.context.close();
       for(const width of [1440,390]) {

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "height": 3.4,
+  "width": 3.0574995457324396,
+  "depth": 3.682857527715697,
+  "parts": [
+    {
+      "file": "0.bin",
+      "texture": "0.webp",
+      "normal": "0-normal.webp",
+      "vertices": 19723,
+      "triangles": 26618,
+      "particles": 8000,
+      "cutoff": 0
+    },
+    {
+      "file": "1.bin",
+      "texture": "1.webp",
+      "normal": "1-normal.webp",
+      "vertices": 9020,
+      "triangles": 6080,
+      "particles": 4000,
+      "cutoff": 0.5714303129304774
+    },
+    {
+      "file": "2.bin",
+      "texture": "2.webp",
+      "normal": "2-normal.webp",
+      "vertices": 128747,
+      "triangles": 91920,
+      "particles": 12000,
+      "cutoff": 0.6994307030269045
+    }
+  ],
+  "credit": {
+    "title": "Old Tree",
+    "author": "gelmi.com.br",
+    "url": "https://sketchfab.com/3d-models/old-tree-5793911821d04f73926ac4ab1d46727a",
+    "license": "CC BY 4.0"
+  }
+}

@@ -2,6 +2,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as THREE from "three";
 import { mountFactorySystems, type FactorySystemsController } from "../components/home/factory-systems-renderer";
 
+// The DOM dissolve is covered separately in scene-handoff.test.ts; keep GPU/controller tests deterministic.
+vi.mock("../components/performance/scene-handoff",()=>({createSceneHandoff:(host:HTMLElement)=>({
+  async reveal(){host.dataset.sceneState="live";},
+  fallback(){host.dataset.sceneState="fallback";},dispose(){},
+})}));
+
 const gpu = vi.hoisted(() => ({ compile: vi.fn(), render: vi.fn(), dispose: vi.fn(), lose: vi.fn() }));
 
 // Exercise the real scene/controller without a browser, credentials or a physical GPU.
@@ -95,7 +101,7 @@ describe("factory scene controller", () => {
   });
 
   it("refreshes all glass properties on a light/dark/light round trip", async () => {
-    vi.stubGlobal("location", { search: "?factory-time=6" });
+    vi.stubGlobal("location", { search: "?factory-time=16" });
     await fixture().mount().ready;
     const rendered = gpu.render.mock.lastCall?.[0] as THREE.Scene;
     function materials() {
@@ -107,9 +113,9 @@ describe("factory scene controller", () => {
       });
       return values;
     }
-    const light = materials(); expect(light).toHaveLength(18); expect(light.every(value => value.clearcoat === .65)).toBe(true);
+    const light = materials(); expect(light).toHaveLength(18); expect(light.every(value => value.clearcoat === .95)).toBe(true);
     theme.theme = "dark"; changeTheme();
-    const dark = materials(); expect(dark.every(value => value.clearcoat === .5)).toBe(true); expect(dark).not.toEqual(light);
+    const dark = materials(); expect(dark.every(value => value.clearcoat === .95)).toBe(true); expect(dark).not.toEqual(light);
     theme.theme = "light"; changeTheme(); expect(materials()).toEqual(light);
   });
 

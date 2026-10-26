@@ -18,7 +18,7 @@ let browser;
   page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
   for(const theme of ['light','dark']){
     await page.addInitScript(value=>localStorage.setItem('voltron-lattice-theme',value),theme);
-    await page.goto(base+'/intelligence?intelligence-time=6');
+    await page.goto(base+'/intelligence?intelligence-time=7.5');
     await page.waitForSelector('.intelligence-face-stage[data-live="true"]',{timeout:30000});
     await page.waitForFunction(()=>Number(getComputedStyle(document.querySelector('.intelligence-face-stage canvas')).opacity)===1);
     await page.screenshot({path:path.join(out,`desktop-${theme}.png`)});
@@ -26,18 +26,27 @@ let browser;
     await page.locator('.intelligence-face-stage canvas').screenshot({path:path.join(out,`poster-${theme}.png`),omitBackground:true});
     await transparent.evaluate(element=>element.remove());
   }
-  if(process.env.ARTWORK_CAPTURE)return;
-  for(const [name,time] of [['cloud',0],['formation',3],['formed',6]]){
+  if(process.env.ARTWORK_POSTERS){const sharp=require("sharp");for(const theme of ["light","dark"])await sharp(path.join(out,`poster-${theme}.png`)).webp({quality:90}).toFile(path.resolve(`public/intelligence/face-cube-${theme}.webp`));}
+  if(process.env.ARTWORK_CAPTURE){if(errors.length)throw new Error(errors.join("\n"));return;}
+  for(const [name,time] of [['waves',1],['formation',3],['holding',4.8],['response',6],['formed',7.5]]){
     await page.goto(base+'/intelligence?intelligence-time='+time);
     await page.waitForSelector('.intelligence-face-stage[data-live="true"]');
     await page.screenshot({path:path.join(out,name+'.png')});
   }
+  for(const view of ['solid','particles']){
+    await page.goto(base+'/intelligence?intelligence-view='+view+'&intelligence-time=7.5&intelligence-review=1');
+    await page.waitForSelector('.intelligence-face-stage[data-live="true"]');
+    await page.getByRole('slider',{name:'Artwork time'}).fill('3');
+    await page.getByRole('slider',{name:'Artwork time'}).fill('7.5');
+    await page.screenshot({path:path.join(out,'review-'+view+'.png')});
+  }
+  await page.goto(base+'/intelligence?intelligence-time=7.5');await page.waitForSelector('.intelligence-face-stage[data-live="true"]');
   await page.getByRole('button',{name:'Replay animation'}).click();
   await page.getByRole('button',{name:'Pause animation'}).click();
   await page.getByRole('button',{name:'Resume animation'}).waitFor();
   await page.getByRole('button',{name:'Resume animation'}).click();
   await page.waitForSelector('.intelligence-face-stage[data-phase="formed"]',{timeout:20000});
-  await page.setViewportSize({width:390,height:844});await page.goto(base+'/intelligence?intelligence-time=6');
+  await page.setViewportSize({width:390,height:844});await page.goto(base+'/intelligence?intelligence-time=7.5');
   await page.waitForSelector('.intelligence-face-stage[data-live="true"]');await page.screenshot({path:path.join(out,'mobile-dark.png'),fullPage:true});
   await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.waitForSelector('.face-poster-dark');
   if(await page.locator('.intelligence-face-stage[data-live="true"]').count())throw new Error('Reduced motion started WebGL');

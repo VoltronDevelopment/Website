@@ -1,6 +1,6 @@
 "use client";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
-import {PhilosophyStill} from "../performance/PhilosophyStill";
+import {ScenePoster} from "../performance/ScenePoster";
 
 import { useEffect, useRef } from "react";
 import type { CubeKind, mountCubes } from "./cube-renderer";
@@ -31,7 +31,7 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
     return ()=>{sceneMotionPreference.removeEventListener("change",retryScene);disposed=true;cancel?.();observer.disconnect();controller.current?.dispose();controller.current=null;};
   },[kind,sequence]);
   useEffect(()=>{controller.current?.setActive(active);},[active]);
-  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true">{kind==="philosophy"&&<PhilosophyStill/>}<canvas ref={canvas}/>{children}</div>;
+  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true">{kind==="philosophy"&&<ScenePoster kind="philosophy"/>}<canvas ref={canvas}/>{children}</div>;
 }
 
 export { FactorySystems } from "./FactorySystems";

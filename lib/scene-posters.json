@@ -1,18 +1,42 @@
 {
   "home": {
-    "light": "/optimized/poster-home-light-f4eed3776289e8c4.webp",
-    "dark": "/optimized/poster-home-dark-58d18c90c8df729b.webp"
+    "light": "/optimized/scene-home-complete-light-015e8028e37c784e.webp",
+    "dark": "/optimized/scene-home-complete-dark-a1bbe7c5be97188a.webp"
   },
   "technology": {
-    "light": "/optimized/poster-technology-light-f52a229d98718287.webp",
-    "dark": "/optimized/poster-technology-dark-437bfcbae5251f02.webp"
-  },
-  "culture": {
-    "light": "/optimized/poster-culture-light-fd2f05c37a6cc763.webp",
-    "dark": "/optimized/poster-culture-dark-6cbd5aed48eecd22.webp"
+    "light": "/optimized/scene-technology-complete-light-946977b8da8d29ce.webp",
+    "dark": "/optimized/scene-technology-complete-dark-96dd3aaf4e956326.webp"
   },
   "commons": {
-    "light": "/optimized/poster-commons-light-8d25eb7fba149441.webp",
-    "dark": "/optimized/poster-commons-dark-be21bcf49acf4b2f.webp"
+    "light": "/optimized/scene-commons-complete-light-68b0480d46efff3d.webp",
+    "dark": "/optimized/scene-commons-complete-dark-88bbef62f630f810.webp"
+  },
+  "culture": {
+    "light": "/optimized/scene-culture-complete-light-251176dfc1e9fbe2.webp",
+    "dark": "/optimized/scene-culture-complete-dark-df1aca80308fb8ce.webp"
+  },
+  "intelligence": {
+    "light": "/optimized/scene-intelligence-complete-light-5e74d767ec721a1b.webp",
+    "dark": "/optimized/scene-intelligence-complete-dark-2eee3bf4015b7947.webp"
+  },
+  "philosophy": {
+    "light": "/optimized/scene-philosophy-complete-light-5e068075273e6e6f.webp",
+    "dark": "/optimized/scene-philosophy-complete-dark-0576c8e5cd7b969b.webp"
+  },
+  "process": {
+    "light": "/optimized/alpha-beacons-process-light-c2c73d611f04c40a.webp",
+    "dark": "/optimized/alpha-beacons-process-dark-3b3880a638dfaecd.webp"
+  },
+  "plant": {
+    "light": "/optimized/alpha-beacons-plant-light-e882e778315ccd1f.webp",
+    "dark": "/optimized/alpha-beacons-plant-dark-020fd5a0ee77b475.webp"
+  },
+  "handCulture": {
+    "light": "/optimized/scene-handCulture-complete-light-ef9c1ba8eca3e0a7.webp",
+    "dark": "/optimized/scene-handCulture-complete-dark-f3fe6b82aab9d687.webp"
+  },
+  "handPartner": {
+    "light": "/optimized/scene-handPartner-complete-light-7b77114969db5cc6.webp",
+    "dark": "/optimized/scene-handPartner-complete-dark-38837e388b110beb.webp"
   }
 }

@@ -1,4 +1,5 @@
 "use client";
+import {ScenePoster} from "../performance/ScenePoster";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
 
 import { useEffect, useId, useRef, useState } from "react";
@@ -82,7 +83,7 @@ export function AlphaProcessScene() {
 
   return <figure className="alpha-process" aria-label="Illustrated surface treatment line" aria-describedby={description}>
     <div className="alpha-process-art" ref={host} data-ready={ready}>
-      <AlphaProcessFallback />
+      <div className="alpha-process-fallback"><ScenePoster kind="process"/></div>
       <canvas ref={canvas} aria-hidden="true" />
     </div>
     <ol className="alpha-process-stages" aria-label="Process chapters">
@@ -101,27 +102,4 @@ export function AlphaProcessScene() {
     </figcaption>
     <p className="alpha-process-description">A suspended silver part is lowered into three tanks in sequence: prepare, coat and finish. The part becomes graphite during coating, then is placed on the unloading platform. The empty hoist returns to loading.</p>
   </figure>;
-}
-
-function AlphaProcessFallback() {
-  return <svg className="alpha-process-fallback" viewBox="0 -115 1120 450" fill="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="alpha-static-metal" x2="0" y2="1"><stop stopColor="var(--surface)"/><stop offset="1" stopColor="var(--cube-right)"/></linearGradient>
-      <linearGradient id="alpha-static-water" x2="0" y2="1"><stop stopColor="var(--cyan)" stopOpacity=".6"/><stop offset="1" stopColor="var(--blue)" stopOpacity=".3"/></linearGradient>
-    </defs>
-    <g transform="translate(45 115) skewY(-8)" stroke="var(--cube-outline)" strokeWidth="1.5" strokeLinejoin="round">
-      <path d="M20 220 930 220 1005 172 95 172Z" fill="var(--cube-left)" fillOpacity=".3"/>
-      {[180, 395, 610].map((x, i) => <g key={x}>
-        <path d={`M${x} 96h182l54-33H${x + 54}Z`} fill="url(#alpha-static-water)"/>
-        <path d={`M${x} 96h182v115H${x}Z`} fill="url(#alpha-static-water)"/>
-        <path d={`m${x + 182} 96 54-33v115l-54 33Z`} fill="var(--cyan)" fillOpacity=".22"/>
-        <path d={`M${x} 86h182l54-33H${x + 54}Z M${x} 86v125h182V86 M${x + 182} 211l54-33V53`} strokeWidth="4"/>
-        <path d={`M${x + 88} -45V12`} strokeWidth="3"/>
-        <rect x={x + 64} y="12" width="48" height="76" rx="3" fill={i === 0 ? "url(#alpha-static-metal)" : "var(--ink)"} fillOpacity=".75"/>
-      </g>)}
-      <path d="M55 211V-50h910v228 M93 185V-76h910v228 M55-50l38-26 M965-50l38-26" strokeWidth="7"/>
-      <path d="M55-42h910 M93-68h910" stroke="var(--surface)" strokeOpacity=".65" strokeWidth="2"/>
-      <path d="M4 188h108v14H4z M881 188h100v14H881z" fill="url(#alpha-static-metal)"/>
-    </g>
-  </svg>;
 }

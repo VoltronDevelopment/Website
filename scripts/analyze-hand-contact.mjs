@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import * as T from 'three';
+import {contactProbe} from './hand-contact-solver.mjs';
+const handshakePlacement=JSON.parse(fs.readFileSync('public/hands/anchors.json','utf8')).handshake;
+const {x,y,z}=handshakePlacement;
+const handContactTransforms=[new T.Matrix4().makeTranslation(-x,y,-z).multiply(new T.Matrix4().makeBasis(new T.Vector3(0,1,0),new T.Vector3(1,0,0),new T.Vector3(0,0,-1))),new T.Matrix4().makeTranslation(x,-y,z).multiply(new T.Matrix4().makeRotationZ(Math.PI/2))];
+const bytes=fs.readFileSync('public/hands/grip-depth.bin'),header=new Uint32Array(bytes.buffer,bytes.byteOffset,2),indices=new Uint32Array(bytes.buffer,bytes.byteOffset+8+header[0]*12,header[1]);
+const read=name=>{const b=fs.readFileSync('public/hands/'+name);return new Float32Array(b.buffer,b.byteOffset,b.length/4);};
+const depths=[read('grip-pose-depth.bin'),read('grip-other-pose-depth.bin')],samples=[read('grip-pose.bin'),read('grip-other-pose.bin')];
+const worlds=depths.map((data,hand)=>{const vertices=[];for(let i=0;i<data.length;i+=6)vertices.push(new T.Vector3(data[i],data[i+1],data[i+2]).applyMatrix4(handContactTransforms[hand]));return vertices;});
+const fields=worlds.map(vertices=>contactProbe(vertices,indices));
+const results=samples.map((data,hand)=>{let checked=0;const penetrating=[];for(let i=0;i<data.length;i+=6*24){const point=new T.Vector3(data[i],data[i+1],data[i+2]).applyMatrix4(handContactTransforms[hand]),contact=fields[1-hand](point);checked++;if(contact.inside&&contact.depth>.035)penetrating.push({depth:contact.depth,source:Array.from(data.slice(i,i+3))});}penetrating.sort((a,b)=>b.depth-a.depth);return {hand,checked,penetrating:penetrating.length,worst:penetrating.slice(0,3)};});
+console.log(JSON.stringify(results,null,2));fs.mkdirSync('.audit-logs/hand-authoring',{recursive:true});fs.writeFileSync('.audit-logs/hand-authoring/contact.json',JSON.stringify(results,null,2));

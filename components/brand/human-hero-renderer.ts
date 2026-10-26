@@ -1,7 +1,11 @@
+import {mountCommonsTree} from "./commons-tree-renderer";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
+import {createSceneHandoff} from "../performance/scene-handoff";
+import {sceneOpeningTime} from "@/lib/scene-continuity";
 import {optimizedAsset} from "@/lib/optimized-assets";
 import * as THREE from "three";
-import {RoomEnvironment} from "three/addons/environments/RoomEnvironment.js";
+import {createArtworkEnvironment,addArtworkSoftboxes} from "./artwork-studio";
+import {observeArtworkTuning,artworkDefaults} from './artwork-tuning';
 import {LineMaterial} from "three/addons/lines/LineMaterial.js";
 import {glassFace,setGlass,strokeMaterial,stroke,nodeHaloTexture,type GlassFace} from "../home/lattice-materials";
 import {createLatticeActivity} from "../home/lattice-activity";
@@ -21,7 +25,9 @@ type Edge={line:ReturnType<typeof stroke>;a:THREE.Vector3;b:THREE.Vector3;front:
 type Node={mesh:THREE.Mesh<THREE.SphereGeometry,THREE.MeshBasicMaterial>;halo:THREE.Sprite;point:THREE.Vector3;front:boolean;owners:number[];glint:THREE.Mesh};
 type Cell={group:THREE.Group;panes:Pane[];arrival:THREE.Group;arrivalMaterials:THREE.Material[];arrivalNodes:THREE.Mesh[];spec:HeroCell;shadow:THREE.Mesh<THREE.PlaneGeometry,THREE.MeshBasicMaterial>};
 
-export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HumanHeroKind){
+export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HumanHeroKind,onMode:(mode:"playing"|"paused"|"settled")=>void=()=>{}){
+  if(kind==="commons")return mountCommonsTree(canvas,host,onMode);
+  const handoff=createSceneHandoff(host,canvas);
   const quality=createRenderQuality(canvas,1.75);
   const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   const cells=heroCells(kind),duration=durations[kind],culture=kind==="culture";
@@ -31,10 +37,14 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
   const target=new THREE.Vector3(0,culture?1.25:1.6,0),offset=new THREE.Vector3(6,culture?3.5:5.5,8);
   camera.position.copy(target).add(offset);camera.lookAt(target);camera.updateMatrixWorld();
   const direction=offset.clone().normalize(),right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),up=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
-  let renderer:THREE.WebGLRenderer|undefined,disposed=false,visible=false,frame=0,previous=0,time=0,fallback=false,sized=false;
+  let paused=false;
+  let tuning={...artworkDefaults};
+  let renderer:THREE.WebGLRenderer|undefined,disposed=false,visible=false,frame=0,previous=0,time=sceneOpeningTime[kind] as number,fallback=false,sized=false;
   let activity:ReturnType<typeof createLatticeActivity>|undefined;
   const motion=matchMedia("(prefers-reduced-motion: reduce)");
   const query=new URLSearchParams(location.search);
+  let review=query.get("human-time");
+  if(review!==null)time=Math.max(0,Math.min(duration,Number(review)||0));
   const compositionReview=query.get("artwork")==="composition"||query.get("animate")==="0";
   const reduced=()=>motion.matches||new URLSearchParams(location.search).get("motion")==="reduced";
   const sceneState=()=>culture&&(compositionReview||reduced())?{...humanHeroState(kind,2.15),done:true}:humanHeroState(kind,time,reduced());
@@ -74,7 +84,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
       const neighbour=new THREE.Vector3(...spec.centre).addScaledVector(new THREE.Vector3(...face.normal),spec.size);
       if(!isHeld&&cells.some(other=>other.size===spec.size&&new THREE.Vector3(...other.centre).distanceTo(neighbour)<.001))continue;
       const geometry=track(new THREE.BufferGeometry());geometry.setAttribute("position",new THREE.Float32BufferAttribute(face.indices.flatMap(i=>local[i].toArray()),3));geometry.setIndex([0,1,2,0,2,3]);geometry.computeVertexNormals();
-      const material=track(glassFace(face.kind,dark())),mesh=new THREE.Mesh(geometry,material);
+      const material=track(glassFace(face.kind,dark(),true,"commons")),mesh=new THREE.Mesh(geometry,material);
       const point=face.indices.reduce((sum,i)=>sum.add(absolute[i]),new THREE.Vector3()).multiplyScalar(.25);
       panes.push({material,kind:face.kind,point});group.add(mesh);
     }
@@ -213,16 +223,16 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
   function palette(){
     light.intensity=dark()?1.5:2.4;
     [...cellRenders,...(held?[held]:[])].forEach(cell=>{
-      cell.panes.forEach(({material,kind})=>setGlass(material,kind,dark()));
+      cell.panes.forEach(({material,kind})=>{setGlass(material,kind,dark());material.opacity*=tuning.glassOpacity;material.roughness*=tuning.roughness;material.envMapIntensity*=tuning.reflection;});
       cell.arrivalMaterials.forEach(material=>{if(material instanceof LineMaterial){const front=material.userData.cssWidth>1;material.color.setHex(front?(dark()?0x76b5f2:0x3284e8):(dark()?0x40769d:0x619bc5));material.userData.restOpacity=front?.8:.3;}else material.userData.restOpacity=.9;});
     });
     state();render();
   }
   function render(){
-    if(disposed)return;if(fallback){staticScene();return;}if(!renderer||!artwork||!blurTarget||!composite||!compositeScene||!compositeCamera)return;
+    if(disposed)return;if(fallback){handoff.fallback();return;}if(!renderer||!artwork||!blurTarget||!composite||!compositeScene||!compositeCamera)return;
     const uniforms=(composite.material as THREE.ShaderMaterial).uniforms;
     const projected=artwork.position.clone().project(camera);maskCentre.set((projected.x+1)/2,(projected.y+1)/2);maskExtent.set(artwork.userData.width/(camera.right-camera.left),artwork.userData.height/(camera.top-camera.bottom));
-    uniforms.soften.value=culture?0:sceneState().emblem*.7;
+    uniforms.soften.value=0;
     renderer.autoClear=false;camera.layers.set(0);renderer.setRenderTarget(blurTarget);renderer.clear();renderer.render(scene,camera);
     renderer.setRenderTarget(null);renderer.clear();renderer.render(compositeScene,compositeCamera);renderer.clearDepth();
     for(const layer of [1,2,3]){camera.layers.set(layer);renderer.render(scene,camera);}camera.layers.enableAll();
@@ -247,11 +257,11 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function tick(now:number){
     if(quality.sample(now))resize();
-    if(disposed||!visible||document.hidden){stop();return;}
+    if(disposed||paused||!visible||document.hidden){stop();return;}
     time=Math.min(duration,time+(previous?(now-previous)/1000:0));previous=now;state();render();
-    if(time<duration)frame=requestAnimationFrame(tick);else{stop();activity?.arm();}
+    if(time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}
   }
-  function resume(){stop();if(reduced()||compositionReview){time=duration;state();render();if(!reduced())activity?.arm();return;}if(!visible||document.hidden||fallback)return;if(time<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else activity?.arm();}
+  function resume(){stop();if(paused)return;if(reduced()||compositionReview){time=duration;state();render();if(!reduced())onMode("settled");return;}if(review!==null||host.dataset.sceneState!=="live"||!visible||document.hidden||fallback)return;if(time<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else onMode("settled");}
   function preference(){activity?.setEnabled(!reduced());resume();}
   function visibility(){activity?.setVisible(visible&&!document.hidden);if(document.hidden)stop();else resume();}
   function contextLost(event:Event){event.preventDefault();stop();fallback=true;activity?.setEnabled(false);staticScene();}
@@ -274,7 +284,8 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
       if(new URLSearchParams(location.search).get("renderer")==="static")throw new Error("Static artwork requested");
       renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
       await yieldToBrowser();if(disposed)return;
-      const environment=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);scene.environment=track(pmrem.fromScene(environment,.12)).texture;environment.dispose();pmrem.dispose();
+      scene.environment=track(createArtworkEnvironment(renderer)).texture;addArtworkSoftboxes(scene,target);
+      track(observeArtworkTuning(kind,value=>{tuning=value;light.position.set(-4+Math.sin(value.keyDirection)*5,7,5);palette();}));
       await yieldToBrowser();if(disposed)return;
       createComposite();
       camera.layers.enableAll();await renderer.compileAsync(scene,camera);
@@ -290,9 +301,12 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
     if(reduced()||fallback||compositionReview)time=duration;
     host.dataset.compositionReview=String(compositionReview);
     palette();resize();activity?.setEnabled(!reduced());
+    if(!fallback){await handoff.reveal();onMode(time>=duration?"settled":"playing");}
+    if(disposed)return;
     resizeObserver.observe(host);themes.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});view.observe(host);
     motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);canvas.addEventListener("webglcontextlost",contextLost);
   }
   void init();
-  return ()=>{disposed=true;stop();activity?.dispose();resizeObserver.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",contextLost);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();};
+  const cleanup=()=>{disposed=true;handoff.dispose();stop();activity?.dispose();resizeObserver.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",contextLost);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();};
+  return Object.assign(cleanup,{toggle(){paused=!paused;onMode(paused?"paused":"playing");if(paused)stop();else resume();},replay(){review=null;paused=false;time=0;state();render();onMode("playing");resume();},seek(seconds:number){paused=true;stop();time=THREE.MathUtils.clamp(seconds,0,duration);state();render();onMode("settled");}});
 }

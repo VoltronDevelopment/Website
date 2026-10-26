@@ -140,7 +140,7 @@ function collectFiles(dir, files = []) {
   }
 
   for (const entry of readdirSync(dir)) {
-    if (SKIP_DIRS.has(entry) || SKIP_FILES.has(entry)) {
+    if (SKIP_DIRS.has(entry) || SKIP_FILES.has(entry) || entry.startsWith(".next-") || entry === ".audit-logs" || entry === ".visual-check") {
       continue;
     }
     const fullPath = join(dir, entry);

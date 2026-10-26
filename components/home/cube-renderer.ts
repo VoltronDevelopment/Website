@@ -1,3 +1,5 @@
+import {createSceneHandoff} from "../performance/scene-handoff";
+import {sceneOpeningTime} from "@/lib/scene-continuity";
 import {createRenderQuality} from "../performance/scene-policy";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
@@ -5,17 +7,21 @@ import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import {glassFace,setGlass,strokeMaterial,stroke,nodeHaloTexture,type GlassFace} from "./lattice-materials";
 import {junctionPulse} from "./lattice-lighting";
 import {createLatticeActivity} from "./lattice-activity";
+import {addPhilosophyLighting,createPhilosophyCubes} from "./philosophy-cubes";
+import {philosophyCamera,homePhilosophyDuration,homePhilosophyCubeState} from "./philosophy-cube-timeline";
+import {createPhilosophyWave} from './philosophy-wave';
 
 export type CubeKind = "enclosure" | "lot" | "philosophy";
 type Options = {kind: CubeKind; active: boolean; sequence?:number};
 
 export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options) {
+  const handoff=createSceneHandoff(host,canvas);
   const quality=createRenderQuality(canvas,1.5);
   const pixelProof=new URLSearchParams(location.search).get("diagnostics")==="pixels";
   canvas.hidden=false;
   const scene=new THREE.Scene();
   const camera=new THREE.OrthographicCamera(-2,2,2,-2,.1,40);
-  camera.position.set(6,4.8,7);camera.lookAt(0,options.kind==="philosophy" ? .65 : 0,0);
+  camera.position.set(...philosophyCamera.position);camera.lookAt(0,options.kind==="philosophy" ? philosophyCamera.target[1] : 0,0);
   const resources: {dispose: () => void}[]=[];
   const track=<T extends {dispose: () => void}>(value: T): T => {resources.push(value);return value;};
   const root=new THREE.Group();scene.add(root);
@@ -23,12 +29,13 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   const cubes: {group: THREE.Group; target: number; delay: number; size:number}[]=[];
   const nodeAccents:{node:THREE.Mesh;halo:THREE.Sprite;point:THREE.Vector3;highlight:THREE.Mesh}[]=[];
   const sequenceDelay=options.kind==="enclosure"?(options.sequence??0)*1.4:0;
-  const duration=options.kind==="philosophy"?5:options.kind==="enclosure"?sequenceDelay+6.5:2.4;
+  const duration=options.kind==="philosophy"?homePhilosophyDuration:options.kind==="enclosure"?sequenceDelay+6.5:2.4;
   const ease=(value:number)=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
   let renderer: THREE.WebGLRenderer | undefined;
   let prepared=false;
   let activity:ReturnType<typeof createLatticeActivity>|undefined;
-  let frame=0, elapsed=0, previous=0, visible=false, disposed=false, fallback=false;
+  const review=new URLSearchParams(location.search).get("cube-time");
+  let frame=0, elapsed=review!==null?Number(review)||0:options.kind==="philosophy"?sceneOpeningTime.philosophy:0, previous=0, visible=false, disposed=false, fallback=false;
   const motion=matchMedia("(prefers-reduced-motion: reduce)");
   let active=options.active;
   const dark=() => document.documentElement.dataset.theme==="dark";
@@ -37,7 +44,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     const geometry=track(new THREE.BoxGeometry(size,size,size));
     if(options.kind==="enclosure"){
       const panes:GlassFace[]=["side","rear","top","bottom","front","rear"];
-      group.add(new THREE.Mesh(geometry,panes.map(faceKind=>{const material=track(glassFace(faceKind,dark()));materials.push({material,role:"glass",faceKind});return material;})));
+      group.add(new THREE.Mesh(geometry,panes.map(faceKind=>{const material=track(glassFace(faceKind,dark(),true,"display"));materials.push({material,role:"glass",faceKind});return material;})));
       const corners=Array.from({length:8},(_,i)=>new THREE.Vector3((i&1?1:-1)*size/2,(i&2?1:-1)*size/2,(i&4?1:-1)*size/2));
       const pairs=[[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
       for(const [a,b] of pairs){const point=corners[a].clone().add(corners[b]).multiplyScalar(.5);const material=track(strokeMaterial(true));materials.push({material,role:"edge",point});const line=stroke([corners[a],corners[b]],material);track(line.geometry);group.add(line);}
@@ -66,15 +73,15 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
       }
     }
   };
-  if(options.kind==="philosophy") {addCube(2.1,0);addCube(.7,0,true,.25);addCube(.36,2.3,true,.55);}
+  const philosophy=options.kind==="philosophy"?track(createPhilosophyCubes()):undefined;
+  const philosophyWave=philosophy?track(createPhilosophyWave(philosophy.groups[2])):undefined;if(philosophyWave)root.add(philosophyWave.points);
+  if(philosophy)root.add(philosophy.root);
   else {addCube(1.65,0);if(options.kind==="lot"){
     const nodeMaterial=track(new THREE.MeshPhongMaterial({color:0x2894bc}));materials.push({material:nodeMaterial,role:"node"});
     const node=new THREE.Mesh(track(new THREE.SphereGeometry(.065,16,12)),nodeMaterial);node.position.set(0,.87,0);root.add(node);
   }}
   const signalNodes=nodeAccents.map(node=>node.point).sort((a,b)=>b.dot(camera.position)-a.dot(camera.position)).slice(0,3);
-  scene.add(new THREE.HemisphereLight(0xeaf6ff,0x314d6b,2));
-  const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(-4,6,4);scene.add(key);
-  const fill=new THREE.DirectionalLight(0x81c9ff,.65);fill.position.set(4,1,3);scene.add(fill);
+  addPhilosophyLighting(scene);
   let assetMaterial:THREE.MeshBasicMaterial | undefined;
   let resolveAsset:()=>void=()=>{};
   const assetReady=new Promise<void>(resolve=>{resolveAsset=resolve;});
@@ -102,6 +109,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }else resolveAsset();
 
   function palette(){
+    if(philosophy){philosophy.setTheme(dark(),active);state();render();return;}
     for(const {material,role,faceKind} of materials){
       material.color.set(role==="solid" ? dark()?0x73afd0:0x68a5cb : role==="glass" ? dark()?0x22668c:0xadddf9 : role==="node" ? dark()?0x78b0ff:0x168cee : dark()?0x72b3d4:0x397cae);
       if(role==="glass")material.opacity=dark()?.13:.15;
@@ -115,6 +123,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     state();render();
   }
   function renderFallback(){
+    if(host.querySelector(".scene-poster")){handoff.fallback();return;}
     camera.updateMatrixWorld();root.updateMatrixWorld(true);
     const project=(point: THREE.Vector3) => {const p=point.project(camera);return `${(p.x+1)*320},${(1-p.y)*240}`;};
     const faces=[[2,6,7,3],[1,3,7,5],[4,5,7,6]];
@@ -147,6 +156,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function state(){
+    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);philosophy.groups[2].traverse(o=>{if(o instanceof THREE.LineSegments){o.visible=pose.individual>=1;(o.material as THREE.LineBasicMaterial).opacity=(o.material as THREE.LineBasicMaterial).userData.baseOpacity*ease((pose.time-4)/.3);}if(o instanceof THREE.Mesh&&o.material instanceof THREE.MeshPhongMaterial){o.material.emissive.setHex(0x246bd4);o.material.emissiveIntensity=ease((pose.time-3.8)/.3)*(1-ease((pose.time-4.4)/.4))*.15;}});philosophyWave?.update(pose.time,pose.individual,pose.height,dark(),quality.ratio);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.waveVisible=String(philosophyWave?.points.visible);return;}
     if(options.kind==="enclosure"){
       const time=motion.matches?6.5:elapsed-sequenceDelay;
       const asset=ease(time/.8),reveal=ease((time-.9)/1.1);
@@ -176,20 +186,8 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
       canvas.dataset.phase=time<.9?"asset":time<2.1?"enclose":time<4.5?"rotate":time<6.5?"glow":"settled";
       return;
     }
-    cubes.forEach(({group,target,delay},index)=>{
-      if(options.kind!=="philosophy"){
-        const t=motion.matches?1:Math.max(0,Math.min(1,(elapsed-delay)/1.5));group.position.y=target+(1-t)**3*.3;group.rotation.y=(1-t)*.06;group.scale.setScalar(.97+.03*t);return;
-      }
-      const reveal=motion.matches?1:index===0?ease(elapsed/1.05):index===1?ease((elapsed-1.2)/1.6):ease((elapsed-2.9)/.35);
-      group.visible=reveal>.001;
-      group.position.y=index===2?target*(motion.matches?1:ease((elapsed-3.15)/1.85)):target+(index===0?.14:0)*(1-reveal);
-      group.rotation.y=index===0?(1-reveal)*.03:0;group.scale.setScalar(.94+.06*reveal);
-      group.traverse(object=>{
-        if(object instanceof THREE.Mesh || object instanceof THREE.LineSegments){
-          const material=object.material as THREE.Material;
-          material.opacity=(material.userData.baseOpacity??1)*reveal;
-        }
-      });
+    cubes.forEach(({group,target,delay})=>{
+      const t=motion.matches?1:Math.max(0,Math.min(1,(elapsed-delay)/1.5));group.position.y=target+(1-t)**3*.3;group.rotation.y=(1-t)*.06;group.scale.setScalar(.97+.03*t);
     });
   }
   function tick(now: number){
@@ -202,7 +200,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function resume(){
     stop();if(motion.matches){elapsed=duration;state();render();return;}
-    if(prepared && visible && !document.hidden && !fallback){if(elapsed<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else activity?.arm();}
+    if(review===null && host.dataset.sceneState==="live" && prepared && visible && !document.hidden && !fallback){if(elapsed<duration){canvas.dataset.continuousRendering="true";frame=requestAnimationFrame(tick);}else activity?.arm();}
   }
   function resize(){
     const {width,height}=host.getBoundingClientRect();if(!width || !height)return;
@@ -217,6 +215,8 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   function preference(){activity?.setEnabled(!motion.matches);if(motion.matches){elapsed=duration;state();}resume();render();}
   function visibility(){activity?.setVisible(visible&&!document.hidden);if(document.hidden)stop();else resume();}
   function lost(event: Event){event.preventDefault();stop();fallback=true;activity?.setEnabled(false);renderFallback();}
+  function seek(event:Event){const value=Number((event as CustomEvent).detail?.time);if(review===null||!Number.isFinite(value))return;stop();elapsed=THREE.MathUtils.clamp(value,0,duration);state();render();}
+  host.addEventListener('cube-control',seek);
   try {
     if(new URLSearchParams(location.search).get("renderer")==="static")throw new Error("Static illustration requested");
     renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
@@ -237,7 +237,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   const themes=new MutationObserver(palette);themes.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
   const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;activity?.setVisible(visible&&!document.hidden);resume();},{threshold:0});view.observe(host);
   motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);canvas.addEventListener("webglcontextlost",lost);
-  canvas.dataset.kind=options.kind;canvas.dataset.cubes=String(cubes.length);state();palette();resize();
+  canvas.dataset.kind=options.kind;canvas.dataset.cubes=String(philosophy?3:cubes.length);state();palette();resize();
   activity?.setEnabled(!motion.matches);
   let cancelPreparation:()=>void=()=>{};
   const cancelled=new Promise<void>(resolve=>{cancelPreparation=resolve;});
@@ -250,12 +250,12 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     }
     if(disposed)return;prepared=true;
     if(assetMaterial&&!fallback)host.dataset.assetLayer="three";
-    state();render();resume();
+    state();render();if(!fallback)await handoff.reveal();if(disposed)return;resume();
   })();
   const ready=Promise.race([preparing,cancelled]);
   return {
     ready,
     setActive(value: boolean){active=value;palette();},
-    dispose(){disposed=true;cancelPreparation();resolveAsset();stop();activity?.dispose();sizing.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",lost);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();},
+    dispose(){disposed=true;handoff.dispose();cancelPreparation();resolveAsset();stop();activity?.dispose();sizing.disconnect();themes.disconnect();view.disconnect();motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);canvas.removeEventListener("webglcontextlost",lost);host.removeEventListener('cube-control',seek);host.querySelector("svg")?.remove();resources.forEach(resource=>resource.dispose());renderer?.dispose();},
   };
 }

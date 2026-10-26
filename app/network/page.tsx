@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { BrandArt } from "@/components/brand/BrandArt";
+import {NetworkGlobeHero} from "@/components/brand/NetworkGlobeHero";
 import { Hero } from "@/components/brand/Hero";
 import { ProcessFlow } from "@/components/brand/ProcessFlow";
 import { NetworkConnections } from "@/components/brand/NetworkConnections";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 export const metadata: Metadata = { title: "Network", description: "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships." };
 export default function NetworkPage() {
-  return <SiteShell><Hero principles eyebrow="Network" title="One architecture. Multiple paths to scale." art="N01-network-hero" primary="Explore the network" href="#owned-plants">A shared manufacturing foundation for directly operated plants and future factory partnerships.</Hero>
+  return <SiteShell><Hero principles={["Plants","Partnerships","Shared architecture"]} eyebrow="Network / Voltron Lattice" title="Built to connect. Designed to grow." illustration={<NetworkGlobeHero/>} primary="Explore the network" href="#owned-plants">One manufacturing foundation. Multiple paths to scale.</Hero>
     <Section white id="owned-plants"><div className="split authority-copy"><Intro eyebrow="Voltron-owned plants" title="Build, operate and learn in direct manufacturing environments."/><p>We establish and run our own plants to develop and validate the Voltron architecture. Each plant becomes a source of operational data, process knowledge and reusable capability.</p></div><ProcessFlow label="Owned manufacturing environments" stages={[
       { title: "Build", record: "Design and set up the plant", detail: "Bring the process, equipment and manufacturing architecture together." },
       { title: "Operate", record: "Run connected production", detail: "Use connected systems within the plant's defined operating responsibilities." },

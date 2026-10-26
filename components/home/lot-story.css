@@ -115,11 +115,14 @@
 /* Evidence is a sequence of small records, without a surrounding text window. */
 .lot-story-evidence { margin-top:8px; }
 .lot-story-evidence .lot-evidence-intro { min-height:24px; margin-bottom:10px; }
-.lot-story-tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding:0; margin:0; list-style:none; }
+.lot-story-tiles { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; padding:0; margin:0; list-style:none; }
 .lot-story-tiles li { display:flex; min-width:0; }
 .lot-story-tiles button { width:100%; min-height:104px; height:100%; padding:14px 16px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb,var(--surface) 58%,transparent); color:var(--muted); text-align:left; font:inherit; cursor:pointer; transition:border-color .15s ease,background-color .15s ease; }
 .lot-story-tiles li[data-active="true"] button { border-color:var(--blue); background:color-mix(in srgb,var(--selection) 40%,var(--surface)); }
 .lot-story-tiles li[data-active="true"] .lot-tile-title > svg:first-child { color:var(--blue); }
+.lot-story-tiles li[data-human-review="true"] button {border-color:var(--cyan);background:color-mix(in srgb,var(--selection) 55%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,var(--cyan) 28%,transparent),0 0 22px color-mix(in srgb,var(--blue) 17%,transparent);}
+.lot-story-tiles li[data-human-review="true"][data-active="true"] button {border-color:var(--cyan);box-shadow:0 0 0 1px color-mix(in srgb,var(--cyan) 65%,transparent),0 0 30px color-mix(in srgb,var(--blue) 30%,transparent),inset 0 0 18px color-mix(in srgb,var(--cyan) 8%,transparent);}
+.lot-story-tiles li[data-human-review="true"] .lot-tile-title > svg:first-child {color:var(--blue);}
 .lot-story-tiles button:hover { border-color:var(--cube-outline); background:var(--hover); }
 .lot-story-tiles button:focus-visible { outline-offset:3px; }
 .lot-tile-title { display:flex; align-items:center; gap:8px; font-size:14px; line-height:22px; color:var(--ink); }
@@ -132,13 +135,16 @@
 .lot-release-gate::before { content:""; width:18px; height:1px; background:var(--cyan); }
 @keyframes lot-record-reveal { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
 @media(max-width:1099px) { .lot-story-tiles { gap:12px; } }
+@media(min-width:768px) and (max-width:1099px) { .lot-story-tiles { grid-template-columns:repeat(3,minmax(0,1fr)); } }
 @media(max-width:767px) {
   .lot-story-tiles { grid-template-columns:minmax(0,1fr); }
-  .lot-story-tiles li { display:none; }
+  .lot-story-tiles li { display:block; }
   .lot-story-tiles li[data-active="true"] { display:block; }
   .lot-story-tiles button { min-height:78px; }
   .lot-release-gate { width:100%; }
 }
 @media(prefers-reduced-motion:reduce) { .lot-tile-message { animation:none!important; } .lot-story-tiles button { transition:none; } }
 @media(prefers-reduced-transparency:reduce) { .lot-story-tiles button { background:var(--surface); } }
+@media(prefers-reduced-transparency:reduce) { .lot-story-tiles li[data-human-review="true"] button { background:var(--surface); } }
 @media(forced-colors:active) { .lot-story-tiles button,.lot-release-gate { border-color:CanvasText; } .lot-story-tiles button[aria-pressed="true"] { border-color:Highlight; } }
+@media(forced-colors:active) { .lot-story-tiles li[data-human-review="true"] button { border:2px solid Highlight;box-shadow:none; } }

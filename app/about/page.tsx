@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { ExternalLink } from "lucide-react";
 import { BrandArt } from "@/components/brand/BrandArt";
+import {EngineeredHero} from "@/components/brand/EngineeredHero";
 import { Hero } from "@/components/brand/Hero";
 import { ContextSelector } from "@/components/brand/ContextSelector";
 import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
 import { artwork as art } from "@/lib/brand-assets";
 export const metadata: Metadata = { title: "About Voltron Lattice", description: "An industrial systems company connecting physical production, manufacturing knowledge, digital architecture and human judgment." };
 export default function AboutPage() {
-  return <SiteShell><Hero eyebrow="About" title="Technology should deepen human progress." art="A01-about-hero">Voltron Lattice is building an industrial systems company around physical production, manufacturing knowledge, digital architecture and human judgment.</Hero>
+  return <SiteShell><Hero principles={["Physical production","Manufacturing knowledge","Human progress"]} eyebrow="About" title="Technology should deepen human progress." illustration={<EngineeredHero kind="about"/>}>Voltron Lattice is building an industrial systems company around physical production, manufacturing knowledge, digital architecture and human judgment.</Hero>
     <Section white><Intro eyebrow="Our direction" title="Manufacturing is our first application.">We connect physical production, manufacturing knowledge and intelligence through one architecture, beginning on the shopfloor.</Intro><div className="entry-grid">{[
       ["Physical production", art.execution, "The real economy. On the shopfloor."], ["Manufacturing knowledge", art.context, "Domain expertise. Captured and structured."], ["Intelligence", art.intelligence, "Connected systems. Better decisions."],
     ].map(([title, family, text]) => <div className="entry capability-entry" key={title}><BrandArt family={family} className="entry-art"/><h3>{title}</h3><p>{text}</p></div>)}</div></Section>

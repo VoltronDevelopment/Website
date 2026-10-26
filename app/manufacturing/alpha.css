@@ -169,3 +169,43 @@
 :root[data-theme="dark"] [data-alpha-poster-theme="light"] { display:none!important; }
 :root[data-theme="dark"] [data-alpha-poster-theme="dark"] { display:block!important; }
 @media(max-width:767px) { .alpha-hero-art { height:280px; max-width:360px; margin-inline:auto; } .alpha-explore { padding-top:40px; } }
+
+/* V-Twin: compact instrument chrome around the established animation viewport. */
+.alpha-line-stage-heading { align-items:center; font-size:10px; padding-bottom:10px; }
+.alpha-line-stage-heading i { font-style:normal; opacity:.4; margin-inline:6px; }
+.alpha-twin-status { display:flex; align-items:center; justify-content:space-between; gap:12px; min-height:38px; }
+.alpha-twin-status .alpha-operation { min-height:0; margin:0; font-size:11px; line-height:1.5; }
+.alpha-lamp-legend { display:flex; flex-shrink:0; gap:10px; font-size:9px; color:var(--muted); }
+.alpha-lamp-legend span { display:flex; align-items:center; gap:4px; }
+.alpha-lamp-legend i { width:5px; height:5px; border-radius:50%; background:var(--cube-outline); }
+.alpha-lamp-legend [data-lamp="active"] { background:var(--blue); box-shadow:0 0 5px color-mix(in srgb,var(--blue) 35%,transparent); }
+.alpha-lamp-legend [data-lamp="complete"] { background:var(--alpha-bath-ice); }
+.alpha-twin-transport { display:grid; grid-template-columns:auto minmax(90px,1fr) auto; gap:12px; align-items:center; padding:3px 6px; border-block:1px solid var(--line); }
+.alpha-twin-transport .alpha-line-controls { grid-column:1; grid-row:1; flex-wrap:nowrap; gap:0; }
+.alpha-twin-transport .alpha-line-progress { grid-column:2; grid-row:1; margin:0; gap:8px; }
+.alpha-twin-transport .alpha-line-chapters { grid-column:3; grid-row:1; margin:0; }
+.alpha-twin-transport .alpha-line-controls button { position:relative; min-width:30px; min-height:32px; padding:5px 7px; font-size:10px; }
+.alpha-twin-transport .alpha-play { min-width:60px!important; }
+.alpha-twin-transport .alpha-control-label,.alpha-twin-transport .alpha-overview-full,.alpha-twin-transport .alpha-overview-compact { display:none; }
+.alpha-twin-transport .alpha-line-chapters button { min-height:32px; padding:5px 8px; font-size:10px; }
+.alpha-twin-transport .alpha-chapter-full { display:none; }
+.alpha-twin-transport .alpha-chapter-compact { display:inline; }
+.alpha-line .alpha-options { margin-top:3px; font-size:10px; }
+.alpha-line .alpha-options > summary { min-height:32px; padding-block:9px; }
+.alpha-line .alpha-line-caption,.alpha-line .alpha-line-static-note { font-size:10px; margin-top:5px; }
+.alpha-line .alpha-line-panel { padding:16px; border-radius:8px; margin-top:25px; }
+.alpha-line .alpha-line-panel h2 { font-size:15px; line-height:1.5; }
+.alpha-line .alpha-line-lot { margin-top:3px; font-size:11px; }
+.alpha-line .alpha-line-tabs { margin-top:12px; }
+.alpha-line .alpha-line-tabs button { min-height:36px; font-size:11px; }
+.alpha-line .alpha-view-summary { margin-top:12px; font-size:11px; line-height:1.6; }
+.alpha-line .alpha-line-facts > div { grid-template-columns:80px minmax(0,1fr); padding:8px 0; gap:8px; }
+.alpha-line .alpha-line-facts dt { font-size:10px; }
+.alpha-line .alpha-line-facts dd { font-size:12px; }
+.alpha-line .alpha-line-evidence { margin-top:12px; }
+.alpha-line .alpha-line-panel summary { min-height:36px; padding-block:10px; font-size:11px; }
+.alpha-line .alpha-line-panel details > p { font-size:11px; }
+@media(pointer:coarse) { .alpha-twin-transport .alpha-line-controls button,.alpha-twin-transport .alpha-line-chapters button,.alpha-line .alpha-line-tabs button { min-height:44px; min-width:44px; } }
+@media(max-width:1100px) { .alpha-twin-transport { grid-template-columns:auto minmax(90px,1fr); gap:8px; } .alpha-twin-transport .alpha-line-chapters { grid-row:2; grid-column:1 / -1; border-top:1px solid var(--line); } }
+@media(max-width:900px) { .alpha-line .alpha-line-panel { margin-top:0; } }
+@media(max-width:600px) { .alpha-twin-status { align-items:flex-start; flex-direction:column; gap:6px; padding-block:9px; } .alpha-line-stage-heading { flex-direction:row; align-items:center; font-size:9px; } .alpha-twin-transport { padding-inline:0; gap:6px; } .alpha-twin-transport .alpha-line-progress > span { font-size:9px; } }

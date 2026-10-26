@@ -1,0 +1,11 @@
+import {describe,it,expect} from 'vitest';
+import * as T from 'three';
+import layout from '../public/sculptures/neural-network.json';
+import {frameNeuralCamera} from '../components/brand/neural-network-framing';
+import {neuralState,neuralDuration} from '../components/brand/neural-network-timeline';
+describe('Complete source neural-network sculpture',()=>{
+ it('retains 54 source nodes and all 433 unique adjacent-layer links',()=>{expect(layout.nodes).toHaveLength(54);expect(layout.edges).toHaveLength(433);expect(layout.sourceConnectionCaps).toBe(866);expect([0,1,2,3].map(i=>layout.nodes.filter(n=>n.layer===i).length)).toEqual([25,9,16,4]);const pairs=new Set();for(const e of layout.edges){expect(layout.nodes[e.to].layer-layout.nodes[e.from].layer).toBe(1);pairs.add(e.from+','+e.to);}expect(pairs.size).toBe(433);});
+ it('attaches each link exactly to its corresponding cube face',()=>{for(const e of layout.edges)for(const [id,point] of [[e.from,e.start],[e.to,e.end]] as const){const n=layout.nodes[id],delta=point.map((x,i)=>Math.abs(x-n.position[i]));expect(Math.max(...delta)).toBeCloseTo(n.edge/2,7);expect(delta.every(x=>x<=n.edge/2+1e-7)).toBe(true);}});
+ it('preserves every node inside desktop, tablet and mobile frames',()=>{for(const aspect of [1.5,1.15,1,.85,2]){const c=new T.PerspectiveCamera(35,aspect,.1,100);c.position.fromArray(layout.camera.position);c.lookAt(new T.Vector3().fromArray(layout.camera.target));c.updateMatrixWorld();frameNeuralCamera(c,aspect);for(const n of layout.nodes)for(let i=0;i<8;i++){const p=new T.Vector3(...n.position as [number,number,number]).add(new T.Vector3(i&1?n.edge/2:-n.edge/2,i&2?n.edge/2:-n.edge/2,i&4?n.edge/2:-n.edge/2)).project(c);expect(Math.abs(p.x)).toBeLessThan(.9);expect(Math.abs(p.y)).toBeLessThan(.9);expect(p.z).toBeLessThan(1);}}});
+ it('establishes every connection before signal propagation and leaves the full graph at rest',()=>{expect(neuralState(4).links.every(x=>x===1)).toBe(true);const end=neuralState(neuralDuration);expect(end.links).toEqual([1,1,1]);expect(end.energy).toBe(0);expect(end.done).toBe(true);for(const n of layout.nodes)expect(end.node(n.id,n.layer)).toBe(1);expect(neuralState(NaN).time).toBe(0);expect(neuralState(99).time).toBe(neuralDuration);});
+});

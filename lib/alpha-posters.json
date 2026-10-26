@@ -1,14 +1,14 @@
 {
   "desktop": {
-    "light": "/optimized/alpha-desktop-light-e16604701dbf1de7.webp",
-    "dark": "/optimized/alpha-desktop-dark-67c34a3768da7232.webp"
+    "light": "/optimized/alpha-beacons-plant-light-e882e778315ccd1f.webp",
+    "dark": "/optimized/alpha-beacons-plant-dark-020fd5a0ee77b475.webp"
   },
   "tablet": {
-    "light": "/optimized/alpha-tablet-light-bc114a35de83883b.webp",
-    "dark": "/optimized/alpha-tablet-dark-444e63651d36c964.webp"
+    "light": "/optimized/alpha-beacons-plant-light-e882e778315ccd1f.webp",
+    "dark": "/optimized/alpha-beacons-plant-dark-020fd5a0ee77b475.webp"
   },
   "mobile": {
-    "light": "/optimized/alpha-mobile-light-e77921679c8460e8.webp",
-    "dark": "/optimized/alpha-mobile-dark-f826b921144edaf7.webp"
+    "light": "/optimized/alpha-beacons-plant-light-e882e778315ccd1f.webp",
+    "dark": "/optimized/alpha-beacons-plant-dark-020fd5a0ee77b475.webp"
   }
 }

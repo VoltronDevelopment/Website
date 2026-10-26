@@ -24,7 +24,7 @@
 .factory-systems { margin:0; min-width:0; }
 .factory-systems-stage { position:relative; isolation:isolate; min-width:0; }
 .factory-component-poster { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
-.factory-component-poster img { width:auto; height:280px; max-width:100%; object-fit:contain; }
+.factory-component-poster img { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:auto; height:280px; max-width:100%; object-fit:contain; }
 .factory-systems-stage[data-renderer="webgl"] .factory-component-poster { visibility:hidden; }
 .factory-systems-stage .factory-system-fallback { visibility:hidden; }
 .factory-systems-stage:not([data-renderer="webgl"]) .factory-system::after { display:none; }
@@ -36,7 +36,7 @@
 .factory-system h3 { position:relative; z-index:2; font-size:18px; line-height:26px; font-weight:500; overflow-wrap:anywhere; }
 .factory-system p { position:relative; z-index:2; max-width:230px; min-height:48px; margin:12px auto 0; font-size:15px; line-height:24px; }
 .factory-system h3,.factory-system p { opacity:var(--label-reveal,1); transform:translateY(calc((1 - var(--label-reveal,1))*6px)); }
-.factory-system-anchor { position:relative; height:280px; width:100%; }
+.factory-system-anchor { position:relative; height:280px; width:100%; container-type:size; }
 .factory-system-fallback { position:absolute; inset:0; }
 .factory-system-fallback svg { display:block; width:100%; height:100%; overflow:visible; }
 .factory-system-fallback img { position:absolute; width:66%; height:66%; left:17%; top:18%; object-fit:contain; }
@@ -137,7 +137,7 @@
   .factory-systems-grid { grid-template-columns:1fr; gap:18px; }
   .factory-system { display:grid; grid-template-columns:minmax(112px,42%) minmax(0,1fr); grid-template-rows:1fr 1fr; column-gap:16px; text-align:left; min-height:144px; }
   .factory-system-anchor { grid-column:1; grid-row:1 / 3; height:144px; }
-  .factory-component-poster img { height:209px; }
+  .factory-component-poster { --component-poster-scale:1.45; }
   .factory-system h3 { grid-column:2; grid-row:1; align-self:end; padding-bottom:6px; font-size:16px; line-height:24px; }
   .factory-system p { grid-column:2; grid-row:2; align-self:start; margin:0; min-height:0; font-size:13px; line-height:21px; }
   .factory-systems-stage:not([data-renderer="webgl"]) .factory-system:not(:last-child)::after { top:calc(100% - 4px); left:21%; width:0; height:26px; border-top:0; border-left:2px dotted var(--cyan); }

@@ -12,3 +12,9 @@
   .human-story-hero .hero-copy > p:not(.eyebrow) { font-size:14px; line-height:23px; }
 }
 @media (max-width:359px) { .human-hero-art { height:350px; } }
+
+/* Keep playback anchored to the artwork when the optional studio is open. */
+.human-hero-controlled:has(.artwork-inspector) > .hero-motion-controls { top:434px; bottom:auto; }
+@media(max-width:1099px){.human-hero-controlled:has(.artwork-inspector) > .hero-motion-controls {top:374px;}}
+@media(max-width:767px){.human-hero-controlled:has(.artwork-inspector) > .hero-motion-controls {top:334px;}}
+@media(max-width:359px){.human-hero-controlled:has(.artwork-inspector) > .hero-motion-controls {top:294px;}}

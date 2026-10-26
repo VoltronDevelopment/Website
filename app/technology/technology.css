@@ -8,3 +8,12 @@
   .technology-lattice-art { height:clamp(310px,43svh,380px); max-width:440px; margin-inline:auto; }
   .technology-hero::before { background-size:32px 32px; }
 }
+
+/* Source network geometry keeps its perspective; mobile framing fits its full width. */
+@media(max-width:767px){.engineered-technology .engineered-stage {height:320px;}}
+.engineered-technology:has(.artwork-inspector) > .hero-motion-controls {top:484px;bottom:auto;}
+@media(min-width:1500px){.engineered-technology:has(.artwork-inspector) > .hero-motion-controls {top:524px;}}
+@media(max-width:1000px){.engineered-technology:has(.artwork-inspector) > .hero-motion-controls {top:414px;}}
+@media(max-width:767px){.engineered-technology:has(.artwork-inspector) > .hero-motion-controls {top:264px;}}
+
+@media(min-width:1100px){.technology-hero .engineered-technology {width:calc(100% + 48px);margin-left:-8px;}}

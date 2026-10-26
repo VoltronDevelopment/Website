@@ -36,3 +36,25 @@
 .intelligence-hero-artwork:after { content:"";position:absolute;left:19%;right:12%;bottom:57px;height:8px;background:linear-gradient(90deg,transparent,#67c5f063,transparent);filter:blur(7px);pointer-events:none; }
 .intelligence-face-stage canvas { transition:opacity .45s ease; }
 @media(prefers-reduced-motion:reduce){.intelligence-face-stage canvas{transition:none}}
+
+.intelligence-face-controls button { display:inline-flex;align-items:center;justify-content:center;gap:8px;color:var(--ink);border-color:var(--line);padding-inline:12px; }
+.intelligence-face-controls button:hover { border-color:var(--accent); }
+:root[data-theme="dark"] .intelligence-intro:before { background:linear-gradient(90deg,#080f15de,transparent 57%),radial-gradient(ellipse at 76% 47%,#07101980,transparent 24%),radial-gradient(ellipse at 87% 22%,#245f8e35,transparent 40%),radial-gradient(ellipse at 62% 66%,#2a7aa023,transparent 27%); }
+.intelligence-hero-artwork:before { left:12%;right:5%;bottom:60px;height:15px;filter:blur(13px);opacity:.7; }
+.intelligence-hero-artwork:after { left:17%;right:9%;bottom:58px;height:4px;filter:blur(4px); }
+.intelligence-sculpture-hero { padding-top:8px;padding-bottom:0; }
+.intelligence-sculpture-hero { min-height:0; }
+.intelligence-sculpture-hero .hero-grid { min-height:0; }
+
+.intelligence-hero-artwork:before { bottom:51px;height:36px;left:16%;right:8%;background:radial-gradient(ellipse,#429acb38,transparent 70%);filter:blur(10px);opacity:calc(.65 + var(--scene-response,0)*.25); }
+.intelligence-hero-artwork:after { bottom:53px;height:22px;left:24%;right:14%;background:radial-gradient(ellipse,#8bcde62e,transparent 72%);filter:blur(7px); }
+.intelligence-review { padding:12px;border:1px solid var(--line);font-size:12px; }
+.intelligence-review label { display:flex;align-items:center;gap:12px; }
+.intelligence-review input { flex:1;min-height:44px;accent-color:var(--accent); }
+.intelligence-review nav { display:flex;gap:16px;flex-wrap:wrap; }
+.intelligence-review a { min-height:44px;display:inline-flex;align-items:center;text-transform:capitalize; }
+/* Ground contact follows the lower viewing angle rather than the former top view. */
+.intelligence-hero-artwork:before,.intelligence-hero-artwork:after { top:calc((100% - 44px)*.865);bottom:auto;transform:translateY(-50%); }
+
+/* Gentle downward camera: pool aligns with the projected cube base. */
+.intelligence-hero-artwork:before,.intelligence-hero-artwork:after { top:calc((100% - 44px)*.92); }

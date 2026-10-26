@@ -26,12 +26,17 @@ describe("one lot and connected evidence", () => {
   });
   it("provides coherent static snapshots for navigation", () => {
     expect(lotStageTimes.map(time => lotStoryStateAt(time).stage)).toEqual([0, 1, 2, 3]);
-    expect(lotStageTimes.map(time => lotStoryStateAt(time).phase)).toEqual(["receive", "process", "verify", "settled"]);
+    expect(lotStageTimes.map(time => lotStoryStateAt(time).phase)).toEqual(["receive", "process", "verify", "dispatch"]);
     const dispatch = lotStoryStateAt(lotStageTimes[3]); expect(dispatch.evidence.every(Boolean)).toBe(true);
   });
   it("holds a completed Dispatch composition after fourteen seconds", () => {
     const state = lotStoryStateAt(lotStoryDuration); expect(state.phase).toBe("settled"); expect(state.settled).toBe(true);
     expect(state.stage).toBe(3); expect(state.evidence.every(Boolean)).toBe(true);
     expect(lotStoryStateAt(100)).toEqual(state); expect(lotStoryStateAt(NaN).time).toBe(0);
+  });
+  it('forms at Receive, travels monotonically and dissolves only after release and dispatch evidence',()=>{
+    expect(lotStoryStateAt(0).formation).toBe(0);expect(lotStoryStateAt(1.3).formation).toBe(1);let previous=0;
+    for(let t=0;t<=14;t+=.025){const s=lotStoryStateAt(t);expect(s.position).toBeGreaterThanOrEqual(previous);previous=s.position;if(t<10.5)expect(s.position).toBeLessThanOrEqual(2);if(s.departure>0){expect(s.released).toBe(true);expect(s.evidence.every(Boolean)).toBe(true);}}
+    expect(lotStoryStateAt(9).position).toBe(2);expect(lotStoryStateAt(9).moving).toBe(false);expect(lotStoryStateAt(14).departure).toBe(1);
   });
 });

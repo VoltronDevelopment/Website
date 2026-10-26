@@ -45,3 +45,21 @@ infra/amplify-env-vars.json
 /public/voltron_network.png
 /public/voltron_qms.png
 /public/voltron_logo_without_background.png
+
+# Local reference/model downloads; deploy the prepared runtime assets instead.
+/examples/
+/vlc-help.txt
+/public/3D face/*.fbx
+/public/3D hand/
+/public/arm__hand_sculpting/
+/public/artificial_neural_network_ann/
+/public/brain-in-head/
+/public/cube/
+/public/handshake-ramadhan-series/
+/public/impossible_cube/
+/public/old_tree/
+/public/particle_wave/
+/public/planes-of-the-head/
+/public/plasmatic-cube/
+/public/quantum-cube/
+/public/rrrs-dosti-symbol/

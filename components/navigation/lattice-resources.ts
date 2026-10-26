@@ -1,7 +1,6 @@
 import {yieldToBrowser} from "../performance/scene-policy";
-import {optimizedAsset} from "@/lib/optimized-assets";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import {createArtworkEnvironment} from "../brand/artwork-studio";
 import type {SharedHeroResources} from "../home/hero-renderer";
 
 export async function createLatticeResources(canvas:HTMLCanvasElement):Promise<SharedHeroResources|undefined>{
@@ -11,11 +10,10 @@ export async function createLatticeResources(canvas:HTMLCanvasElement):Promise<S
     if(new URLSearchParams(location.search).get("renderer")==="static")return undefined;
     renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});
     await yieldToBrowser();
-    const room=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
-    environment=pmrem.fromScene(room,.04);room.dispose();pmrem.dispose();
+    environment=createArtworkEnvironment(renderer);
     await yieldToBrowser();
-    const texture=await new THREE.TextureLoader().loadAsync(optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png"));
-    texture.colorSpace=THREE.SRGBColorSpace;
+    const texture=await new THREE.TextureLoader().loadAsync("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png");
+    texture.colorSpace=THREE.SRGBColorSpace;texture.generateMipmaps=false;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     const activeRenderer=renderer,activeEnvironment=environment;
     return {renderer,environment:environment.texture,texture,dispose(){texture.dispose();activeEnvironment.dispose();activeRenderer.dispose();}};
   }catch{environment?.dispose();renderer?.dispose();return undefined;}

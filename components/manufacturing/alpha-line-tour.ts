@@ -1,4 +1,3 @@
-import { alphaLineStation } from "./alpha-line-config";
 import { alphaLineSchedule, alphaLineStateAt, alphaLineDuration, type AlphaLineState } from "./alpha-line-timeline";
 const smooth = (t: number) => { t = Math.max(0, Math.min(1,t)); return t*t*(3-2*t); };
 let cursor = 0;
@@ -25,29 +24,14 @@ export function alphaTourStateAt(seconds: number): AlphaLineState {
 }
 export function alphaPlaybackDuration(mode: AlphaLineState["mode"]) { return mode === "tour" ? alphaTourDuration : alphaLineDuration; }
 const at = (id: string, kind: string) => alphaLineSchedule.find(e=>e.stationId===id && e.kind===kind)!.t0;
-const anchor = (id: string, zoom: number) => {const s=alphaLineStation(id);return {x:s.x,z:s.z,zoom};};
-const shots = [
-  {at:0,x:0,z:0,zoom:1,detail:0},
-  {at:at("LOAD","receive"),...anchor("LOAD",1.9),detail:1},
-  {at:at("T01","travel"),...anchor("T02",1.8),detail:1},
-  {at:at("T04","travel"),...anchor("T04",1.8),detail:1},
-  {at:at("T06","travel"),...anchor("T07",1.65),detail:1},
-  {at:at("T09","travel"),...anchor("T10",1.8),detail:1},
-  {at:at("T12","travel"),...anchor("T12",1.8),detail:1},
-  {at:at("UNLOAD","travel"),...anchor("UNLOAD",1.9),detail:1},
-  {at:at("UNLOAD","review"),x:0,z:0,zoom:1,detail:0},
-];
-/** Seekable camera track; orientation is fixed and each operation has a settled working frame. */
+/** Absolute-time follow camera: no stale station-group anchors during transfers. */
 export function alphaLineShotAt(state: AlphaLineState, narrow = false) {
-  const time=state.time, toTime=(t:number)=>state.mode==="tour"?alphaTourTimeAt(t):t;
-  let index=0; shots.forEach((s,i)=>{if(time>=toTime(s.at))index=i;});
-  // On narrow screens centre the featured first/final dips instead of their wider tank group.
-  const frame = (shot: typeof shots[number]) => {
-    if (!narrow) return shot;
-    const station = shot.at === at("T01","travel") ? alphaLineStation("T01") : shot.at === at("T12","travel") ? alphaLineStation("T13") : null;
-    return station ? {...shot,x:station.x,z:station.z} : shot;
-  };
-  const next=frame(shots[index]), previous=frame(shots[Math.max(0,index-1)]);
-  const t=smooth((time-toTime(next.at))/.85);
-  return {x:previous.x+(next.x-previous.x)*t,z:previous.z+(next.z-previous.z)*t,zoom:previous.zoom+(next.zoom-previous.zoom)*t,detail:previous.detail+(next.detail-previous.detail)*t};
+  const toTime = (t: number) => state.mode === "tour" ? alphaTourTimeAt(t) : t;
+  const enter = smooth((state.time - toTime(at("LOAD", "receive"))) / .85);
+  const exit = smooth((state.time - toTime(at("UNLOAD", "review"))) / .85);
+  const detail = enter * (1 - exit);
+  // Open the working frame slightly on the short leg; ease with the actual hoist turn.
+  const bend = Math.sin(state.yaw);
+  const workingZoom = (narrow ? 1.75 : 1.9) - .22 * bend * bend;
+  return { x: state.x, z: state.z, zoom: 1 + (workingZoom - 1) * detail, detail, azimuth: -.22 * bend * detail };
 }

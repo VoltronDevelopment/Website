@@ -1,26 +1,40 @@
 {
   "desktop": {
     "light": [
-      "/optimized/lot-desktop-light-0-5374f655ac784007.webp",
-      "/optimized/lot-desktop-light-14-01b0852f811abcc3.webp"
+      "/optimized/lot-desktop-light-1.9-5e83fcb959a3c312.webp",
+      "/optimized/lot-desktop-light-4.4-d10cb0fc115496bd.webp",
+      "/optimized/lot-desktop-light-7.7-f185230995e41b02.webp",
+      "/optimized/lot-desktop-light-12.4-a8567a4f0118c37c.webp"
     ],
     "dark": [
-      "/optimized/lot-desktop-dark-0-de4c1998d8188d65.webp",
-      "/optimized/lot-desktop-dark-14-4ad26e829caf9c02.webp"
+      "/optimized/lot-desktop-dark-1.9-ffd31e7f883412c3.webp",
+      "/optimized/lot-desktop-dark-4.4-a0ddfaf32a36e731.webp",
+      "/optimized/lot-desktop-dark-7.7-b336ec3960e94ad9.webp",
+      "/optimized/lot-desktop-dark-12.4-e72a04623d504e2a.webp"
     ]
   },
   "mobile": {
     "light": [
-      "/optimized/lot-mobile-light-0-6cc729ac9b2a521e.webp",
-      "/optimized/lot-mobile-light-4.9-0bdb4ee7698ca632.webp",
-      "/optimized/lot-mobile-light-7.9-8af6082b59841e96.webp",
-      "/optimized/lot-mobile-light-14-6cc729ac9b2a521e.webp"
+      "/optimized/lot-mobile-light-1.9-80abbeb87b5c1777.webp",
+      "/optimized/lot-mobile-light-4.4-34b0da78b6c6bf23.webp",
+      "/optimized/lot-mobile-light-7.7-d90804b1dc71ba2a.webp",
+      "/optimized/lot-mobile-light-12.4-075061292b74dc2b.webp"
     ],
     "dark": [
-      "/optimized/lot-mobile-dark-0-cc486e52349f7640.webp",
-      "/optimized/lot-mobile-dark-4.9-c324a0c4f0b614ed.webp",
-      "/optimized/lot-mobile-dark-7.9-69e23f0563f8f235.webp",
-      "/optimized/lot-mobile-dark-14-cc486e52349f7640.webp"
+      "/optimized/lot-mobile-dark-1.9-734f268cb686c8d7.webp",
+      "/optimized/lot-mobile-dark-4.4-8a744665ed0ab510.webp",
+      "/optimized/lot-mobile-dark-7.7-33ab0b8615ce76be.webp",
+      "/optimized/lot-mobile-dark-12.4-e2097707156fcd5b.webp"
     ]
+  },
+  "opening": {
+    "desktop": {
+      "light": "/optimized/lot-desktop-light-0-255b40e646862006.webp",
+      "dark": "/optimized/lot-desktop-dark-0-c59e54cec6ae10ba.webp"
+    },
+    "mobile": {
+      "light": "/optimized/lot-mobile-light-0-3d1127b7fb7c5d68.webp",
+      "dark": "/optimized/lot-mobile-dark-0-54ef04827daafeec.webp"
+    }
   }
 }

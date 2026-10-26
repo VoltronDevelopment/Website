@@ -1,11 +1,16 @@
 import {optimizedAsset} from "@/lib/optimized-assets";
+import {sceneOpeningTime} from "@/lib/scene-continuity";
+import {mountHomeReveal} from './home-reveal-renderer';
 import {updateLineDistance} from "../performance/line-distance";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
+import {addArtworkSoftboxes,createArtworkEnvironment,createFloorEcho,edgePrism} from "../brand/artwork-studio";
 import * as homeTimeline from "./hero-timeline";
 import * as technologyTimeline from "./technology-hero-timeline";
 import {glassFace,setGlass,strokeMaterial,stroke} from "./lattice-materials";
+import {cloneArtworkMaterial,homePaneRole,homeCellTone} from "./home-glass";
+import {observeArtworkTuning,artworkDefaults} from '../brand/artwork-tuning';
 import {alignmentLight,junctionPulse,contactShadow} from "./lattice-lighting";
 import {createLatticeActivity} from "./lattice-activity";
 import {sizeHeroSurface} from "./hero-surface";
@@ -13,6 +18,7 @@ import {homeCells,cellsAt} from "../navigation/lattice-transition";
 const {smooth,gridOpacityAt}=homeTimeline;
 
 export function mountHero(canvas, container, hero, variant="home", options={}) {
+if(variant==='home')return mountHomeReveal(canvas,container,hero,options);
 const quality=createRenderQuality(canvas,1.75);
 const technology=variant==="technology";
 const {duration,offsets,stateAt}=technology ? technologyTimeline : homeTimeline;
@@ -40,6 +46,9 @@ const edgeCounts = new Map(), nodeCounts = new Map(), faceCounts = new Map();
 const resources = [], groundMaterials = [], materialGroups = {};
 const groundObjects=[];
 let floorReflection;
+let groundEcho;
+const glassRims=[];
+const homeFloorLights=[];
 const arrivals = [], arrivalMaterials = [];
 const illuminatedMaterials=[];
 const nodeAccents=[],connectionHighlights=[];
@@ -55,7 +64,14 @@ let blurX,blurY,gaussianMaterial,gaussianScene;
 let raf = 0, startTime = 0, currentTime = 0, renderedFrames = 0;
 let fallback = false, disposed = false, observer, visibilityObserver, themeObserver;
 let inView = true;
+let started=!options.deferStart;
+const reviewTime=new URLSearchParams(location.search).get("hero-time");
+const initialTime=reviewTime!==null?Math.max(0,Math.min(duration,Number(reviewTime)||0)):options.immediate?duration:sceneOpeningTime[variant];
+currentTime=initialTime;
 let activity;
+let tuning={...artworkDefaults};
+let entranceWave;
+let userPaused=false,manualReplay=false;
 let morphState=null;
 let morphSurface=null;
 const markUrl = optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png");
@@ -68,11 +84,20 @@ function surfaceKind(cell,face) {
   if(cellKeys.has(neighbour.join(",")))return "internal";
   return face.kind;
 }
+function paneMaterial(cell,face){
+  const kind=surfaceKind(cell,face),role=technology?undefined:homePaneRole(cell,face.normal,kind==="internal"),tone=technology?undefined:homeCellTone(cell),key=technology?kind:kind+":"+role+":"+tone;
+  if(!materialGroups[key]){
+    const material=tracked(glassFace(kind,false,true,technology?undefined:"home",role));
+    if(!technology){material.userData.homeCellTone=tone;setGlass(material,kind,false);}
+    materialGroups[key]=material;
+  }
+  return materialGroups[key];
+}
 
 function tracked(resource) { resources.push(resource); return resource; }
 function pointKey(point) { return point.toArray().join(","); }
 function litMaterial(base,position,kind) {
-  const material=tracked(base.clone());
+  const material=tracked(cloneArtworkMaterial(base));
   illuminatedMaterials.push({material,base,position:position.clone(),distance:position.distanceTo(coreCentre ?? logoRegion),kind});
   return material;
 }
@@ -102,7 +127,7 @@ function createGeometry() {
       const geometry = tracked(new THREE.BufferGeometry());
       geometry.setAttribute("position",new THREE.Float32BufferAttribute(points.flatMap(point=>point.toArray()),3));
       geometry.setIndex([0,1,2,0,2,3]); geometry.computeVertexNormals();
-      const material = materialGroups[kind] ??= tracked(glassFace(kind));
+      const material = paneMaterial(cell,face);
       const mesh = new THREE.Mesh(geometry,material);
       // Transparent panes sort around their own centres, not the world origin.
       const centre = points.reduce((sum,point)=>sum.add(point),new THREE.Vector3()).multiplyScalar(.25);
@@ -118,6 +143,14 @@ function createGeometry() {
     const material = midpoint.clone().sub(target).dot(direction)>-.1 ? edgeFront : edgeRear;
     const edge = stroke(pair.map(point=>point.clone().sub(midpoint)),litMaterial(material,midpoint,"edge"));tracked(edge.geometry);edge.position.copy(midpoint);
     edge.layers.set(isForeground(midpoint) ? 1 : 0);assembled.add(edge);
+  }
+  // Thin hexagonal rails give glass highlights a physical surface and stay batched.
+  for(const layer of [0,1]){
+    const pieces=[...edges.values()].filter(pair=>Number(isForeground(pair[0].clone().lerp(pair[1],.5)))===layer).map(pair=>edgePrism(pair[0],pair[1],technology?.0075:.011));
+    if(!pieces.length)continue;
+    const geometry=tracked(mergeGeometries(pieces));pieces.forEach(piece=>piece.dispose());
+    const material=tracked(new THREE.MeshPhysicalMaterial({color:0x99c9ed,metalness:.4,roughness:technology?.12:.08,clearcoat:1,envMapIntensity:technology?1.6:2,transparent:true,opacity:1}));
+    const rim=new THREE.Mesh(geometry,material);rim.layers.set(layer);assembled.add(rim);glassRims.push(rim);
   }
   const nodeGeometry = tracked(new THREE.SphereGeometry(.029,12,8));
   const haloTexture=radialTexture([[0,"rgba(72,207,234,.5)"],[.25,"rgba(72,207,234,.22)"],[1,"rgba(72,207,234,0)"]]);
@@ -141,9 +174,16 @@ function createGeometry() {
   logoJunctions=[...vertices.values()].sort((a,b)=>a.distanceTo(logoRegion)-b.distanceTo(logoRegion)).slice(0,3);
   for(const [index,cell] of cells.entries()){
     const from=new THREE.Vector3(cell[0]-.5,cell[1]+.5,cell[2]+.5),to=from.clone().add(new THREE.Vector3(1,0,0));
-    const material=tracked(strokeMaterial(true));material.color.setHex(0x48cfea);material.userData.cssWidth=1.6;
+    const material=tracked(strokeMaterial(true));material.color.setHex(0x48cfea);material.userData.cssWidth=technology?1.6:1.9;
     const line=stroke([from,to],material);tracked(line.geometry);line.layers.set(isForeground(from.clone().lerp(to,.5))?1:0);scene.add(line);
-    connectionHighlights.push({line,from,to,index});
+    if(!technology){material.depthTest=false;line.renderOrder=4;}
+    const halos=[];
+    if(!technology)for(const [width,opacity]of [[7,.12],[4,.23]]){
+      const haloMaterial=tracked(strokeMaterial(true));haloMaterial.userData.cssWidth=width;haloMaterial.color.setHex(0x43b9ff);haloMaterial.userData.peakOpacity=opacity;
+      const halo=stroke([from,to],haloMaterial);tracked(halo.geometry);halo.layers.mask=line.layers.mask;scene.add(halo);halos.push(halo);
+      haloMaterial.depthTest=false;halo.renderOrder=3;
+    }
+    connectionHighlights.push({line,halos,from,to,index});
   }
 }
 
@@ -179,13 +219,13 @@ function createArrivals() {
     const corners=Array.from({length:8},(_,index)=>new THREE.Vector3((index&1)?.5:-.5,(index&2)?.5:-.5,(index&4)?.5:-.5));
     const world=point=>point.clone().add(new THREE.Vector3(...cell));
     const materialFor=(base,count,kind,point)=>{
-      const material=tracked(base.clone());arrivalMaterials.push({material,base,count,cellIndex,kind,point});return material;
+      const material=tracked(cloneArtworkMaterial(base));arrivalMaterials.push({material,base,count,cellIndex,kind,point});return material;
     };
     for(const face of faces) {
       const points=face.corners.map(index=>corners[index]);
       const key=points.map(world).map(pointKey).sort().join("|");
       const count=faceCounts.get(key);
-      const base=materialGroups[surfaceKind(cell,face)];
+      const base=paneMaterial(cell,face);
       const geometry=tracked(new THREE.BufferGeometry());
       geometry.setAttribute("position",new THREE.Float32BufferAttribute(points.flatMap(point=>point.toArray()),3));
       geometry.setIndex([0,1,2,0,2,3]);geometry.computeVertexNormals();
@@ -233,6 +273,15 @@ function createGround() {
   const floor = new THREE.Mesh(tracked(new THREE.PlaneGeometry(2.7,2.7)),material);
   floorReflection=floor;
   floor.rotation.x = -Math.PI/2; floor.position.y = -.025; scene.add(floor); groundMaterials.push(material);
+  groundEcho=tracked(createFloorEcho([assembled],0));scene.add(groundEcho.group);
+  if(!technology){
+    const glow=radialTexture([[0,"rgba(207,245,255,.9)"],[.12,"rgba(65,178,255,.55)"],[.42,"rgba(36,107,212,.12)"],[1,"rgba(36,107,212,0)"]]);
+    const geometry=tracked(new THREE.PlaneGeometry(.28,.28));
+    for(const point of vertices.values())if(point.y===0){
+      const material=tracked(new THREE.MeshBasicMaterial({map:glow,transparent:true,opacity:0,depthWrite:false,toneMapped:false}));
+      const pool=new THREE.Mesh(geometry,material);pool.rotation.x=-Math.PI/2;pool.position.set(point.x,-.006,point.z);scene.add(pool);homeFloorLights.push(pool);
+    }
+  }
 }
 
 function measureLogo(texture) {
@@ -240,7 +289,7 @@ function measureLogo(texture) {
   source.width = texture.image.width; source.height = texture.image.height;
   const context = source.getContext("2d",{willReadFrequently:true}); context.drawImage(texture.image,0,0);
   const {data} = context.getImageData(0,0,source.width,source.height);
-  logoMask=createLogoMask(data,source.width,source.height);
+  if(technology)logoMask=createLogoMask(data,source.width,source.height);
   let minX=source.width,minY=source.height,maxX=0,maxY=0;
   for (let y=0;y<source.height;y++) for (let x=0;x<source.width;x++) {
     if (data[(y*source.width+x)*4+3]<32) continue;
@@ -357,12 +406,14 @@ function palette() {
   if(fallback) {renderFallback();return;}
   const dark = theme === "dark", diagnostic = view!=="hero";
   for (const [kind,material] of Object.entries(materialGroups)) {
-    const core=kind.startsWith("core-"),faceKind=core ? kind.slice(5) : kind;
+    const core=kind.startsWith("core-"),faceKind=core ? kind.slice(5) : material.userData.faceKind||kind;
     const coreColours=dark ? {top:0x1a5e90,side:0x0b304f,front:0x124773} : {top:0x12527f,side:0x06152b,front:0x0b2d50};
     if(core){material.color.setHex(coreColours[faceKind]);material.userData.restOpacity=.96;material.envMapIntensity=.08;material.clearcoat=.35;}
-    else {setGlass(material,faceKind,dark);material.userData.restOpacity*=diagnostic?.2:1;}
+    else {setGlass(material,faceKind,dark);material.opacity*=tuning.glassOpacity;material.userData.restOpacity=material.opacity*(diagnostic?.2:1);material.roughness*=tuning.roughness;material.envMapIntensity*=tuning.reflection;const transmission=faceKind==="side"&&material.userData.paneRole!=="backing"?tuning.transmission*.3:0;if((material.transmission>0)!==(transmission>0))material.needsUpdate=true;material.transmission=transmission;material.thickness=.025;}
   }
-  keyLight.intensity=dark ? 1.35 : 2.5;hemisphere.intensity=dark ? 1.2 : 1.8;
+  keyLight.intensity=dark ? 2 : 3.2;hemisphere.intensity=dark ? .7 : .95;keyLight.position.set(-3+Math.sin(tuning.keyDirection)*4,6,5);
+  glassRims.forEach(rim=>rim.material.color.setHex(technology?(dark?0x76b7e3:0x8bbde2):(dark?0x8ac9ed:0xc0e0f4)));
+  connectionHighlights.forEach(({line})=>line.material.color.setHex(technology?0x48cfea:dark?0xc5f4ff:0x157ad9));
   edgeFront.color.setHex(dark ? 0x579acb : 0x2468aa);
   edgeRear.color.setHex(dark ? 0x40769d : 0x619bc5);
   nodeFront.color.setHex(dark ? 0x78b0ff : 0x246bd4);
@@ -371,7 +422,7 @@ function palette() {
     coreEdge.material.color.setHex(dark ? 0x66b6e8 : 0x299bdd);
     coreConnection.material.color.setHex(dark ? 0x66b6e8 : 0x299bdd);
   }
-  for(const [material,opacity] of [[edgeFront,.88],[edgeRear,.3],[nodeFront,.98],[nodeRear,dark ? .32 : .4]]) material.userData.restOpacity=opacity;
+  for(const [material,opacity] of [[edgeFront,.5],[edgeRear,.16],[nodeFront,.98],[nodeRear,dark ? .32 : .4]]) material.userData.restOpacity=opacity*((material===edgeFront||material===edgeRear)?tuning.outline:1);
   for(const record of arrivalMaterials) record.material.copy(record.base);
   for(const record of illuminatedMaterials) record.material.copy(record.base);
   applyState(currentTime);
@@ -382,14 +433,17 @@ function weightedOpacity(opacity,weight) { return 1-Math.pow(1-opacity,Math.max(
 
 function applyState(seconds) {
   currentTime=seconds;
+  const mode=fallback?"static":userPaused?"paused":seconds>=duration?"settled":"playing";if(container.dataset.sceneMode!==mode)container.dataset.sceneMode=mode;
   if(fallback) {canvas.dataset.settled="true";canvas.dataset.animationTime=String(duration);return;}
   const state=stateAt(seconds), dark=theme==="dark",diagnostic=view!=="hero";
+  if(entranceWave){entranceWave.material.uniforms.uTime.value=seconds;entranceWave.material.uniforms.uDark.value=dark?1:0;entranceWave.visible=!diagnostic&&!technology&&seconds<6.5;}
   const materials=[...Object.values(materialGroups),edgeFront,edgeRear,nodeFront,nodeRear];
   for(const material of materials) material.opacity=weightedOpacity(material.userData.restOpacity,state.resolve);
   let maximumWave=0;
   const blue=new THREE.Color(dark?0x48cfea:0x32adff);
   const timeline=technology?technologyTimeline:homeTimeline;
-  const pulseAt=point=>reduceMotion()?0:Math.max(alignmentLight(seconds,point.toArray(),cells,timeline.starts),timeline.latticeWaveAt(seconds,point.distanceTo(logoRegion))*Math.max(.22,1-point.distanceTo(logoRegion)/3),...logoJunctions.map((node,index)=>junctionPulse(seconds,(technology?6.9:5.6)+index*.12,.14,.65)*Math.max(0,1-point.distanceTo(node)/.85)),activity?.strength(point.toArray())??0);
+  const scanStates=technology?[]:connectionHighlights.map(({index})=>homeTimeline.scanAt(seconds,index));
+  const pulseAt=point=>reduceMotion()?0:Math.max(alignmentLight(seconds,point.toArray(),cells,timeline.starts),timeline.latticeWaveAt(seconds,point.distanceTo(logoRegion))*Math.max(.22,1-point.distanceTo(logoRegion)/3),...logoJunctions.map((node,index)=>junctionPulse(seconds,(technology?6.9:5.6)+index*.12,.14,.65)*Math.max(0,1-point.distanceTo(node)/.85)),...(!technology?connectionHighlights.map(({to,index})=>scanStates[index].receiver*Math.max(0,1-point.distanceTo(to)/.24)):[]),activity?.strength(point.toArray())??0);
   for(const {material,base,distance,position,kind} of illuminatedMaterials) {
     const wave=diagnostic ? 0 : pulseAt(position);
     maximumWave=Math.max(maximumWave,wave);
@@ -417,17 +471,23 @@ function applyState(seconds) {
     material.color.copy(base.color).lerp(blue,wave*.3);
   }
   for(const {mesh,highlight,halo,point,front} of nodeAccents){
-    const pulse=pulseAt(point);halo.visible=pulse>.001;halo.material.opacity=pulse*(dark?.55:.38)*state.resolve;
+    const pulse=pulseAt(point);halo.visible=pulse>.001;halo.material.opacity=pulse*(technology?(dark?.55:.38):(dark?.55:.65))*state.resolve*tuning.glow;
     highlight.material.opacity=(front?.7:.25)*state.resolve;
   }
-  for(const {line,from,to,index} of connectionHighlights){
+  let scanStrength=0;
+  for(const {line,halos,from,to,index} of connectionHighlights){
     const age=seconds-((technology?technologyTimeline:homeTimeline).starts[index]+1.5+.12);
-    const progress=age/.34;line.visible=!reduceMotion() && progress>0 && progress<1;
+    const scan=technology?null:scanStates[index];
+    const progress=scan?scan.head:age/.34;line.visible=!diagnostic&&!reduceMotion() && (scan?scan.visible:progress>0&&progress<1);
+    halos.forEach(halo=>halo.visible=line.visible);
     if(line.visible){
-      const a=from.clone().lerp(to,Math.max(0,progress-.3)),b=from.clone().lerp(to,progress);
-      line.geometry.attributes.instanceStart.setXYZ(0,a.x,a.y,a.z);line.geometry.attributes.instanceEnd.setXYZ(0,b.x,b.y,b.z);
-      line.geometry.attributes.instanceStart.needsUpdate=true;line.geometry.attributes.instanceEnd.needsUpdate=true;
-      line.geometry.computeBoundingSphere();line.material.opacity=Math.sin(progress*Math.PI)*.8;
+      const a=from.clone().lerp(to,scan?scan.tail:Math.max(0,progress-.3)),b=from.clone().lerp(to,progress);
+      const strength=scan?scan.strength:Math.sin(progress*Math.PI);scanStrength=Math.max(scanStrength,strength);
+      for(const stroke of [line,...halos]){
+        stroke.geometry.attributes.instanceStart.setXYZ(0,a.x,a.y,a.z);stroke.geometry.attributes.instanceEnd.setXYZ(0,b.x,b.y,b.z);
+        stroke.geometry.attributes.instanceStart.needsUpdate=true;stroke.geometry.attributes.instanceEnd.needsUpdate=true;
+        stroke.geometry.computeBoundingSphere();stroke.material.opacity=strength*(stroke===line?(technology?.8:.98):stroke.material.userData.peakOpacity*(dark?.7:1))*tuning.glow;
+      }
     }
   }
   logo.material.opacity=state.logo;logo.visible=state.logo>0;
@@ -461,20 +521,29 @@ function applyState(seconds) {
   canvas.dataset.shadowSync=String(groundObjects.every(shadow=>{const group=arrivals[shadow.userData.cellIndex];return shadow.position.x===group.position.x&&shadow.position.z===group.position.z;}));
   canvas.dataset.visibleShadows=String(groundObjects.filter(shadow=>shadow.material.opacity>.001).length);
   canvas.dataset.floorReflection=groundReveal.toFixed(3);
+  glassRims.forEach(rim=>{rim.material.opacity=state.resolve*.74*tuning.outline;rim.visible=!diagnostic;});
+  homeFloorLights.forEach(pool=>{pool.visible=!diagnostic;pool.material.opacity=state.resolve*(dark?.28:.42);});
+  groundEcho?.update(diagnostic?0:groundReveal*(dark?.65:1));
   if(blurMaterial) {
     blurMaterial.uniforms.amount.value=diagnostic ? 0 : state.logo*(technology ? .85 : .98);
     blurMaterial.uniforms.quiet.value=dark ? .055 : .04;
   }
   canvas.dataset.animationTime=seconds.toFixed(3);canvas.dataset.settled=String(state.done);
-  canvas.dataset.logoOpacity=state.logo.toFixed(3);canvas.dataset.blurAmount=(diagnostic ? 0 : state.logo*(technology ? .85 : .98)).toFixed(3);
+  canvas.dataset.logoOpacity=state.logo.toFixed(3);canvas.dataset.blurAmount=(diagnostic||!technology ? 0 : state.logo*.85).toFixed(3);
+  canvas.dataset.glassTreatment=technology?"legacy":"face-roles";
   canvas.dataset.logoPulse=state.pulse.toFixed(3);canvas.dataset.gridPulse=state.gridPulse.toFixed(3);
   canvas.dataset.logoGlowOpacity="0.000";
   canvas.dataset.latticeWave=maximumWave.toFixed(3);
+  canvas.dataset.scanStrength=scanStrength.toFixed(3);
 }
 
 function render() {
   if(fallback) {renderFallback();return;}
   if (!renderer) return;
+  if(!technology){
+    renderer.autoClear=true;renderer.setRenderTarget(null);camera.layers.set(0);camera.layers.enable(1);renderer.render(scene,camera);
+    renderer.autoClear=false;renderer.clearDepth();camera.layers.set(2);renderer.render(scene,camera);camera.layers.enableAll();
+  }else{
   const centre=logo.position.clone().project(camera),uniforms=blurMaterial.uniforms;
   uniforms.centre.value.set((centre.x+1)/2,(centre.y+1)/2);
   uniforms.pageColour.value.set(...(theme==="dark" ? [4/255,4/255,6/255] : [243/255,245/255,247/255]));
@@ -492,6 +561,7 @@ function render() {
   renderer.setRenderTarget(null);renderer.clear();renderer.render(compositeScene,compositeCamera);
   renderer.clearDepth();camera.layers.set(1);renderer.render(scene,camera);
   camera.layers.set(2);renderer.render(scene,camera);camera.layers.enableAll();
+  }
   renderedFrames++;canvas.dataset.renderedFrames=String(renderedFrames);
   const checked=canvas.dataset.nonblankSamples&&canvas.dataset.theme===theme;
   canvas.dataset.view=view;canvas.dataset.theme=theme;
@@ -517,11 +587,11 @@ function resize() {
   camera.left=-framing*aspect/2; camera.right=framing*aspect/2; camera.top=framing/2; camera.bottom=-framing/2;
   camera.updateProjectionMatrix();
   const worldPixel=framing/height;
-  for(const {mesh,halo,front} of nodeAccents){mesh.scale.setScalar(worldPixel*(front?2.25:1.5)/.029);halo.scale.setScalar(worldPixel*17);}
+  for(const {mesh,halo,front} of nodeAccents){mesh.scale.setScalar(worldPixel*(front?2.25:1.5)/.029);halo.scale.setScalar(worldPixel*(technology?17:24));}
   camera.updateMatrixWorld();
   container.dataset.pointerTargets=JSON.stringify(nodeAccents.filter(node=>node.front).map(({point})=>{const p=point.clone().project(camera);return {x:(p.x+1)*width/2,y:(1-p.y)*height/2};}));
   if(fallback) {renderFallback();return;}
-  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],width,height,quality.ratio,quality.blurScale);render();
+  sizeHeroSurface(renderer,technology?[blurTarget,blurX,blurY]:[],width,height,quality.ratio,quality.blurScale);render();
 }
 
 function stopMotion() {cancelAnimationFrame(raf);raf=0;canvas.dataset.continuousRendering="false";}
@@ -530,14 +600,16 @@ function tick(now) {
   if(disposed || !inView || document.hidden) {stopMotion();return;}
   const elapsed=Math.min(duration,(now-startTime)/1000);
   applyState(elapsed);render();
-  if(elapsed<duration) raf=requestAnimationFrame(tick);else {stopMotion();activity?.arm();}
+  if(elapsed<duration) raf=requestAnimationFrame(tick);else {stopMotion();/* Finite intro: no idle pulses after settlement. */}
 }
 function play() {
   morphState=null;morphSurface=null;
   stopMotion();
   activity?.restart();
-  if(fallback || reduceMotion() || options.immediate || performance.now()>2000) {applyState(duration);render();activity?.arm();return;}
-  applyState(0);render();startTime=performance.now();canvas.dataset.continuousRendering="true";raf=requestAnimationFrame(tick);
+  if(fallback || reduceMotion() || options.immediate) {applyState(duration);render();/* Finite intro: no idle pulses after settlement. */return;}
+  applyState(initialTime);render();
+  if(!started||reviewTime!==null&&!manualReplay)return;
+  startTime=performance.now()-initialTime*1000;canvas.dataset.continuousRendering="true";raf=requestAnimationFrame(tick);
 }
 
 function renderFallback() {
@@ -550,12 +622,15 @@ function renderFallback() {
   for(const cell of cells) {
     const corners=Array.from({length:8},(_,index)=>new THREE.Vector3(cell[0]+((index&1)?.5:-.5),cell[1]+((index&2)?.5:-.5),cell[2]+((index&4)?.5:-.5)));
     for(const face of faces) {
+      if(!technology&&surfaceKind(cell,face)==="internal")continue;
       const points=face.corners.map(index=>corners[index]),key=points.map(pointKey).sort().join("|");
       if(seen.has(key))continue;seen.add(key);
       const centre=points.reduce((sum,p)=>sum.add(p),new THREE.Vector3()).multiplyScalar(.25);
       const core=surfaceKind(cell,face).startsWith("core-");
-      const fill=core ? (dark ? "#1675ae" : "#42b5ed") : dark ? "#15527c" : face.kind==="top" ? "#d8efff" : "#83c4ed";
-      polygons.push({depth:centre.dot(direction),svg:`<polygon points="${points.map(project).join(" ")}" fill="${fill}" fill-opacity="${core ? .3 : face.kind==="side" ? .16 : .07}"/>`});
+      const ink=!technology&&homeCellTone(cell)==="dark";
+      const fill=!technology?(ink?(face.kind==="top"?"#163149":"#0d263c"):(face.kind==="top"?"#f6fbff":"#d4e6f2")):core ? (dark ? "#1675ae" : "#42b5ed") : dark ? "#15527c" : face.kind==="top" ? "#d8efff" : "#83c4ed";
+      const opacity=!technology?(ink?.84:.48):core?.3:face.kind==="side"?.16:.07;
+      polygons.push({depth:centre.dot(direction),svg:`<polygon points="${points.map(project).join(" ")}" fill="${fill}" fill-opacity="${opacity}"/>`});
     }
   }
   polygons.sort((a,b)=>a.depth-b.depth);
@@ -586,8 +661,9 @@ function renderFallback() {
 }
 
 function resume() {
-  if(disposed || !inView || document.hidden || reduceMotion() || fallback) return;
-  if(currentTime>=duration){activity?.arm();return;}
+  if(disposed || userPaused || !inView || document.hidden || reduceMotion() || fallback) return;
+  if(!started||reviewTime!==null&&!manualReplay)return;
+  if(currentTime>=duration){/* Finite intro: no idle pulses after settlement. */return;}
   stopMotion(); startTime=performance.now()-currentTime*1000;
   canvas.dataset.continuousRendering="true"; raf=requestAnimationFrame(tick);
 }
@@ -598,7 +674,15 @@ function onMotion() {
 }
 function onVisibility() {activity?.setVisible(inView&&!document.hidden);if(document.hidden)stopMotion();else resume();}
 function onContextLost(event) {event.preventDefault();stopMotion();fallback=true;activity?.setEnabled(false);renderFallback();}
+function heroControl(event){
+  if(reduceMotion()||fallback)return;
+  if(event.detail.action==="replay"){stopMotion();userPaused=false;manualReplay=true;started=true;applyState(0);render();resume();}
+  else if(event.detail.action==="seek"){stopMotion();userPaused=true;manualReplay=true;applyState(THREE.MathUtils.clamp(Number(event.detail.time)||0,0,duration));render();}
+  else{userPaused=!userPaused;container.dataset.sceneMode=userPaused?"paused":"playing";if(userPaused)stopMotion();else resume();}
+}
 function bindControls() {
+  tracked(observeArtworkTuning(variant,value=>{tuning=value;palette();render();}));
+  container.addEventListener("hero-control",heroControl);
   observer=new ResizeObserver(resize);observer.observe(container);observer.observe(hero);
   themeObserver=new MutationObserver(()=>{
     theme=document.documentElement.dataset.theme==="dark"?"dark":"light";palette();render();
@@ -613,6 +697,7 @@ function bindControls() {
   canvas.addEventListener("webglcontextlost",onContextLost);
 }
 function cleanup() {
+  container.removeEventListener("hero-control",heroControl);
   disposed=true;stopMotion();observer?.disconnect();themeObserver?.disconnect();visibilityObserver?.disconnect();
   activity?.dispose();
   motionPreference.removeEventListener("change",onMotion);
@@ -630,11 +715,11 @@ async function init() {
     renderer.setClearColor(0x000000,0); renderer.outputColorSpace=THREE.SRGBColorSpace;
     renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
     if(options.shared)scene.environment=options.shared.environment;
-    else {const environment=new RoomEnvironment(), pmrem=new THREE.PMREMGenerator(renderer);
-    scene.environment=tracked(pmrem.fromScene(environment,.04)).texture; environment.dispose();pmrem.dispose();}
+    else scene.environment=tracked(createArtworkEnvironment(renderer)).texture;
     hemisphere=new THREE.HemisphereLight(0xe7f4ff,0x7192b3,1.8);scene.add(hemisphere);
     keyLight=new THREE.DirectionalLight(0xffffff,2.5);keyLight.position.set(-3,6,5);scene.add(keyLight);
     const fill=new THREE.DirectionalLight(0xb5dfff,.7);fill.position.set(4,3,-2);scene.add(fill);
+    addArtworkSoftboxes(scene,target);
     createGeometry();await yieldToBrowser();if(disposed)return;createGround();createArrivals();await yieldToBrowser();if(disposed)return;createCore();
     scene.traverse(object=>{if(object.isLight)object.layers.enableAll();});
     const texture=options.shared?.texture ?? tracked(await new THREE.TextureLoader().loadAsync(markUrl));
@@ -644,12 +729,17 @@ async function init() {
     logo.quaternion.copy(camera.quaternion);logo.layers.set(2);scene.add(logo);measureLogo(texture);
     const bounds=new THREE.LineSegments(tracked(new THREE.EdgesGeometry(new THREE.PlaneGeometry(1,1))),tracked(new THREE.LineBasicMaterial({color:0x2894bc,transparent:true,opacity:.55})));
     bounds.position.copy(logo.position);bounds.quaternion.copy(logo.quaternion);bounds.scale.copy(logo.scale);bounds.layers.set(1);proof.add(bounds);
-    createBlur();
+    if(technology)createBlur();
+    if(!technology){
+      const positions=[],seeds=[];for(let i=0;i<1100;i++){const r=Math.abs((Math.sin(i*127.1+311.7)*43758.5453)%1);positions.push(-2.7+r*4.4,.3+Math.floor(r*3)*.5,-1.5+(r*37%1)*.8);seeds.push(r);}
+      const waveGeometry=tracked(new THREE.BufferGeometry());waveGeometry.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));waveGeometry.setAttribute("seed",new THREE.Float32BufferAttribute(seeds,1));
+      const waveMaterial=tracked(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uTime:{value:0},uDark:{value:0}},vertexShader:`uniform float uTime;attribute float seed;varying float vAlpha;void main(){vec3 p=position;p.x+=uTime*.2;p.y+=sin(position.x*2.-uTime*1.2)*.14;vAlpha=smoothstep(.4,1.2,uTime)*(1.-smoothstep(4.,6.5,uTime))*(.2+seed*.3);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=1.+seed;}`,fragmentShader:`uniform float uDark;varying float vAlpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.13,.40,.7),vec3(.55,.78,.95),uDark),vAlpha*(1.-smoothstep(.15,.5,r)));}`}));entranceWave=new THREE.Points(waveGeometry,waveMaterial);scene.add(entranceWave);
+    }
     const nodePoints=[...vertices.values()],nodeKeys=new Map(nodePoints.map((p,index)=>[pointKey(p),index]));
     activity=createLatticeActivity({host:container,points:nodePoints.map(p=>p.toArray()),links:[...edges.values()].map(([a,b])=>[nodeKeys.get(pointKey(a)),nodeKeys.get(pointKey(b))]),
       project:index=>{const p=nodePoints[index].clone().project(camera),bounds=container.getBoundingClientRect();return {x:(p.x+1)*bounds.width/2,y:(1-p.y)*bounds.height/2,visible:nodePoints[index].clone().sub(target).dot(direction)>-.1};},
       onFrame:()=>{if(disposed)return;applyState(currentTime);render();}});
-    activity.setEnabled(!reduceMotion());palette();await yieldToBrowser();if(disposed)return;camera.layers.enableAll();await renderer.compileAsync(scene,camera);await yieldToBrowser();if(disposed)return;await renderer.compileAsync(compositeScene,compositeCamera);await renderer.compileAsync(gaussianScene,compositeCamera);if(disposed)return;resize();bindControls();canvas.dataset.ready="true";play();
+    activity.setEnabled(!reduceMotion());palette();await yieldToBrowser();if(disposed)return;camera.layers.enableAll();await renderer.compileAsync(scene,camera);await yieldToBrowser();if(disposed)return;if(technology){await renderer.compileAsync(compositeScene,compositeCamera);await renderer.compileAsync(gaussianScene,compositeCamera);}if(disposed)return;resize();bindControls();canvas.dataset.ready="true";play();
   } catch(error) {
     if(disposed)return;
     fallback=true;stopMotion();canvas.dataset.fallbackReason=error.message;
@@ -660,16 +750,17 @@ async function init() {
 }
 cleanup.ready=init();
 cleanup.pause=()=>{stopMotion();activity?.setEnabled(false);};
+cleanup.start=()=>{started=true;resume();};
 cleanup.beginMorph=(width,height)=>{
   cleanup.pause();morphSurface={width:Math.ceil(width),height:Math.ceil(height)};
 };
 cleanup.morph=(mix,width,height)=>{
-  if(disposed||fallback||!logo||!blurTarget)return;
+  if(disposed||fallback||!logo)return;
   morphState=[mix,width,height];
   if(!morphSurface)cleanup.beginMorph(width,height);
   currentTime=duration;
   assembled.visible=false;arrivalRoot.visible=true;proof.visible=false;
-  connectionHighlights.forEach(({line})=>line.visible=false);
+  connectionHighlights.forEach(({line,halos})=>{line.visible=false;halos.forEach(halo=>halo.visible=false);});
   const dark=theme==="dark";
   const positions=cellsAt(mix).map(point=>new THREE.Vector3(...point));
   arrivals.forEach((group,index)=>{group.visible=true;group.position.copy(positions[index]);group.rotation.set(0,0,0);});
@@ -705,7 +796,7 @@ cleanup.morph=(mix,width,height)=>{
   const endpoint=anchor.clone().addScaledVector(up,-alphaHeight*scale/2-.045);
   coreConnection.geometry.setFromPoints([coreCentre,coreCentre.clone().lerp(endpoint,smooth((mix-.3)/.6))]);updateLineDistance(coreConnection.geometry);coreConnection.material.opacity=coreReveal*.6;
   groundMaterials.forEach(material=>material.opacity=dark?.24:.48);
-  sizeHeroSurface(renderer,[blurTarget,blurX,blurY],morphSurface.width,morphSurface.height,quality.ratio);
+  sizeHeroSurface(renderer,technology?[blurTarget,blurX,blurY]:[],morphSurface.width,morphSurface.height,quality.ratio);
   canvas.dataset.transitionMix=mix.toFixed(4);render();
 };
 return cleanup;

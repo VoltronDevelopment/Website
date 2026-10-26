@@ -2,7 +2,7 @@ export type HumanHeroKind="commons"|"culture";
 export type HeroCell={centre:readonly [number,number,number];size:number;start:number;satellite?:boolean};
 const clamp=(value:number)=>Math.max(0,Math.min(1,value));
 export const smooth=(value:number)=>{const t=clamp(value);return t*t*(3-2*t);};
-export const durations={commons:4.2,culture:5.2};
+export const durations={commons:10.5,culture:5.2};
 export const commonsRoot=[0,.7,0] as const;
 export const cultureSize=.56;
 export const cultureCarryHeight=2.25;

@@ -1,0 +1,42 @@
+{
+  "home": {
+    "light": "/optimized/scene-home-opening-light-472f09b2378c7fde.webp",
+    "dark": "/optimized/scene-home-opening-dark-d841dfe95fbf5ec6.webp"
+  },
+  "technology": {
+    "light": "/optimized/scene-technology-opening-light-5d78d434afea4e9e.webp",
+    "dark": "/optimized/scene-technology-opening-dark-108820c85f7c31d2.webp"
+  },
+  "commons": {
+    "light": "/optimized/scene-commons-opening-light-35f87d30cf817079.webp",
+    "dark": "/optimized/scene-commons-opening-dark-f331f1497dd7a4ae.webp"
+  },
+  "culture": {
+    "light": "/optimized/scene-culture-opening-light-09205fa4d5cd8483.webp",
+    "dark": "/optimized/scene-culture-opening-dark-b63cf31df46ed195.webp"
+  },
+  "intelligence": {
+    "light": "/optimized/scene-intelligence-opening-light-f571838add06f833.webp",
+    "dark": "/optimized/scene-intelligence-opening-dark-3998a16621852157.webp"
+  },
+  "philosophy": {
+    "light": "/optimized/scene-philosophy-opening-light-b9b268f78cb0f54d.webp",
+    "dark": "/optimized/scene-philosophy-opening-dark-391074d849bc291a.webp"
+  },
+  "process": {
+    "light": "/optimized/alpha-beacons-process-light-c2c73d611f04c40a.webp",
+    "dark": "/optimized/alpha-beacons-process-dark-3b3880a638dfaecd.webp"
+  },
+  "plant": {
+    "light": "/optimized/alpha-beacons-plant-light-e882e778315ccd1f.webp",
+    "dark": "/optimized/alpha-beacons-plant-dark-020fd5a0ee77b475.webp"
+  },
+  "handCulture": {
+    "light": "/optimized/scene-handCulture-opening-light-3376d2042b148980.webp",
+    "dark": "/optimized/scene-handCulture-opening-dark-92066db7c149e32e.webp"
+  },
+  "handPartner": {
+    "light": "/optimized/scene-handPartner-opening-light-d02bea89866b59a7.webp",
+    "dark": "/optimized/scene-handPartner-opening-dark-efe5904b5ca860a6.webp"
+  }
+}

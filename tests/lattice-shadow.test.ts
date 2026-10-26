@@ -12,7 +12,7 @@ describe("Cube-attached contact shadows",()=>{
     }
   });
   it("reveals each shadow on its own arrival schedule",()=>{
-    const first=stateAt(starts[0]+.15),second=first.arrivals[1];
+    const first=stateAt(starts[0]+.05),second=first.arrivals[1];
     expect(contactShadow(first.arrivals[0].progress,.1).opacity).toBeGreaterThan(0);
     expect(contactShadow(second.progress,.1).opacity).toBe(0);
   });

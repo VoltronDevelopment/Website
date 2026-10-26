@@ -27,41 +27,20 @@ describe("component reveal visibility", () => {
   });
 });
 
-describe("component reveal choreography", () => {
-  it("keeps the physical component alone before digitising", () => {
-    const state = factorySystemsStateAt(1.1);
-    expect(state.dissolve).toBe(0); expect(state.separate).toBe(0);
-    expect(state.cubes).toEqual([0, 0, 0]); expect(state.labels).toEqual([0, 0, 0]);
-  });
-  it("holds a fully digitised component before separation", () => {
-    for (const time of [2.1, 2.25, 2.39]) {
-      const state = factorySystemsStateAt(time);
-      expect(state.dissolve).toBe(1); expect(state.separate).toBe(0); expect(state.particles).toBe(1);
-      expect(state.cubes).toEqual([0, 0, 0]);
-    }
-  });
-  it("preserves a short contour as groups leave and removes it before assembly", () => {
-    expect(factorySystemsStateAt(2.55).ghost).toBeGreaterThan(0);
-    expect(factorySystemsStateAt(3.3).ghost).toBe(0);
-  });
-  it("introduces artwork inside formed enclosures and connects after the labels", () => {
-    expect(factorySystemsStateAt(4.2).cubes).toEqual([1, 1, 1]);
-    expect(factorySystemsStateAt(4.2).artworks).toEqual([0, 0, 0]);
-    expect(factorySystemsStateAt(5.2).labels).toEqual([1, 1, 1]);
-    expect(factorySystemsStateAt(5.2).connections).toBe(0);
-  });
-  it("ends at a completely readable static composition without particle remnants", () => {
-    const state = factorySystemsStateAt(factorySystemsDuration);
-    expect(state.phase).toBe("settled"); expect(state.settled).toBe(true);
-    expect(state.particles).toBe(0); expect(state.ghost).toBe(0);
-    expect(state.cubes).toEqual([1, 1, 1]); expect(state.artworks).toEqual([1, 1, 1]);
-    expect(state.labels).toEqual([1, 1, 1]); expect(state.connections).toBe(1);
-  });
-  it("clamps review and interruption inputs", () => {
-    expect(factorySystemsStateAt(-2).time).toBe(0);
-    expect(factorySystemsStateAt(NaN).time).toBe(0);
-    expect(factorySystemsStateAt(100).time).toBe(6);
-  });
+describe("three-view manufacturing choreography",()=>{
+ it("finishes the cut before retracting and exposes context before a recommendation",()=>{
+  expect(factorySystemsStateAt(0).cut).toBe(0);
+  expect(factorySystemsStateAt(6.5).cut).toBeCloseTo(.5);
+  expect(factorySystemsStateAt(8).cut).toBe(1);
+  expect(factorySystemsStateAt(8).recommendation).toBe(0);
+  expect(factorySystemsStateAt(10.5).context).toBe(1);
+  expect(factorySystemsStateAt(13.5).intelligence).toBe(1);
+ });
+ it("settles all three perspectives at sixteen seconds",()=>{
+  const end=factorySystemsStateAt(factorySystemsDuration);
+  expect(end.settled).toBe(true);expect(end.cut).toBe(1);expect(end.recommendation).toBe(1);expect(end.cubes).toEqual([1,1,1]);
+  expect(factorySystemsStateAt(NaN).time).toBe(0);expect(factorySystemsStateAt(-1).time).toBe(0);expect(factorySystemsStateAt(100).time).toBe(16);
+ });
 });
 
 describe("machined flange geometry", () => {
