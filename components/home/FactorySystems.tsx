@@ -1,11 +1,14 @@
 "use client";
-import {useEffect,useId,useRef,useState} from 'react';
+import {useEffect,useId,useRef,useState,type CSSProperties} from 'react';
 import {Pause,Play,RotateCcw} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {canPrepareHomeScene,prepareScene} from './scene-preparation';
 import type {FactorySystemsController} from './factory-systems-renderer';
 import type {FactoryPhase} from './factory-systems-timeline';
 import posters from '@/lib/factory-part-posters.json';
+import {DeferredArtwork} from '../performance/DeferredArtwork';
+import componentPoster from '@/lib/component-scene-poster.json';
+import {capabilityProjection} from './capability-cube-style';
 
 const systems=[
  {title:'Execution',text:'A finishing pass on the original flange housing.'},
@@ -14,8 +17,16 @@ const systems=[
 ];
 const captions:Record<FactoryPhase,string>={component:'One part. Three connected perspectives.',digitize:'The same sample becomes a particle representation.',separate:'Particles carry the shared structure into three views.',assemble:'Three connected cubes and cards take shape.',resolve:'Execution: finishing the annular face.',connect:'Context and inspection evidence connect the same feature.',settled:'Illustrative example · Connected manufacturing evidence.'};
 export function FactorySystems(){
+ const opening=useRef<HTMLDivElement>(null);
+ const projection=capabilityProjection(),posterUnit=`min(90cqw / ${projection.width},90cqh / ${projection.height})`;
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<FactorySystemsController|null>(null),description=useId();
  const [ready,setReady]=useState(false),[paused,setPaused]=useState(false),[reduced,setReduced]=useState(false),[phase,setPhase]=useState<FactoryPhase>('settled'),[focus,setFocus]=useState(2);
+ useEffect(()=>{
+  const stage=host.current,poster=opening.current,anchor=stage?.querySelectorAll<HTMLElement>('[data-system-anchor]')[1];
+  if(!stage||!poster||!anchor)return;
+  const align=()=>{const a=anchor.getBoundingClientRect(),b=stage.getBoundingClientRect();Object.assign(poster.style,{left:`${a.left-b.left}px`,top:`${a.top-b.top}px`,width:`${a.width}px`,height:`${a.height}px`});};
+  align();const observer=new ResizeObserver(align);observer.observe(stage);observer.observe(anchor);return()=>observer.disconnect();
+ },[]);
  useEffect(()=>{
   let disposed=false,nearby=false,scheduled=false,cancel:(()=>void)|undefined;
   const motion=matchMedia('(prefers-reduced-motion: reduce)');
@@ -32,11 +43,12 @@ export function FactorySystems(){
  return <figure className="factory-systems" aria-label="One component, three manufacturing perspectives" aria-describedby={description}>
   <div className="factory-view-tabs" role="group" aria-label="Manufacturing perspective">{systems.map((s,i)=><button type="button" key={s.title} aria-pressed={focus===i} onClick={()=>{setFocus(i);setPaused(true);controller.current?.select(i);}}>{s.title}</button>)}</div>
   <div className="factory-systems-stage" ref={host} data-focus={focus}>
+   <div className="factory-opening-poster" ref={opening} style={{"--poster-width":`calc(${posterUnit} * ${componentPoster.worldWidth})`,"--poster-height":`calc(${posterUnit} * ${componentPoster.worldHeight})`} as CSSProperties}><div className="factory-component-poster">{(['light','dark'] as const).map(theme=><DeferredArtwork key={theme} className={'art-theme-'+theme} src={componentPoster[theme]} width={300} height={280}/>)}</div></div>
    <canvas className="factory-systems-canvas" ref={canvas} aria-hidden="true"/>
    <div className="factory-systems-grid">{systems.map((system,index)=><article className="factory-system" key={system.title} data-active={focus===index}>
     <h3>{system.title}</h3>
     <div className="factory-system-anchor" data-system-anchor aria-hidden="true">
-     <div className="factory-system-fallback">{(['light','dark'] as const).map(theme=><img key={theme} className={'art-theme-'+theme} src={posters[theme][index]} width="400" height="340" alt="" loading="lazy" decoding="async"/>)}</div>
+     <div className="factory-system-fallback">{(['light','dark'] as const).map(theme=><DeferredArtwork key={theme} className={'art-theme-'+theme} src={posters[theme][index]} width={400} height={340}/>)}</div>
 
     </div>
     <p className="factory-summary">{system.text}</p>

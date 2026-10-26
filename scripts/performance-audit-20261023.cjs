@@ -99,7 +99,7 @@ function snapshot() {
       report.lifecycle.navigation=[];
       for(let i=0;i<30;i++) {
         const route=i%2===0?'/technology':'/';await p.page.locator(`.site-header a[href="${route}"]`).first().click();await p.page.waitForURL(base+route);
-        await p.page.waitForFunction(()=>document.querySelector('[data-lattice-slot]')?.dataset.live==='true');await sleep(250);await p.cdp.send('HeapProfiler.collectGarbage');
+        await p.page.waitForFunction(route=>route==='/'?document.querySelector('[data-lattice-slot]')?.dataset.live==='true':document.querySelector('.engineered-technology .engineered-stage')?.getAttribute('data-scene-state')==='live',route);await sleep(250);await p.cdp.send('HeapProfiler.collectGarbage');
         report.lifecycle.navigation.push(await p.page.evaluate(snapshot));
       }
       for(const route of ['/','/technology']) {
@@ -109,7 +109,7 @@ function snapshot() {
       await p.context.close();
       const reduced=await makePage({reduced:true});await reduced.page.goto(base,{waitUntil:'load'});await sleep(500);const still=await reduced.page.evaluate(snapshot);report.lifecycle.reduced=still;
       assert.equal(still.contexts.length,0,'Reduced motion started a WebGL context');
-      const poster=await reduced.page.locator('[data-lattice-slot] .scene-poster img.art-theme-light').evaluate(n=>n.complete&&n.naturalWidth>0);assert(poster,'Static artwork did not load');await reduced.context.close();
+      const poster=await reduced.page.locator('[data-lattice-slot] .scene-pose-complete img.art-theme-light').evaluate(n=>n.complete&&n.naturalWidth>0);assert(poster,'Static artwork did not load');await reduced.context.close();
       if(process.env.AUDIT_FINAL) {
         for(const [route,reduced] of [['/',false],['/',true],['/manufacturing',false],['/about/people-culture',false]]) {
           const m=await makePage({mobile:true,throttle:true,reduced});await m.page.goto(base+route,{waitUntil:'load',timeout:120000});await sleep(2500);

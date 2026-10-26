@@ -17,3 +17,7 @@
 /* More specific than page-level image rules: exactly one theme is ever painted. */
 :root:not([data-theme="dark"]) .scene-poster .art-theme-dark,:root[data-theme="dark"] .scene-poster .art-theme-light { display:none; }
 :root:not([data-theme="dark"]) .scene-poster .art-theme-light,:root[data-theme="dark"] .scene-poster .art-theme-dark { display:block; }
+
+/* Native display-size captures preserve the screen-space stroke/glow width. */
+.scene-responsive-opening:not(.scene-responsive-technology) img { width:100cqw!important; height:100cqh!important; }
+@media(min-width:768px) { .scene-responsive-opening img { width:100cqw!important; height:100cqh!important; } }

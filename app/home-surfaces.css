@@ -4,6 +4,11 @@
 .home-page :is(.factory-system,.alpha-process,.home-philosophy-content) { border:1px solid var(--card-edge); border-radius:10px; background:linear-gradient(145deg,var(--card-fill),var(--card-shade)); box-shadow:inset 0 1px 0 var(--card-top),0 10px 30px var(--card-shadow); }
 .home-page .factory-system { padding:20px 12px 18px; }
 .home-page .factory-systems-grid { gap:24px; }
+.factory-opening-poster { display:none; position:absolute; pointer-events:none; container-type:size; }
+:root[data-scene-motion="motion"] .factory-opening-poster { display:block; }
+.factory-opening-poster .factory-component-poster img { width:var(--poster-width); height:var(--poster-height); max-width:none; }
+:root[data-scene-motion="motion"] .factory-systems-stage:not([data-renderer]) .factory-system { opacity:0; }
+:root[data-scene-motion="static"] .factory-opening-poster,.factory-systems-stage[data-renderer="fallback"] .factory-opening-poster { display:none; }
 .home-page .factory-system h3 { font-size:17px; }
 .factory-systems-stage[data-renderer="webgl"] .factory-system { opacity:var(--card-reveal,1); }
 .home-page .factory-system>p { min-height:48px; }

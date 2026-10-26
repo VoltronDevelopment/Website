@@ -1,0 +1,22 @@
+{
+  "technology": {
+    "desktop": {
+      "light": "/optimized/scene-technology-opening-light-desktop-fc861011d08bb94f.webp",
+      "dark": "/optimized/scene-technology-opening-dark-desktop-cc5e92f3b0ae36c3.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-technology-opening-light-mobile-4fe36afd78a674b8.webp",
+      "dark": "/optimized/scene-technology-opening-dark-mobile-57e67e3e2542fdc5.webp"
+    }
+  },
+  "process": {
+    "desktop": {
+      "light": "/optimized/scene-process-opening-light-desktop-5e0f902d61a81ef2.webp",
+      "dark": "/optimized/scene-process-opening-dark-desktop-2d7fff40a75421e0.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-process-opening-light-mobile-1f07e3adcb3d3582.webp",
+      "dark": "/optimized/scene-process-opening-dark-mobile-73a4711ac8e65b6f.webp"
+    }
+  }
+}

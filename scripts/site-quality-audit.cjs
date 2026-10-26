@@ -81,7 +81,7 @@ function measure() {
     let ready=false;
     for(let i=0;i<100;i++){try{if((await fetch(base+'/coming-soon')).ok){ready=true;break;}}catch{}if(server.exitCode!==null)throw Error('Fixture server exited');await sleep(200);}
     if(!ready)throw Error('Fixture server failed to start');
-    browser=await chromium.launch({...(process.env.SITE_AUDIT_BROWSER==='chromium'?{}:{channel:'chrome'}),headless:true,args:['--enable-unsafe-swiftshader','--use-gl=angle']});
+    browser=await chromium.launch({...(process.env.SITE_AUDIT_BROWSER==='chromium'?{}:{channel:process.env.SITE_AUDIT_BROWSER||'chrome'}),headless:true,args:['--enable-unsafe-swiftshader','--use-gl=angle']});
     const auth=await browser.newContext();
     if(Date.now()<Date.parse('2026-11-07T18:30:00Z')) {
       const login=await auth.request.post(base+'/api/founder/login',{headers:{Origin:base},data:{username:'auditone',password}});
