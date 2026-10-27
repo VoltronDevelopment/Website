@@ -47,7 +47,7 @@ export function createMachiningView(index:number){
  return {group,update(time:number,cutProgress:number,_context:number,_intelligence:number){
   cut.value=cutProgress;stock.visible=index===0&&cutProgress<1;tool.visible=index===0;
   guides.visible=index===1&&time>3.5&&time<7.8;lineMaterial.opacity=THREE.MathUtils.smoothstep(time,3.5,4.2)*(1-THREE.MathUtils.smoothstep(time,6.7,7.8))*.9;
-  probe.visible=index===2&&time>6&&time<10.5;effects.update(time);
+  probe.visible=index===2&&time>6&&time<10.5;effects.update(time,typeof document!=='undefined'&&document.documentElement.dataset.theme==='dark');
   const at=millingPosition(cutProgress),retract=THREE.MathUtils.smoothstep(time,4,4.8),approach=1-THREE.MathUtils.smoothstep(time,.7,1);
   tool.position.set(at.x,at.y,.335+(retract+approach)*.20);
   chips.visible=index===0&&time>1&&time<4;for(let i=0;i<72;i++){const age=(time*1.8+i*.137)%1;chipPositions.set([at.x+Math.cos(i*2.4)*age*.14,at.y+Math.sin(i*2.4)*age*.14,.35+Math.sin(age*Math.PI)*.14],i*3);}chipsGeometry.attributes.position.needsUpdate=true;

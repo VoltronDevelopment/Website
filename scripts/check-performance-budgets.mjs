@@ -9,6 +9,9 @@ const opening=JSON.parse(fs.readFileSync('lib/scene-opening-posters.json','utf8'
 for(const [kind,themes] of Object.entries(opening))posters[kind+'-opening']=themes;
 posters.component = JSON.parse(fs.readFileSync('lib/component-poster.json','utf8'));
 const component=JSON.parse(fs.readFileSync('lib/component-scene-poster.json','utf8'));posters['component-matched']={light:component.light,dark:component.dark};
+const responsive=JSON.parse(fs.readFileSync('lib/scene-responsive-opening-posters.json','utf8'));
+for(const [kind,devices]of Object.entries(responsive))for(const [device,themes]of Object.entries(devices))posters['responsive-'+kind+'-'+device]=themes;
+for(const kind of ['manufacturing','network','ontology','about'])for(const theme of ['light','dark']){const url='/heroes/'+kind+'-complete-'+theme+'.webp';if(fs.statSync('public'+url).size>200000)failures.push('Hero exceeds 200 KB: '+url);}
 for(const themes of Object.values(posters))for(const url of Object.values(themes)) {
   const buffer=fs.readFileSync('public'+url),hash=crypto.createHash('sha256').update(buffer).digest('hex').slice(0,16);
   if(!url.includes(hash))failures.push('Poster content hash mismatch: '+url);

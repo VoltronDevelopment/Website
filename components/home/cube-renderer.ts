@@ -156,7 +156,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function state(){
-    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);philosophy.groups[2].traverse(o=>{if(o instanceof THREE.LineSegments){o.visible=pose.individual>=1;(o.material as THREE.LineBasicMaterial).opacity=(o.material as THREE.LineBasicMaterial).userData.baseOpacity*ease((pose.time-4)/.3);}if(o instanceof THREE.Mesh&&o.material instanceof THREE.MeshPhongMaterial){o.material.emissive.setHex(0x246bd4);o.material.emissiveIntensity=ease((pose.time-3.8)/.3)*(1-ease((pose.time-4.4)/.4))*.15;}});philosophyWave?.update(pose.time,pose.individual,pose.height,dark(),quality.ratio);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.waveVisible=String(philosophyWave?.points.visible);return;}
+    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);philosophy.groups[2].traverse(o=>{if(o instanceof THREE.LineSegments){o.visible=pose.individual>=1;(o.material as THREE.LineBasicMaterial).opacity=(o.material as THREE.LineBasicMaterial).userData.baseOpacity*(1-pose.merge)*ease((pose.time-4)/.3);}if(o instanceof THREE.Mesh&&o.material instanceof THREE.MeshPhongMaterial){o.visible=pose.merge<.85;}});philosophyWave?.update(pose.time,pose.individual,pose.height,dark(),quality.ratio);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.individualMerge=pose.merge.toFixed(3);canvas.dataset.waveVisible=String(philosophyWave?.points.visible);return;}
     if(options.kind==="enclosure"){
       const time=motion.matches?6.5:elapsed-sequenceDelay;
       const asset=ease(time/.8),reveal=ease((time-.9)/1.1);
@@ -235,7 +235,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   const sizing=new ResizeObserver(resize);sizing.observe(host);
   const themes=new MutationObserver(palette);themes.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
-  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;activity?.setVisible(visible&&!document.hidden);resume();},{threshold:0});view.observe(host);
+  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&(options.kind!=='philosophy'||entry.intersectionRatio>=.35);activity?.setVisible(visible&&!document.hidden);resume();},{threshold:options.kind==='philosophy'?[0,.35]:0});view.observe(host);
   motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);canvas.addEventListener("webglcontextlost",lost);
   canvas.dataset.kind=options.kind;canvas.dataset.cubes=String(philosophy?3:cubes.length);state();palette();resize();
   activity?.setEnabled(!motion.matches);

@@ -6,14 +6,15 @@ const out='.audit-logs/scene-continuity';fs.mkdirSync(out,{recursive:true});cons
 const server=spawn(process.execPath,['node_modules/next/dist/bin/next',process.env.SCENE_DEV?'dev':'start','-H','127.0.0.1','-p',port],{cwd:process.env.SCENE_SOURCE_ROOT||process.cwd(),windowsHide:true,stdio:['ignore',log,log],env:{...process.env,NEXT_DIST_DIR:process.env.SCENE_DIST||'.next-scene-continuity',FOUNDER_CREDENTIALS:`sceneone:${salt}:${digest},scenetwo:${salt}:${digest}`,FOUNDER_SESSION_SECRET:crypto.randomBytes(48).toString('hex')}});
 const openingTimes=require('../lib/scene-opening-times.json');
 const definitions=[
- ['home','/','[data-lattice-slot]','[data-persistent-stage] canvas','hero-time',openingTimes.home,11,1440,960],
+ ['cultureHelix','/about/people-culture','.culture-helix-stage','.culture-helix-stage canvas','helix-time',.6,7.5,640,640],
+ ['home','/','[data-lattice-slot]','[data-persistent-stage] canvas','hero-time',openingTimes.home,14,1440,960],
  ['technology','/technology','.engineered-technology .engineered-stage','.engineered-technology canvas','hero-time',openingTimes.technology,9.5,960,640],
  ['commons','/about/voltron-commons','.human-hero-art','.human-hero-art canvas','human-time',openingTimes.commons,10.5,640,640],
  ['intelligence','/intelligence','.intelligence-face-stage','.intelligence-face-stage canvas','intelligence-time',openingTimes.intelligence,7.5,960,640],
  ['philosophy','/','.home-cube-philosophy','.home-cube-philosophy canvas','cube-time',openingTimes.philosophy,6.8,480,640],
  ['process','/','.alpha-process-art','.alpha-process-art canvas','process-time',openingTimes.process,28,1120,450],
- ['handCulture','/about/people-culture','.particle-hand-stage','.particle-hand-stage canvas','hand-time',1.2,14,960,640],
- ['handPartner','/partner','.particle-hand-stage','.particle-hand-stage canvas','hand-time',1.2,9.5,960,640],
+ ['handCulture','/about/people-culture','.particle-hand-stage','.particle-hand-stage canvas','hand-time',openingTimes.culture,14,960,640],
+ ['handPartner','/partner','.particle-hand-stage','.particle-hand-stage canvas','hand-time',openingTimes.partner,9.5,960,640],
  ['plant','/manufacturing','.alpha-line-art','.alpha-line-art canvas','alpha-time',0,0,1120,600]
 ];
 let browser;
@@ -39,19 +40,19 @@ if(process.env.SCENE_CAPTURE_COMPONENT){
 const manifests={opening:JSON.parse(fs.readFileSync('lib/scene-opening-posters.json')),complete:JSON.parse(fs.readFileSync('lib/scene-posters.json'))};const framing=JSON.parse(fs.readFileSync('lib/scene-poster-framing.json'));const selected=process.env.SCENE_KINDS?.split(',');
 // These values mirror the current sculpture cameras, not the earlier hand assets.
 const neuralFit=require('../public/sculptures/neural-network.json').camera.framing;framing.technology={minWidth:neuralFit.minWidth,minHeight:neuralFit.minHeight,width:Math.max(neuralFit.minWidth,neuralFit.minHeight*1.5),height:Math.max(neuralFit.minHeight,neuralFit.minWidth/1.5)};
-framing.commons={minWidth:5.4,minHeight:5.25,width:5.4,height:5.4};
-framing.handCulture={minWidth:8.2,minHeight:7.6,width:11.4,height:7.6};
+framing.commons={minWidth:5.7,minHeight:5.7,width:5.7,height:5.7};
+framing.handCulture={minWidth:5.4,minHeight:7.6,width:11.4,height:7.6};
 framing.handPartner={minWidth:5.8,minHeight:7.2,width:10.8,height:7.2};
 for(const [name,route,hostSelector,canvasSelector,param,opening,end,width,height] of definitions.filter(row=>!selected||selected.includes(row[0]))){
  for(const pose of ['opening','complete']){manifests[pose][name]={};for(const theme of ['light','dark']){
-  const context=await browser.newContext({storageState,viewport:{width:2800,height:1600},deviceScaleFactor:1});await context.addInitScript(t=>localStorage.setItem('voltron-lattice-theme',t),theme);const p=await context.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));
+  const context=await browser.newContext({storageState,viewport:{width:2800,height:1600},deviceScaleFactor:1});await context.addInitScript(t=>localStorage.setItem('voltron-lattice-theme',t),theme);const p=await context.newPage();const errors=[];p.on('pageerror',e=>errors.push(e.message));p.on('console',m=>{if(m.type()==='error'&&/Shader|THREE|GL_INVALID/.test(m.text()))errors.push(m.text());});
   await p.goto(base+route+'?scene-capture=1&'+param+'='+(pose==='opening'?opening:end));
   const host=p.locator(hostSelector);await host.scrollIntoViewIfNeeded();await p.waitForFunction(selector=>document.querySelector(selector)?.dataset.sceneState==='live',hostSelector,{timeout:60000});
   await host.evaluate((e,rect)=>{e.style.width=rect[0]+'px';e.style.height=rect[1]+'px';e.style.minHeight=rect[1]+'px';e.style.maxHeight='none';},[width,height]);
   await p.evaluate(()=>{window.dispatchEvent(new Event("resize"));return document.fonts.ready;});await p.waitForTimeout(200);
   await p.addStyleTag({content:'*{background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;filter:none!important;visibility:hidden!important}*:before,*:after{display:none!important}canvas{visibility:visible!important}.lattice-atmosphere{display:none!important}'});
   const canvas=p.locator(canvasSelector);const raw=await canvas.screenshot({omitBackground:true});const box=await canvas.boundingBox(),captureWidth=name==='plant'?Math.round(box.width):width,captureHeight=name==='plant'?Math.round(box.height):height;const png=await sharp(raw).resize(captureWidth,captureHeight,{fit:'fill'}).png().toBuffer();if(name==='process'||name==='plant'){const insets=await canvas.evaluate(e=>JSON.parse(e.dataset.frameInsets));framing[name]={minWidth:captureWidth-insets.left-insets.right,minHeight:captureHeight-insets.top-insets.bottom,width:captureWidth,height:captureHeight,padding:true};}
-  let image=await sharp(png).webp({quality:name==='home'?94:90,alphaQuality:100,effort:6}).toBuffer();if(name==='home'&&image.length>200000)image=await sharp(png).webp({quality:92,alphaQuality:100,effort:6}).toBuffer();const hash=crypto.createHash('sha256').update(image).digest('hex').slice(0,16),url=`/optimized/scene-${name}-${pose}-${theme}-${hash}.webp`;
+  let image=await sharp(png).webp({quality:name==='home'?94:90,alphaQuality:100,effort:6}).toBuffer();if(name==='home')for(const quality of [92,90,88,86,84]){if(image.length<=200000)break;image=await sharp(png).webp({quality,alphaQuality:100,effort:6}).toBuffer();}const hash=crypto.createHash('sha256').update(image).digest('hex').slice(0,16),url=`/optimized/scene-${name}-${pose}-${theme}-${hash}.webp`;
   fs.writeFileSync('public'+url,image);manifests[pose][name][theme]=url;
   fs.writeFileSync(`${out}/${name}-${pose}-${theme}.png`,png);console.log(name,pose,theme,image.length,errors);if(errors.length)throw Error(errors.join('; '));await context.close();
  }}

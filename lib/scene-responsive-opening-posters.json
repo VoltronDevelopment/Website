@@ -1,22 +1,108 @@
 {
   "technology": {
     "desktop": {
-      "light": "/optimized/scene-technology-opening-light-desktop-fc861011d08bb94f.webp",
-      "dark": "/optimized/scene-technology-opening-dark-desktop-cc5e92f3b0ae36c3.webp"
+      "light": "/optimized/scene-technology-opening-light-desktop-3d0abb6c7904e8c4.webp",
+      "dark": "/optimized/scene-technology-opening-dark-desktop-be8194d4f97367d5.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-technology-opening-light-mobile-4fe36afd78a674b8.webp",
-      "dark": "/optimized/scene-technology-opening-dark-mobile-57e67e3e2542fdc5.webp"
+      "light": "/optimized/scene-technology-opening-light-mobile-29673a0178827513.webp",
+      "dark": "/optimized/scene-technology-opening-dark-mobile-4ce9c710e5c25592.webp"
     }
   },
   "process": {
     "desktop": {
-      "light": "/optimized/scene-process-opening-light-desktop-5e0f902d61a81ef2.webp",
-      "dark": "/optimized/scene-process-opening-dark-desktop-2d7fff40a75421e0.webp"
+      "light": "/optimized/scene-process-opening-light-desktop-7f75d0570eccc25f.webp",
+      "dark": "/optimized/scene-process-opening-dark-desktop-7b57b1e4185b02e7.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-process-opening-light-mobile-1f07e3adcb3d3582.webp",
-      "dark": "/optimized/scene-process-opening-dark-mobile-73a4711ac8e65b6f.webp"
+      "light": "/optimized/scene-process-opening-light-mobile-8cbdfe96d3cdbc86.webp",
+      "dark": "/optimized/scene-process-opening-dark-mobile-869c752bb8107d54.webp"
+    }
+  },
+  "manufacturing": {
+    "desktop": {
+      "light": "/optimized/scene-manufacturing-opening-light-desktop-3f9b49a7e2aefe15.webp",
+      "dark": "/optimized/scene-manufacturing-opening-dark-desktop-6e8e9f7d1165fe15.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-manufacturing-opening-light-mobile-541f9dd1f0913fe3.webp",
+      "dark": "/optimized/scene-manufacturing-opening-dark-mobile-61bdc4a0749ff839.webp"
+    },
+    "short": {
+      "light": "/optimized/scene-manufacturing-opening-light-short-33796a6defcda8cf.webp",
+      "dark": "/optimized/scene-manufacturing-opening-dark-short-330a29a305a5796e.webp"
+    },
+    "tablet": {
+      "light": "/optimized/scene-manufacturing-opening-light-tablet-5038d9765b42e26e.webp",
+      "dark": "/optimized/scene-manufacturing-opening-dark-tablet-a25806128e3d5d81.webp"
+    }
+  },
+  "network": {
+    "desktop": {
+      "light": "/optimized/scene-network-opening-light-desktop-7e619901bc170a7c.webp",
+      "dark": "/optimized/scene-network-opening-dark-desktop-9440293ae63b86dc.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-network-opening-light-mobile-d801faf0781e96df.webp",
+      "dark": "/optimized/scene-network-opening-dark-mobile-c2edf2cf725f85af.webp"
+    }
+  },
+  "ontology": {
+    "desktop": {
+      "light": "/optimized/scene-ontology-opening-light-desktop-1f3c85987f7977ef.webp",
+      "dark": "/optimized/scene-ontology-opening-dark-desktop-4b3cd1b416922a1b.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-ontology-opening-light-mobile-20bc47021a9a6227.webp",
+      "dark": "/optimized/scene-ontology-opening-dark-mobile-968187f14cee479a.webp"
+    }
+  },
+  "about": {
+    "desktop": {
+      "light": "/optimized/scene-about-opening-light-desktop-778d76a35b59d904.webp",
+      "dark": "/optimized/scene-about-opening-dark-desktop-a42c1c07a7c7f6b1.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-about-opening-light-mobile-1cfe13ef480918d3.webp",
+      "dark": "/optimized/scene-about-opening-dark-mobile-fb693b74d85abe57.webp"
+    }
+  },
+  "handCulture": {
+    "desktop": {
+      "light": "/optimized/scene-handCulture-opening-light-desktop-0e54c54e6210fc24.webp",
+      "dark": "/optimized/scene-handCulture-opening-dark-desktop-aaf6da0542c29008.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-handCulture-opening-light-mobile-eb6c164a319011fe.webp",
+      "dark": "/optimized/scene-handCulture-opening-dark-mobile-1848e944061fd957.webp"
+    },
+    "short": {
+      "light": "/optimized/scene-handCulture-opening-light-short-6d78bc9d878a1f37.webp",
+      "dark": "/optimized/scene-handCulture-opening-dark-short-cfce30510658ec79.webp"
+    },
+    "tablet": {
+      "light": "/optimized/scene-handCulture-opening-light-tablet-c87d55e135098e0c.webp",
+      "dark": "/optimized/scene-handCulture-opening-dark-tablet-511cf22f53bfdbb7.webp"
+    }
+  },
+  "handPartner": {
+    "desktop": {
+      "light": "/optimized/scene-handPartner-opening-light-desktop-91438d52c67bb1f7.webp",
+      "dark": "/optimized/scene-handPartner-opening-dark-desktop-1c21fa0a3bcb3934.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-handPartner-opening-light-mobile-c3e522cb0cfb4a2f.webp",
+      "dark": "/optimized/scene-handPartner-opening-dark-mobile-948482c4adc19fc2.webp"
+    }
+  },
+  "commons": {
+    "desktop": {
+      "light": "/optimized/scene-commons-opening-light-desktop-bdc8c434fb1492d5.webp",
+      "dark": "/optimized/scene-commons-opening-dark-desktop-3a47bb0c1863f207.webp"
+    },
+    "mobile": {
+      "light": "/optimized/scene-commons-opening-light-mobile-77b1cc52e42e4016.webp",
+      "dark": "/optimized/scene-commons-opening-dark-mobile-b6af6147dab90e15.webp"
     }
   }
 }

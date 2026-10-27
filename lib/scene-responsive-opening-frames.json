@@ -1,0 +1,98 @@
+{
+  "manufacturing": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 540
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625
+    },
+    "short": {
+      "width": 624.71875,
+      "height": 420
+    },
+    "tablet": {
+      "width": 714,
+      "height": 460
+    }
+  },
+  "ontology": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 560
+    },
+    "mobile": {
+      "width": 320,
+      "height": 380
+    }
+  },
+  "about": {
+    "desktop": {
+      "width": 624.734375,
+      "height": 560
+    },
+    "mobile": {
+      "width": 320,
+      "height": 380
+    }
+  },
+  "network": {
+    "desktop": {
+      "width": 624.734375,
+      "height": 560
+    },
+    "mobile": {
+      "width": 320,
+      "height": 380
+    }
+  },
+  "technology": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 560
+    },
+    "mobile": {
+      "width": 320,
+      "height": 380
+    }
+  },
+  "handCulture": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 540
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625
+    },
+    "short": {
+      "width": 624.71875,
+      "height": 420
+    },
+    "tablet": {
+      "width": 714,
+      "height": 460
+    }
+  },
+  "handPartner": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 540
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625
+    }
+  },
+  "commons": {
+    "desktop": {
+      "width": 624.734375,
+      "height": 540
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625
+    }
+  }
+}

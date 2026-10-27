@@ -4,7 +4,7 @@ const {chromium}=require('playwright'),sharp=require('sharp');
 const out=path.resolve(process.env.HERO_OUT||'.audit-logs/hero-family'),base='http://127.0.0.1:3294';fs.mkdirSync(out,{recursive:true});fs.mkdirSync('public/heroes',{recursive:true});
 const password=crypto.randomBytes(24).toString('hex'),salt=crypto.randomBytes(16).toString('hex'),hash=crypto.scryptSync(password,Buffer.from(salt,'hex'),32).toString('hex'),log=fs.openSync(path.join(out,'server.log'),'w');
 const server=spawn(process.execPath,['node_modules/next/dist/bin/next','start','-H','127.0.0.1','-p','3294'],{windowsHide:true,stdio:['ignore',log,log],env:{...process.env,FOUNDER_CREDENTIALS:`heroone:${salt}:${hash},herotwo:${salt}:${hash}`,FOUNDER_SESSION_SECRET:crypto.randomBytes(48).toString('hex')}});
-const definitions=[['technology','/technology',7.5],['manufacturing','/manufacturing',6.2],['network','/network',10],['ontology','/ontology',6],['about','/about',6]];
+const definitions=[['technology','/technology',7.5],['manufacturing','/manufacturing',8],['network','/network',10],['ontology','/ontology',6],['about','/about',6]];
 let browser;
 (async()=>{
  for(let i=0;i<120;i++){try{if((await fetch(base+'/coming-soon')).ok)break;}catch{}await new Promise(r=>setTimeout(r,250));}

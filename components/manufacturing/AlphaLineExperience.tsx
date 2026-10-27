@@ -41,11 +41,13 @@ export function AlphaLineExperience() {
     let disposed = false, preparing = true;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const query = new URLSearchParams(location.search);
+    const staticScene=()=>query.get('renderer')==='static'||query.get('motion')==='reduced'||query.get('animate')==='0'||prefersStaticScene();
     const reviewTime = query.get("alpha-time");
     if (reviewTime !== null) { playbackRef.current = alphaLineStateAt(Number(reviewTime) || 0); setPlayback(playbackRef.current); setFullRoute(true); }
     const updateMotion = () => {
-      setReduced(motion.matches);
-      if (motion.matches) {
+      setReduced(staticScene());
+      if (staticScene()) {
+        if(host.current&&!controller.current){host.current.dataset.sceneState='fallback';host.current.dataset.fallback='true';host.current.dataset.scenePose='complete';}
         pausedRef.current = true; setPaused(true);
         // Keep a useful still overview for visitors who prefer reduced motion.
         if (!reviewTime) {
@@ -57,7 +59,7 @@ export function AlphaLineExperience() {
     };
     updateMotion(); motion.addEventListener("change", updateMotion);
     const observer = new IntersectionObserver(async ([entry]) => {
-      if (!entry.isIntersecting || prefersStaticScene()) return;
+      if (!entry.isIntersecting || staticScene()) return;
       observer.disconnect();
       if (query.get("renderer") === "static") { if (host.current) host.current.dataset.fallback = "true"; return; }
       try {
@@ -78,7 +80,7 @@ export function AlphaLineExperience() {
             pausedRef.current = true; setPaused(true); controller.current?.setPaused(true);
             setSelectedId(id); setGuided(false); controller.current?.setGuided(false); controller.current?.focusStation(id);
           },
-          onReady: () => { if (!disposed) setReady(true); },
+          onReady: () => { if (!disposed) {if(host.current)host.current.dataset.fallback='false';setReady(true);} },
           onEnded: () => { if (!disposed) { pausedRef.current = true; setPaused(true); } },
         });
         if(disposed){controller.current.dispose();controller.current=null;return;}
@@ -175,7 +177,7 @@ export function AlphaLineExperience() {
           {ready && <button type="button" onClick={overview} aria-label="Overview"><Maximize2 size={14} aria-hidden="true"/><span className="alpha-overview-full">Overview</span><span className="alpha-overview-compact">View</span></button>}
         </div>
         </div>
-        <details className="alpha-options"><summary>Inspect &amp; explore</summary><div className="alpha-secondary"><label>Inspect station<select value={selectedId ?? ""} onChange={event=>choose(event.target.value)}><option value="">Complete line</option>{alphaLineStations.map(station=><option key={station.id} value={station.id}>{station.name}</option>)}</select></label>
+        <details className="alpha-options"><summary>Inspect &amp; explore</summary><div className="alpha-secondary"><label>Inspect station<select aria-label="Inspect station" value={selectedId ?? ""} onChange={event=>choose(event.target.value)}><option value="">Complete line</option>{alphaLineStations.map(station=><option key={station.id} value={station.id}>{station.name}</option>)}</select></label>
           <button type="button" aria-pressed={fullRoute} onClick={()=>{remember(true); overview(); setFullRoute(!fullRoute); seek("route",0);}}>{fullRoute ? "Full route selected" : "Watch full route"}</button>
           {ready && <button type="button" aria-pressed={explore} onClick={()=>{remember(true);setGuided(false);controller.current?.setGuided(false);setExplore(!explore);controller.current?.setExplore(!explore);}}>Explore freely</button>}
         </div></details>
@@ -183,7 +185,7 @@ export function AlphaLineExperience() {
         {playback.chapter === "review" && <p className="alpha-line-result">Lot identified · Process history connected · Quality review pending</p>}
         {ready && explore && <div className="alpha-line-orbit" aria-label="Camera controls"><span>Drag to rotate, or use these controls.</span><button type="button" aria-label="Rotate view left" onClick={() => controller.current?.orbit(-.12, 0, 0)}><ChevronLeft size={16}/></button><button type="button" aria-label="Rotate view right" onClick={() => controller.current?.orbit(.12, 0, 0)}><ChevronRight size={16}/></button><button type="button" aria-label="Zoom out" onClick={() => controller.current?.orbit(0, 0, -.08)}><Minus size={16}/></button><button type="button" aria-label="Zoom in" onClick={() => controller.current?.orbit(0, 0, .08)}><Plus size={16}/></button></div>}
         <p className="alpha-line-caption" id={description}>Conceptual demonstration · Timing compressed</p>
-        {(!ready || reduced) && <p className="alpha-line-static-note">{reduced ? "Reduced motion: " : "Static overview: "}use the chapters and journey control to inspect each stage.</p>}
+        {(!ready || reduced) && <p className="alpha-line-static-note">{reduced ? "Static view: " : "Static overview: "}use the chapters and journey control to inspect each stage.</p>}
       </div>
       <aside className="alpha-line-panel" aria-labelledby={panelTitle}>
         <p className="eyebrow">Lot inspector</p><h2 id={panelTitle}>Demo lot / Carrier 03</h2><p className="alpha-line-lot">Inspection pending</p>

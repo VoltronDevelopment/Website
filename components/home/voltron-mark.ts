@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 type Outline={width:number;height:number;shapes:{outline:number[][];holes:number[][][]}[]};
 /** Shallow solid emblem, preserving the original raster's silhouette and sampled colours. */
-export async function createVoltronMark(pixels:Uint8ClampedArray,width:number,height:number,bounds:number[],worldWidth:number){
+export async function createVoltronMark(pixels:Uint8ClampedArray,width:number,height:number,bounds:number[],worldWidth:number,frontTexture?:THREE.Texture){
  const response=await fetch('/heroes/voltron-mark-outline.json');if(!response.ok)throw Error('Logo outline unavailable');const trace=await response.json() as Outline;
  if(trace.width!==width||trace.height!==height)throw Error('Logo outline does not match source');
  const [x0,y0,x1,y1]=bounds,scale=worldWidth/(x1-x0+1),cx=(x0+x1+1)/2,cy=(y0+y1+1)/2;
@@ -16,7 +16,8 @@ export async function createVoltronMark(pixels:Uint8ClampedArray,width:number,he
   color.multiplyScalar(Math.abs(normal.getZ(i))>.5?1.10:.6);color.toArray(colors,i*3);
  }
  geometry.setAttribute('color',new THREE.BufferAttribute(colors,3));
- const face=new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,depthWrite:true,toneMapped:false});
+ if(frontTexture){const uv=new Float32Array(position.count*2);for(let i=0;i<position.count;i++){uv[i*2]=(position.getX(i)/scale+cx)/width;uv[i*2+1]=1-(cy-position.getY(i)/scale)/height;}geometry.setAttribute('uv',new THREE.BufferAttribute(uv,2));}
+ const face=new THREE.MeshBasicMaterial({map:frontTexture,vertexColors:!frontTexture,transparent:true,depthWrite:true,toneMapped:false});
  const side=new THREE.MeshPhysicalMaterial({vertexColors:true,metalness:.25,roughness:.25,clearcoat:.7,transparent:true,depthWrite:true,envMapIntensity:.5,emissive:0x1264ba,emissiveIntensity:.08});
  return new THREE.Mesh(geometry,[face,side]);
 }

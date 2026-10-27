@@ -1,4 +1,7 @@
 "use client";
+import type {CSSProperties} from "react";
+import openingFrames from "@/lib/scene-responsive-opening-frames.json";
+import responsiveOpening from "@/lib/scene-responsive-opening-posters.json";
 import {ScenePoster} from "../performance/ScenePoster";
 import {ArtworkControls} from "./ArtworkControls";
 import {useEffect,useRef,useState} from "react";
@@ -8,7 +11,13 @@ import {heroSceneDurations,type HeroSceneKind} from "./hero-scene-timeline";
 import type {EngineeredController,SceneMode} from "./engineered-hero-renderer";
 import "./hero-art-direction.css";
 import {ArtworkInspector} from './ArtworkInspector';
-const descriptions:Record<HeroSceneKind,string>={technology:"A complete four-layer network of 54 blue cube nodes connected by 433 fine strands. Signals travel through the connected architecture.",manufacturing:"A mounting bracket whose satin silver surface becomes graphite as an illustrative particle wave passes across it.",network:"A dimensional globe makes one complete rotation as illustrative manufacturing connections form, then holds the completed network.",ontology:"A manufactured part and its distinct records gather into a connected spatial structure.",about:"Three glass structures align around a shared foundation, connecting production, knowledge and intelligence."};
+const descriptions:Record<HeroSceneKind,string>={technology:"Fine particles form 54 glass cube nodes in four layers connected by 346 strands. Signals travel through the architecture before it settles into stillness.",manufacturing:"Fine particles form a mounting bracket, then a prominent glowing plane scans across it as its silver surface becomes graphite. The completed part settles into stillness.",network:"A dimensional globe makes one complete rotation. A round polygon envelope forms around readable continents, while geographic nodes light briefly before the globe settles.",ontology:"A manufactured part and its distinct records gather into a connected spatial structure.",about:"Three glass structures align around a shared foundation, connecting production, knowledge and intelligence."};
+function ResponsiveHeroOpening({kind,theme}:{kind:"manufacturing"|"network"|"ontology"|"about";theme:"light"|"dark"}){
+ const images=responsiveOpening[kind],frame=openingFrames[kind];
+ const style=Object.fromEntries(Object.entries(frame).flatMap(([device,capture])=>{const aspect=capture.width/capture.height,h=Math.max(1,(960/760)/aspect);return [[`--hero-native-${device}-width`,h*aspect],[`--hero-native-${device}-height`,h]];})) as CSSProperties;
+ const extra=kind==='manufacturing'?responsiveOpening.manufacturing:undefined;
+ return <picture style={style} className={`art-theme-${theme} responsive-hero-opening`}><source media="(max-width:767px)" srcSet={images.mobile[theme]}/>{extra&&<><source media="(min-width:768px) and (max-width:1023px)" srcSet={extra.tablet[theme]}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={extra.short[theme]}/></>}<img src={images.desktop[theme]} alt="" width="625" height="540"/></picture>;
+}
 export function EngineeredHero({kind}:{kind:HeroSceneKind}){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<EngineeredController|null>(null);
  const [mode,setMode]=useState<SceneMode>("static"),[review,setReview]=useState(false);
@@ -29,10 +38,10 @@ export function EngineeredHero({kind}:{kind:HeroSceneKind}){
   return()=>{disposed=true;abort.abort();view.disconnect();motion.removeEventListener("change",preference);controller.current?.dispose();controller.current=null;};
  },[kind]);
  return <div className={`engineered-art engineered-${kind}`}><div className="engineered-stage" ref={host} role="img" aria-label={descriptions[kind]}>
-  {kind==='technology'?<ScenePoster kind="technology"/>:<div className="engineered-posters" data-scene-poster aria-hidden="true">{(["opening","complete"] as const).map(pose=><div className={`engineered-pose engineered-${pose}`} key={pose}>{["light","dark"].map(theme=>kind==='network'?<picture key={theme} className={`art-theme-${theme}`}><source media="(max-width:767px)" srcSet={`/heroes/network-${pose}-${theme}-mobile.webp`}/><img src={`/heroes/${kind}-${pose}-${theme}.webp`} alt="" width="960" height="760"/></picture>:<img key={theme} className={`art-theme-${theme}`} src={`/heroes/${kind}-${pose}-${theme}.webp`} alt="" width="960" height="760"/>)}</div>)}</div>}
+  {kind==='technology'?<ScenePoster kind="technology"/>:<div className="engineered-posters" data-scene-poster aria-hidden="true">{(["opening","complete"] as const).map(pose=><div className={`engineered-pose engineered-${pose}`} key={pose}>{["light","dark"].map(theme=>(kind==='manufacturing'||kind==='network'||kind==='ontology'||kind==='about')&&pose==='opening'?<ResponsiveHeroOpening key={theme} kind={kind} theme={theme as 'light'|'dark'}/>:kind==='network'?<img key={theme} className={`art-theme-${theme}`} src={`/heroes/network-${pose}-${theme}.webp`} alt="" width="960" height="760"/>:<img key={theme} className={`art-theme-${theme}`} src={`/heroes/${kind}-${pose}-${theme}.webp`} alt="" width="960" height="760"/>)}</div>)}</div>}
   <canvas ref={canvas} aria-hidden="true"/>
  </div><ArtworkControls mode={mode} onToggle={()=>controller.current?.toggle()} onReplay={()=>controller.current?.replay()}/>
- {kind==="network"&&<p className="hero-art-caption">Future network vision</p>}
+ {kind==="network"&&<p className="hero-art-caption">Illustrative geography · Future network vision</p>}
  {review&&<label className="hero-review">Artwork time<input aria-label="Artwork time" type="range" min="0" max={heroSceneDurations[kind]} step=".05" defaultValue={heroSceneDurations[kind]} onChange={event=>controller.current?.seek(Number(event.target.value))}/></label>}
  <ArtworkInspector scene={kind} duration={heroSceneDurations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;
 }

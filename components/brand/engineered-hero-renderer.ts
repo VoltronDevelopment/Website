@@ -1,3 +1,4 @@
+import {particleWaveGLSL} from './particle-wave';
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
 import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
@@ -6,7 +7,8 @@ import {MeshSurfaceSampler} from "three/addons/math/MeshSurfaceSampler.js";
 import {glassFace,setGlass,stroke,strokeMaterial,type GlassFace} from "../home/lattice-materials";
 import {createSceneHandoff} from "../performance/scene-handoff";
 import {createRenderQuality} from "../performance/scene-policy";
-import {ease,heroSceneDurations,heroSceneState,type HeroSceneKind} from "./hero-scene-timeline";
+import {ease,heroSceneDurations,heroSceneState,manufacturingSurfaceState,type HeroSceneKind} from "./hero-scene-timeline";
+import {createQualityScan} from './quality-scan';
 import {createArtworkRoute} from './artwork-route';
 import {observeArtworkTuning,artworkDefaults} from './artwork-tuning';
 
@@ -19,7 +21,7 @@ const random=(i:number)=>{const v=Math.sin(i*127.1+311.7)*43758.5453;return v-Ma
 /** Procedural authoring stand-ins are isolated here so approved GLBs can replace them later. */
 export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HeroSceneKind,onMode:(mode:SceneMode)=>void,signal:AbortSignal):Promise<EngineeredController>{
  if(kind==="technology")return (await import("./neural-network-renderer")).mountNeuralNetwork(canvas,host,onMode,signal);
- const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});
+ const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture")});
  renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
  const quality=createRenderQuality(canvas,1.5);renderer.setPixelRatio(quality.ratio);
  const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-4,4,3,-3,.1,80);
@@ -105,7 +107,8 @@ export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivE
 
  let surfaceParticles:THREE.Points<THREE.BufferGeometry,THREE.ShaderMaterial>|undefined;
  let distantPoints:THREE.Points<THREE.BufferGeometry,THREE.PointsMaterial>|undefined;
- const boundary={value:-3.5},response={value:0};
+ const boundary={value:-3.5},response={value:0},formation={value:0};
+ let scanner:ReturnType<typeof createQualityScan>|undefined;
  if(kind==="network"){
   const sites:[[number,number,number],number][]=[[[0,-1.32,1.6],3.3],[[-2.2,-1.32,-.65],1.85],[[2.15,-1.32,-1],1.85],[[0,-1.32,-3.2],1.55]];
   sites.forEach(([p,size],i)=>{const module=site(size,p,i);if(i<3){const building=factory(module,size/1.85);building.position.y=.1;}else{const foundation=box(module,[size*.78,.06,size*.55],[0,.11,0],white);foundation.material=white;}});
@@ -122,19 +125,21 @@ export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivE
   // Asset seam: replace this group with a prepared GLB, retaining component-local X.
   const component=new THREE.Group();scene.add(component);visualRoots.push(component);component.rotation.y=-.22;
   const finish=track(new THREE.MeshStandardMaterial({color:0xbfc8cf,metalness:.88,roughness:.3}));
-  finish.onBeforeCompile=shader=>{shader.uniforms.uBoundary=boundary;shader.uniforms.uResponse=response;
+  finish.onBeforeCompile=shader=>{shader.uniforms.uBoundary=boundary;shader.uniforms.uResponse=response;shader.uniforms.uFormation=formation;
    shader.vertexShader=shader.vertexShader.replace("#include <common>","#include <common>\nvarying vec3 vComponent;varying vec3 vSurfaceNormal;").replace("#include <begin_vertex>","#include <begin_vertex>\nvComponent=position;vSurfaceNormal=normal;");
-   shader.fragmentShader=shader.fragmentShader.replace("#include <common>","#include <common>\nuniform float uBoundary,uResponse;varying vec3 vComponent;varying vec3 vSurfaceNormal;").replace("#include <color_fragment>","#include <color_fragment>\nfloat edge=vComponent.x+.09*sin(vComponent.y*4.)+.045*sin(vComponent.z*7.);float shell=1.-smoothstep(.25,.75,abs(vSurfaceNormal.y));float bore=smoothstep(.47,.58,length(vComponent.xy-vec2(0.,1.75)));float coated=(1.-smoothstep(uBoundary-.16,uBoundary+.16,edge))*shell*bore;diffuseColor.rgb=mix(vec3(.65,.71,.76),vec3(.055,.10,.15),coated);diffuseColor.rgb+=uResponse*.035;").replace("#include <roughnessmap_fragment>","#include <roughnessmap_fragment>\nroughnessFactor=mix(.19,.43,coated)+.004*sin(vComponent.x*190.);").replace("#include <emissivemap_fragment>","#include <emissivemap_fragment>\nfloat treatmentLight=exp(-pow((edge-uBoundary)/.075,2.))*step(-2.1,uBoundary)*step(uBoundary,2.1);totalEmissiveRadiance+=vec3(.035,.25,.48)*treatmentLight*shell;");};
+   shader.fragmentShader=shader.fragmentShader.replace("#include <common>","#include <common>\nuniform float uBoundary,uResponse,uFormation;varying vec3 vComponent;varying vec3 vSurfaceNormal;").replace("#include <color_fragment>","#include <color_fragment>\nfloat grain=fract(sin(dot(floor(vComponent*85.),vec3(12.9898,78.233,37.719)))*43758.5453);float field=clamp((vComponent.x+2.1)/4.2,0.,1.)*.8+grain*.15;if(grain>smoothstep(field-.08,field+.08,uFormation))discard;float edge=vComponent.x+.09*sin(vComponent.y*4.)+.045*sin(vComponent.z*7.);float shell=1.-smoothstep(.25,.75,abs(vSurfaceNormal.y));float bore=smoothstep(.47,.58,length(vComponent.xy-vec2(0.,1.75)));float coated=(1.-smoothstep(uBoundary-.16,uBoundary+.16,edge))*shell*bore;diffuseColor.rgb=mix(vec3(.65,.71,.76),vec3(.055,.10,.15),coated);diffuseColor.rgb+=uResponse*.035;").replace("#include <roughnessmap_fragment>","#include <roughnessmap_fragment>\nroughnessFactor=mix(.19,.43,coated)+.004*sin(vComponent.x*190.);").replace("#include <emissivemap_fragment>","#include <emissivemap_fragment>\nfloat treatmentLight=exp(-pow((edge-uBoundary)/.075,2.))*step(-2.1,uBoundary)*step(uBoundary,2.1);totalEmissiveRadiance+=vec3(.035,.25,.48)*treatmentLight*shell;");};
   const base=new THREE.Shape();base.moveTo(-1.55,-.7);base.quadraticCurveTo(-2.03,-.7,-2.03,-.2);base.quadraticCurveTo(-2.03,.65,-1.45,.65);base.bezierCurveTo(-.75,.65,-.6,.28,0,.3);base.bezierCurveTo(.6,.28,.75,.65,1.45,.65);base.quadraticCurveTo(2.03,.65,2.03,-.2);base.quadraticCurveTo(2.03,-.7,1.55,-.7);base.bezierCurveTo(.65,-.7,.7,-.45,0,-.46);base.bezierCurveTo(-.7,-.45,-.65,-.7,-1.55,-.7);base.closePath();
   for(const x of [-1.45,1.45]){const hole=new THREE.Path();hole.absarc(x,0,.23,0,Math.PI*2,true);base.holes.push(hole);}
   const baseGeo=new THREE.ExtrudeGeometry(base,{depth:.22,bevelEnabled:true,bevelThickness:.06,bevelSize:.06,bevelSegments:3,curveSegments:40});baseGeo.rotateX(-Math.PI/2);mesh(baseGeo,finish,component);
   const upright=new THREE.Shape();upright.moveTo(-1.25,.2);upright.bezierCurveTo(-.83,.35,-.76,1.15,-.69,1.75);upright.absarc(0,1.75,.7,Math.PI,0,true);upright.bezierCurveTo(.76,1.15,.83,.35,1.25,.2);upright.closePath();const bore=new THREE.Path();bore.absarc(0,1.75,.46,0,Math.PI*2,false);upright.holes.push(bore);
   const uprightGeo=new THREE.ExtrudeGeometry(upright,{depth:.45,bevelEnabled:true,bevelSize:.065,bevelThickness:.055,bevelSegments:4,curveSegments:56});uprightGeo.translate(0,0,-.225);mesh(uprightGeo,finish,component);
   const positions:number[]=[],normals:number[]=[],seed:number[]=[];const point=new THREE.Vector3(),normal=new THREE.Vector3();let index=0;
-  for(const geometry of [baseGeo,uprightGeo]){const sampler=(new MeshSurfaceSampler(new THREE.Mesh(geometry)) as MeshSurfaceSampler & {setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(()=>random(++index)).build();for(let i=0;i<(matchMedia("(max-width:767px)").matches?1200:3200);i++){sampler.sample(point,normal);positions.push(...point.addScaledVector(normal,.014).toArray());normals.push(...normal.toArray());seed.push(random(++index));}}
+  for(const geometry of [baseGeo,uprightGeo]){const sampler=(new MeshSurfaceSampler(new THREE.Mesh(geometry)) as MeshSurfaceSampler & {setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(()=>random(++index)).build();for(let i=0;i<(matchMedia("(max-width:767px)").matches?4500:9000);i++){sampler.sample(point,normal);positions.push(...point.addScaledVector(normal,.014).toArray());normals.push(...normal.toArray());seed.push(random(++index));}}
   const geo=track(new THREE.BufferGeometry());geo.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geo.setAttribute("normal",new THREE.Float32BufferAttribute(normals,3));geo.setAttribute("aSeed",new THREE.Float32BufferAttribute(seed,1));
-  const mat=track(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uBoundary:boundary,uRatio:{value:quality.ratio},uDark:{value:dark()?1:0}},vertexShader:`uniform float uBoundary,uRatio;attribute float aSeed;varying float vAlpha;void main(){float edge=position.x+.09*sin(position.y*4.)+.045*sin(position.z*7.);vAlpha=exp(-pow((edge-uBoundary)/.25,2.));gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);gl_PointSize=(1.+aSeed*1.5)*uRatio;}`,fragmentShader:`uniform float uDark;varying float vAlpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.12,.4,.8),vec3(.65,.88,1.),uDark),vAlpha*(1.-smoothstep(.15,.5,r)));}`}));
+  const mat=track(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uBoundary:boundary,uFormation:formation,uRatio:{value:quality.ratio},uDark:{value:dark()?1:0}},vertexShader:`${particleWaveGLSL}
+uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vAlpha;void main(){float edge=position.x+.09*sin(position.y*4.)+.045*sin(position.z*7.);float field=clamp((position.x+2.1)/4.2,0.,1.)*.8+aSeed*.15;float arrived=smoothstep(field-.18,field+.04,uFormation);vec3 p=latticeWave(position,arrived,aSeed,uFormation*3.,vec3(1.,.12,.1),2.3,.32);vAlpha=uFormation<.999?(1.-smoothstep(field,field+.16,uFormation)):exp(-pow((edge-uBoundary)/.18,2.));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.9+aSeed*.8)*uRatio;}`,fragmentShader:`uniform float uDark;varying float vAlpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.12,.4,.8),vec3(.65,.88,1.),uDark),vAlpha*(1.-smoothstep(.15,.5,r)));}`}));
   surfaceParticles=new THREE.Points(geo,mat);component.add(surfaceParticles);
+  scanner=createQualityScan(1.8,3.0,track);component.add(scanner.group);scanner.group.rotation.y=Math.PI/2;scanner.group.position.y=1.05;
  }
  // A directional open ribbon; no rings, orbital motion or permanent atmospheric loop.
  const cloud:number[]=[],seeds:number[]=[];for(let i=0;i<(matchMedia("(max-width:767px)").matches?650:1800);i++){cloud.push(-3.5+random(i+1)*6,(Math.floor(random(i+2)*3)-1)*.52+(random(i+3)-.5)*.15,-1.2+(random(i+4)-.5)*1.2);seeds.push(random(i+5));}
@@ -154,17 +159,18 @@ export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivE
   junctions.forEach((node,i)=>node.scale.setScalar(1+state.response*.35*(.6+random(i)*.4)));
   if(distantPoints){distantPoints.material.opacity=state.connection(3)*.5;distantPoints.material.color.setHex(dark()?0x73bce4:0x246b9e);}
   boundary.value=-2.5+state.finish*5;response.value=state.response;waveMat.uniforms.uTime.value=time;waveMat.uniforms.uAlpha.value=state.wave;waves.visible=state.wave>.001;
-  if(surfaceParticles){surfaceParticles.visible=time>1.1&&time<4.5;surfaceParticles.material.uniforms.uRatio.value=quality.ratio*tuning.particleScale;}shadowMaterial.opacity=state.ground;
+  const surface=manufacturingSurfaceState(kind==="manufacturing"?state.time:time);formation.value=surface.formation;if(scanner){scanner.group.position.x=surface.boundary;scanner.update(surface.scan,dark(),tuning.glow);}
+  if(surfaceParticles){surfaceParticles.visible=time>.5&&time<6.9;surfaceParticles.material.uniforms.uRatio.value=quality.ratio*tuning.particleScale;}shadowMaterial.opacity=state.ground;
   if(kind==="manufacturing"){waves.visible=false;waveMat.uniforms.uAlpha.value=0;}
   echo.update(state.ground*(dark()?.5:.85));catcherMaterial.opacity=state.ground*(dark()?.18:.12);renderer.shadowMap.needsUpdate=true;
-  renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);host.dataset.phase=state.done?"settled":time<2?"establishing":time<4.5?"connecting":"resolving";
+  renderer.render(scene,camera);canvas.dataset.partFormation=formation.value.toFixed(3);canvas.dataset.scanPlane=String(scanner?.group.visible??false);canvas.dataset.animationTime=time.toFixed(3);canvas.dataset.scanEnergy=surface.scan.toFixed(3);canvas.dataset.surfacePhase=surface.phase;host.dataset.phase=state.done?"settled":time<2?"establishing":time<4.5?"connecting":"resolving";
  }
  function size(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height;const extent=Math.max(kind==="manufacturing"?4.2:kind==="network"?6.2:5.8,(kind==="manufacturing"?4.2:kind==="network"?6.2:5.8)*(960/760)/aspect);camera.left=-extent*aspect/2;camera.right=extent*aspect/2;camera.top=extent/2;camera.bottom=-extent/2;camera.updateProjectionMatrix();draw();}
  function theme(){outlines.forEach(material=>{material.userData.restOutline??=material.opacity;material.opacity=material.userData.restOutline*tuning.outline;});routes.forEach(route=>route.setTheme(dark()));palette.forEach(({material,light,dark:night})=>material.color.setHex(dark()?night:light));panes.forEach(({material,kind})=>{setGlass(material,kind,dark());material.opacity*=tuning.glassOpacity;material.roughness*=tuning.roughness;material.envMapIntensity*=tuning.reflection;const transmission=kind==="side"?tuning.transmission*.35:0;if((material.transmission>0)!==(transmission>0))material.needsUpdate=true;material.transmission=transmission;material.thickness=.025;});waveMat.uniforms.uDark.value=dark()?1:0;if(surfaceParticles)surfaceParticles.material.uniforms.uDark.value=dark()?1:0;hemi.intensity=dark()?.65:.8;key.position.set(-4+Math.sin(tuning.keyDirection)*5,8,7);draw();}
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;quality.reset();host.dataset.running="false";}
  function tick(now:number){frame=0;if(disposed||lost||!visible||document.hidden||paused||frozen)return;time=Math.min(duration,time+(last?Math.min(.08,(now-last)/1000):0));last=now;if(quality.sample(now)){renderer.setPixelRatio(quality.ratio);waveMat.uniforms.uRatio.value=quality.ratio;if(surfaceParticles)surfaceParticles.material.uniforms.uRatio.value=quality.ratio;size();}draw();if(time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}}
  function schedule(){if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!disposed&&!lost&&visible&&!document.hidden&&!paused&&!frozen&&!frame&&time<duration&&host.dataset.sceneState==="live"){last=0;host.dataset.running="true";frame=requestAnimationFrame(tick);}}
- const resize=new ResizeObserver(size),themes=new MutationObserver(theme),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)schedule();else stop();},{threshold:.05});
+ const resize=new ResizeObserver(size),themes=new MutationObserver(theme),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&(kind!=="manufacturing"||entry.intersectionRatio>=.25);if(visible)schedule();else stop();},{threshold:kind==="manufacturing"?[0,.25]:.05});
  function visibility(){if(document.hidden)stop();else schedule();}
  function contextLost(event:Event){event.preventDefault();lost=true;stop();handoff.fallback();onMode("static");}
  function restored(){lost=false;theme();size();void handoff.reveal().then(()=>{if(disposed)return;onMode(time>=duration?"settled":paused?"paused":"playing");schedule();});}

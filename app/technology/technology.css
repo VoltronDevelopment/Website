@@ -17,3 +17,64 @@
 @media(max-width:767px){.engineered-technology:has(.artwork-inspector) > .hero-motion-controls {top:264px;}}
 
 @media(min-width:1100px){.technology-hero .engineered-technology {width:calc(100% + 48px);margin-left:-8px;}}
+/* Technology shares Home's optical language while keeping content outside the artwork. */
+.site-presentation:has(.technology-page) {border:0;backdrop-filter:blur(7px) saturate(1.01);-webkit-backdrop-filter:blur(7px) saturate(1.01);box-shadow:0 20px 64px var(--glass-drop)}
+.site-presentation:has(.technology-page)::before {display:none}
+.site-presentation:has(.technology-page) .presentation-veil {opacity:.58}
+.site-presentation:has(.technology-page) :is(.site-header,.site-footer) {border:0;box-shadow:0 8px 28px rgba(12,35,55,.045)}
+.technology-page {--tech-fill:rgba(250,253,255,.84);--tech-shade:rgba(216,232,244,.64);--tech-shadow:rgba(24,52,78,.13);--tech-line:#648aa6;--tech-accent:#15547b;--tech-selection:rgba(124,181,216,.22);--tech-surface:rgba(244,250,254,.65)}
+:root[data-theme="dark"] .technology-page {--tech-fill:rgba(27,43,59,.88);--tech-shade:rgba(13,25,39,.85);--tech-shadow:rgba(0,0,0,.28);--tech-line:#638ca7;--tech-accent:#b9e4fa;--tech-selection:rgba(83,143,181,.23);--tech-surface:rgba(20,39,56,.7)}
+.technology-page .section {min-height:0;padding-block:88px;scroll-margin-top:100px}
+.technology-page .hero-principle-strip {border:0;box-shadow:0 -8px 30px rgba(12,35,55,.035)}
+.technology-page .hero-principle-strip li+li {border:0}
+.technology-page .section-intro {max-width:780px}
+.technology-architecture {position:relative}
+.architecture-instruction {font-size:12px;line-height:20px;color:var(--muted);margin-bottom:24px}
+.technology-map {position:relative;display:grid;grid-template-columns:1fr .9fr 1fr;grid-template-areas:"mes ontology twin" "scada ontology ai";gap:28px 70px;padding:12px 0 32px}
+.technology-node {position:relative;z-index:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:138px;gap:8px;text-align:left;padding:22px 24px;border:0;border-radius:14px;color:var(--ink);background:linear-gradient(140deg,var(--tech-fill),var(--tech-shade));box-shadow:0 12px 34px var(--tech-shadow);backdrop-filter:blur(10px);font:inherit;cursor:pointer;transition:background .2s,box-shadow .2s,transform .2s}
+.technology-node>svg {color:var(--tech-accent);width:26px;height:26px}
+.technology-node>span {font-size:18px;line-height:26px;font-weight:500}
+.technology-node>small {font-size:12px;line-height:20px;color:var(--muted)}
+.technology-node:hover {transform:translateY(-2px)}
+.technology-node[aria-pressed="true"] {background:linear-gradient(140deg,var(--tech-fill),var(--tech-selection));box-shadow:0 14px 40px var(--tech-shadow),inset 0 3px 0 var(--tech-accent)}
+.node-mes {grid-area:mes}.node-scada {grid-area:scada}.node-ontology {grid-area:ontology;align-self:center;min-height:168px}.node-twin {grid-area:twin}.node-ai {grid-area:ai}
+.technology-map-lines {position:absolute;inset:0;width:100%;height:100%;pointer-events:none;fill:none;stroke:var(--tech-line);stroke-width:1.2;opacity:.72}
+.technology-map-lines .architecture-signal {stroke:var(--tech-accent);stroke-width:2;stroke-dasharray:8 8;animation:technology-signal 1.6s ease-out 1 both}
+@keyframes technology-signal {from{stroke-dashoffset:96;opacity:.2}to{stroke-dashoffset:0;opacity:1}}
+.architecture-insight {display:grid;grid-template-columns:1.7fr 1fr;gap:56px;margin-top:20px;padding:28px 0}
+.architecture-insight h3 {font-size:21px;font-weight:500;line-height:30px;margin-bottom:14px}
+.architecture-insight h3 span {display:block;font-size:13px;font-weight:400;color:var(--muted);line-height:22px}
+.architecture-insight p {font-size:15px;line-height:26px;color:var(--muted);max-width:60ch}
+.architecture-records {margin:0;font-size:13px;line-height:24px;color:var(--muted)}
+.architecture-records dt {color:var(--ink);font-weight:500;margin-bottom:8px}
+.architecture-records dd {margin:0;padding-block:2px}
+.architecture-example {display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:16px;padding:22px 24px;border-radius:14px;background:var(--tech-surface);box-shadow:0 10px 30px var(--tech-shadow);font-size:12px;line-height:21px}
+.architecture-example strong {font-weight:500;margin-right:auto}.architecture-example i {font-style:normal;color:var(--tech-accent)}.architecture-example p {flex-basis:100%;color:var(--muted);max-width:80ch}
+.technology-example-note {font-size:11px;line-height:20px;color:var(--muted);margin-top:20px;max-width:85ch}
+.configuration-toolbar {display:flex;justify-content:space-between;gap:24px;align-items:center;margin-bottom:28px}
+.configuration-toolbar h3 {font-size:21px;font-weight:500;line-height:30px}.configuration-toolbar p {font-size:13px;line-height:22px;color:var(--muted);margin-top:6px}
+.configuration-toolbar label {display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted)}
+.configuration-toolbar select {min-height:44px;padding:10px 36px 10px 14px;min-width:180px;border:1px solid var(--tech-line);border-radius:8px;color:var(--ink);background:var(--surface);font:inherit;font-size:13px}
+.configuration-workspace {display:grid;grid-template-columns:230px minmax(0,1fr);gap:40px;align-items:center}
+.configuration-core {border-radius:14px;padding:28px 24px;background:linear-gradient(145deg,var(--tech-fill),var(--tech-shade));box-shadow:0 14px 36px var(--tech-shadow);backdrop-filter:blur(10px)}
+.configuration-core h4 {font-size:19px;font-weight:500;line-height:28px;margin-block:18px 12px}.configuration-core p,.configuration-core li {font-size:12px;line-height:22px;color:var(--muted)}.configuration-core ul {padding:0;list-style:none;margin:16px 0 0}
+.configuration-core-mark {display:flex;gap:4px;align-items:flex-end;height:36px}.configuration-core-mark i {display:block;width:20px;height:28px;border-radius:3px;background:var(--tech-accent);opacity:.65}.configuration-core-mark i:nth-child(2){height:36px;opacity:1}.configuration-core-mark i:nth-child(3){height:21px;opacity:.4}
+.configuration-pack-name {font-size:15px;font-weight:500;color:var(--ink);margin-bottom:20px}
+.configuration-flow {display:flex;align-items:center;gap:14px}.configuration-flow>div {flex:1;min-width:0;padding:16px 12px;background:var(--tech-surface);border-radius:10px;box-shadow:0 8px 24px var(--tech-shadow)}.configuration-flow span {display:block;font-size:10px;line-height:18px;color:var(--muted);margin-bottom:5px}.configuration-flow strong {display:block;font-size:13px;line-height:21px;font-weight:500}.configuration-flow>i {font-style:normal;color:var(--tech-accent)}
+.configuration-flow .configuration-operation {background:var(--tech-selection);animation:configuration-resolve .65s ease-out 1 both}
+@keyframes configuration-resolve {from{opacity:.45;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.configuration-description {color:var(--muted);font-size:13px;line-height:23px;margin-top:22px;max-width:70ch}
+.configuration-plant {display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:24px;padding-top:18px;font-size:11px;line-height:20px;color:var(--muted)}.configuration-plant strong {flex-basis:100%;color:var(--ink);font-weight:500}
+.configuration-capabilities {display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px}.configuration-capabilities p {font-size:13px;line-height:23px;color:var(--muted)}.configuration-capabilities strong {display:block;color:var(--ink);font-weight:500;margin-bottom:5px}
+.technology-responsibilities .entry-grid {display:block}.technology-responsibilities .responsibility {padding:24px 0;border:0;box-shadow:none;background:none;display:grid;grid-template-columns:36px 240px 1fr;gap:22px}.technology-responsibilities .responsibility>div {display:contents}.technology-responsibilities .responsibility p {margin:0;color:var(--muted);font-size:14px;line-height:25px;max-width:68ch}.technology-responsibilities .responsibility h3 {font-weight:500}
+@media(max-width:1000px){.technology-map{gap:20px 28px}.technology-node{padding:20px 18px}.configuration-workspace{grid-template-columns:200px minmax(0,1fr);gap:24px}.configuration-flow{gap:8px}}
+@media(max-width:767px){
+ .technology-page .section{padding-block:56px}.technology-map{grid-template-columns:1fr 1fr;grid-template-areas:"mes scada" "ontology ontology" "twin ai";gap:16px;padding:0 0 18px}.technology-node{min-height:140px;padding:18px 14px}.technology-node>span{font-size:16px}.technology-node>small{font-size:11px;line-height:18px}.node-ontology{min-height:116px;align-items:center;text-align:center}.technology-map-lines{display:none}.architecture-insight{grid-template-columns:1fr;gap:20px;padding-block:18px}.architecture-example{padding:20px 16px;gap:10px}.architecture-example strong{flex-basis:100%}.configuration-toolbar{display:block}.configuration-toolbar label{margin-top:22px;justify-content:space-between}.configuration-toolbar select{min-width:170px}.configuration-workspace{grid-template-columns:1fr;gap:24px}.configuration-core{padding:22px}.configuration-core-mark{float:right}.configuration-core h4{margin-top:0}.configuration-core ul{display:flex;gap:12px;flex-wrap:wrap}.configuration-flow{flex-direction:column;gap:8px;align-items:stretch}.configuration-flow>i{text-align:center;transform:rotate(90deg)}.configuration-flow>div{padding:14px 18px}.configuration-capabilities{grid-template-columns:1fr;gap:18px}.technology-responsibilities .responsibility{grid-template-columns:32px minmax(0,1fr);gap:10px 16px}.technology-responsibilities .responsibility p{grid-column:2}.technology-page .engineered-technology .engineered-stage {height:clamp(290px,46svh,380px)}
+ .site-presentation:has(.technology-page) .site-header[data-compact="true"]:not(:focus-within){transform:translateY(-14px)}.site-presentation:has(.technology-page) .site-header[data-compact="true"] .header-inner{transform:translateY(7px)}
+}
+@media(prefers-reduced-motion:reduce){.technology-page *{animation:none!important;scroll-behavior:auto}.technology-node{transition:none}.technology-node:hover{transform:none}}
+:root[data-scene-motion="static"] .technology-page * {animation:none!important}
+@media(prefers-reduced-transparency:reduce){.technology-node,.configuration-core {backdrop-filter:none;background:var(--surface)}}
+@media(forced-colors:active){.technology-node,.configuration-core,.architecture-example{border:1px solid CanvasText;box-shadow:none}.technology-node[aria-pressed="true"]{outline:2px solid Highlight}}
+@media(max-width:767px){.site-presentation:has(.technology-page) .site-header{transition:transform .2s ease}} @media(prefers-reduced-motion:reduce){.site-presentation:has(.technology-page) .site-header{transition:none}}
+@media(min-width:901px){.technology-hero[data-art-side="left"] .engineered-technology{width:100%;margin-left:0}}

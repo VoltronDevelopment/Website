@@ -1,0 +1,18 @@
+.collaboration-art{position:relative;min-width:0}
+.collaboration-about{isolation:isolate}
+.collaboration-about::before{content:"";position:absolute;inset:-4%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse,rgba(227,238,245,.9),rgba(228,239,246,.55) 48%,transparent 76%)}
+:root[data-theme="dark"] .collaboration-about::before{background:radial-gradient(ellipse,rgba(8,19,29,.95),rgba(8,19,29,.72) 46%,transparent 76%)}
+.collaboration-stage{container-type:size;position:relative;overflow:hidden;width:100%;height:540px}
+.collaboration-stage>canvas{display:block;width:100%;height:100%}
+.story-posters,.story-posters>span,.story-posters picture{position:absolute;inset:0;pointer-events:none}
+.story-complete{display:none}
+:root:not([data-theme="dark"]) .story-posters picture.art-theme-light,:root[data-theme="dark"] .story-posters picture.art-theme-dark{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center}
+.story-posters picture>img{position:relative;grid-area:1/1;max-width:none;object-fit:fill;width:calc(min(100cqw / var(--story-w),100cqh / var(--story-h)) * var(--story-frame));height:calc(min(100cqw / var(--story-w),100cqh / var(--story-h)) * var(--story-frame))}
+.story-native-opening{--story-native-w:var(--story-desktop-w);--story-native-h:var(--story-desktop-h)}
+.story-posters .story-native-opening>img{width:calc(min(100cqw / var(--story-w),100cqh / var(--story-h)) * var(--story-native-w));height:calc(min(100cqw / var(--story-w),100cqh / var(--story-h)) * var(--story-native-h))}
+@media(max-width:767px){.story-native-opening{--story-native-w:var(--story-mobile-w);--story-native-h:var(--story-mobile-h)}}
+@media(min-width:768px) and (max-width:1023px){.story-native-opening{--story-native-w:var(--story-tablet-w);--story-native-h:var(--story-tablet-h)}}
+@media(min-width:1024px) and (max-height:780px){.story-native-opening{--story-native-w:var(--story-short-w);--story-native-h:var(--story-short-h)}}
+.collaboration-stage[data-scene-pose="complete"] .story-opening,:root[data-scene-motion="static"] .collaboration-stage .story-opening{display:none}
+.collaboration-stage[data-scene-pose="complete"] .story-complete,:root[data-scene-motion="static"] .collaboration-stage .story-complete{display:block}
+@media(prefers-reduced-motion:reduce){.collaboration-stage .story-opening{display:none}.collaboration-stage .story-complete{display:block}}

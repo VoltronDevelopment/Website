@@ -24,7 +24,7 @@ describe('Prepared human sculptures',()=>{
   for(const p of path.points){expect(p.supportHits).toBeGreaterThanOrEqual(6);expect(Math.hypot(...p.q)).toBeCloseTo(1,5);expect([p.r,p.y,p.d].every(Number.isFinite)).toBe(true);}
   const end=path.points.at(-1);expect(end.r).toBeCloseTo(0);expect(end.y).toBeCloseTo(0);expect(end.d).toBeCloseTo(0);expect(Math.abs(end.q[3])).toBeCloseTo(1);
  });
- it('keeps the rotating cube clear of the arm at baked and interpolated poses',()=>{
+ it('keeps the two transferred cubes clear of the source figures after emergence',()=>{
   expect(()=>execFileSync(process.execPath,['scripts/audit-sculpture-motion.mjs'],{stdio:'pipe'})).not.toThrow();
  });
  it('places the head outside the central cube instead of intersecting its glass faces',()=>{
@@ -32,7 +32,7 @@ describe('Prepared human sculptures',()=>{
   const r=new T.Vector3(7,0,-6).normalize(),n=new T.Vector3(6,0,7).normalize(),basis=new T.Matrix4().makeBasis(r,new T.Vector3(0,1,0),n);let intersections=0;
   for(let i=0;i<count;i++){
    const p=new T.Vector3(data[i*8],data[i*8+1],data[i*8+2]).multiplyScalar(cultureHead.scale).applyAxisAngle(new T.Vector3(0,1,0),cultureHead.yaw).applyMatrix4(basis).addScaledVector(r,cultureHead.r).addScaledVector(n,cultureHead.d);p.y+=cultureHead.y;
-   if(Math.abs(p.x)<1.05&&Math.abs(p.z)<1.05&&Math.abs(p.y+.65)<1.05)intersections++;
+   if(Math.abs(p.x)<1.05&&Math.abs(p.z)<1.05&&Math.abs(p.y-.7)<1.05)intersections++;
   }expect(intersections).toBe(0);
  });
 });

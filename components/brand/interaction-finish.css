@@ -43,3 +43,9 @@
   .site-presentation .about-disclosure > button::after { transition:none; }
   .site-presentation .directional-action:is(:hover,:focus-visible,:active) > svg { transform:none; }
 }
+/* Long industrial names remain readable under text enlargement and narrow reflow. */
+#main-content :is(h1,h2,h3,p,.button){overflow-wrap:anywhere}
+/* Intrinsic text growth must leave theme/menu controls reachable at 200% text. */
+.site-header .brand-lockup{min-width:0;flex-shrink:1}.site-header .brand-wordmark{min-width:0;white-space:normal;overflow-wrap:anywhere}.site-header .site-nav{min-width:0;flex-wrap:wrap}
+.skip-link{top:0;transform:translateY(calc(-100% - 12px));max-width:calc(100vw - 32px)}.skip-link:focus{top:12px;transform:none}
+@media(max-width:359px){.site-header .brand-wordmark{display:none}}

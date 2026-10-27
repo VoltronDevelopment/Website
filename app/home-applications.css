@@ -1,0 +1,37 @@
+.application-previews { --preview-play:paused; position:relative; }
+.application-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px; }
+.application-screen { min-width:0; padding:24px; border-radius:16px; background:linear-gradient(135deg,var(--card-fill),var(--card-shade)); box-shadow:0 14px 40px var(--card-shadow); backdrop-filter:blur(12px) saturate(1.08); }
+.application-screen header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.application-screen h3 { font-size:20px; line-height:28px; font-weight:500; }
+.application-screen header span { color:var(--muted); font-size:12px; line-height:20px; }
+.application-screen .preview-demo { font-size:10px; white-space:nowrap; }
+.application-screen svg { display:block; width:100%; height:auto; margin:12px 0 8px; overflow:visible; }
+.application-screen svg text { fill:var(--ink); font:400 13px Montserrat,Arial,sans-serif; }
+.application-screen svg .diagram-note { fill:var(--muted); font-size:11px; }
+.diagram-link,.diagram-machine { fill:none; stroke:var(--diagram-line); stroke-width:1.5; }
+.diagram-machine { stroke:var(--diagram-ink); }
+.diagram-surface { fill:var(--diagram-surface); stroke:var(--diagram-line); stroke-width:1; }
+.diagram-node,.tank-body { fill:var(--diagram-glass); stroke:var(--diagram-ink); stroke-width:1.2; }
+.diagram-part,.mes-item { fill:var(--diagram-ink); }
+.application-screen svg .diagram-part-label { fill:var(--diagram-inverse); }
+.diagram-review { fill:var(--diagram-glass); stroke:var(--diagram-ink); stroke-width:2; }
+.tank-liquid { fill:var(--diagram-water); }
+.signal-wave { fill:none; stroke:var(--diagram-ink); stroke-width:1.5; }
+.application-caption { display:flex; justify-content:space-between; align-items:center; gap:16px; }
+.application-caption p { color:var(--muted); font-size:13px; line-height:22px; max-width:34ch; }
+.application-caption a { width:44px; height:44px; flex-shrink:0; display:grid; place-items:center; color:var(--ink); border-radius:50%; background:var(--diagram-surface); }
+.application-caption a:hover { background:var(--selection); }
+.application-disclaimer { margin-top:20px; font-size:11px; color:var(--muted); text-align:center; }
+.application-particles { position:absolute; inset:0; width:100%; height:calc(100% - 40px); pointer-events:none; }
+.application-screen[data-entered="true"] .mes-item { animation:mes-stage 9s ease-in-out 1 both; animation-play-state:var(--preview-play); }
+.application-screen[data-entered="true"] .twin-carrier { animation:twin-stage 9s ease-in-out 1 both; animation-play-state:var(--preview-play); }
+.application-screen[data-entered="true"] :is(.signal-path,.ontology-edges,.signal-wave) { stroke-dasharray:6 5; animation:diagram-flow 7s linear 1 both; animation-play-state:var(--preview-play); }
+.mes-item { transform:translateX(58px); }.twin-carrier { transform:translateX(97px); }
+@keyframes mes-stage { 0%,12%{transform:translateX(58px)}30%,43%{transform:translateX(161px)}61%,72%{transform:translateX(264px)}90%,100%{transform:translateX(367px)} }
+@keyframes twin-stage { 0%,12%{transform:translate(97px,0)}22%,33%{transform:translate(97px,24px)}40%{transform:translate(97px,0)}55%,66%{transform:translate(204px,24px)}75%{transform:translate(204px,0)}90%,100%{transform:translate(311px,0)} }
+@keyframes diagram-flow { to { stroke-dashoffset:-88; } }
+.application-tabs { display:none; }
+@media(max-width:767px) { .application-tabs { display:flex; gap:4px; margin-bottom:16px; } .application-tabs button { flex:1; min-height:44px; padding:8px 4px; border:0; border-radius:8px; background:var(--card-fill); color:var(--muted); font:inherit; font-size:12px; box-shadow:0 6px 18px var(--card-shadow); } .application-tabs button[aria-selected="true"] { color:var(--ink); } .application-grid { grid-template-columns:1fr; gap:20px; }.application-screen { padding:20px 16px; }.application-screen h3 {font-size:18px}.application-screen svg {margin-block:16px}.application-screen svg text {font-size:15px}.application-caption p {font-size:12px;line-height:20px} }
+@media(prefers-reduced-motion:reduce) { .application-previews * { animation:none!important; }.application-particles{display:none}.mes-item{transform:translateX(367px)}.twin-carrier{transform:translateX(311px)} }
+@supports not(backdrop-filter:blur(1px)) { .application-screen {background:var(--surface)} }
+:root[data-scene-motion="static"] .application-previews * {animation:none!important} :root[data-scene-motion="static"] .application-particles{display:none}

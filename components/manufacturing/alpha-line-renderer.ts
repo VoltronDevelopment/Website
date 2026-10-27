@@ -233,10 +233,10 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
       const context = label.getContext("2d")!;
       context.fillStyle = "#edf5fa"; context.fillRect(0, 0, 512, 112);
       context.strokeStyle = "#9ab5ca"; context.lineWidth = 8; context.strokeRect(4, 4, 504, 104);
-      context.fillStyle = "#174b80"; context.font = "500 48px Montserrat, sans-serif";
+      context.fillStyle = "#041526"; context.font = "700 52px Montserrat, sans-serif";
       context.textAlign = "center"; context.textBaseline = "middle";
       context.fillText(point === points[0] ? "LOADING" : "UNLOADING", 256, 58);
-      const texture = new THREE.CanvasTexture(label); texture.colorSpace = THREE.SRGBColorSpace; signTextures.push(texture);
+      const texture = new THREE.CanvasTexture(label); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = 8; texture.minFilter = THREE.LinearFilter; texture.generateMipmaps = false; signTextures.push(texture);
       // Fixed vertical sign panels, elevated above the complete trolley/rail envelope.
       const sign = new THREE.Group(); sign.position.set(x, 6.75, z); sign.rotation.y = -.4;
       equipment.add(sign);

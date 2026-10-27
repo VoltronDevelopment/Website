@@ -1,0 +1,27 @@
+import * as T from 'three';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+/** A full identity cell: GPU corner morph, edge shedding, and an unclipped original image. */
+export function createIdentityCube(texture:T.Texture,track:<R extends {dispose():void}>(r:R)=>R){
+ const group=new T.Group(),round={value:0},clock={value:0},night={value:0},energy={value:0};
+ const geometry=track(new RoundedBoxGeometry(1,1,1,4,.08)),sharp=track(new T.BoxGeometry(1,1,1,9,9,9).toNonIndexed());
+ geometry.setAttribute('aSharpPosition',sharp.attributes.position);geometry.setAttribute('aSharpNormal',sharp.attributes.normal);
+ const faces=Array.from({length:6},(_,i)=>{
+  const m=track(new T.MeshPhysicalMaterial({transparent:true,depthWrite:false,roughness:.16,metalness:.06,clearcoat:.9,clearcoatRoughness:.12,envMapIntensity:1.3}));
+  m.onBeforeCompile=s=>{s.uniforms.uRound=round;s.vertexShader='attribute vec3 aSharpPosition,aSharpNormal;uniform float uRound;\n'+s.vertexShader.replace('#include <beginnormal_vertex>','vec3 objectNormal=normalize(mix(aSharpNormal,normal,uRound));').replace('#include <begin_vertex>','vec3 transformed=mix(aSharpPosition,position,uRound);');};m.customProgramCacheKey=()=> 'home-identity-rounded-'+i;return m;
+ });
+ const body=new T.Mesh(geometry,faces);group.add(body);
+ const shape=new T.Shape(),r=.08;shape.moveTo(-.5+r,-.5);shape.lineTo(.5-r,-.5);shape.quadraticCurveTo(.5,-.5,.5,-.5+r);shape.lineTo(.5,.5-r);shape.quadraticCurveTo(.5,.5,.5-r,.5);shape.lineTo(-.5+r,.5);shape.quadraticCurveTo(-.5,.5,-.5,.5-r);shape.lineTo(-.5,-.5+r);shape.quadraticCurveTo(-.5,-.5,-.5+r,-.5);
+ const backingMaterial=track(new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:true,toneMapped:false})),backing=new T.Mesh(track(new T.ShapeGeometry(shape,16)),backingMaterial);backing.position.z=.502;backing.renderOrder=5;group.add(backing);
+ const logoMaterial=track(new T.MeshBasicMaterial({map:texture,transparent:true,opacity:0,depthWrite:false,toneMapped:false})),logo=new T.Mesh(track(new T.PlaneGeometry(.94,.94)),logoMaterial);logo.position.z=.507;logo.renderOrder=6;group.add(logo);
+ const pulseMaterial=track(new T.ShaderMaterial({side:T.BackSide,transparent:true,depthWrite:false,toneMapped:false,uniforms:{uPower:{value:0},uLogo:{value:0},uDark:night},vertexShader:'varying vec3 vLocal,vNormal,vEye;void main(){vLocal=position;vec4 view=modelViewMatrix*vec4(position,1.);vNormal=normalize(normalMatrix*normal);vEye=normalize(-view.xyz);gl_Position=projectionMatrix*view;}',fragmentShader:'varying vec3 vLocal,vNormal,vEye;uniform float uPower,uLogo,uDark;void main(){vec3 a=abs(vLocal);float middle=max(min(a.x,a.y),min(max(a.x,a.y),a.z));float bevel=smoothstep(.36,.48,middle);float rim=pow(1.-abs(dot(normalize(vNormal),normalize(vEye))),2.);float front=1.-smoothstep(.40,.49,vLocal.z);float alpha=uLogo*(.10+.23*uPower)*bevel*(.35+.65*rim)*front;if(alpha<.001)discard;gl_FragColor=vec4(mix(vec3(.04,.32,.65),vec3(.26,.65,1.),uDark),alpha);\n#include <colorspace_fragment>\n}'})),pulse=new T.Mesh(geometry,pulseMaterial);group.add(pulse);
+ const count=3200,positions=new Float32Array(count*3),seeds=new Float32Array(count);let seed=73;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
+ for(let i=0;i<count;i++){const a=i%3,b=(a+1)%3,c=(a+2)%3,p=[0,0,0];p[a]=(random()-.5);p[b]=(i&1?1:-1)*.5;p[c]=(i&2?1:-1)*.5;positions.set(p,i*3);seeds[i]=random();}
+ const pg=track(new T.BufferGeometry());pg.setAttribute('position',new T.BufferAttribute(positions,3));pg.setAttribute('seed',new T.BufferAttribute(seeds,1));
+ const pm=track(new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:clock,uRound:round,uNight:night,uEnergy:energy,uRatio:{value:1}},vertexShader:'attribute float seed;uniform float uTime,uRound,uEnergy,uRatio;varying float alpha;void main(){float phase=fract(seed+uTime*.35);float band=sin((position.y+position.x)*8.-uTime*4.);vec3 p=position+normalize(position)*phase*.40*uRound;p.y+=phase*.22;alpha=uEnergy*(1.-phase)*smoothstep(-.2,.9,band);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(1.+seed)*uRatio;}',fragmentShader:'uniform float uNight;varying float alpha;void main(){float d=max(abs(gl_PointCoord.x-.5),abs(gl_PointCoord.y-.5));gl_FragColor=vec4(mix(vec3(.04,.32,.60),vec3(.48,.83,1.),uNight),alpha*(1.-smoothstep(.18,.5,d)));}'}));const particles=new T.Points(pg,pm);particles.frustumCulled=false;group.add(particles);
+ return {group,update(time:number,rounding:number,logoOpacity:number,dark:boolean,power:number,ratio:number){
+ round.value=rounding;clock.value=time;night.value=dark?1:0;energy.value=time>6&&time<11.6?Math.sin(Math.PI*T.MathUtils.clamp((time-6)/5.6,0,1)):0;pm.uniforms.uRatio.value=ratio;particles.visible=energy.value>0;
+ faces.forEach((m,i)=>{m.color.setHex(i===2?(dark?0x729ebb:0xeaf4fb):i===1||i===5?(dark?0x102b43:0x567d9d):(dark?0x285575:0xa4c7de));m.opacity=(i===4?.35:i===2?.64:.55)*(1-logoOpacity*.08);m.emissive.setHex(0x237edc);m.emissiveIntensity=i===4?0:logoOpacity*(.035+power*.10);});
+ backingMaterial.color.setHex(dark?0x0c1218:0xf5f8fb);backingMaterial.opacity=logoOpacity;logoMaterial.opacity=logoOpacity;
+ pulse.visible=logoOpacity>0;pulse.scale.setScalar(1.01+.06*power);pulseMaterial.uniforms.uLogo.value=logoOpacity;pulseMaterial.uniforms.uPower.value=power;pulseMaterial.blending=dark?T.AdditiveBlending:T.NormalBlending;
+ }};
+}

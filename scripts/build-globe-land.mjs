@@ -6,3 +6,9 @@ const bounds=polygons.map(rings=>({rings,minX:Math.min(...rings[0].map(p=>p[0]))
 const points=[];for(let i=0;i<21000;i++){const lat=Math.asin(1-2*(i+.5)/21000)*180/Math.PI,lng=((i*137.50776405)%360)-180;if(bounds.some(p=>lng>=p.minX&&lng<=p.maxX&&lat>=p.minY&&lat<=p.maxY&&insideRing(lng,lat,p.rings[0])&&!p.rings.slice(1).some(r=>insideRing(lng,lat,r))))points.push(Math.round(lat*100)/100,Math.round(lng*100)/100);}
 fs.writeFileSync('public/globe/land-points.json',JSON.stringify(points));
 console.log('Prepared',points.length/2,'deterministic land samples.');
+
+// Compact coastline segments preserve recognizable silhouettes beneath the routes.
+const coast=[];const point=([lng,lat])=>{const a=lat*Math.PI/180,b=lng*Math.PI/180;return [Math.cos(a)*Math.sin(b),Math.sin(a),Math.cos(a)*Math.cos(b)];};
+for(const rings of polygons)for(const ring of rings)for(let i=1;i<ring.length;i++)coast.push(...point(ring[i-1]),...point(ring[i]));
+fs.writeFileSync('public/globe/coastlines.bin',Buffer.from(new Float32Array(coast).buffer));
+console.log('Prepared',coast.length/6,'coastline segments.');

@@ -7,6 +7,7 @@ import { intelligenceHeroDuration, intelligenceHeroState } from "./intelligence-
 import {addArtworkSoftboxes,createArtworkEnvironment,edgePrism} from "./artwork-studio";
 import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
 import {observeArtworkTuning,artworkDefaults} from './artwork-tuning';
+import {createPortraitScans} from './portrait-scans';
 export type IntelligenceHeroController = { toggle(): void; replay(): void; scrub(seconds:number): void; dispose(): void };
 type Mode = "static" | "playing" | "paused" | "settled";
 
@@ -24,6 +25,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   const camera = new THREE.OrthographicCamera(-3.2,3.2,2.4,-2.4,.1,50);
   camera.position.set(12,4.55,12); camera.lookAt(0,0,0);
   const cube = new THREE.Group(); scene.add(cube);
+  const scans=createPortraitScans();scene.add(scans.group);host.dataset.networkNodes='0';
   const faces: { material:THREE.MeshPhysicalMaterial; kind:GlassFace }[] = [];
   const planes: [GlassFace,number[],number[]][] = [["front",[0,0,1.6],[0,0,0]],["rear",[0,0,-1.6],[0,Math.PI,0]],["side",[1.6,0,0],[0,Math.PI/2,0]],["side",[-1.6,0,0],[0,-Math.PI/2,0]],["top",[0,1.6,0],[-Math.PI/2,0,0]],["bottom",[0,-1.6,0],[Math.PI/2,0,0]]];
   planes.forEach(([kind,position,rotation])=>{
@@ -44,7 +46,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   const lowerMat=strokeMaterial(true);lowerMat.userData.cssWidth=1.1;lowerMat.opacity=.65;
   cube.add(stroke([new THREE.Vector3(-1.6,-1.6,1.6),new THREE.Vector3(1.6,-1.6,1.6),new THREE.Vector3(1.6,-1.6,1.6),new THREE.Vector3(1.6,-1.6,-1.6)],lowerMat)); box.dispose(); edges.dispose();
   const query=new URLSearchParams(location.search),review=query.get("intelligence-time"),reviewView=query.get("intelligence-view"),mobile=matchMedia("(max-width:767px)").matches;
-  const figure=createSculptureSurface(asset,'planes',mobile,reviewView==='solid');figure.group.scale.setScalar(2.5);figure.group.position.y=-1.25;figure.group.rotation.y=1.05;sculpture.add(figure.group);
+  const figure=createSculptureSurface(asset,'planes',mobile,reviewView==='solid',mobile?3:2);figure.group.scale.setScalar(2.5);figure.group.position.y=-1.25;figure.group.rotation.y=1.05;sculpture.add(figure.group);
   let disposed=false, frame=0, visible=false, paused=false, time=sceneOpeningTime.intelligence as number,last=0;
   let frozen:number|null=null,tuning={...artworkDefaults};
   if(reviewView&&review===null){frozen=intelligenceHeroDuration;time=frozen;}
@@ -52,23 +54,26 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   function draw(){
     if(disposed)return;
     const state=intelligenceHeroState(time);
+    const dark=document.documentElement.dataset.theme==='dark';
     const diagnostic=reviewView==='solid'||reviewView==='particles';
     figure.update(time,reviewView==='particles'?Math.min(.88,state.formation):state.formation,document.documentElement.dataset.theme==='dark',renderer.getPixelRatio());
     figure.mesh.visible=reviewView!=='particles';cube.visible=!diagnostic;
+    scans.update(time,dark);scans.group.visible=!diagnostic;
+    canvas.dataset.scanHorizontal=state.scans.horizontal.strength.toFixed(4);canvas.dataset.scanVertical=state.scans.vertical.strength.toFixed(4);canvas.dataset.formationParticles=String(figure.particleCount);
     edgeMat.opacity=state.enclosure*.20*tuning.outline;lowerMat.opacity=state.enclosure*(.42+state.response*.3*tuning.glow)*tuning.outline;
     rimMaterial.opacity=state.enclosure*.4;
     faces.forEach(({material})=>{material.opacity=(material.userData.restOpacity as number)*(state.enclosure+state.response*.4);});
     host.parentElement?.style.setProperty("--scene-response",String(state.response));
-    host.dataset.phase=state.settled?"formed":time<1.5?"waves":time<3.8?"forming":time<5.3?"holding":"responding";
+    host.dataset.phase=state.settled?"formed":time<1.5?"waves":time<3.8?"forming":time<4.5?"holding":time<5.9?"horizontal-scan":"vertical-scan";
     renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);canvas.dataset.theme=document.documentElement.dataset.theme||"light";
   }
   function tick(now:number){frame=0;if(disposed||!visible||document.hidden||paused||frozen!==null)return;
     const delta=last?(now-last)/1000:0;last=now;
     time=Math.min(intelligenceHeroDuration,time+delta);draw();
-    if(time<intelligenceHeroDuration)frame=requestAnimationFrame(tick);else {last=0;onMode("settled");}
+    if(time<intelligenceHeroDuration)frame=requestAnimationFrame(tick);else {last=0;host.dataset.running="false";onMode("settled");}
   }
-  function schedule(){last=0;if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&host.dataset.sceneState==="live"&&!disposed&&visible&&!document.hidden&&!paused&&frozen===null&&!frame&&(time<intelligenceHeroDuration))frame=requestAnimationFrame(tick);}
-  function stop(){cancelAnimationFrame(frame);frame=0;last=0;}
+  function schedule(){last=0;if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&host.dataset.sceneState==="live"&&!disposed&&visible&&!document.hidden&&!paused&&frozen===null&&!frame&&(time<intelligenceHeroDuration)){host.dataset.running='true';frame=requestAnimationFrame(tick);}}
+  function stop(){cancelAnimationFrame(frame);frame=0;last=0;host.dataset.running='false';}
   function size(){const {width,height}=host.getBoundingClientRect(); if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height;const half=aspect<1?2.55/aspect:2.55;camera.top=half;camera.bottom=-half;camera.left=-half*aspect;camera.right=half*aspect;camera.updateProjectionMatrix();draw();}
   function theme(){const dark=document.documentElement.dataset.theme==="dark";faces.forEach(({material,kind})=>{setGlass(material,kind,dark);material.opacity*=tuning.glassOpacity;material.roughness*=tuning.roughness;material.envMapIntensity*=tuning.reflection;material.userData.restOpacity=material.opacity;});edgeMat.color.setHex(dark?0x78b0ff:0x246bd4);lowerMat.color.setHex(dark?0xb0def4:0x307ca6);draw();}
   function visibility(){if(document.hidden)stop();else schedule();}
@@ -76,7 +81,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   function restored(){theme();size();void handoff.reveal().then(()=>{if(disposed)return;host.dataset.live="true";onMode(time>=intelligenceHeroDuration?"settled":paused?"paused":"playing");schedule();});}
   const resize=new ResizeObserver(size);resize.observe(host);
   const themes=new MutationObserver(theme);themes.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
-  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)schedule();else stop();},{threshold:.1});view.observe(host);
+  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.25;if(visible)schedule();else stop();},{threshold:[0,.25]});view.observe(host);
   const studio=observeArtworkTuning('intelligence',value=>{tuning=value;figure.tune(value);theme();});
   document.addEventListener("visibilitychange",visibility);canvas.addEventListener("webglcontextlost",lost);canvas.addEventListener("webglcontextrestored",restored);
   theme();size();await handoff.reveal();if(disposed)return {toggle(){},replay(){},scrub(){},dispose(){}};host.dataset.live="true";onMode(frozen!==null?"settled":"playing");schedule();

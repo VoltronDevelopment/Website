@@ -19,7 +19,7 @@ const railY = 5.28;
 
 export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDivElement, options: Options): Promise<AlphaProcessController> {
   const handoff=createSceneHandoff(host,canvas);
-  const quality=createRenderQuality(canvas);
+  const quality=createRenderQuality(canvas,2);
   await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
   try {

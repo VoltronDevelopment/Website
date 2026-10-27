@@ -12,12 +12,14 @@ const about = [["About Voltron", "/about"], ["People Culture", "/about/people-cu
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const [compact,setCompact]=useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  useEffect(()=>{let last=scrollY,ticking=false;const allowed=pathname!=='/enter'&&pathname!=='/coming-soon';const scroll=()=>{if(ticking)return;ticking=true;requestAnimationFrame(()=>{const y=scrollY;if(!allowed||mobileOpen||aboutOpen||y<72)setCompact(false);else if(y>last+6)setCompact(true);else if(y<last-6)setCompact(false);last=y;ticking=false;});};window.addEventListener('scroll',scroll,{passive:true});if(mobileOpen||aboutOpen)setCompact(false);return()=>window.removeEventListener('scroll',scroll);},[pathname,mobileOpen,aboutOpen]);
   const aboutRef = useRef<HTMLDivElement>(null);
   const aboutButton = useRef<HTMLButtonElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
-  useEffect(() => { setMobileOpen(false); setAboutOpen(false); }, [pathname]);
+  useEffect(() => { setCompact(false); setMobileOpen(false); setAboutOpen(false); }, [pathname]);
   useEffect(() => {
     function outside(event: PointerEvent) { if (!aboutRef.current?.contains(event.target as Node)) setAboutOpen(false); }
     function escape(event: KeyboardEvent) {
@@ -28,7 +30,7 @@ export function SiteHeader() {
     document.addEventListener("pointerdown", outside); document.addEventListener("keydown", escape);
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [aboutOpen, mobileOpen]);
-  return <header className="site-header"><div className="container header-inner">
+  return <header className="site-header" data-compact={compact} onFocusCapture={()=>setCompact(false)}><div className="container header-inner">
     <BrandLogo/>
     <nav id="site-navigation" aria-label="Main navigation" className={`site-nav ${mobileOpen ? "is-open" : ""}`}>
       {links.map(([label, href]) => <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined} onClick={() => setMobileOpen(false)}>{label}</Link>)}

@@ -69,3 +69,18 @@
 .context-art-hub .context-art-node:nth-of-type(2){transform:translateY(-24px)}
 .context-art-stack .context-art-node:nth-of-type(2){transform:translateY(-38px)}
 .modular-art.context-art .context-art-structure{min-height:160px;gap:6px}.modular-art.context-art .context-art-symbol{width:48px;height:48px}.modular-art.context-art .context-art-node{font-size:10px;gap:8px}
+/* Shared hero direction: alternate the main page compositions without changing reading order. */
+@media(min-width:901px){
+ .site-presentation .hero[data-art-side="left"]>.hero-grid{grid-template-columns:minmax(0,57fr) minmax(0,43fr)}
+ .site-presentation .hero[data-art-side="left"] .hero-copy{grid-column:2;grid-row:1}
+ .site-presentation .hero[data-art-side="left"] .hero-visual{grid-column:1;grid-row:1}
+ :root:not([data-theme="dark"]) .site-presentation .hero[data-art-side="left"]::before{background:linear-gradient(270deg,rgba(243,246,248,.72),rgba(236,245,251,.38) 60%,rgba(231,242,250,.3)),radial-gradient(ellipse at 18% 27%,rgba(86,170,228,.18),transparent 50%)}
+ :root[data-theme="dark"] .site-presentation .hero[data-art-side="left"]::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(270deg,rgba(8,15,21,.76),rgba(8,15,21,.15) 56%,transparent)}
+}
+@media(max-width:900px){.site-presentation .hero[data-art-side="left"]>.hero-grid{grid-template-columns:minmax(0,1fr)}}
+.engineered-opening .responsive-hero-opening{position:absolute;inset:0;overflow:hidden}
+/* Preserve the captured projection aspect, including the fractional CSS width.
+   The WebGL buffer is integer sized; using its intrinsic aspect moves fine points. */
+@media(min-width:768px){:is(.engineered-manufacturing,.engineered-ontology,.engineered-about) .engineered-opening .responsive-hero-opening img{aspect-ratio:var(--hero-opening-desktop-aspect)}}
+
+@media(max-width:767px){:is(.engineered-manufacturing,.engineered-ontology,.engineered-about) .engineered-opening .responsive-hero-opening img{aspect-ratio:var(--hero-opening-mobile-aspect)}}

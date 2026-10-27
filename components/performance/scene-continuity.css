@@ -18,6 +18,7 @@
 :root:not([data-theme="dark"]) .scene-poster .art-theme-dark,:root[data-theme="dark"] .scene-poster .art-theme-light { display:none; }
 :root:not([data-theme="dark"]) .scene-poster .art-theme-light,:root[data-theme="dark"] .scene-poster .art-theme-dark { display:block; }
 
-/* Native display-size captures preserve the screen-space stroke/glow width. */
-.scene-responsive-opening:not(.scene-responsive-technology) img { width:100cqw!important; height:100cqh!important; }
-@media(min-width:768px) { .scene-responsive-opening img { width:100cqw!important; height:100cqh!important; } }
+/* Native frames preserve projection when the stage height changes with the viewport. */
+.scene-responsive-process img {width:100cqw!important;height:100cqh!important}
+.scene-native-opening {--scene-native-width:var(--scene-native-desktop-width);--scene-native-height:var(--scene-native-desktop-height)}
+@media(max-width:767px){.scene-native-opening{--scene-native-width:var(--scene-native-mobile-width);--scene-native-height:var(--scene-native-mobile-height)}}

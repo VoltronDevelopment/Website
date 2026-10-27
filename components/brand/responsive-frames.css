@@ -1,0 +1,92 @@
+/* Canonical page framing. Scene geometry retains its own camera and optical fit. */
+.site-presentation {
+ --hero-stage:clamp(420px,calc(100svh - 360px),560px);
+ --chapter-space:80px;
+ --chapter-light:rgba(242,249,255,.16);
+ --chapter-shadow:rgba(18,43,64,.07);
+}
+:root[data-theme="dark"] .site-presentation {--chapter-light:rgba(73,119,158,.035);--chapter-shadow:rgba(0,0,0,.18)}
+.site-presentation #main-content .hero {min-height:0;padding-block:24px 0;justify-content:flex-start}
+.site-presentation #main-content .hero>.hero-grid {
+ grid-template-columns:minmax(0,43fr) minmax(0,57fr);gap:24px;
+ min-height:0;padding-block:16px 24px;align-items:start;flex:none;
+}
+.site-presentation #main-content .hero[data-art-side="left"]>.hero-grid {grid-template-columns:minmax(0,57fr) minmax(0,43fr)}
+.site-presentation #main-content .hero .hero-copy {
+ grid-column:1;grid-row:1;min-width:0;max-width:640px;
+ padding-block:calc(var(--hero-stage)*.20) 0;
+}
+.site-presentation #main-content .hero[data-art-side="left"] .hero-copy {grid-column:2}
+.site-presentation #main-content .hero .hero-visual {grid-column:2;grid-row:1;min-width:0;width:100%}
+.site-presentation #main-content .hero[data-art-side="left"] .hero-visual {grid-column:1}
+.site-presentation #main-content .hero .hero-copy h1 {font-size:36px;line-height:1.22;letter-spacing:-.025em;font-weight:400;max-width:100%;margin:0}
+.site-presentation #main-content .hero .hero-copy .eyebrow {font-size:11px;line-height:18px;letter-spacing:.08em;margin:0 0 16px}
+.site-presentation #main-content .hero .hero-copy>p:not(.eyebrow) {font-size:16px;line-height:1.6;margin:24px 0 0;max-width:56ch}
+.site-presentation #main-content .hero .hero-actions {display:flex;flex-wrap:wrap;gap:12px 24px;margin-top:28px;min-width:0}
+.site-presentation #main-content .hero .hero-actions>a {min-height:44px;max-width:100%;white-space:normal;line-height:1.5}
+.site-presentation #main-content .hero :is(.engineered-stage,.home-lattice-art,.intelligence-face-stage,.particle-hand-stage,.human-hero-art) {
+ height:var(--hero-stage);min-height:0;max-height:none;width:100%;margin-inline:0;
+}
+.site-presentation #main-content .hero .engineered-technology {width:100%;margin-inline:0}
+.site-presentation #main-content .hero>.breadcrumb {position:absolute;top:14px;left:0;right:0;z-index:3;padding:0;font-size:12px;line-height:20px;min-height:20px}
+.site-presentation #main-content .hero .hero-principle-strip {border:0;box-shadow:0 -12px 30px -24px var(--chapter-shadow)}
+.site-presentation #main-content .hero .hero-principle-strip ul {min-height:80px;padding-block:20px;margin-block:0}
+.site-presentation #main-content .hero .hero-principle-strip li+li {border:0}
+.site-presentation #main-content .hero .hero-motion-controls {top:auto;bottom:12px;right:8px;margin:0;min-height:44px}
+.site-presentation #main-content .hero .hero-art-caption {bottom:20px;left:8px;max-width:calc(100% - 112px)}
+.site-presentation #main-content :is(.section,.alpha-explore,.alpha-architecture) {padding-block:var(--chapter-space);min-height:0;scroll-margin-top:100px}
+.site-presentation #main-content .section-intro {margin-bottom:36px}
+.site-presentation #main-content .section-white {background:linear-gradient(180deg,var(--chapter-light),transparent 42%);box-shadow:0 -20px 38px -36px var(--chapter-shadow);border:0}
+.site-presentation #main-content :is(.alpha-line-tabs,.network-focus) button {min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.5;min-height:44px}
+/* Optical contrast is localized behind the art, leaving the established page wash intact. */
+.site-presentation #main-content .hero .hero-visual {position:relative;isolation:isolate}
+.site-presentation #main-content .technology-hero .hero-visual::before {content:"";position:absolute;inset:5% -2%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse,rgba(222,235,245,.83),rgba(227,240,248,.44) 52%,transparent 76%)}
+:root[data-theme="dark"] .site-presentation #main-content .technology-hero .hero-visual::before {background:radial-gradient(ellipse,rgba(8,19,30,.82),rgba(9,23,37,.50) 52%,transparent 76%)}
+@media(min-width:1024px) and (max-width:1199px){.site-presentation #main-content .hero .hero-copy h1{font-size:32px}}
+@media(max-width:1099px){.site-presentation{--chapter-space:64px}}
+@media(max-width:1023px){
+ .site-presentation{--hero-stage:clamp(380px,43svh,460px)}
+ .site-presentation #main-content .hero,.site-presentation #main-content .hero-with-breadcrumb {padding-top:24px}
+ .site-presentation #main-content .hero>.hero-grid,.site-presentation #main-content .hero[data-art-side="left"]>.hero-grid {grid-template-columns:minmax(0,1fr);gap:24px;padding-block:24px}
+ .site-presentation #main-content .hero .hero-copy,.site-presentation #main-content .hero[data-art-side="left"] .hero-copy {grid-column:1;grid-row:1;padding:0;width:100%}
+ .site-presentation #main-content .hero .hero-visual,.site-presentation #main-content .hero[data-art-side="left"] .hero-visual {grid-column:1;grid-row:2}
+ .site-presentation #main-content .hero .hero-copy h1 {font-size:32px}
+ .site-presentation #main-content .hero.hero-with-breadcrumb>.hero-grid {padding-top:24px}
+ .site-presentation #main-content .hero .hero-actions {margin-top:24px}
+ .site-presentation #main-content .section-intro {margin-bottom:32px}
+}
+@media(max-width:767px){
+ .site-presentation #main-content .hero.hero-with-breadcrumb>.hero-grid {padding-top:16px}
+ .site-presentation{--hero-stage:clamp(300px,43svh,380px);--chapter-space:48px}
+ .site-presentation #main-content .hero>.hero-grid,.site-presentation #main-content .hero[data-art-side="left"]>.hero-grid {gap:20px;padding-block:16px 20px}
+ .site-presentation #main-content .hero .hero-copy h1 {font-size:29px;line-height:1.24}
+ .site-presentation #main-content .hero .hero-copy>p:not(.eyebrow) {margin-top:20px}
+ .site-presentation #main-content .hero .hero-actions {gap:8px 20px}
+ .site-presentation #main-content .hero .hero-principle-strip ul {padding-block:18px;gap:8px;min-height:80px}
+ .site-presentation #main-content .hero .hero-principle-strip li {font-size:11px;gap:8px;padding-inline:2px}
+ .site-presentation #main-content .hero .hero-art-caption {bottom:16px;font-size:10px;line-height:16px}
+ .site-presentation #main-content .section-intro {margin-bottom:28px}
+}
+@media(max-height:500px) and (max-width:1023px){.site-presentation{--hero-stage:300px}}
+@media(max-width:359px){.site-presentation #main-content :is(.alpha-line-tabs,.network-focus){display:grid;grid-template-columns:1fr;gap:8px}.site-presentation #main-content .network-focus button{min-height:48px}}
+@media(prefers-contrast:more),(forced-colors:active){.site-presentation #main-content .section-white{box-shadow:none}.site-presentation #main-content .technology-hero .hero-visual::before{display:none}}
+
+/* Native captures retain their projection and any overscan around the source frame. */
+.site-presentation #main-content .hero .responsive-hero-opening {--hero-native-width:var(--hero-native-desktop-width);--hero-native-height:var(--hero-native-desktop-height)}
+.site-presentation #main-content .hero .responsive-hero-opening img {width:calc(min(100cqw / 1.263157895,100cqh) * var(--hero-native-width));height:calc(min(100cqw / 1.263157895,100cqh) * var(--hero-native-height));max-width:none;aspect-ratio:auto}
+.site-presentation #main-content .hero .engineered-network .engineered-complete img {width:min(100cqw,126.3158cqh)}
+@media(max-width:767px){.site-presentation #main-content .hero .responsive-hero-opening {--hero-native-width:var(--hero-native-mobile-width);--hero-native-height:var(--hero-native-mobile-height)}}
+@media(min-width:768px) and (max-width:1023px){.site-presentation #main-content .hero .engineered-manufacturing .responsive-hero-opening {--hero-native-width:var(--hero-native-tablet-width);--hero-native-height:var(--hero-native-tablet-height)}}
+@media(min-width:1024px) and (max-height:780px){.site-presentation #main-content .hero .engineered-manufacturing .responsive-hero-opening {--hero-native-width:var(--hero-native-short-width);--hero-native-height:var(--hero-native-short-height)}}
+@media(max-width:359px){.site-presentation #main-content .alpha-line-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.site-presentation #main-content .alpha-line-tabs button:last-child{grid-column:1/-1}}
+
+@media(max-width:359px){.site-presentation #main-content .hero .hero-copy .eyebrow{min-height:36px;display:flex;align-items:flex-end}}
+
+/* Center captured pixels in layout, avoiding a transform resampling layer on fine particles. */
+.site-presentation #main-content .scene-native-opening {position:absolute;inset:0}
+:root:not([data-theme="dark"]) .site-presentation #main-content :is(.responsive-hero-opening,.scene-native-opening).art-theme-light,
+:root[data-theme="dark"] .site-presentation #main-content :is(.responsive-hero-opening,.scene-native-opening).art-theme-dark {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);place-items:center}
+.site-presentation #main-content :is(.responsive-hero-opening,.scene-native-opening)>img {position:relative;grid-area:1 / 1;left:auto;top:auto;transform:none;margin:0;align-self:center;justify-self:center}
+
+@media(min-width:768px) and (max-width:1023px){.site-presentation #main-content .scene-responsive-handCulture {--scene-native-width:var(--scene-native-tablet-width);--scene-native-height:var(--scene-native-tablet-height)}}
+@media(min-width:1024px) and (max-height:780px){.site-presentation #main-content .scene-responsive-handCulture {--scene-native-width:var(--scene-native-short-width);--scene-native-height:var(--scene-native-short-height)}}

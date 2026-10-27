@@ -1,8 +1,24 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {intelligenceHeroDuration,intelligenceHeroState} from "../components/brand/intelligence-hero-timeline";
+import {intelligenceScanState} from '../components/brand/intelligence-hero-timeline';
+import {createPortraitScans} from '../components/brand/portrait-scans';
+it('scans the complete figure on two orthogonal planes and clears both at rest',()=>{
+ const scans=createPortraitScans();scans.update(5.15,false);const[h,v]=scans.group.children;
+ expect(h.visible).toBe(true);expect(v.visible).toBe(false);expect(h.position.y).toBeCloseTo(0);expect(h.rotation.x).toBeCloseTo(-Math.PI/2);
+ scans.update(6.6,true);expect(h.visible).toBe(false);expect(v.visible).toBe(true);expect(v.position.x).toBeCloseTo(0);expect(v.rotation.y).toBeCloseTo(Math.PI/2);
+ for(const t of [0,4.45,7.5,Infinity,NaN]){scans.update(t,false);expect(scans.group.children.every(p=>!p.visible)).toBe(true);}
+ for(let t=0;t<7.5;t+=.05){const s=intelligenceScanState(t);expect(s.horizontal.strength*s.vertical.strength).toBeLessThan(.0001);}
+ scans.group.traverse(o=>{const m=o as import('three').Mesh;m.geometry?.dispose();if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(v=>v.dispose());});
+});
+it('uses denser finite formation samples without changing other sculpture defaults',async()=>{
+ const {createSculptureSurface}=await import('../components/brand/sculpture-surface');const mesh=readFileSync('public/sculptures/planes-mesh.bin'),p=readFileSync('public/sculptures/planes-points.bin');const asset={mesh:mesh.buffer.slice(mesh.byteOffset,mesh.byteOffset+mesh.byteLength) as ArrayBuffer,points:new Float32Array(Array.from(new Float32Array(p.buffer,p.byteOffset,p.byteLength/4)))};
+ const normal=createSculptureSurface(asset,'planes',false),desktop=createSculptureSurface(asset,'planes',false,false,2),mobile=createSculptureSurface(asset,'planes',true,false,3);
+ expect(normal.particleCount).toBe(32000);expect(desktop.particleCount).toBe(64000);expect(mobile.particleCount).toBe(48000);
+ for(const s of [normal,desktop,mobile]){const points=s.group.children[1] as import('three').Points;expect(Array.from(points.geometry.getAttribute('position').array).every(Number.isFinite)).toBe(true);s.dispose();}
+});
 describe("Sculpture choreography",()=>{
- it("forms before the network and has a single finite cube response",()=>{let previous=0;for(let t=0;t<=7.5;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);previous=s.formation;}expect(intelligenceHeroState(3).connections).toBe(0);expect(intelligenceHeroState(4.8).connections).toBeGreaterThan(0);expect(intelligenceHeroState(5).response).toBe(0);expect(intelligenceHeroState(6).response).toBeGreaterThan(0);expect(intelligenceHeroState(7.5).response).toBe(0);});
+ it("forms before orthogonal scans and has a single finite cube response",()=>{let previous=0;for(let t=0;t<=7.5;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);previous=s.formation;}expect(intelligenceHeroState(3).scans.horizontal.strength).toBe(0);expect(intelligenceHeroState(4.8).scans.horizontal.strength).toBeGreaterThan(0);expect(intelligenceHeroState(5).response).toBe(0);expect(intelligenceHeroState(6).response).toBeGreaterThan(0);expect(intelligenceHeroState(7.5).response).toBe(0);});
  it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.wave).toBe(0);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
 });
 

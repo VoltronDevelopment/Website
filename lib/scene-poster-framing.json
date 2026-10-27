@@ -18,10 +18,10 @@
     "height": 5.15
   },
   "commons": {
-    "minWidth": 5.4,
-    "minHeight": 5.25,
-    "width": 5.4,
-    "height": 5.4
+    "minWidth": 5.7,
+    "minHeight": 5.7,
+    "width": 5.7,
+    "height": 5.7
   },
   "intelligence": {
     "minWidth": 5.1,
@@ -36,21 +36,21 @@
     "height": 4.8
   },
   "process": {
-    "width": 1120,
-    "height": 450,
     "minWidth": 802.3343584266343,
     "minHeight": 394.00000000000006,
+    "width": 1120,
+    "height": 450,
     "padding": true
   },
   "plant": {
-    "width": 1120,
-    "height": 600,
     "minWidth": 953.7033957530939,
     "minHeight": 544,
+    "width": 1120,
+    "height": 600,
     "padding": true
   },
   "handCulture": {
-    "minWidth": 8.2,
+    "minWidth": 5.4,
     "minHeight": 7.6,
     "width": 11.4,
     "height": 7.6
@@ -60,5 +60,11 @@
     "minHeight": 7.2,
     "width": 10.8,
     "height": 7.2
+  },
+  "cultureHelix": {
+    "minWidth": 4.2,
+    "minHeight": 4.2,
+    "width": 4.2,
+    "height": 4.2
   }
 }

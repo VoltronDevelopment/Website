@@ -1,0 +1,54 @@
+{
+  "about": {
+    "desktop": {
+      "width": 624.734375,
+      "height": 540,
+      "light": "/stories/about-opening-desktop-light.webp",
+      "dark": "/stories/about-opening-desktop-dark.webp"
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625,
+      "light": "/stories/about-opening-mobile-light.webp",
+      "dark": "/stories/about-opening-mobile-dark.webp"
+    },
+    "tablet": {
+      "width": 714,
+      "height": 460,
+      "light": "/stories/about-opening-tablet-light.webp",
+      "dark": "/stories/about-opening-tablet-dark.webp"
+    },
+    "short": {
+      "width": 624.734375,
+      "height": 420,
+      "light": "/stories/about-opening-short-light.webp",
+      "dark": "/stories/about-opening-short-dark.webp"
+    }
+  },
+  "partner": {
+    "desktop": {
+      "width": 624.71875,
+      "height": 540,
+      "light": "/stories/partner-opening-desktop-light.webp",
+      "dark": "/stories/partner-opening-desktop-dark.webp"
+    },
+    "mobile": {
+      "width": 320,
+      "height": 362.90625,
+      "light": "/stories/partner-opening-mobile-light.webp",
+      "dark": "/stories/partner-opening-mobile-dark.webp"
+    },
+    "tablet": {
+      "width": 714,
+      "height": 460,
+      "light": "/stories/partner-opening-tablet-light.webp",
+      "dark": "/stories/partner-opening-tablet-dark.webp"
+    },
+    "short": {
+      "width": 624.71875,
+      "height": 420,
+      "light": "/stories/partner-opening-short-light.webp",
+      "dark": "/stories/partner-opening-short-dark.webp"
+    }
+  }
+}

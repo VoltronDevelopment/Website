@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {particleWaveGLSL} from '../brand/particle-wave';
 import {MeshSurfaceSampler} from 'three/addons/math/MeshSurfaceSampler.js';
 
 /** The enclosure and supplied component share one local formation/dissolve field. */
@@ -19,15 +20,17 @@ export function createLotReveal(root:THREE.Group,housing:THREE.BufferGeometry,ge
  for(let i=0;i<1200;i++){const face=i%6,p=[(random()-.5)*1.65,(random()-.5)*1.65,(random()-.5)*1.65];p[Math.floor(face/2)]=(face%2?1:-1)*.826;positions.push(...p);seeds.push(random());}
  const sampler=(new MeshSurfaceSampler(new THREE.Mesh(housing)) as MeshSurfaceSampler&{setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(random).build(),point=new THREE.Vector3();
  for(let i=0;i<900;i++){sampler.sample(point);positions.push(point.x*.64-.03,point.y*.64-.12,point.z*.64+.07);seeds.push(random());}
- const geo=geometry(new THREE.BufferGeometry());geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('aSeed',new THREE.Float32BufferAttribute(seeds,1));
- const mat=material(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms,vertexShader:`attribute float aSeed;uniform float uLotForm,uLotExit,uTime,uRatio;varying float vAlpha,vSeed;void main(){
+ const trails:number[]=Array(positions.length/3).fill(0),baseCount=positions.length/3;for(let i=0;i<baseCount;i+=6)for(let lag=1;lag<=2;lag++){positions.push(...positions.slice(i*3,i*3+3));seeds.push(seeds[i]);trails.push(lag);}
+ const geo=geometry(new THREE.BufferGeometry());geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('aSeed',new THREE.Float32BufferAttribute(seeds,1));geo.setAttribute('aTrail',new THREE.Float32BufferAttribute(trails,1));
+ const mat=material(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms,vertexShader:`${particleWaveGLSL}
+attribute float aSeed,aTrail;uniform float uLotForm,uLotExit,uTime,uRatio;varying float vAlpha,vSeed;void main(){
   float grain=fract(sin(dot(floor(position*65.),vec3(12.9898,78.233,37.719)))*43758.5453);
   float field=clamp((position.x+.84)/1.68+sin(position.z*4.+position.y*2.)*.04,0.,1.)*.72+grain*.10,exitField=clamp((position.x+.84)/1.68,0.,1.)*.72+grain*.10;
-  float arrived=smoothstep(field-.10,field+.06,uLotForm),covered=smoothstep(field,field+.16,uLotForm),departed=smoothstep(exitField-.05,exitField+.12,uLotExit);
-  vec3 origin=vec3(-1.5+aSeed*.28,position.y*.65+sin(position.z*4.+uTime*2.)*.12,position.z*1.18);vec3 p=mix(origin,position,arrived);
-  p+=vec3(.65+aSeed*.35,sin(position.z*4.+uTime*2.)*.14,position.z*.15)*departed;
-  vAlpha=((1.-covered)*(.22+.65*arrived)*(1.-uLotExit)+departed*(1.-smoothstep(.62,1.,uLotExit)))*.85;vSeed=aSeed;
-  gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(1.+aSeed*1.2)*uRatio;
+  float arrived=smoothstep(field-.10,field+.06,uLotForm-aTrail*.025),covered=smoothstep(field,field+.16,uLotForm),departed=smoothstep(exitField-.05,exitField+.12,uLotExit-aTrail*.03);
+  vec3 p=latticeWave(position,arrived,aSeed,uTime,vec3(1.,.08,.18),1.75,.58);
+  p+=latticeRelease(position,departed,aSeed,uTime,vec3(1.,.12,-.24),1.4,.30)-position;
+  vAlpha=((1.-covered)*(.22+.65*arrived)*(1.-uLotExit)+departed*(1.-smoothstep(.62,1.,uLotExit)))*.85*pow(.42,aTrail);vSeed=aSeed;
+  gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.85+aSeed*.85)*uRatio;
  }`,fragmentShader:`uniform float uDark;varying float vAlpha,vSeed;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.03,.32,.75),vec3(.42,.80,1.),uDark),vAlpha*(1.-smoothstep(.12,.5,r)));#include <colorspace_fragment>\n}`.replace(';#include',';\n#include')}));
  const points=new THREE.Points(geo,mat);points.frustumCulled=false;points.renderOrder=4;root.add(points);
  return {bind,update(form:number,exit:number,time:number,dark:boolean,ratio:number){uniforms.uLotForm.value=form;uniforms.uLotExit.value=exit;uniforms.uTime.value=time;uniforms.uRatio.value=ratio;uniforms.uDark.value=dark?1:0;uniforms.uLotCenter.value.copy(root.position);points.visible=form<1||exit>0&&exit<1;},points};

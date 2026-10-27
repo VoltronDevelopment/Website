@@ -16,3 +16,9 @@ describe("Finite hero narratives",()=>{
   expect(stateAt(4).arrivals.every(a=>a.progress===1)).toBe(true);expect(stateAt(4).logo).toBe(0);expect(stateAt(duration).logo).toBe(1);expect(stateAt(duration).gridPulse).toBe(0);expect(stateAt(duration).done).toBe(true);
  });
 });
+import {manufacturingSurfaceState} from '../components/brand/hero-scene-timeline';
+it('finishes manufacturing formation before scanning and clears the scan at rest',()=>{
+ let previous=-2.5;for(let t=0;t<=8;t+=.025){const s=manufacturingSurfaceState(t);if(s.scan>.001)expect(s.formation).toBe(1);expect(s.boundary).toBeGreaterThanOrEqual(previous);previous=s.boundary;}
+ expect(manufacturingSurfaceState(2).formation).toBeGreaterThan(0);expect(manufacturingSurfaceState(2).formation).toBeLessThan(1);expect(manufacturingSurfaceState(2).scan).toBe(0);
+ expect(manufacturingSurfaceState(4.5).scan).toBe(1);expect(manufacturingSurfaceState(8)).toMatchObject({formation:1,scan:0,boundary:2.5,phase:'complete'});expect(manufacturingSurfaceState(NaN).formation).toBe(0);
+});

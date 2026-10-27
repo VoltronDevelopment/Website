@@ -1,3 +1,31 @@
+## Remaining pages and audit closure — 27 October 2026
+
+Ontology, About, People & Culture, Commons and Partner follow [the completion record](docs/remaining-implementation-2026-10-27.md). Preserve one illustrative lot across the Ontology graph/action explanation; SVG/HTML controls own supporting interactions. Open artwork and long text remain on the continuous atmosphere; selective foreground glass owns short reading blocks. Native opening captures retain their CSS projection aspect independently of integer render buffers. Text enlargement must leave header controls reachable, and roadmap year targets wrap on phones. Alpha preserves the approved three-tank geometry and supports a DPR ceiling of 2 with adaptive reduction. Publication remains cancelled.
+
+## Persistent navigation and alternating heroes — 27 October 2026
+
+The shared SiteFrame in the root layout owns the marketing presentation, header, main region and footer; route bodies retain server-side SiteShell access checks. Normal client navigation updates content, URL and active nav item while preserving chrome/background DOM. Enter and Coming Soon stay standalone. Hero’s artSide prop controls composition: Technology and Manufacturing use artwork left / copy right above 900px; Intelligence and Network use artwork right. Mobile retains semantic copy-first order. Preserve the approved Home composition.
+
+## Current Network page and neural materials — 27 October 2026
+
+Network follows [its implementation record](docs/network-implementation-2026-10-27.md): one finite globe turn, a progressively formed round polygon envelope, readable map surfaces and no geographic arcs. The owned-plant cycle and shared-architecture diagram use semantic controls. Preserve governed context, future-vision labeling, open artwork and selective glass. Technology’s neural cube faces now derive from Home optics, with muted pearl/smoked tones, restrained reflections and visible dark faces. Earlier descriptions of white neural faces are superseded. Publication remains cancelled; implementation continues locally.
+
+## Current Manufacturing page — 26 October 2026
+
+Manufacturing follows [its implementation record](docs/manufacturing-implementation-2026-10-26.md). Preserve the mounting bracket, its eight-second formation/scan/finish sequence, the thirteen-tank plant and guided camera. Use the shared quality-scan helper for the prominent lit sheet and layered rim. Keep the continuous quiet shell, selective foreground glass and open artwork. Board text is #092f4c in 600-weight Montserrat, loaded before texture creation. Mobile retains a fitted overview and deliberate close-ups, 44px controls and an in-flow inspector. Static modes retain working stage and inspector choices with zero initial WebGL contexts.
+
+## Current Intelligence page — 26 October 2026
+
+Intelligence follows [its implementation record](docs/intelligence-implementation-2026-10-26.md). Preserve one dimensional portrait and the finite 7.5-second formation. No backdrop mesh or network is rendered. Fine formation uses 64,000 desktop / 48,000 mobile particles, followed by prominent horizontal and vertical scan planes in Connected Lot’s quality-scan style; both clear before stillness. Evidence, specialists, point-of-work views and human review use semantic, functional selections; they remain illustrative. Reuse the original flange housing across evidence and station views. Apply the quieter continuous shell with selective foreground glass, open long-form text and no decorative page borders. Static modes retain the complete composition and working page controls without WebGL.
+
+## Current Technology page — 26 October 2026
+
+Technology follows [its implementation record](docs/technology-implementation-2026-10-26.md): 54 original nodes, 346 connected display strands from 433 source links, fine particle formation, shared pearl/navy glass optics, a five-system interactive architecture map and a functional process-pack configuration. Heroes remain uncarded; short interactive surfaces use selective glass and shadows. Historical descriptions of all 433 displayed connections are superseded.
+
+## Current Home page — 26 October 2026
+
+Home now follows [the page implementation record](docs/home-implementation-2026-10-26.md): four base cubes, 8+27 depth fragments, a full identity cube with two rotations and GPU corner rounding, the exact Enter image on an independent front plane, selective foreground glass, four application concept screens, Connected Lot, Alpha, the decade roadmap and a centered Philosophy merge. Earlier contradictory Home notes below are historical and superseded by this record. Other pages are completed separately.
+
 ## Alpha V-Twin and tank beacons - 26 October 2026
 
 Both Alpha renderers share `alpha-stack-light.ts`: small rim-mounted, ribbed two-lens industrial beacons in satin metal. The upper cobalt lens indicates actual tank work (lower, hold, raise, drain, verify); transfer does not light the destination early. The lower ice-blue lens indicates completed passage, and idle lenses are unlit. Existing deviation attention uses steady amber. No blinking, extra scene lights or full-scene bloom. State changes are absolute-time driven, reversible on seek, and respect existing pause/static/disposal rules. Beacon groups stay outside static batching; ribbing is one lathed lens mesh.
@@ -321,3 +349,27 @@ The Partner hero now uses a paired particle-hand scene in place of its missing F
 scripts/build-hand-particles.mjs reads the supplied 40 MB hand1.OBJ offline, preserves indexed topology to calculate smooth normals, samples deterministic positions/normals/seeds/finger regions and generates clustered depth geometry. Runtime loads hand-points.bin (42,000 samples) or grip-points.bin (32,000 samples per hand), with every third sample rendered on mobile: 14,000 Culture / about 21,334 combined Partner. The source OBJ is never requested by these scenes. Shared particle-hand-surface.ts supplies normal lighting, coherent formation waves, wrist fading and final anatomical occlusion.
 
 Both scenes have lazy viewport initialization, fixed orthographic cameras, stable resize, offscreen/hidden suspension, adaptive DPR, Pause/Resume and Replay, review scrubbing at hand-review=1, and solid views at hand-view=solid. hand-time accepts 0..8.5 or 0..7.5 respectively. Completed and opening theme posters are exported from the live scene; initial motion begins at the matching .65-second opening pose. Reduced motion, Save-Data, unavailable WebGL and context loss use completed artwork. GPU resources and listeners are disposed on unmount. Headings, actions, inquiry forms and all scene controls remain HTML.
+
+## Current rendering contracts — 27 October 2026
+
+The current implementation records in `docs/*implementation*2026-10-2*.md` supersede older scene counts and choreography above. The rendering-reference pass is detailed in `docs/rendering-implementation-2026-10-27.md`.
+
+Use `components/brand/particle-wave.ts` for seeded, absolute-time deposition/release fields inside the existing scene clock. Fine currents converge onto approved geometry and clear at the endpoint. Preserve distinct amplitudes/directions per artwork; avoid uniform atmospheric glitter or new perpetual loops. Roadmap particle movement is shader-driven; do not reintroduce per-frame position uploads.
+
+Home identity pulse belongs to the side/rear/bevel volume. Its original Enter logo and front backing remain steady, and its front physical face has zero emissive pulse. The completed identity faces the viewer after two turns. The installed Three.js planar floor pilot is opt-in via `reflection=planar`; retain the lightweight echo by default until hardware benefit/cost justifies a change.
+
+People & Culture's secondary Individual/Whole artwork is a finite 7.5-second particle helix that resolves into a contribution cube within a clear enclosure. It preserves the prominent head/hand hero, uses HTML selectors and playback controls, pauses offscreen/hidden and has renderer-captured completed fallbacks. No new typography, global background or animation dependency is introduced.
+
+## Shared hero framing and overhead contribution — 27 October 2026
+
+This user-approved pass supersedes the earlier People arm/palm choreography. The People hero contains one head below the Voltron enclosure. Its medium contribution comes from the head; a smaller cube forms from overhead particles, holds after forming, and descends vertically into the same centre. The arm and its path are not requested by this renderer. Keep the separate Partner hands artwork. Preserve the 14s finite endpoint, playback controls, static modes and original source assets.
+
+`components/brand/responsive-frames.css` owns shared marketing hero layout and chapter rhythm. Split columns begin at 1024px; smaller viewports stack text before artwork regardless of desktop art side. The existing 1120px container and 43:57 copy/art ratio remain. Headings share a copy anchor; breadcrumbs use the existing top allowance. Desktop stages use `clamp(420px, calc(100svh - 360px), 560px)`, tablet stages `clamp(380px,43svh,460px)`, and phone stages `clamp(300px,43svh,380px)`. Natural text growth can increase the hero height. Section spacing is 80/64/48px; soft chapter-tone falloffs replace visible boundary rules. Keep unfinished section content and internal layouts unchanged.
+
+Use the shared HeroPrinciples strip for Intelligence and sibling heroes. On narrow phones, allow controls to reflow and reserve room for wrapped eyebrow labels; do not hide text overflow or reduce touch targets. Keep main hero titles/artwork open and use glass selectively for short reading/action blocks.
+
+Native opening posters must follow camera projection rather than stretching to a new stage rectangle. Captured frame dimensions in `lib/scene-responsive-opening-frames.json` supply that mapping. Dense People/Partner/Commons fields have native phone/desktop frames; Manufacturing additionally has short-laptop/tablet frames for its broad deposition field. Regenerate captures whenever framing or source bounds change, retaining the established pixel-matching and asset budgets.
+
+### About and Partner artwork — 27 October 2026
+
+About uses two retained source stair structures: one walker on the straight stair and two independently phased walkers on the L stair. Preserve their original tread dimensions and matching skinned paths. Pearl treads, clear near faces and darker glass recesses connect this artwork to the hero optical system. Partner keeps both user-approved Human After All figures, with satin body surfaces and polished helmets, behind a locally authored glass worktable and one shared arched workpiece. Blueprint, wireframe and solid states use the same geometry. All figures form from coherent particle waves; both introductions stop at twelve seconds. Use CollaborationHero and the shared artwork controls, lifecycle policy and responsive hero stage. Opening posters are device-sized native captures, positioned through authored camera bounds. KUKA/Ontology remains deferred.

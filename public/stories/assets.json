@@ -1,0 +1,31 @@
+{
+  "progression": {
+    "peopleInSource": 8,
+    "retainedWalkers": 2,
+    "displayedPeople": 3,
+    "stairs": 2,
+    "occupancy": [
+      1,
+      2
+    ],
+    "skins": 2,
+    "meshes": 5,
+    "channels": 402,
+    "bytes": 1314232,
+    "sourceClipSeconds": 8.333333015441895
+  },
+  "figures": [
+    {
+      "name": "_guy2",
+      "vertices": 10536,
+      "triangles": 23072,
+      "bytes": 529736
+    },
+    {
+      "name": "_thomas2",
+      "vertices": 7819,
+      "triangles": 16037,
+      "bytes": 380108
+    }
+  ]
+}

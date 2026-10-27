@@ -1,11 +1,13 @@
 import {readFileSync} from 'node:fs';
 import {describe,it,expect} from 'vitest';
-import {commonsFence,commonsTreeDuration,commonsTreeState} from '../components/brand/commons-tree-timeline';
-describe('Commons tree and four-cube energy sequence',()=>{
- it('surrounds the roots with four non-overlapping cubes at matching heights',()=>{
-  expect(commonsFence).toHaveLength(4);expect(new Set(commonsFence.map(p=>`${p[0]},${p[2]}`)).size).toBe(4);
-  for(const p of commonsFence){expect(p[1]).toBe(.36);expect(Math.hypot(p[0],p[2])).toBeGreaterThan(2);}
+import {commonsEnergyY,commonsRootSurface,commonsFence,commonsTreeDuration,commonsTreeState} from '../components/brand/commons-tree-timeline';
+describe('Commons tree and single root-energy cube',()=>{
+ it('delivers energy from the cube centre exactly to the roots, never into the trunk',()=>{
+  expect(commonsEnergyY(0)).toBe(commonsFence[0][1]);expect(commonsEnergyY(1)).toBeCloseTo(.075);
+  for(let t=-.5;t<1.5;t+=.01){expect(commonsEnergyY(t)).toBeGreaterThanOrEqual(commonsFence[0][1]);expect(commonsEnergyY(t)).toBeLessThanOrEqual(commonsRootSurface);}
+  expect(commonsEnergyY(NaN)).toBe(commonsFence[0][1]);
  });
+ it('supports the tree on one centered cube with a root-level top face',()=>{expect(commonsFence).toEqual([[0,-.65,0]]);expect(commonsFence[0][1]+1.45/2).toBeCloseTo(.075);});
  it('establishes the cubes and their energy before growing the tree, then settles',()=>{
   expect(commonsTreeState(1.65).cubes.every(v=>v===1)).toBe(true);expect(commonsTreeState(1.65).power).toBeGreaterThan(0);expect(commonsTreeState(1.65).growth).toBe(0);
   let previous=0;for(let t=0;t<=11;t+=.05){const s=commonsTreeState(t);expect(s.growth).toBeGreaterThanOrEqual(previous);previous=s.growth;}

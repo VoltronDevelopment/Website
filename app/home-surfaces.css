@@ -48,3 +48,60 @@
 @media(max-width:767px) { .home-page .alpha-process { padding:12px; } .home-page .home-philosophy-content { padding:24px 16px; } .home-page .factory-system { padding:18px 12px; } .home-page { --card-frost:6px; } }
 @media(prefers-reduced-transparency:reduce) { .home-page :is(.factory-system,.alpha-process,.home-philosophy-content,.lot-story-tiles button) { background:var(--surface); backdrop-filter:none; -webkit-backdrop-filter:none; } }
 @media(forced-colors:active) { .home-page :is(.factory-system,.alpha-process,.home-philosophy-content,.lot-story-tiles button) { background:Canvas; border-color:CanvasText; box-shadow:none; } .home-page .lot-story-tiles li[data-human-review="true"] button { border:2px solid Highlight; box-shadow:none; } }
+/* Home owns a quiet presentation shell; material emphasis belongs to useful foregrounds. */
+.home-presentation { border:0; background:var(--glass-fill); box-shadow:0 20px 64px var(--glass-drop); }
+.home-presentation::before { display:none; }
+.home-presentation .presentation-veil { opacity:.58; }
+.home-presentation .site-header,.home-presentation .site-footer { border:0; box-shadow:0 8px 28px rgba(12,35,55,.045); }
+.home-page { --card-fill:rgba(250,253,255,.84); --card-shade:rgba(216,232,244,.64); --card-shadow:rgba(24,52,78,.13); --diagram-line:#7198b4; --diagram-ink:#15547b; --diagram-surface:rgba(241,249,254,.75); --diagram-glass:rgba(130,180,213,.25); --diagram-water:rgba(62,138,184,.22); --diagram-inverse:#f4fbff; }
+:root[data-theme="dark"] .home-page { --card-fill:rgba(27,43,59,.88); --card-shade:rgba(13,25,39,.85); --card-shadow:rgba(0,0,0,.28); --diagram-line:#6593af; --diagram-ink:#b9e4fa; --diagram-surface:rgba(23,45,65,.9); --diagram-glass:rgba(84,137,172,.25); --diagram-water:rgba(76,156,202,.24); --diagram-inverse:#11283c; }
+.home-page :is(.alpha-process,.home-philosophy-content) { padding:0; border:0; border-radius:0; background:none; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.home-page .alpha-process-art { aspect-ratio:1.95; min-height:350px; }
+.home-page .lot-story-tiles button { border:0; border-radius:12px; box-shadow:0 8px 24px var(--card-shadow); }
+.home-page .lot-story-tiles li[data-human-review="true"] button { border:0; box-shadow:0 10px 26px var(--card-shadow),inset 0 2px 0 color-mix(in srgb,var(--cyan) 50%,transparent); }
+.home-page .lot-story-tiles li[data-human-review="true"][data-active="true"] button { box-shadow:0 12px 30px var(--card-shadow),inset 0 3px 0 var(--cyan); }
+.home-roadmap { position:relative; }
+.roadmap-years { display:flex; gap:8px; flex-wrap:wrap; }
+.roadmap-years button { min-height:44px; padding:10px 18px; border:0; border-radius:8px; background:transparent; color:var(--muted); font:inherit; font-size:13px; cursor:pointer; }
+.roadmap-years button[aria-pressed="true"] { color:var(--ink); background:var(--card-fill); box-shadow:0 6px 20px var(--card-shadow); }
+.roadmap-ticks { display:flex; gap:0; list-style:none; margin:12px 0 0; padding:0; }
+.roadmap-ticks button { min-width:44px; min-height:32px; padding:0; border:0; background:transparent; color:var(--muted); font:inherit; font-size:11px; cursor:pointer; }
+.roadmap-ticks button[aria-pressed="true"] { color:var(--ink); font-weight:600; }
+.roadmap-evidence { margin:16px 0 0; padding-left:18px; color:var(--muted); font-size:14px; line-height:24px; }
+.home-roadmap.is-expanded .roadmap-detail { max-width:520px; }
+.roadmap-composition { display:grid; grid-template-columns:1.3fr 1fr; align-items:center; gap:40px; }
+.roadmap-art { position:relative; min-width:0; height:380px; }
+.roadmap-art canvas,.roadmap-still { position:absolute; inset:0; width:100%; height:100%; }
+.roadmap-still { fill:var(--diagram-glass); stroke:var(--diagram-ink); stroke-width:1.4; }
+.roadmap-art[data-ready="true"] .roadmap-still { visibility:hidden; }
+.roadmap-detail { max-width:440px; }
+.roadmap-period { font-size:12px; color:var(--muted); margin-bottom:12px; }
+.roadmap-detail h3 { font-size:28px; line-height:38px; font-weight:400; margin-bottom:18px; }
+.roadmap-detail>p:not(.roadmap-period) { font-size:15px; line-height:26px; color:var(--muted); }
+.roadmap-detail .roadmap-gate { margin-top:24px; font-size:12px!important;line-height:21px!important; }
+.roadmap-gate strong { display:block; color:var(--ink); font-weight:500; margin-bottom:4px; }
+.roadmap-note { font-size:11px; line-height:19px; color:var(--muted); margin-top:20px; max-width:72ch; }
+@media(max-width:767px) {
+ .home-page .home-cube-philosophy { height:340px; }
+ .home-page .alpha-process-art { min-height:300px; aspect-ratio:1.25; }
+ .home-page .home-philosophy-content { padding:0; }
+ .roadmap-years { gap:4px; }.roadmap-years button { padding:10px 9px; font-size:11px; }
+ .roadmap-composition { grid-template-columns:1fr; gap:8px; }.roadmap-art {height:290px}.roadmap-detail{min-height:232px}.roadmap-detail h3{font-size:25px;line-height:34px}
+ .home-presentation .site-header { transition:transform .2s ease; }.home-presentation .site-header[data-compact="true"]:not(:focus-within) { transform:translateY(-14px); }.home-presentation .site-header[data-compact="true"] .header-inner { transform:translateY(7px); }
+ .home-page .hero-grid {gap:20px}.home-page .home-lattice-art {height:clamp(300px,54svh,460px)}
+}
+@media(prefers-reduced-motion:reduce) { .home-presentation .site-header {transition:none} }
+@media(prefers-reduced-transparency:reduce) { .application-screen {backdrop-filter:none;background:var(--surface)} }
+@media(forced-colors:active) { .application-screen {border:1px solid CanvasText;box-shadow:none}.roadmap-years button[aria-pressed="true"]{outline:2px solid Highlight} }
+/* These stronger Home selectors also win over the shared @supports glass layer. */
+.site-presentation.home-presentation { backdrop-filter:blur(7px) saturate(1.01); -webkit-backdrop-filter:blur(7px) saturate(1.01); }
+.home-presentation .home-page :is(.alpha-process,.home-philosophy-content) { background:transparent; backdrop-filter:none; -webkit-backdrop-filter:none; }
+.home-page .lot-story-tiles .lot-tile-message { color:var(--ink); opacity:1; }
+.home-page .hero-principle-strip { border:0; box-shadow:0 -8px 30px rgba(12,35,55,.035); }
+.home-page .hero-principle-strip li+li { border:0; }
+.home-page .section { scroll-margin-top:100px; }
+.application-caption svg { width:20px; height:20px; margin:0; }
+.home-presentation .home-page .lot-story-tiles .lot-tile-message {color:var(--ink);opacity:1;}
+/* Ten year targets wrap rather than escaping the glass surface on narrow screens. */
+.roadmap-ticks{display:grid;grid-template-columns:repeat(10,minmax(44px,1fr));gap:0}.roadmap-ticks button{min-height:44px;width:100%}
+@media(max-width:767px){.roadmap-ticks{grid-template-columns:repeat(5,minmax(44px,1fr))}}

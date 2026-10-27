@@ -26,12 +26,12 @@ export function setGlass(material:THREE.MeshPhysicalMaterial,kind:GlassFace,dark
   material.emissive.setHex(0x246bd4);material.emissiveIntensity=.012;
   if(material.userData.glassProfile==="home")tuneHomeGlass(material,kind,dark);
   else if(material.userData.glassProfile){
+    // The shared Home optics establish the same pearl crown, deep sides and softbox bands.
+    tuneHomeGlass(material,kind,dark);
     const portrait=material.userData.glassProfile==="portrait",process=material.userData.glassProfile==="process";
-    material.color.setHex((dark?{top:0x85b1d1,side:0x3b729b,front:0xabcde4,rear:0x244e73,bottom:0x315d7c,internal:0x193e58}:studioLight)[kind]);
-    material.opacity=(dark?{top:.38,side:.40,front:.065,rear:.16,bottom:.12,internal:.012}:{top:.30,side:.30,front:.075,rear:.12,bottom:.10,internal:.014})[kind];
+    if(kind==='front')material.opacity=dark?.10:.075;
     if(portrait)material.opacity*=kind==="front"?.22:kind==="rear"?.45:.55;
     if(process)material.opacity*=.65;
-    material.roughness=kind==="top"?.10:.16;material.envMapIntensity=dark?1.05:1.25;
   }
   material.userData.faceKind=kind;
   material.userData.restOpacity=material.opacity;

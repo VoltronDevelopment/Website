@@ -37,7 +37,7 @@ export function IntelligenceHeroArtwork() {
     return () => { disposed = true; observer.disconnect(); motion.removeEventListener("change", change); controller.current?.dispose(); controller.current = null; };
   }, []);
   return <div className="intelligence-hero-artwork">
-    <div ref={host} className="intelligence-face-stage" role="img" aria-label="A silver-blue particle face inside a glass cube. Particles assemble into a three-dimensional human head, forming inside the lightly glazed enclosure.">
+    <div ref={host} className="intelligence-face-stage" role="img" aria-label="Particles assemble into one dimensional human portrait inside a glass cube. Dense particles form the figure, then prominent horizontal and vertical quality scan planes sweep across it before the scene settles.">
       <ScenePoster kind="intelligence"/>
       <canvas ref={canvas} aria-hidden="true"/>
     </div>

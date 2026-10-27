@@ -113,9 +113,9 @@ describe("factory scene controller", () => {
       });
       return values;
     }
-    const light = materials(); expect(light).toHaveLength(18); expect(light.every(value => value.clearcoat === .95)).toBe(true);
+    const light = materials(); expect(light).toHaveLength(18); expect(light.every(value => value.clearcoat === 1)).toBe(true);
     theme.theme = "dark"; changeTheme();
-    const dark = materials(); expect(dark.every(value => value.clearcoat === .95)).toBe(true); expect(dark).not.toEqual(light);
+    const dark = materials(); expect(dark.every(value => value.clearcoat === .65)).toBe(true); expect(dark).not.toEqual(light);
     theme.theme = "light"; changeTheme(); expect(materials()).toEqual(light);
   });
 
