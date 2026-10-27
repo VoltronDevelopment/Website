@@ -4,9 +4,9 @@ import {cloneArtworkMaterial,homePaneRole,homeCellTone} from "../components/home
 import {homeCells} from "../components/navigation/lattice-transition";
 
 describe("Home glass isolation and theme continuity",()=>{
-  it('assigns exactly three light cells behind/below the logo and four dark cells',()=>{
-    expect(homeCells.filter(cell=>homeCellTone(cell)==='light')).toEqual([[.5,.5,.5],[.5,1.5,-.5],[-.5,1.5,.5]]);
-    expect(homeCells.filter(cell=>homeCellTone(cell)==='dark')).toHaveLength(4);
+  it('balances two pearl and two smoked cells in the retained base',()=>{
+    expect(homeCells.filter(cell=>homeCellTone(cell)==='light')).toEqual([[.5,.5,-.5],[.5,.5,.5],[.5,1.5,-.5],[-.5,1.5,.5]]);
+    expect(homeCells.filter(cell=>homeCellTone(cell)==='dark')).toHaveLength(3);
     const ink=glassFace('front',false,true,'home','backing'),ice=glassFace('front',true,true,'home','near');
     ink.userData.homeCellTone='dark';ice.userData.homeCellTone='light';
     for(const night of [false,true]){setGlass(ink,'front',night);setGlass(ice,'front',night);expect(ink.color.getHSL({h:0,s:0,l:0}).l).toBeLessThan(.04);expect(ice.color.getHSL({h:0,s:0,l:0}).l).toBeGreaterThan(.8);}

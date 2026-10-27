@@ -1,6 +1,6 @@
 /* Canonical page framing. Scene geometry retains its own camera and optical fit. */
 .site-presentation {
- --hero-stage:clamp(420px,calc(100svh - 360px),560px);
+ --hero-stage:clamp(460px,calc(100svh - 280px),640px);
  --chapter-space:80px;
  --chapter-light:rgba(242,249,255,.16);
  --chapter-shadow:rgba(18,43,64,.07);
@@ -90,3 +90,6 @@
 
 @media(min-width:768px) and (max-width:1023px){.site-presentation #main-content .scene-responsive-handCulture {--scene-native-width:var(--scene-native-tablet-width);--scene-native-height:var(--scene-native-tablet-height)}}
 @media(min-width:1024px) and (max-height:780px){.site-presentation #main-content .scene-responsive-handCulture {--scene-native-width:var(--scene-native-short-width);--scene-native-height:var(--scene-native-short-height)}}
+
+@media(min-width:1024px) and (min-height:920px){.site-presentation #main-content .scene-responsive-handCulture{--scene-native-width:var(--scene-native-tall-width);--scene-native-height:var(--scene-native-tall-height)}.site-presentation #main-content .hero .engineered-manufacturing .responsive-hero-opening{--hero-native-width:var(--hero-native-tall-width);--hero-native-height:var(--hero-native-tall-height)}}
+@media(max-width:767px) and (min-height:884px){.site-presentation #main-content .scene-responsive-handCulture{--scene-native-width:var(--scene-native-mobileTall-width);--scene-native-height:var(--scene-native-mobileTall-height)}.site-presentation #main-content .hero .engineered-manufacturing .responsive-hero-opening{--hero-native-width:var(--hero-native-mobileTall-width);--hero-native-height:var(--hero-native-mobileTall-height)}}

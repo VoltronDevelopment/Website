@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type 
 import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt } from "./entry-timeline";
+import {IdentityTile} from './IdentityTile';
 
 const pillars=[{id:"human",above:"Human",below:"ingenuity."},{id:"connected",above:"Connected",below:"intelligence."},{id:"manufacturing",above:"Manufacturing",below:"possibilities."}];
 // Tangent panels connect both caps along the same 20px rounded perimeter.
@@ -32,7 +33,7 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     if(!host.current)return;
     const root=host.current;
     // Decode the final emblem during the opening hold, rather than on its first visible frame.
-    root.querySelectorAll<HTMLImageElement>(".entry-enter-mark img").forEach(image=>{void image.decode().catch(()=>{});});
+    root.querySelectorAll<HTMLImageElement>(".identity-tile-mark img").forEach(image=>{void image.decode().catch(()=>{});});
     let disposed=false,frame=0,time=0,previous=0;
     let celebration:ReturnType<typeof import("../coming-soon/fireworks").createFireworks> | undefined;
     let celebrationRequested=false;
@@ -108,7 +109,7 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
             {["top","bottom","left","right"].map(side=><span className={`entry-body-wall entry-body-${side}`} aria-hidden="true" key={side}/>)}
             {curvedEdges.map((style,index)=><span className="entry-body-curve" aria-hidden="true" key={index} style={style}/>)}
             {[0,1,2,3,4].map(face=><div key={face} className="entry-face" data-entry-face={face} hidden={face!==0} style={{"--face-turn":face%2} as CSSProperties}>
-              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:comingSoon?<div className="entry-face-enter"><span className="entry-enter-mark" aria-hidden="true"><img src={optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png")} alt="" width="120" height="120"/></span><span className="entry-enter-label">Coming this Diwali</span></div>:<Link href="/" className="entry-face-enter" onClick={enter} aria-disabled={!ready || leaving} tabIndex={ready?0:-1}><span className="entry-enter-mark" aria-hidden="true"><img src={optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png")} alt="" width="120" height="120"/></span><span className="entry-enter-label">Enter Lattice<ArrowRight size={16} aria-hidden="true"/></span></Link>}
+              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:comingSoon?<div className="entry-face-enter"><IdentityTile caption="Coming this Diwali"/></div>:<Link href="/" className="entry-face-enter" onClick={enter} aria-disabled={!ready || leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
             </div>)}
           </div></div>
           <span className="entry-pulse" aria-hidden="true"/>

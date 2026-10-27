@@ -49,7 +49,7 @@ export function createSceneHandoff(host:HTMLElement,canvas:HTMLCanvasElement,imm
     reveal(){
       if(disposed||host.isConnected===false)return Promise.resolve();
       cancel();
-      if(immediate){progress(1);host.dataset.sceneState='live';return Promise.resolve();}
+      if(immediate||host.closest?.('.home-page')){progress(1);host.dataset.sceneState='live';return Promise.resolve();}
       try{blend=snapshot();}catch{/* A blocked canvas readback can still dissolve safely. */}
       host.dataset.sceneState='handoff';progress(0);
       return new Promise<void>(resolve=>{

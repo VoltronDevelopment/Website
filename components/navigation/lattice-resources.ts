@@ -1,3 +1,4 @@
+import {identityMark} from '@/lib/identity-assets';
 import {yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
 import {createArtworkEnvironment} from "../brand/artwork-studio";
@@ -12,7 +13,7 @@ export async function createLatticeResources(canvas:HTMLCanvasElement):Promise<S
     await yieldToBrowser();
     environment=createArtworkEnvironment(renderer);
     await yieldToBrowser();
-    const texture=await new THREE.TextureLoader().loadAsync("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png");
+    const texture=await new THREE.TextureLoader().loadAsync(identityMark);
     texture.colorSpace=THREE.SRGBColorSpace;texture.generateMipmaps=false;texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());
     const activeRenderer=renderer,activeEnvironment=environment;
     return {renderer,environment:environment.texture,texture,dispose(){texture.dispose();activeEnvironment.dispose();activeRenderer.dispose();}};

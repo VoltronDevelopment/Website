@@ -7,13 +7,14 @@ import "./home-surfaces.css";
 import "./home-applications.css";
 import {ApplicationPreviews} from "@/components/home/ApplicationPreviews";
 import {HomeRoadmap} from "@/components/home/HomeRoadmap";
+import {HomeMotion} from '@/components/home/HomeMotion';
 import {HeroPrinciples} from "@/components/brand/HeroPrinciples";
 import "@/components/brand/hero-art-direction.css";
 
 export default function HomePage() {
   return <SiteShell presentation><div className="home-page">
     <section className="hero home-hero" aria-labelledby="home-title">
-      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s intelligent manufacturing backbone.</h1><p>Human ingenuity. Connected intelligence. Shared progress.</p><div className="hero-actions"><Action href="#factory-systems" secondary>Explore Voltron</Action><Action href="/about" text>Our vision</Action></div></div><HomeHeroArtwork/></div>
+      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s intelligent manufacturing backbone.</h1><p>Connected systems for production, quality and machine records, built and proven on our own factory floor.</p><div className="hero-actions"><Action href="#factory-systems" secondary>Explore Voltron</Action><Action href="/about" text>Our vision</Action></div></div><HomeHeroArtwork/></div>
       <HeroPrinciples home labels={["Human ingenuity","Connected intelligence","Shared progress"]}/>
     </section>
     <Section className="home-systems-section" id="factory-systems"><Intro title="What Voltron connects.">Four application views of the same manufacturing reality. Illustrative concepts, not shipping software.</Intro><ApplicationPreviews/></Section>
@@ -21,5 +22,6 @@ export default function HomePage() {
     <Section white className="home-alpha-section" id="voltron-alpha"><div className="home-alpha"><div className="home-alpha-intro"><div className="split-copy"><p className="eyebrow">Surface treatment / Voltron Alpha</p><h2>The ambition meets<br/>the factory floor.</h2><p>Our first manufacturing environment for developing and validating the wider architecture.</p></div><Action href="/manufacturing" text>Explore manufacturing</Action></div><AlphaProcessScene/></div></Section>
     <Section className="home-roadmap-section" id="roadmap"><Intro title="A decade of building capability.">Prove the process. Develop original products. Earn global trust.</Intro><HomeRoadmap/></Section>
     <Section className="home-philosophy" id="philosophy"><div className="home-philosophy-content"><p className="eyebrow">The Voltron organizational philosophy</p><h2>Individual excellence.<br/>Aligned to the whole.</h2><PhilosophyScene/><p className="home-philosophy-signature">Distinct perspectives. Shared purpose. Mutual growth.</p><p className="home-philosophy-statement">Each individual strengthens the whole.<br/>The whole creates room for individual growth.</p><Action href="/about/people-culture" text>Explore our culture</Action></div></Section>
+    <HomeMotion/>
   </div></SiteShell>;
 }

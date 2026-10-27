@@ -1,6 +1,6 @@
 /** Motion choice is separate from GPU quality. No scene download is needed for a still. */
 export function prefersStaticScene() {
-  return matchMedia('(prefers-reduced-motion: reduce)').matches ||
+  return document.documentElement.dataset.artworkMotion==='off' || matchMedia('(prefers-reduced-motion: reduce)').matches ||
     !!(navigator as Navigator & {connection?:{saveData?:boolean}}).connection?.saveData;
 }
 

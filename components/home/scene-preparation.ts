@@ -39,6 +39,7 @@ export function canPrepareHomeScene(){
   if(document.hidden)return false;
   const stage=document.querySelector<HTMLElement>("[data-persistent-stage]");
   if(stage?.querySelector<HTMLCanvasElement>("canvas")?.dataset.continuousRendering!=="true")return true;
+  if(stage?.querySelector<HTMLCanvasElement>('canvas')?.dataset.settled==='true')return true;
   const rect=stage.getBoundingClientRect();
   const visible=Math.max(0,Math.min(rect.bottom,innerHeight)-Math.max(rect.top,0));
   return visible/Math.max(1,rect.height)<.6;

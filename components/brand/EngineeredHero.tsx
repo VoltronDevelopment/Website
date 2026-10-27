@@ -16,7 +16,7 @@ function ResponsiveHeroOpening({kind,theme}:{kind:"manufacturing"|"network"|"ont
  const images=responsiveOpening[kind],frame=openingFrames[kind];
  const style=Object.fromEntries(Object.entries(frame).flatMap(([device,capture])=>{const aspect=capture.width/capture.height,h=Math.max(1,(960/760)/aspect);return [[`--hero-native-${device}-width`,h*aspect],[`--hero-native-${device}-height`,h]];})) as CSSProperties;
  const extra=kind==='manufacturing'?responsiveOpening.manufacturing:undefined;
- return <picture style={style} className={`art-theme-${theme} responsive-hero-opening`}><source media="(max-width:767px)" srcSet={images.mobile[theme]}/>{extra&&<><source media="(min-width:768px) and (max-width:1023px)" srcSet={extra.tablet[theme]}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={extra.short[theme]}/></>}<img src={images.desktop[theme]} alt="" width="625" height="540"/></picture>;
+ return <picture style={style} className={`art-theme-${theme} responsive-hero-opening`}><>{extra&&<source media="(max-width:767px) and (min-height:884px)" srcSet={extra.mobileTall[theme]}/>}<source media="(max-width:767px)" srcSet={images.mobile[theme]}/>{extra&&<source media="(min-width:1024px) and (min-height:920px)" srcSet={extra.tall[theme]}/>}</>{extra&&<><source media="(min-width:768px) and (max-width:1023px)" srcSet={extra.tablet[theme]}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={extra.short[theme]}/></>}<img src={images.desktop[theme]} alt="" width="625" height="540"/></picture>;
 }
 export function EngineeredHero({kind}:{kind:HeroSceneKind}){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<EngineeredController|null>(null);

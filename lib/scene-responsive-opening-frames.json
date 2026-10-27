@@ -15,6 +15,14 @@
     "tablet": {
       "width": 714,
       "height": 460
+    },
+    "tall": {
+      "width": 624.71875,
+      "height": 560
+    },
+    "mobileTall": {
+      "width": 320,
+      "height": 380
     }
   },
   "ontology": {
@@ -73,6 +81,14 @@
     "tablet": {
       "width": 714,
       "height": 460
+    },
+    "tall": {
+      "width": 624.71875,
+      "height": 560
+    },
+    "mobileTall": {
+      "width": 320,
+      "height": 380
     }
   },
   "handPartner": {

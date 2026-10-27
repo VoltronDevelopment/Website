@@ -21,7 +21,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   const params = new URLSearchParams(location.search);
   const previewTime = params.has("lot-time") ? Number(params.get("lot-time")) : NaN;
   const preview = Number.isFinite(previewTime), composition = params.get("animate") === "0" || params.get("artwork") === "composition";
-  let elapsed = preview ? Math.max(0, Math.min(14, previewTime)) : options.initialTime ?? (motion.matches || composition ? 14 : 0);
+  let elapsed = preview ? Math.max(0, Math.min(lotStoryDuration, previewTime)) : options.initialTime ?? (motion.matches || composition ? lotStoryDuration : 0);
   let paused = options.initialTime !== null, frame = 0, previous = 0, disposed = false, failed = false, prepared = false, released = false, visible = false, started = false;
   let cancelPreparation: () => void = () => {};
   const cancelled = new Promise<void>(resolve => { cancelPreparation = resolve; });
@@ -30,7 +30,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
     if (params.get("renderer") === "static") throw new Error("Static artwork requested");
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power", preserveDrawingBuffer: params.get("lot-poster") === "1" });
   } catch {
-    handoff.fallback();host.dataset.renderer = "fallback"; canvas.hidden = true; options.onState(lotStoryStateAt(options.initialTime ?? 14)); options.onReady(false);
+    handoff.fallback();host.dataset.renderer = "fallback"; canvas.hidden = true; options.onState(lotStoryStateAt(options.initialTime ?? lotStoryDuration)); options.onReady(false);
     return { ready: Promise.resolve(), select() {}, replay() {}, setPaused() {}, dispose() {} };
   }
   renderer.setClearColor(0, 0); renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -174,7 +174,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   }
   function fail() {
     if (disposed || failed) return; failed = true; stop(); cancelPreparation(); release();
-    handoff.fallback();canvas.hidden = true; host.dataset.renderer = "fallback"; options.onReady(false); options.onState(lotStoryStateAt(paused ? elapsed : 14));
+    handoff.fallback();canvas.hidden = true; host.dataset.renderer = "fallback"; options.onReady(false); options.onState(lotStoryStateAt(paused ? elapsed : lotStoryDuration));
   }
   let renderedFrames=0;
   function render() { if (prepared && !disposed && !failed){renderer.render(scene, camera);canvas.dataset.renderedFrames=String(++renderedFrames);} }

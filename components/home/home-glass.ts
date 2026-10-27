@@ -3,7 +3,7 @@ import type {GlassFace} from "./lattice-materials";
 export type PaneRole="backing"|"crown"|"near"|"recess"|"shared"|"base"|"clear";
 /** Two cells enclosing the logo void and the supporting cell directly below it. */
 export function homeCellTone(cell:readonly number[]):"dark"|"light"{
-  return (cell[1]>1&&(cell[0]>0||cell[2]>0))||(cell[1]<1&&cell[0]>0&&cell[2]>0)?"light":"dark";
+  return (cell[1]>1&&(cell[0]>0||cell[2]>0))||(cell[1]<1&&cell[0]>0)?"light":"dark";
 }
 export function homePaneRole(cell:readonly number[],normal:readonly number[],shared=false):PaneRole{
   if(shared)return "shared";
@@ -61,15 +61,16 @@ export function tuneHomeGlass(material:THREE.MeshPhysicalMaterial,kind:GlassFace
 /** Authored softbox bands give flat orthographic panes a spatial reflection gradient.
  * Physical environment/area-light shading remains underneath; this is not refraction.
  */
-export function addHomePaneReflections(material:THREE.MeshPhysicalMaterial,kind:GlassFace){
+export function addHomePaneReflections(material:THREE.MeshPhysicalMaterial,kind:GlassFace,span=1){
   if(kind==="internal"||kind==="bottom")return;
   const plane=kind==="top"?"position.xz":kind==="side"?"position.zy":"position.xy";
   const role=material.userData.paneRole as PaneRole|undefined;
   const strength=role==="backing"?.025:kind==="front"?.28:kind==="rear"?.55:kind==="top"?.75:.55;
+  const reach=span.toFixed(3);
   material.onBeforeCompile=shader=>{
     shader.uniforms.uHomeReflectionGain=material.userData.homeReflectionGain||{value:1};
     shader.vertexShader=shader.vertexShader.replace("#include <common>","#include <common>\nvarying vec2 vHomePane;")
-      .replace("#include <begin_vertex>",`#include <begin_vertex>\nvHomePane = ${plane};`);
+      .replace("#include <begin_vertex>",`#include <begin_vertex>\nvHomePane = (${plane}) * ${reach};`);
     shader.fragmentShader=shader.fragmentShader.replace("#include <common>","#include <common>\nvarying vec2 vHomePane;\nuniform float uHomeReflectionGain;")
       .replace("#include <opaque_fragment>",`
         float homeAxis = vHomePane.x * ${kind==="top"?".28":".65"} + vHomePane.y * ${role==="recess"?"-.35":".12"};
@@ -78,10 +79,12 @@ export function addHomePaneReflections(material:THREE.MeshPhysicalMaterial,kind:
         float homeDarkCard = exp(-pow((homeAxis - .12) / .17, 2.));
         outgoingLight *= 1. - homeDarkCard * ${(.42*strength).toFixed(3)};
         outgoingLight += vec3(.75, .88, 1.) * (homeBroad * .42 + homeStrip * .8) * ${strength.toFixed(3)} * uHomeReflectionGain;
+        float fresnelRim = pow(1. - abs(dot(normalize(normal), normalize(vViewPosition))), 2.4);
+        outgoingLight += vec3(.62, .86, 1.) * fresnelRim * .34 * uHomeReflectionGain;
         diffuseColor.a *= .78 + homeBroad * .28 + homeStrip * .38;
         #include <opaque_fragment>`);
   };
-  material.customProgramCacheKey=()=>`pane-reflections-v3-${kind}-${role||"display"}`;
+  material.customProgramCacheKey=()=>`pane-reflections-v5-${kind}-${role||"display"}-${reach}`;
 }
 
 /** Three's Material.clone/copy omits shader hooks; preserve them for lit/arrival copies. */

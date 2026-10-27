@@ -17,7 +17,10 @@ const reportVital:Parameters<typeof useReportWebVitals>[0]=metric=>publish(metri
 export function PerformanceMonitor() {
   const pathname=usePathname(),previous=useRef<string|null>(null);
   useReportWebVitals(reportVital);
-  useEffect(()=>{const motion=matchMedia("(prefers-reduced-motion: reduce)");const update=()=>{document.documentElement.dataset.sceneMotion=motion.matches||!!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData?"static":"motion";};motion.addEventListener("change",update);return()=>motion.removeEventListener("change",update);},[]);
+  useEffect(()=>{const motion=matchMedia("(prefers-reduced-motion: reduce)");
+    try{document.documentElement.dataset.artworkMotion=localStorage.getItem('voltron-artwork-motion')||'on';}catch{}
+    const update=()=>{const q=new URLSearchParams(location.search);document.documentElement.dataset.sceneMotion=q.get('renderer')==='static'||q.get('motion')==='reduced'||q.get('animate')==='0'||q.get('artwork')==='composition'||document.documentElement.dataset.artworkMotion==='off'||motion.matches||!!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData?"static":"motion";};
+    update();motion.addEventListener("change",update);window.addEventListener('voltron:motion',update);return()=>{motion.removeEventListener("change",update);window.removeEventListener('voltron:motion',update);};},[]);
   useEffect(()=>{
     const started=previous.current===null?0:performance.now();previous.current=pathname;
     const seen=new WeakSet<Element>();

@@ -9,6 +9,8 @@ body:has(.brand-entry) { isolation:isolate; }
 :root[data-route-state="incoming"] { --route-nudge:-12px; }
 
 .lattice-atmosphere { display:none; position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; color:#164e86; }
+html[data-scrolling] .lattice-atmosphere * { animation-play-state:paused; }
+body:has(.home-page) .atmosphere-lattice,:root[data-theme="dark"] body:has(.home-page) .atmosphere-lattice { opacity:.22; filter:blur(.4px); }
 body:has(.site-presentation) .lattice-atmosphere,
 body:has(.brand-entry) .lattice-atmosphere { display:block; }
 :root[data-theme="dark"] .lattice-atmosphere { color:#548ab8; }

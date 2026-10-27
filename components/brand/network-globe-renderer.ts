@@ -7,6 +7,7 @@ import {createSceneHandoff} from '../performance/scene-handoff';
 import {globeCoordinate,globeDuration,globeLinks,globeNodes,globeState,globeTextureYaw} from './network-globe-timeline';
 import type {EngineeredController,SceneMode} from './engineered-hero-renderer';
 import {observeArtworkTuning,artworkDefaults} from './artwork-tuning';
+import {createGlobeEnvelope} from './globe-envelope';
 
 export async function mountNetworkGlobe(canvas:HTMLCanvasElement,host:HTMLDivElement,onMode:(mode:SceneMode)=>void,signal:AbortSignal):Promise<EngineeredController>{
  const responses=await Promise.all(['/globe/land-points.json','/globe/coastlines.bin'].map(url=>fetch(url,{signal})));if(responses.some(r=>!r.ok))throw Error('Globe geography unavailable');const land:number[]=await responses[0].json(),coast=new Float32Array(await responses[1].arrayBuffer());
@@ -20,9 +21,9 @@ export async function mountNetworkGlobe(canvas:HTMLCanvasElement,host:HTMLDivEle
  const tilt=new THREE.Group(),geography=new THREE.Group();tilt.rotation.z=-.12;tilt.add(geography);scene.add(tilt);
  const radius=1.8,bodyMaterial=track(new THREE.MeshPhysicalMaterial({color:0xc2deed,metalness:.2,roughness:.38,clearcoat:.45,clearcoatRoughness:.32,envMapIntensity:.75,transparent:true,depthWrite:true}));
  bodyMaterial.metalness=.03;bodyMaterial.roughness=.72;bodyMaterial.clearcoat=.12;
- const shellGeometry=track(new THREE.IcosahedronGeometry(radius*1.16,2));
+ const envelope=createGlobeEnvelope(radius*1.16),shellGeometry=track(envelope.surface);
  const shellMaterial=track(new THREE.LineBasicMaterial({color:0x397ba6,transparent:true,opacity:.17,depthWrite:false}));
- const shell=new THREE.LineSegments(track(new THREE.WireframeGeometry(shellGeometry)),shellMaterial);shell.name='connected-polygon-envelope';tilt.add(shell);
+ const shell=new THREE.LineSegments(track(envelope.wire),shellMaterial);shell.name='connected-polygon-envelope';tilt.add(shell);
  // A quiet deposition front precedes the fixed polygon edges; no route arcs return.
  const wavePositions=[],waveSeeds=[];const shellPoints=shell.geometry.attributes.position;
  for(let i=0;i<shellPoints.count;i+=2){const a=new THREE.Vector3().fromBufferAttribute(shellPoints,i),b=new THREE.Vector3().fromBufferAttribute(shellPoints,i+1);for(let j=0;j<3;j++){wavePositions.push(...a.clone().lerp(b,j/3).toArray());waveSeeds.push(((i*73+j*37)%997)/997);}}

@@ -22,3 +22,6 @@
 .scene-responsive-process img {width:100cqw!important;height:100cqh!important}
 .scene-native-opening {--scene-native-width:var(--scene-native-desktop-width);--scene-native-height:var(--scene-native-desktop-height)}
 @media(max-width:767px){.scene-native-opening{--scene-native-width:var(--scene-native-mobile-width);--scene-native-height:var(--scene-native-mobile-height)}}
+
+/* Picture-cube posters follow the live perspective camera's height and mobile FOV. */
+@container (max-aspect-ratio:9/10){.scene-poster-home img{--home-poster-fov:0.825778792}}

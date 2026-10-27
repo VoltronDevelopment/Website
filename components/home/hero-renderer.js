@@ -1,6 +1,6 @@
 import {optimizedAsset} from "@/lib/optimized-assets";
 import {sceneOpeningTime} from "@/lib/scene-continuity";
-import {mountHomeReveal} from './home-reveal-renderer';
+import {mountHomeCube} from './home-cube-renderer';
 import {updateLineDistance} from "../performance/line-distance";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
@@ -18,7 +18,7 @@ import {homeCells,cellsAt} from "../navigation/lattice-transition";
 const {smooth,gridOpacityAt}=homeTimeline;
 
 export function mountHero(canvas, container, hero, variant="home", options={}) {
-if(variant==='home')return mountHomeReveal(canvas,container,hero,options);
+if(variant==='home')return mountHomeCube(canvas,container,hero,options);
 const quality=createRenderQuality(canvas,1.75);
 const technology=variant==="technology";
 const {duration,offsets,stateAt}=technology ? technologyTimeline : homeTimeline;

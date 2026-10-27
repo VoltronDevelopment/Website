@@ -71,3 +71,14 @@ export function nodeHaloTexture(){
   gradient.addColorStop(0,"rgba(72,207,234,.5)");gradient.addColorStop(.25,"rgba(72,207,234,.2)");gradient.addColorStop(1,"rgba(72,207,234,0)");
   context.fillStyle=gradient;context.fillRect(0,0,64,64);return new THREE.CanvasTexture(canvas);
 }
+
+/** A view-dependent rim, cheap enough to run on glass without a bloom pass. */
+export function addFresnelRim(material:THREE.MeshPhysicalMaterial,strength=.4){
+  const previous=material.onBeforeCompile,priorKey=material.customProgramCacheKey?.bind(material);
+  material.userData.fresnelRim=strength;
+  material.onBeforeCompile=(shader,renderer)=>{previous?.call(material,shader,renderer);
+    shader.uniforms.uFresnelRim={value:strength};
+    shader.fragmentShader=shader.fragmentShader.replace("#include <opaque_fragment>",`float fresnelRim=pow(1.-abs(dot(normalize(normal),normalize(vViewPosition))),2.4);outgoingLight+=vec3(.62,.86,1.)*fresnelRim*uFresnelRim;\n#include <opaque_fragment>`);
+  };
+  material.customProgramCacheKey=()=>(priorKey?priorKey():"")+`-fresnel-${strength}`;
+}

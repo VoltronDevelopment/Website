@@ -8,6 +8,7 @@ import {usePathname,useRouter} from "next/navigation";
 import type {HeroController,SharedHeroResources} from "../home/hero-renderer";
 import {canMorph,mixForView,transitionMix,viewForPath,type LatticeView} from "./lattice-transition";
 import {localRect,placedRect,sceneClip,type SceneRect} from "./lattice-placement";
+import {subscribeScroll} from "@/lib/scroll-frame";
 import "./lattice-experience.css";
 
 type Slot={node:HTMLDivElement;hero:HTMLElement;kind:LatticeView};
@@ -25,19 +26,34 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const previousPath=useRef(pathname);
   const currentPath=useRef(pathname),initialPath=useRef(pathname),firstHome=useRef(false);
   currentPath.current=pathname;
-  const canvas=useRef<HTMLCanvasElement>(null),layer=useRef<HTMLDivElement>(null);
+  const canvas=useRef<HTMLCanvasElement>(null),layer=useRef<HTMLDivElement>(null),anchor=useRef<HTMLDivElement>(null);
   const slot=useRef<Slot|null>(null),controller=useRef<HeroController|null>(null);
   const resources=useRef<Promise<SharedHeroResources|undefined>|null>(null),shared=useRef<SharedHeroResources|undefined>(undefined);
   const pending=useRef<Pending|null>(null),mix=useRef(0),generation=useRef(0),animation=useRef(0),positionFrame=useRef(0);
   const loadingTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined),settleTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
   const [loading,setLoading]=useState("");
+  const [dock,setDock]=useState<HTMLElement|null>(null);
   const lifetime=useRef(0);
   const outgoingCopy=useRef<HTMLElement|null>(null);
   const unavailable=useRef(false);
   const handoff=useRef<ReturnType<typeof createSceneHandoff>|null>(null);
   const activateRef=useRef<(value:Slot,request?:Pending)=>void>(()=>{});
 
+  const syncDock=useCallback(()=>{
+    const node=slot.current?.node;
+    const should=!animation.current&&!pending.current&&slot.current?.kind==="home"&&node?.dataset.renderer==="live";
+    const next=should&&node?node:null;
+    const stageNode=layer.current,home=anchor.current;
+    if(stageNode&&home&&stageNode.parentElement!==(next??home))(next??home).appendChild(stageNode);
+    setDock(current=>current===next?current:next);
+  },[]);
   const position=useCallback((rect?:SceneRect)=>{
+    if(layer.current)layer.current.dataset.kind=slot.current?.kind??'';
+    syncDock();
+    if(!animation.current&&!pending.current&&slot.current?.kind==="home"&&layer.current?.parentElement===slot.current.node){
+      Object.assign(layer.current.style,{left:"0",top:"0",width:"100%",height:"100%",visibility:"visible",clipPath:"none"});
+      return;
+    }
     const presentation=slot.current?.node.dataset.renderer;
     if(presentation!=="live"&&presentation!=="morph"){if(layer.current)layer.current.style.visibility="hidden";return;}
     const target=rect??slot.current?.node.getBoundingClientRect();if(!target||!layer.current)return;
@@ -55,7 +71,7 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(holes)clipPath=`path(evenodd, '${path}')`;
     }
     Object.assign(layer.current.style,{left:`${target.x}px`,top:`${target.y}px`,width:`${target.width}px`,height:`${target.height}px`,visibility:target.y+target.height>0&&target.y<innerHeight?"visible":"hidden",clipPath});
-  },[]);
+  },[syncDock]);
   const clearState=useCallback(()=>{
     clearTimeout(loadingTimer.current);clearTimeout(settleTimer.current);setLoading("");
     outgoingCopy.current?.remove();outgoingCopy.current=null;
@@ -66,8 +82,9 @@ export function LatticeExperience({children}:{children:ReactNode}){
     if(request&&pending.current!==request)return;
     pending.current=null;clearState();
     if(layer.current)layer.current.dataset.transition="settled";
+    syncDock();
     if(request?.keyboard){const heading=document.querySelector<HTMLElement>("main h1");heading?.setAttribute("tabindex","-1");heading?.focus({preventScroll:true});}
-  },[clearState]);
+  },[clearState,syncDock]);
 
   const mount=useCallback(async(value:Slot,immediate:boolean,token:number)=>{
     if(!canvas.current)return;
@@ -137,9 +154,10 @@ export function LatticeExperience({children}:{children:ReactNode}){
     node.dataset.live="false";
     position();
     queueMicrotask(()=>{if(slot.current===value&&node.isConnected)void activateRef.current(value,request?.path===(kind==="home"?"/":"/technology")?request:undefined);});
-    return ()=>{if(slot.current?.node===node){slot.current=null;controller.current?.pause();if(!pending.current&&layer.current)layer.current.style.visibility="hidden";}};
+    return ()=>{if(slot.current?.node===node){slot.current=null;setDock(null);controller.current?.pause();if(!pending.current&&layer.current)layer.current.style.visibility="hidden";}};
   },[position]);
 
+  useEffect(()=>{position();},[dock,position]);
   useEffect(()=>{
     const move=()=>{if(animation.current||positionFrame.current)return;positionFrame.current=requestAnimationFrame(()=>{positionFrame.current=0;position();});};
     const click=(event:MouseEvent)=>{
@@ -170,12 +188,12 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(url.pathname===currentPath.current&&slot.current)void activateRef.current(slot.current,request);
     };
     const pop=()=>{generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;clearState();};
-    const simplify=()=>{if(prefersStaticScene()){generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;controller.current?.pause();if(slot.current&&slot.current.node.dataset.renderer!=="live"){slot.current.node.dataset.live="false";slot.current.node.dataset.renderer="poster";}position();clearState();return;}if(slot.current&&!pending.current&&slot.current.node.dataset.renderer==="poster"){void activateRef.current(slot.current);return;}if(pending.current&&slot.current){pending.current.rich=false;slot.current.node.dataset.renderer="poster";position();void activateRef.current(slot.current,pending.current);}else {controller.current?.start();move();}};
+    const simplify=()=>{if(prefersStaticScene()){generation.current++;cancelAnimationFrame(animation.current);animation.current=0;pending.current=null;controller.current?.pause();if(slot.current){slot.current.node.dataset.live="false";slot.current.node.dataset.renderer="poster";}position();clearState();return;}if(slot.current&&!pending.current&&slot.current.node.dataset.renderer==="poster"){void activateRef.current(slot.current);return;}if(pending.current&&slot.current){pending.current.rich=false;slot.current.node.dataset.renderer="poster";position();void activateRef.current(slot.current,pending.current);}else {controller.current?.start();move();}};
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
     const lost=()=>{unavailable.current=true;};const surface=canvas.current;surface?.addEventListener("webglcontextlost",lost);
     const panels=new MutationObserver(()=>position(animation.current&&layer.current?layer.current.getBoundingClientRect():undefined));panels.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:["aria-expanded"]});
-    document.addEventListener("click",click,true);window.addEventListener("scroll",move,{passive:true});window.addEventListener("resize",simplify);window.addEventListener("popstate",pop);motion.addEventListener("change",simplify);
-    return ()=>{document.removeEventListener("click",click,true);window.removeEventListener("scroll",move);window.removeEventListener("resize",simplify);window.removeEventListener("popstate",pop);motion.removeEventListener("change",simplify);surface?.removeEventListener("webglcontextlost",lost);panels.disconnect();cancelAnimationFrame(positionFrame.current);};
+    document.addEventListener("click",click,true);const stopScroll=subscribeScroll(()=>{if(!animation.current)position();});window.addEventListener("resize",simplify);window.addEventListener("voltron:motion",simplify);window.addEventListener("popstate",pop);motion.addEventListener("change",simplify);
+    return ()=>{document.removeEventListener("click",click,true);stopScroll();window.removeEventListener("resize",simplify);window.removeEventListener("voltron:motion",simplify);window.removeEventListener("popstate",pop);motion.removeEventListener("change",simplify);surface?.removeEventListener("webglcontextlost",lost);panels.disconnect();cancelAnimationFrame(positionFrame.current);};
   },[clearState,position,router]);
 
   useEffect(()=>{
@@ -191,5 +209,6 @@ export function LatticeExperience({children}:{children:ReactNode}){
       queueMicrotask(()=>{if(lifetime.current!==token)return;handoff.current?.dispose();controller.current?.();void resources.current?.then(value=>value?.dispose());});
     };
   },[]);
-  return <SlotContext.Provider value={register}>{children}<div ref={layer} className="persistent-lattice-stage" data-persistent-stage aria-hidden="true"><canvas ref={canvas}/></div><div className="route-loading" role="status" aria-live="polite">{loading&&<><span aria-hidden="true"/><span className="sr-only">{loading}</span></>}</div></SlotContext.Provider>;
+  const stage=<div ref={layer} className="persistent-lattice-stage" data-persistent-stage data-docked={dock?"slot":"fixed"} aria-hidden="true"><canvas ref={canvas}/></div>;
+  return <SlotContext.Provider value={register}>{children}<div ref={anchor} className="lattice-stage-anchor"/>{stage}<div className="route-loading" role="status" aria-live="polite">{loading&&<><span aria-hidden="true"/><span className="sr-only">{loading}</span></>}</div></SlotContext.Provider>;
 }

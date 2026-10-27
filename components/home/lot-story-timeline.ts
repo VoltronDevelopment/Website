@@ -1,4 +1,4 @@
-export const lotStoryDuration = 14;
+export const lotStoryDuration = 16;
 export type LotPhase = "receive" | "process" | "verify" | "review" | "dispatch" | "settle" | "settled";
 export const lotStageTimes = [1.9, 4.4, 7.7, 12.4] as const;
 export const lotStoryStages = [
@@ -14,12 +14,12 @@ const ease=(v:number)=>v*v*(3-2*v);
 /** One clock owns physical action, evidence availability and the release boundary. */
 export function lotStoryStateAt(seconds: number) {
   const time = Math.max(0, Math.min(lotStoryDuration, Number.isFinite(seconds) ? seconds : 0));
-  const phase: LotPhase = time < 2 ? "receive" : time < 5 ? "process" : time < 8 ? "verify" : time < 10.5 ? "review" : time < 13 ? "dispatch" : time < 14 ? "settle" : "settled";
+  const phase: LotPhase = time < 2 ? "receive" : time < 5 ? "process" : time < 8 ? "verify" : time < 10.5 ? "review" : time < 15.4 ? "dispatch" : time < 16 ? "settle" : "settled";
   const stage = time < 2 ? 0 : time < 5 ? 1 : time < 10.5 ? 2 : 3;
   const evidence = [1.35, 4.6, 7.7, 10.5, 12.4].map(at => time >= at);
   const activeEvidence = phase === "review" ? 3 : stage === 3 ? 4 : stage;
   const moves=[[1.65,2.4],[4.65,5.4],[10.5,11.25]].map(([a,b])=>ease(progress(time,a,b)));
-  const position=moves.reduce((a,b)=>a+b,0),formation=ease(progress(time,0,1.3)),departure=ease(progress(time,12.65,13.9));
+  const position=moves.reduce((a,b)=>a+b,0),formation=ease(progress(time,0,1.3)),departure=ease(progress(time,12.65,15.4));
   return {
     time, phase, stage, evidence, activeEvidence, released: evidence[3], settled: time === lotStoryDuration,
     process: progress(time, 2.4, 4.65), inspection: progress(time, 5.4, 7.9), review: progress(time, 8, 10.5),

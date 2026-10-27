@@ -3,7 +3,7 @@ import {createArtworkEnvironment,addArtworkSoftboxes} from './artwork-studio';
 import {createPhilosophyCubes} from '../home/philosophy-cubes';
 import {createSceneHandoff} from '../performance/scene-handoff';
 import {createRenderQuality,prefersStaticScene} from '../performance/scene-policy';
-import {particleWaveGLSL} from './particle-wave';
+import {longParticleWaveGLSL as particleWaveGLSL} from './particle-wave';
 import {cultureHelixDuration,cultureHelixState} from './culture-helix-timeline';
 import type {SceneMode} from './engineered-hero-renderer';
 
@@ -22,12 +22,13 @@ export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElemen
  const material=new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:{value:0},uArrival:{value:0},uTwist:{value:0},uGather:{value:0},uDark:{value:0},uRatio:{value:quality.ratio},uSelected:{value:0}},
   vertexShader:`${particleWaveGLSL}
   attribute float aSeed,aStrand;attribute vec3 aTarget;uniform float uTime,uArrival,uTwist,uGather,uRatio,uSelected;varying float alpha,strand,emphasis;
-  void main(){float t=position.x,angle=t*(.6+uTwist*1.4)*6.2831853+aStrand*3.14159265;
+  void main(){float t=position.x,spin=(aStrand<.5?1.:-1.)*uTwist*uTime*.22,angle=t*(.6+uTwist*1.4)*6.2831853+aStrand*3.14159265+spin;
    vec3 helix=vec3(cos(angle)*.57+position.y,(t-.5)*3.1,sin(angle)*.57+position.z);
-   float deposit=smoothstep(aSeed*.35,aSeed*.35+.65,uArrival);
-   vec3 p=latticeWave(helix,deposit,aSeed,uTime,vec3(mix(1.,-1.,aStrand),.25,.1),1.35,.23);
-   p=mix(p,aTarget,uGather);alpha=sin(clamp(uArrival*2.,0.,1.)*1.5707963)*(1.-smoothstep(.68,1.,uGather))*(.45+.55*aSeed);
-   strand=aStrand;emphasis=mix(.56,1.,1.-abs(aStrand-uSelected));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.85+aSeed*.7)*uRatio;}`,
+   float deposit=smoothstep(aSeed*.28+aStrand*.08,aSeed*.28+aStrand*.08+.55,uArrival);
+   float crest=latticeSheetCrest(aSeed,uTime);
+   vec3 p=latticeSheetWave(helix,deposit,aSeed,uTime,vec3(aStrand<.5?1.:-1.,.12,.08),3.1,1.05);
+   p=mix(p,aTarget,uGather);alpha=sin(clamp(uArrival*2.,0.,1.)*1.5707963)*(1.-smoothstep(.68,1.,uGather))*(.4+.35*aSeed+max(crest,0.)*.4);
+   strand=aStrand;emphasis=mix(.56,1.,1.-abs(aStrand-uSelected));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.8+aSeed*.55+max(crest,0.)*.9)*uRatio;}`,
   fragmentShader:'uniform float uDark;varying float alpha,strand,emphasis;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;vec3 color=mix(mix(vec3(.04,.24,.48),vec3(.025,.31,.41),strand),mix(vec3(.38,.66,1.),vec3(.36,.89,1.),strand),uDark);gl_FragColor=vec4(color,alpha*emphasis*(1.-smoothstep(.12,.5,r)));\n#include <colorspace_fragment>\n}'});
  const points=new T.Points(geometry,material);points.frustumCulled=false;scene.add(points);
  const bridgeGeometry=new T.BufferGeometry(),bridgePositions=new Float32Array(5*3*2*3);bridgeGeometry.setAttribute('position',new T.BufferAttribute(bridgePositions,3));
@@ -38,7 +39,7 @@ export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElemen
  function draw(){if(disposed||lost)return;const s=cultureHelixState(time),dark=document.documentElement.dataset.theme==='dark';
   Object.entries({uTime:time,uArrival:s.arrival,uTwist:s.twist,uGather:s.gather,uDark:dark?1:0,uRatio:quality.ratio,uSelected:Number(host.dataset.selected)||0}).forEach(([key,value])=>material.uniforms[key].value=value);
   points.visible=!s.done;cubes.setTheme(dark,time>6);cubes.apply({outer:s.enclosure,core:s.gather,individual:0,height:0});
-  for(let i=0;i<5;i++){bridgeMaterials[i].color.setHex(dark?0x9bd6ee:0x247192);bridgeMaterials[i].opacity=s.bridges[i]*.55;
+  for(let i=0;i<5;i++){bridgeMaterials[i].color.setHex(dark?0x9bd6ee:0x247192);bridgeMaterials[i].opacity=s.bridges[i]*(.62+.38*Math.sin(time*3.2-i*.9));
    for(let j=0;j<3;j++){const t=(i+.55)/5+(j-1)*.013,angle=t*(.6+s.twist*1.4)*Math.PI*2,x=Math.cos(angle)*.57,z=Math.sin(angle)*.57,y=(t-.5)*3.1;bridgePositions.set([x,y,z,-x,y,-z],i*18+j*6);}}
   bridgeGeometry.attributes.position.needsUpdate=true;renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);host.dataset.phase=s.phase;canvas.dataset.particleCount=String(count);
  }
