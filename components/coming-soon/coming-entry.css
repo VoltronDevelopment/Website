@@ -28,8 +28,11 @@
 .coming-launch .countdown-unit small { font-size:11px; line-height:16px; color:var(--muted); }
 .coming-live { display:grid; justify-items:center; gap:16px; margin-top:20px; }
 @media(max-width:767px) {
- .coming-soon-entry .entry-stage { top:38%; }
- .coming-soon-entry .entry-wordmark { top:calc(38% + var(--entry-logo-size)*1.25 + 12px); }
+ .coming-soon-entry .entry-stage { top:46%; }
+ .coming-soon-entry .entry-wordmark { top:calc(46% + var(--entry-logo-size)*1.14 + 12px); }
+ .coming-soon-entry .entry-radial-grid span { width:calc(var(--entry-logo-size) * 1.37); }
+ .coming-soon-entry .entry-radial-grid span:nth-child(2) { width:calc(var(--entry-logo-size) * 1.82); }
+ .coming-soon-entry .entry-radial-grid span:nth-child(3) { width:calc(var(--entry-logo-size) * 2.28); }
  .coming-launch { padding:6px 16px 16px; }
  .coming-launch .launch-countdown { width:min(320px,100%); gap:0; }
  .coming-launch .countdown-unit { padding-inline:8px; }
@@ -40,6 +43,10 @@
  .coming-soon-entry .entry-wordmark { top:calc(36% + var(--entry-logo-size)*1.25 + 8px); }
  .coming-launch { padding-bottom:12px; }
  .coming-launch .launch-countdown { margin-top:12px; }
+}
+@media(max-height:700px) and (max-width:767px) {
+ .coming-soon-entry .entry-stage { top:42%; }
+ .coming-soon-entry .entry-wordmark { top:calc(42% + var(--entry-logo-size)*1.14 + 8px); }
 }
 @media(max-height:700px) and (min-width:768px) {
  .coming-soon-entry .entry-wordmark { font-size:32px; line-height:42px; }
