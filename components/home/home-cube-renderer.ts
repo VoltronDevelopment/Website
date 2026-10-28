@@ -1,4 +1,4 @@
-import {identityMark} from '@/lib/identity-assets';
+import {identityMark, identityMark2x} from '@/lib/identity-assets';
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
 import {addArtworkSoftboxes} from "../brand/artwork-studio";
@@ -13,6 +13,7 @@ type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroRe
 type Cubie = {mesh: THREE.Group; sx: number; sy: number; sz: number; x: number; y: number; z: number; q: THREE.Quaternion};
 
 const TILE = 900;
+const PIECE = 512;
 const CUBIE = 0.92;
 const SPACING = 0.96;
 const STICKER = 0.9;
@@ -44,7 +45,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   camera.position.set(-0.62, 1.7, 7.9);
   camera.lookAt(0, 0, 0);
   const quality = createRenderQuality(canvas, 2);
-  const tileSize = options.sharp ? 2048 : TILE;
+  const tileSize = options.sharp ? PIECE * 3 : TILE;
   const px = (value: number) => Math.round(value * tileSize / TILE);
   const query = new URLSearchParams(location.search);
   const review = query.get("hero-time");
@@ -72,19 +73,28 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     intelligence: document.createElement("canvas"),
   };
   for (const node of Object.values(canvases)) {node.width = node.height = tileSize;}
-  const maps = {
+  const atlas = options.sharp ? null : {
     logo: track(new THREE.CanvasTexture(canvases.logo)),
     ingenuity: track(new THREE.CanvasTexture(canvases.ingenuity)),
     progress: track(new THREE.CanvasTexture(canvases.progress)),
     intelligence: track(new THREE.CanvasTexture(canvases.intelligence)),
   };
-  for (const map of Object.values(maps)) {
-    map.colorSpace = THREE.SRGBColorSpace;
-    map.anisotropy = options.sharp ? 16 : 8;
-    if (options.sharp) {map.generateMipmaps = false; map.minFilter = THREE.LinearFilter; map.magFilter = THREE.LinearFilter;}
+  if (atlas) for (const map of Object.values(atlas)) {map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8;}
+  const pieces: {canvas: HTMLCanvasElement; texture: THREE.CanvasTexture; master: HTMLCanvasElement; x: number; y: number}[] = [];
+  function pieceTexture(master: HTMLCanvasElement, col: number, row: number) {
+    const piece = document.createElement("canvas");
+    piece.width = piece.height = PIECE;
+    const texture = track(new THREE.CanvasTexture(piece));
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 16;
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    pieces.push({canvas: piece, texture, master, x: col * PIECE, y: row * PIECE});
+    return texture;
   }
 
-  const faces: {id: keyof typeof maps; axis: "x" | "z"; side: number; rotY: number; col: (x: number, z: number) => number}[] = [
+  const faces: {id: keyof typeof canvases; axis: "x" | "z"; side: number; rotY: number; col: (x: number, z: number) => number}[] = [
     {id: "logo", axis: "z", side: 1, rotY: 0, col: x => x + 1},
     {id: "ingenuity", axis: "x", side: 1, rotY: Math.PI / 2, col: (_, z) => 1 - z},
     {id: "progress", axis: "z", side: -1, rotY: Math.PI, col: x => 1 - x},
@@ -99,11 +109,13 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     for (const face of faces) {
       const onFace = face.axis === "x" ? x === face.side : z === face.side;
       if (!onFace) continue;
-      const map = track(maps[face.id].clone());
-      map.repeat.set(1 / 3, 1 / 3);
-      map.offset.set(face.col(x, z) / 3, y / 3 + 1 / 3);
-      map.colorSpace = THREE.SRGBColorSpace;
-      map.needsUpdate = true;
+      const map = options.sharp ? pieceTexture(canvases[face.id], face.col(x, z), 1 - y) : track(atlas![face.id].clone());
+      if (!options.sharp) {
+        map.repeat.set(1 / 3, 1 / 3);
+        map.offset.set(face.col(x, z) / 3, y / 3 + 1 / 3);
+        map.colorSpace = THREE.SRGBColorSpace;
+        map.needsUpdate = true;
+      }
       const material = track(new THREE.MeshBasicMaterial({map, transparent: true, depthWrite: true, toneMapped: false}));
       stickers.push(material);
       const sticker = new THREE.Mesh(stickerGeometry, material);
@@ -178,6 +190,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     const drawTile = (canvasNode: HTMLCanvasElement, mark: (ctx: CanvasRenderingContext2D) => void) => {
       const ctx = canvasNode.getContext("2d");
       if (!ctx) return;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
       ctx.clearRect(0, 0, tileSize, tileSize);
       rounded(ctx, px(8), px(8), tileSize - px(16), tileSize - px(16), px(48));
       ctx.fillStyle = tile;
@@ -201,7 +215,15 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
         lines.forEach((lineText, line) => ctx.fillText(lineText, tileSize / 2, tileSize / 2 + (line - (lines.length - 1) / 2) * size * 1.18));
       });
     });
-    for (const map of Object.values(maps)) map.needsUpdate = true;
+    for (const piece of pieces) {
+      const ctx = piece.canvas.getContext("2d");
+      if (!ctx) continue;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(piece.master, piece.x, piece.y, PIECE, PIECE, 0, 0, PIECE, PIECE);
+      piece.texture.needsUpdate = true;
+    }
+    if (atlas) for (const map of Object.values(atlas)) map.needsUpdate = true;
     for (const material of stickers) if (material.map) material.map.needsUpdate = true;
     glasses.forEach((material,i)=>{setGlass(material,faceKinds[i],dark);material.opacity*=faceKinds[i]==='front'?.75:.92;material.envMapIntensity*=.8;});
 
@@ -286,9 +308,9 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.05;
       scene.environment = options.shared?.environment ?? null;
-      await document.fonts?.load("500 92px Montserrat").catch(() => undefined);
+      await document.fonts?.load(`500 ${px(92)}px Montserrat`).catch(() => undefined);
       if (disposed) return;
-      if(!logoImage){const texture=track(await new THREE.TextureLoader().loadAsync(identityMark));logoImage=texture.image as CanvasImageSource;if(disposed)return;}
+      if(!logoImage){const texture=track(await new THREE.TextureLoader().loadAsync(options.sharp ? identityMark2x : identityMark));logoImage=texture.image as CanvasImageSource;if(disposed)return;}
       paint();
       await yieldToBrowser();
       if (disposed) return;
