@@ -1,7 +1,16 @@
-.coming-soon-entry .entry-presentation { display:flex; flex-direction:column; }
-.coming-soon-entry .entry-body { min-height:560px; height:65svh; flex:1; }
-.coming-soon-entry .entry-stage { top:43%; }
-.coming-soon-entry .entry-wordmark { top:calc(43% + var(--entry-logo-size)*1.25 + 28px); }
+.coming-soon-entry .entry-presentation { display:flex; flex-direction:column; height:100%; min-height:0; }
+.coming-soon-entry { --coming-cube-scale:1.85; height:var(--entry-scene-height); min-height:0; overflow:hidden; }
+.coming-soon-entry .entry-body { min-height:0; height:auto; flex:1; }
+.coming-soon-entry .entry-stage { top:40%; }
+.coming-soon-entry .entry-wordmark { top:calc(40% + var(--entry-logo-size)*1.25 + 16px); }
+.coming-cube { position:absolute; left:50%; top:50%; z-index:2; width:calc(var(--entry-logo-size) * var(--coming-cube-scale)); aspect-ratio:1; transform:translate(-50%,-50%); pointer-events:none; }
+.coming-cube-glow { position:absolute; left:50%; top:50%; z-index:0; width:calc(var(--entry-logo-size) * var(--coming-cube-scale) + 112px); aspect-ratio:1; transform:translate(-50%,-50%); border-radius:52px; background:radial-gradient(circle,rgba(74,143,253,.2),transparent 72%); filter:drop-shadow(0 0 22px rgba(74,143,253,.28)) drop-shadow(0 0 46px rgba(74,143,253,.14)); pointer-events:none; }
+.coming-soon-entry .entry-radial-grid { z-index:1; }
+.coming-soon-entry .entry-radial-grid span { animation-name:coming-ring-breathe; }
+:root[data-theme="dark"] .coming-soon-entry .entry-radial-grid span { animation-name:coming-ring-breathe-dark; }
+.coming-cube canvas { position:relative; z-index:1; display:block; width:100%; height:100%; background:transparent; }
+@keyframes coming-ring-breathe { 0%,100% { opacity:.16; } 50% { opacity:.34; } }
+@keyframes coming-ring-breathe-dark { 0%,100% { opacity:.14; } 50% { opacity:.3; } }
 .coming-soon-entry .entry-stage { z-index:1; }
 .coming-intro-fireworks { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:2; opacity:0; }
 .coming-soon-entry[data-celebrating="true"] .coming-intro-fireworks { opacity:1; }
@@ -9,8 +18,7 @@
 .coming-soon-entry .entry-controls > .icon-button,
 .coming-soon-entry .entry-controls > .founder-login-trigger { width:32px; height:32px; min-width:32px; min-height:32px; padding:0; }
 .coming-soon-entry .entry-controls > button svg { width:15px; height:15px; }
-.coming-soon-entry .entry-radial-grid span { animation:none; }
-.coming-launch { position:relative; z-index:2; padding:16px 24px 40px; text-align:center; }
+.coming-launch { position:relative; z-index:2; flex:none; padding:8px 24px 22px; text-align:center; }
 .coming-launch-tagline { font-size:14px; line-height:1.7; opacity:var(--coming-tagline,1); transform:translateY(calc((1 - var(--coming-tagline,1))*10px)); }
 .coming-launch-date { font-size:12px; margin-top:12px; color:var(--muted); opacity:var(--coming-date,1); transform:translateY(calc((1 - var(--coming-date,1))*8px)); }
 .coming-launch .launch-countdown { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); width:min(360px,100%); justify-content:center; gap:0; margin-top:20px; }
@@ -20,11 +28,20 @@
 .coming-launch .countdown-unit small { font-size:11px; line-height:16px; color:var(--muted); }
 .coming-live { display:grid; justify-items:center; gap:16px; margin-top:20px; }
 @media(max-width:767px) {
- .coming-soon-entry .entry-body { min-height:470px; height:60svh; }
- .coming-soon-entry .entry-stage { top:46%; }
- .coming-soon-entry .entry-wordmark { top:calc(46% + var(--entry-logo-size)*1.25 + 22px); }
- .coming-launch { padding:12px 16px 28px; }
+ .coming-soon-entry .entry-stage { top:38%; }
+ .coming-soon-entry .entry-wordmark { top:calc(38% + var(--entry-logo-size)*1.25 + 12px); }
+ .coming-launch { padding:6px 16px 16px; }
  .coming-launch .launch-countdown { width:min(320px,100%); gap:0; }
  .coming-launch .countdown-unit { padding-inline:8px; }
 }
-@media(prefers-reduced-motion:reduce) { .coming-soon-entry .entry-pulse { animation:none; } }
+@media(max-height:700px) {
+ .coming-soon-entry { --coming-cube-scale:1.58; }
+ .coming-soon-entry .entry-stage { top:36%; }
+ .coming-soon-entry .entry-wordmark { top:calc(36% + var(--entry-logo-size)*1.25 + 8px); }
+ .coming-launch { padding-bottom:12px; }
+ .coming-launch .launch-countdown { margin-top:12px; }
+}
+@media(max-height:700px) and (min-width:768px) {
+ .coming-soon-entry .entry-wordmark { font-size:32px; line-height:42px; }
+}
+@media(prefers-reduced-motion:reduce) { .coming-soon-entry .entry-radial-grid span { animation:none; opacity:.28; } }

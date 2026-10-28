@@ -9,7 +9,7 @@ import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTur
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
 import type {PaneRole} from "./home-glass";
 
-type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean};
+type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean; sharp?: boolean};
 type Cubie = {mesh: THREE.Group; sx: number; sy: number; sz: number; x: number; y: number; z: number; q: THREE.Quaternion};
 
 const TILE = 900;
@@ -44,6 +44,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   camera.position.set(-0.62, 1.7, 7.9);
   camera.lookAt(0, 0, 0);
   const quality = createRenderQuality(canvas, 2);
+  const tileSize = options.sharp ? 2048 : TILE;
+  const px = (value: number) => Math.round(value * tileSize / TILE);
   const query = new URLSearchParams(location.search);
   const review = query.get("hero-time");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -69,14 +71,18 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     progress: document.createElement("canvas"),
     intelligence: document.createElement("canvas"),
   };
-  for (const node of Object.values(canvases)) {node.width = node.height = TILE;}
+  for (const node of Object.values(canvases)) {node.width = node.height = tileSize;}
   const maps = {
     logo: track(new THREE.CanvasTexture(canvases.logo)),
     ingenuity: track(new THREE.CanvasTexture(canvases.ingenuity)),
     progress: track(new THREE.CanvasTexture(canvases.progress)),
     intelligence: track(new THREE.CanvasTexture(canvases.intelligence)),
   };
-  for (const map of Object.values(maps)) {map.colorSpace = THREE.SRGBColorSpace; map.anisotropy = 8;}
+  for (const map of Object.values(maps)) {
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.anisotropy = options.sharp ? 16 : 8;
+    if (options.sharp) {map.generateMipmaps = false; map.minFilter = THREE.LinearFilter; map.magFilter = THREE.LinearFilter;}
+  }
 
   const faces: {id: keyof typeof maps; axis: "x" | "z"; side: number; rotY: number; col: (x: number, z: number) => number}[] = [
     {id: "logo", axis: "z", side: 1, rotY: 0, col: x => x + 1},
@@ -172,16 +178,16 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     const drawTile = (canvasNode: HTMLCanvasElement, mark: (ctx: CanvasRenderingContext2D) => void) => {
       const ctx = canvasNode.getContext("2d");
       if (!ctx) return;
-      ctx.clearRect(0, 0, TILE, TILE);
-      rounded(ctx, 8, 8, TILE - 16, TILE - 16, 48);
+      ctx.clearRect(0, 0, tileSize, tileSize);
+      rounded(ctx, px(8), px(8), tileSize - px(16), tileSize - px(16), px(48));
       ctx.fillStyle = tile;
       ctx.fill();
-      ctx.lineWidth = 8;
+      ctx.lineWidth = px(8);
       ctx.strokeStyle = line;
       ctx.stroke();
       mark(ctx);
     };
-    drawTile(canvases.logo, ctx => {if (image && "width" in image && typeof image.width === "number" && image.width > 0) ctx.drawImage(image, 90, 90, TILE - 180, TILE - 180);});
+    drawTile(canvases.logo, ctx => {if (image && "width" in image && typeof image.width === "number" && image.width > 0) ctx.drawImage(image, px(90), px(90), tileSize - px(180), tileSize - px(180));});
     phrases.forEach((phrase, index) => {
       const names = ["ingenuity", "progress", "intelligence"] as const;
       drawTile(canvases[names[index]], ctx => {
@@ -189,10 +195,10 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         const lines = phrase.split(" ");
-        let size = 92;
+        let size = px(92);
         ctx.font = `500 ${size}px Montserrat, Arial, sans-serif`;
-        while (size > 46 && lines.some(lineText => ctx.measureText(lineText).width > TILE * 0.7)) {size -= 4; ctx.font = `500 ${size}px Montserrat, Arial, sans-serif`;}
-        lines.forEach((lineText, line) => ctx.fillText(lineText, TILE / 2, TILE / 2 + (line - (lines.length - 1) / 2) * size * 1.18));
+        while (size > px(46) && lines.some(lineText => ctx.measureText(lineText).width > tileSize * 0.7)) {size -= px(4); ctx.font = `500 ${size}px Montserrat, Arial, sans-serif`;}
+        lines.forEach((lineText, line) => ctx.fillText(lineText, tileSize / 2, tileSize / 2 + (line - (lines.length - 1) / 2) * size * 1.18));
       });
     });
     for (const map of Object.values(maps)) map.needsUpdate = true;
@@ -227,7 +233,9 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     camera.aspect = width / height;
     camera.fov = width / height < 0.9 ? 39.7 : 33.2;
     camera.updateProjectionMatrix();
-    sizeHeroSurface(renderer, [], width, height, quality.ratio);
+    const ratio = options.sharp ? Math.max(2, quality.ratio) : quality.ratio;
+    sizeHeroSurface(renderer, [], width, height, ratio);
+    canvas.dataset.renderScale = ratio.toFixed(2);
     draw();
   }
   function stop() {cancelAnimationFrame(frame); frame = 0; last = 0; canvas.dataset.continuousRendering = "false";}

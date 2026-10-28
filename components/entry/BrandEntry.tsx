@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt } from "./entry-timeline";
 import {IdentityTile} from './IdentityTile';
+import {ComingCube} from '../coming-soon/ComingCube';
 
 const pillars=[{id:"human",above:"Human",below:"ingenuity."},{id:"connected",above:"Connected",below:"intelligence."},{id:"manufacturing",above:"Manufacturing",below:"possibilities."}];
 // Tangent panels connect both caps along the same 20px rounded perimeter.
@@ -103,17 +104,17 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     <div className="entry-body" key={replay}>
       <div className="entry-stage">
         <div className="entry-radial-grid" aria-hidden="true"><span/><span/><span/></div>
-        <div className="entry-logo"><span className="entry-logo-glow" aria-hidden="true"/>
+        {comingSoon ? <ComingCube/> : <div className="entry-logo"><span className="entry-logo-glow" aria-hidden="true"/>
           <div className="entry-perspective"><div className="entry-flip-card">
             <span className="entry-body-cap entry-body-front" aria-hidden="true"/><span className="entry-body-cap entry-body-back" aria-hidden="true"/>
             {["top","bottom","left","right"].map(side=><span className={`entry-body-wall entry-body-${side}`} aria-hidden="true" key={side}/>)}
             {curvedEdges.map((style,index)=><span className="entry-body-curve" aria-hidden="true" key={index} style={style}/>)}
             {[0,1,2,3,4].map(face=><div key={face} className="entry-face" data-entry-face={face} hidden={face!==0} style={{"--face-turn":face%2} as CSSProperties}>
-              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:comingSoon?<div className="entry-face-enter"><IdentityTile caption="Coming this Diwali"/></div>:<Link href="/" className="entry-face-enter" onClick={enter} aria-disabled={!ready || leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
+              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:<Link href="/" className="entry-face-enter" onClick={enter} aria-disabled={!ready || leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
             </div>)}
           </div></div>
           <span className="entry-pulse" aria-hidden="true"/>
-        </div>
+        </div>}
       </div>
       <h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>
     </div>
