@@ -8,7 +8,7 @@ import type {CollaborationController} from './collaboration-renderer';
 import captures from '@/lib/collaboration-posters.json';
 import './collaboration-hero.css';
 
-const descriptions={about:'Three people form through particles and progress upward on two original stair structures, with one person on the first and two on the second, then hold at different stages of their ascent.',partner:'Two Human After All figures stand behind a glass worktable. A blueprint becomes a wireframe and then a finished arched metal sample between them.'};
+const descriptions={about:'Three people form through particles and progress upward on two original stair structures, with one person on the first and two on the second, then hold at different stages of their ascent.',partner:'Two people form from particles, walk toward each other, and shake hands.'};
 export function CollaborationHero({kind}:{kind:CollaborationKind}){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<CollaborationController|null>(null),[mode,setMode]=useState('static');
  useEffect(()=>{let disposed=false,loading=false;const abort=new AbortController(),motion=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search),forced=query.get('renderer')==='static'||query.get('animate')==='0'||query.get('motion')==='reduced';

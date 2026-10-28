@@ -2,7 +2,7 @@
 import {useHomeMotion,resetHomeScene} from './HomeMotion';
 
 import { useEffect, useId, useRef, useState } from "react";
-import { Check, ClipboardList, FileText, Settings2, Shield, UserRound } from "lucide-react";
+import { Check, ClipboardList, FileText, Settings2, Shield } from "lucide-react";
 import {prefersStaticScene} from "../performance/scene-policy";
 import { canPrepareHomeScene, prepareScene } from "./scene-preparation";
 import { lotStageTimes, lotStoryDuration, lotStoryStages, lotStoryStateAt } from "./lot-story-timeline";
@@ -11,16 +11,10 @@ import "./lot-story.css";
 import lotPosters from "@/lib/lot-posters.json";
 import {DeferredPicture} from '../performance/DeferredArtwork';
 
-const icons = [ClipboardList, Settings2, Shield, UserRound, FileText];
-const tileMessages = ["Lot identified. Requirements linked.", "Execution recorded. Process history connected.", "Inspection evidence linked to the lot.", "Released lot. Connected history preserved."];
-const tilePendingMessages = ["Identifying the lot and requirements.", "Recording process execution.", "Connecting inspection evidence.", "Preparing the released lot record."];
-const recordCards=[
- {title:'Receive',time:lotStageTimes[0],complete:tileMessages[0],pending:tilePendingMessages[0]},
- {title:'Process',time:lotStageTimes[1],complete:tileMessages[1],pending:tilePendingMessages[1]},
- {title:'Verify',time:lotStageTimes[2],complete:tileMessages[2],pending:tilePendingMessages[2]},
- {title:'Human Review',time:9,complete:'Human release recorded. Dispatch authorised.',pending:'A human reviews the evidence before dispatch.'},
- {title:'Dispatch',time:lotStageTimes[3],complete:tileMessages[3],pending:tilePendingMessages[3]},
-];
+const icons = [ClipboardList, Settings2, Shield, FileText];
+const tileMessages = ["Lot identified. Requirements linked.", "Execution recorded. History connected.", "Inspection evidence linked.", "Connected history preserved."];
+const tilePendingMessages = ["Identifying the lot.", "Recording the process.", "Connecting inspection evidence.", "Preparing the dispatch record."];
+const recordCards=lotStoryStages.map((stage,i)=>({title:stage.title,time:lotStageTimes[i],complete:tileMessages[i],pending:tilePendingMessages[i]}));
 
 export function HomeLotFlow() {
   const motionRevision=useHomeMotion();
@@ -72,8 +66,8 @@ export function HomeLotFlow() {
     selectedTime.current = time; setState(lotStoryStateAt(time)); controller.current?.select(time);
   }
 
-  const activeTitle = state.phase === "review" ? "Human review and release" : lotStoryStages[state.stage].title;
-  const detail = state.phase === "review" ? "The accumulated evidence is reviewed before a human release decision is recorded. This is an illustrative review." : lotStoryStages[state.stage].detail;
+  const activeTitle = lotStoryStages[state.stage].title;
+  const detail = lotStoryStages[state.stage].detail;
 
   return <figure className="lot-story" aria-label="One lot travels through Receive, Process, Verify and Dispatch with connected evidence" aria-describedby={`${id}-description`}>
     <div className="lot-story-art" ref={host} data-selected={state.stage}>
@@ -91,8 +85,7 @@ export function HomeLotFlow() {
     </div>
     <section className="lot-story-evidence" aria-label="VOS evidence history">
       <p className="lot-evidence-intro">VOS <span aria-hidden="true">·</span> Demo lot VL-001</p>
-      <div className="lot-record-selector" role="group" aria-label="Select a lot record">{recordCards.map((record,i)=><button type="button" key={record.title} aria-pressed={state.activeEvidence===i} aria-controls={`${id}-record`} data-complete={state.evidence[i]} onClick={()=>selectTime(record.time)}><span className="lot-step-index">{String(i+1).padStart(2,'0')}</span>{record.title}{state.evidence[i]&&<Check size={12} aria-hidden="true"/>}</button>)}</div>
-      <div className="lot-selected-record" id={`${id}-record`} data-human-review={state.activeEvidence===3} aria-live="polite"><span className="lot-tile-title">{(()=>{const Icon=icons[state.activeEvidence];return <Icon size={19} aria-hidden="true"/>;})()}{recordCards[state.activeEvidence].title}<small>{state.evidence[state.activeEvidence]?'Recorded':state.activeEvidence===3?'Reviewing':'In progress'}</small></span><p>{state.evidence[state.activeEvidence]?recordCards[state.activeEvidence].complete:state.activeEvidence===3?'Human review in progress. Dispatch is held.':recordCards[state.activeEvidence].pending}</p></div>
+      <div className="lot-milestone-tiles" role="group" aria-label="Select a lot record">{recordCards.map((record,i)=>{const Icon=icons[i];return <button type="button" className="lot-milestone-tile" key={record.title} aria-pressed={state.activeEvidence===i} data-complete={state.evidence[i]} onClick={()=>selectTime(record.time)}><span className="lot-tile-title"><Icon size={16} aria-hidden="true"/>{record.title}{state.evidence[i]&&<Check size={12} aria-hidden="true"/>}</span><span className="lot-tile-message">{state.evidence[i]?record.complete:record.pending}</span></button>;})}</div>
     <p className="sr-only" id={`${id}-detail`} aria-live="polite" aria-atomic="true">{activeTitle}: {detail}</p>
     </section>
     <figcaption className="lot-story-footer"><p id={`${id}-description`}>{state.settled?"Illustrative journey · Lot dispatched; connected history retained.":"One lot through four stages · Illustrative sequence"}</p></figcaption>

@@ -6,7 +6,7 @@ import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import {createMachiningPartGeometry,millingPosition} from './machining-part';
 import { glassFace, setGlass, nodeHaloTexture, stroke, strokeMaterial, type GlassFace } from "./lattice-materials";
 import { factorySystemsCanStart } from "./factory-systems-visibility";
-import { lotStoryDuration, lotStoryStateAt, type LotStoryState } from "./lot-story-timeline";
+import { lotStageTimes, lotStoryDuration, lotStoryStateAt, type LotStoryState } from "./lot-story-timeline";
 import {createLotReveal} from './lot-story-particles';
 
 type Options = { initialTime: number | null; onState: (state: LotStoryState) => void; onReady: (ready: boolean) => void };
@@ -181,7 +181,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   function apply() {
     const state = lotStoryStateAt(elapsed);
     // A motion-free summary keeps the released lot visible before its outgoing dissolve.
-    const visual=(motion.matches||composition)&&state.settled?lotStoryStateAt(12.4):state;
+    const visual=(motion.matches||composition)&&state.settled?lotStoryStateAt(lotStageTimes[3]):state;
     const carrierSegment=Math.min(2,Math.floor(visual.position)),carrierFraction=visual.position-carrierSegment;
     snapshots.forEach(snapshot => {
       snapshot.root.position.lerpVectors(destinations[carrierSegment],destinations[carrierSegment+1],carrierFraction);snapshot.root.visible=true;
@@ -221,7 +221,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
     const signature = `${state.phase}:${state.evidence.join("")}`;
     if (signature !== lastSignature) { lastSignature = signature; options.onState(state); }
     canvas.dataset.phase = state.phase; canvas.dataset.animationTime = state.time.toFixed(3); canvas.dataset.settled = String(state.settled); canvas.dataset.theme = dark() ? "dark" : "light";
-    canvas.dataset.partIdentity='flange-housing';canvas.dataset.particleMotion='coherent-wave';canvas.dataset.carrierCount='1';canvas.dataset.carrierPosition=snapshots[0].root.position.toArray().map(v=>v.toFixed(4)).join(',');canvas.dataset.lotPosition=state.position.toFixed(4);canvas.dataset.formation=visual.formation.toFixed(4);canvas.dataset.departure=visual.departure.toFixed(4);canvas.dataset.beltTravel=travel.toFixed(4);canvas.dataset.mobileConveyor=String(mobile);canvas.dataset.particles=String(reveal.points.visible);canvas.dataset.scanGlow=inspecting?'enhanced':'off';
+    canvas.dataset.partIdentity='flange-housing';canvas.dataset.particleMotion='surface-particles';canvas.dataset.carrierCount='1';canvas.dataset.carrierPosition=snapshots[0].root.position.toArray().map(v=>v.toFixed(4)).join(',');canvas.dataset.lotPosition=state.position.toFixed(4);canvas.dataset.formation=visual.formation.toFixed(4);canvas.dataset.departure=visual.departure.toFixed(4);canvas.dataset.beltTravel=travel.toFixed(4);canvas.dataset.mobileConveyor=String(mobile);canvas.dataset.particles=String(reveal.points.visible);canvas.dataset.scanGlow=inspecting?'enhanced':'off';
     canvas.dataset.scanEnergy=String(scanMaterial.uniforms.uOpacity.value);canvas.dataset.lotStage=String(state.stage);
   }
   function palette() {

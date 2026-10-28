@@ -1,0 +1,11 @@
+Model Information:
+* title:	Bamboo Puzzle Prison House
+* source:	https://sketchfab.com/3d-models/bamboo-puzzle-prison-house-029bc92ed77040938d2018e79b5bc709
+* author:	trinityscsp (https://sketchfab.com/trinityscsp)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Bamboo Puzzle Prison House" (https://sketchfab.com/3d-models/bamboo-puzzle-prison-house-029bc92ed77040938d2018e79b5bc709) by trinityscsp (https://sketchfab.com/trinityscsp) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

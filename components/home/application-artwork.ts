@@ -4,8 +4,6 @@ import {createArtworkEnvironment,addArtworkSoftboxes} from '../brand/artwork-stu
 import {createQualityScan} from '../brand/quality-scan';
 import {createMachiningPartGeometry} from './machining-part';
 import {addFresnelRim} from './lattice-materials';
-import {longParticleWaveGLSL} from '../brand/particle-wave';
-
 /** Four small physical application views share the approved component and studio optics. */
 export function mountApplicationArtwork(canvas:HTMLCanvasElement,kind:string){
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;
@@ -47,7 +45,7 @@ export function mountApplicationArtwork(canvas:HTMLCanvasElement,kind:string){
   const count=700,positions=new Float32Array(count*3),seeds=new Float32Array(count);
   for(let i=0;i<count;i++){positions.set([(i%20)/19-.5,(Math.floor(i/20)%7)/6-.5,(Math.floor(i/140)%5)/4-.5],i*3);seeds[i]=(i*47%700)/700;}
   const geometry=track(new T.BufferGeometry());geometry.setAttribute('position',new T.BufferAttribute(positions,3));geometry.setAttribute('aSeed',new T.BufferAttribute(seeds,1));
-  flowMaterial=track(new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:{value:0},uForm:{value:0},uDark:{value:0},uRatio:{value:1}},vertexShader:`${longParticleWaveGLSL}attribute float aSeed;uniform float uTime,uForm,uRatio;varying float alpha;void main(){vec3 target=vec3(-.15,.55,0)+position*.35;float crest=latticeSheetCrest(aSeed,uTime);vec3 p=latticeSheetWave(target,uForm,aSeed,uTime,vec3(-1.,.1,.05),3.4,.9);alpha=sin(min(uForm,1.)*3.14159265)*(.3+max(crest,0.)*.6);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.8+max(crest,0.))*uRatio;}`,fragmentShader:'uniform float uDark;varying float alpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.05,.35,.62),vec3(.55,.86,1.),uDark),alpha*(1.-smoothstep(.12,.5,r)));}'}));
+  flowMaterial=track(new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:{value:0},uForm:{value:0},uDark:{value:0},uRatio:{value:1}},vertexShader:`attribute float aSeed;uniform float uForm,uRatio;varying float alpha;void main(){vec3 target=vec3(-.15,.55,0)+position*.35;float deposit=smoothstep(aSeed*.08,aSeed*.08+.72,uForm);float ease=deposit*deposit*(3.-2.*deposit);vec3 jitter=vec3(fract(aSeed*17.13)-.5,fract(aSeed*29.71)-.5,fract(aSeed*43.17)-.5);vec3 p=mix(target+jitter*1.7,target,ease);alpha=(1.-smoothstep(.7,1.,deposit))*(.35+.5*aSeed);gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(1.+aSeed*.8)*uRatio;}`,fragmentShader:'uniform float uDark;varying float alpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.03,.32,.75),vec3(.42,.80,1.),uDark),alpha*(1.-smoothstep(.12,.5,r)));}'}));
   flow=new T.Points(geometry,flowMaterial);flow.frustumCulled=false;root.add(flow);
   for(let i=0;i<3;i++){const panel=new T.Group();panel.position.set(1.05,.15+i*.48,-.25);box(panel,0,0,0,1.15,.32,.05,i===2?navy:glass);box(panel,-.38,0,.04,.12,.1,.02,pearl);box(panel,.12,0,.04,.5,.02,.02,pearl);root.add(panel);panels.push(panel);}
   const gate=new T.Group();gate.position.set(2.15,.55,0);root.add(gate);
@@ -80,7 +78,7 @@ export function mountApplicationArtwork(canvas:HTMLCanvasElement,kind:string){
    if(telemetry){for(let i=0;i<telemetry.count;i++)telemetry.setY(i,-.72+Math.sin(i*.45-time*3.2)*.08);telemetry.needsUpdate=true;}}
   if(kind==='twin'&&moving&&ghost){const station=Math.min(2,Math.floor(p*3)),local=(p*3)%1;const x=-1.65+station*1.65,y=p===1?0:-Math.sin(local*Math.PI)*.62;moving.position.set(x,y,0);ghost.position.set(x,y,-1.65);}
   if(kind==='ai'&&token&&gateLight&&flowMaterial){
-   flowMaterial.uniforms.uTime.value=time;flowMaterial.uniforms.uForm.value=Math.min(1,time/3.6);flowMaterial.uniforms.uDark.value=smoked?1:0;flowMaterial.uniforms.uRatio.value=renderer.getPixelRatio();if(flow)flow.visible=time<4.2;
+   flowMaterial.uniforms.uForm.value=Math.min(1,time/3.6);flowMaterial.uniforms.uDark.value=smoked?1:0;flowMaterial.uniforms.uRatio.value=renderer.getPixelRatio();if(flow)flow.visible=time<4.2;
    inspection?.update(p>0&&p<.42?Math.sin(p/.42*Math.PI):0,smoked);inspection?.group.position.set(-1.35,.55,0);
    panels.forEach((panel,i)=>{panel.visible=p>.2+i*.16;panel.position.y=.15+i*.48+Math.max(0,.28-p+i*.1)*.6;});
    const approach=ease(Math.min(1,p/.72));token.position.set(-1.35+approach*3.15,.55,0);token.visible=p>.08;

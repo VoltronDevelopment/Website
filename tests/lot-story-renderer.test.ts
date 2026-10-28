@@ -89,7 +89,7 @@ describe("synchronized lot scene controller", () => {
     expect(canvas.dataset.settled).toBe("true"); expect(canvas.dataset.running).toBe("false"); expect(frames.size).toBe(0);
     expect(snapshotGroups.map(group => group.position.toArray())).toEqual(positions);
     expect(canvas.dataset.departure).toBe('1.0000');expect(canvas.dataset.particles).toBe('false');
-    expect(onState.mock.lastCall?.[0].evidence).toEqual([true, true, true, true, true]);
+    expect(onState.mock.lastCall?.[0].evidence).toEqual([true, true, true, true]);
   });
   it('keeps one mobile carrier centred while conveyor travel advances',async()=>{
     narrow=true;const {scene,canvas}=fixture();await scene.ready;
@@ -103,9 +103,9 @@ describe("synchronized lot scene controller", () => {
     intersect(false); const offscreen = canvas.dataset.animationTime; advance(10); expect(canvas.dataset.animationTime).toBe(offscreen);
     intersect(true); advance(155); scene.replay(); expect(canvas.dataset.phase).toBe("receive"); expect(canvas.dataset.animationTime).toBe("0.000");
   });
-  it("stage selection pauses playback and keeps human release before Dispatch", async () => {
+  it("stage selection pauses playback and keeps Verify before Dispatch", async () => {
     const { scene, onState, canvas } = fixture(); await scene.ready; intersect(true); advance(3);
-    scene.select(9); expect(canvas.dataset.phase).toBe("review"); expect(frames.size).toBe(0);
+    scene.select(7.4); expect(canvas.dataset.phase).toBe("verify"); expect(frames.size).toBe(0);
     expect(onState.mock.lastCall?.[0].stage).toBe(2); expect(onState.mock.lastCall?.[0].released).toBe(false);
     scene.select(14); expect(onState.mock.lastCall?.[0].released).toBe(true); expect(onState.mock.lastCall?.[0].stage).toBe(3);
   });
@@ -129,7 +129,7 @@ describe("synchronized lot scene controller", () => {
   it("settles immediately on reduced motion and supports still snapshot selection", async () => {
     const { scene, canvas } = fixture(); await scene.ready; intersect(true); advance(4);
     motion.matches = true; changeMotion(); expect(canvas.dataset.settled).toBe("true"); expect(frames.size).toBe(0);
-    scene.select(8); expect(canvas.dataset.phase).toBe("review"); expect(frames.size).toBe(0);
+    scene.select(8); expect(canvas.dataset.phase).toBe("verify"); expect(frames.size).toBe(0);
     const rendered=gpu.render.mock.lastCall?.[0] as THREE.Scene;expect(rendered.getObjectByName('lot-carrier')!.position.toArray()).toEqual(rendered.getObjectByName('lot-station-2')!.position.toArray());
   });
   it("restores the completed fallback and releases preparation on context loss during compile", async () => {

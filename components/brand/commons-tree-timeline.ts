@@ -1,12 +1,15 @@
 import {smooth} from './human-hero-timeline';
-export const commonsTreeDuration=10.5;
-export const commonsFence=[[0,-.65,0]] as const;
-export const commonsRootSurface=commonsFence[0][1]+1.45/2;
-export function commonsEnergyY(progress:number){
- const t=Number.isFinite(progress)?Math.max(0,Math.min(1,progress)):0;
- return commonsFence[0][1]+(commonsRootSurface-commonsFence[0][1])*t;
-}
+export const commonsTreeDuration=12;
+export const commonsCornerCount=8;
+export const commonsCubeCenter:[number,number,number]=[0,1.35,0];
+export const commonsCubeSpan=4.4;
+/** Root plane of the existing tree, kept so the trunk still meets the ground. */
+export const commonsRootSurface=.075;
 export function commonsTreeState(seconds:number){
  const time=Math.max(0,Math.min(commonsTreeDuration,Number.isFinite(seconds)?seconds:0));
- return {time,done:time===commonsTreeDuration,cubes:commonsFence.map((_,i)=>smooth((time-.15-i*.18)/.85)),power:smooth((time-1.1)/.75)*(1-smooth((time-4.6)/1.4)),growth:smooth((time-1.65)/6.4),canopy:smooth((time-4.8)/3.4),settle:smooth((time-8.5)/2)};
+ const cube=smooth(time/2.2);
+ const glow=smooth((time-2.2)/.45)*(1-smooth((time-8.4)/1.15));
+ const growth=smooth((time-4.2)/4.2);
+ const canopy=smooth((time-6.2)/3.2);
+ return {time,done:time===commonsTreeDuration,cube,glow,growth,canopy,nodes:commonsCornerCount,settle:smooth((time-9.6)/1.6)};
 }

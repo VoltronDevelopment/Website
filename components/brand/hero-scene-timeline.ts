@@ -1,5 +1,5 @@
 export type HeroSceneKind = "technology" | "manufacturing" | "network" | "ontology" | "about";
-export const heroSceneDurations: Record<HeroSceneKind, number> = {technology:9.5,manufacturing:8,network:10,ontology:6,about:6};
+export const heroSceneDurations: Record<HeroSceneKind, number> = {technology:9.5,manufacturing:8,network:10,ontology:12,about:6};
 export const ease = (value:number) => {const t=Math.max(0,Math.min(1,value));return t*t*t*(t*(t*6-15)+10);};
 export function manufacturingSurfaceState(seconds:number){
  const time=Math.max(0,Math.min(8,Number.isFinite(seconds)?seconds:0));

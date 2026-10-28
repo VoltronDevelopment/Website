@@ -21,6 +21,7 @@ const random=(i:number)=>{const v=Math.sin(i*127.1+311.7)*43758.5453;return v-Ma
 /** Procedural authoring stand-ins are isolated here so approved GLBs can replace them later. */
 export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind:HeroSceneKind,onMode:(mode:SceneMode)=>void,signal:AbortSignal):Promise<EngineeredController>{
  if(kind==="technology")return (await import("./neural-network-renderer")).mountNeuralNetwork(canvas,host,onMode,signal);
+ if(kind==="ontology")return (await import("./ontology-puzzle-renderer")).mountOntologyPuzzle(canvas,host,onMode,signal);
  const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture")});
  renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.15;
  const quality=createRenderQuality(canvas,1.5);renderer.setPixelRatio(quality.ratio);

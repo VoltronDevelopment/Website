@@ -74,7 +74,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     }
   };
   const philosophy=options.kind==="philosophy"?track(createPhilosophyCubes()):undefined;
-  const philosophyWave=philosophy?track(createPhilosophyWave(philosophy.groups[2])):undefined;if(philosophyWave)root.add(philosophyWave.points);
+  const philosophyWave=philosophy?track(createPhilosophyWave(philosophy.groups[2],{gather:true,reach:1.15})):undefined;if(philosophyWave)root.add(philosophyWave.points);
   if(philosophy)root.add(philosophy.root);
   else {addCube(1.65,0);if(options.kind==="lot"){
     const nodeMaterial=track(new THREE.MeshPhongMaterial({color:0x2894bc}));materials.push({material:nodeMaterial,role:"node"});

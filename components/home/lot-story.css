@@ -118,8 +118,8 @@
 .lot-story-tiles button { width:100%; min-height:104px; height:100%; padding:14px 16px; border:1px solid var(--line); border-radius:6px; background:color-mix(in srgb,var(--surface) 58%,transparent); color:var(--muted); text-align:left; font:inherit; cursor:pointer; transition:border-color .15s ease,background-color .15s ease; }
 .lot-story-tiles li[data-active="true"] button { border-color:var(--blue); background:color-mix(in srgb,var(--selection) 40%,var(--surface)); }
 .lot-story-tiles li[data-active="true"] .lot-tile-title > svg:first-child { color:var(--blue); }
-.lot-story-tiles li[data-human-review="true"] button {border-color:var(--cyan);background:color-mix(in srgb,var(--selection) 55%,var(--surface));box-shadow:0 0 0 1px color-mix(in srgb,var(--cyan) 28%,transparent),0 0 22px color-mix(in srgb,var(--blue) 17%,transparent);}
-.lot-story-tiles li[data-human-review="true"][data-active="true"] button {border-color:var(--cyan);box-shadow:0 0 0 1px color-mix(in srgb,var(--cyan) 65%,transparent),0 0 30px color-mix(in srgb,var(--blue) 30%,transparent),inset 0 0 18px color-mix(in srgb,var(--cyan) 8%,transparent);}
+.lot-story-tiles li[data-human-review="true"] button {border-color:var(--cyan);background:color-mix(in srgb,var(--selection) 55%,var(--surface));box-shadow:0 5px 16px var(--card-shadow,var(--glass-drop));}
+.lot-story-tiles li[data-human-review="true"][data-active="true"] button {border-color:var(--cyan);box-shadow:0 8px 20px var(--card-shadow,var(--glass-drop));}
 .lot-story-tiles li[data-human-review="true"] .lot-tile-title > svg:first-child {color:var(--blue);}
 .lot-story-tiles button:hover { border-color:var(--cube-outline); background:var(--hover); }
 .lot-story-tiles button:focus-visible { outline-offset:3px; }
@@ -154,6 +154,13 @@
 /* Compact selectors, one actual reading surface, in every viewport. */
 .lot-story-evidence .lot-record-selector{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 14px;overflow:visible}
 .lot-story-evidence .lot-record-selector button{justify-content:center;min-width:0;gap:7px;padding:9px 10px;font-size:12px;font-weight:400}.lot-step-index{font-size:9px;opacity:.65}.lot-record-selector button>svg{flex:none}
-.lot-story-evidence .lot-selected-record{position:relative;isolation:isolate;width:100%;max-width:760px;min-height:110px;border:0;border-radius:var(--radius-card);background:linear-gradient(145deg,var(--card-fill),var(--card-shade));box-shadow:inset 0 1px 0 var(--card-top),0 12px 32px var(--card-shadow)}
-.lot-story-evidence .lot-selected-record[data-human-review="true"]{box-shadow:inset 0 1px 0 var(--cyan),0 12px 32px var(--card-shadow),0 0 24px color-mix(in srgb,var(--cyan) 12%,transparent)}
+.lot-story-evidence .lot-selected-record{position:relative;isolation:isolate;width:100%;max-width:760px;min-height:110px;border:0;border-radius:var(--radius-card);background:linear-gradient(145deg,var(--card-fill),var(--card-shade));box-shadow:0 12px 32px var(--card-shadow)}
+.lot-story-evidence .lot-selected-record[data-human-review="true"]{box-shadow:0 12px 32px var(--card-shadow)}
 @media(max-width:767px){.lot-story-evidence .lot-record-selector{grid-template-columns:repeat(3,minmax(0,1fr))}.lot-story-evidence .lot-record-selector button{padding:8px 4px;font-size:11px}.lot-step-index{display:none}.lot-story-evidence .lot-selected-record{min-height:115px}}
+.lot-milestone-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
+.lot-milestone-tile{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-height:96px;height:100%;padding:12px 12px 14px;border:0;border-radius:10px;background:linear-gradient(145deg,var(--card-fill,var(--surface)),var(--card-shade,var(--surface)));box-shadow:0 8px 20px var(--card-shadow,var(--glass-drop));color:var(--muted);font:inherit;font-size:12px;line-height:1.45;text-align:left;cursor:pointer}
+.lot-milestone-tile[aria-pressed="true"]{color:var(--ink);box-shadow:0 10px 24px var(--card-shadow,var(--glass-drop)),0 0 16px color-mix(in srgb,var(--cyan) 18%,transparent)}
+.lot-milestone-tile .lot-tile-title{display:flex;align-items:center;gap:7px;font-size:13px;line-height:1.3;color:var(--ink)}
+.lot-milestone-tile .lot-tile-title>svg:last-child:not(:first-child){margin-left:auto;color:var(--cyan)}
+.lot-milestone-tile .lot-tile-message{display:block;min-height:2.9em;font-size:12px;line-height:1.45}
+@media(max-width:767px){.lot-milestone-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.lot-milestone-tile{min-height:88px;padding:10px 10px 12px}.lot-milestone-tile .lot-tile-message{min-height:2.6em}}
