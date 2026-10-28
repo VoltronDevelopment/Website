@@ -116,8 +116,6 @@ export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivE
   route([[0,-1.23,.31],[0,-1.23,-.7],[-1.28,-1.23,-.7]]);route([[0,-1.23,-.7],[1.23,-1.23,-.7]]);route([[0,-1.23,-.7],[0,-1.23,-2.6]]);
   const sparse:number[]=[];for(let i=0;i<96;i++){const p=[(random(i+10)-.5)*.85,(random(i+20)-.5)*.85,(random(i+30)-.5)*.85];p[i%3]=(i%2?1:-1)*.425;sparse.push(p[0],p[1]+.5,p[2]-3.85);}
   const sparseGeometry=track(new THREE.BufferGeometry());sparseGeometry.setAttribute("position",new THREE.Float32BufferAttribute(sparse,3));distantPoints=new THREE.Points(sparseGeometry,track(new THREE.PointsMaterial({color:0x468ab8,size:.023,transparent:true,opacity:.5,depthWrite:false})));distantPoints.position.set(0,-1.2,.65);scene.add(distantPoints);
- }else if(kind==="ontology"){
-  part(cell(1.8,[0,.2,0],0));record(cell(1.1,[-1.7,.8,.8],1));record(cell(1.1,[1.7,.8,-.7],2),true);lot(cell(1.1,[.2,-.5,1.9],3));route([[-1.7,.25,.8],[-.9,.25,.8]]);route([[.9,.25,0],[1.7,.25,0],[1.7,.25,-.7]]);route([[0,-.7,0],[0,-.7,1.9]]);
  }else if(kind==="about"){
   const positions=[[-1.55,-.1,.3],[0,.55,-.5],[1.55,-.1,.3]];
   positions.forEach((p,i)=>{const block=cell(1.45,p,i);if(i===0)part(block);else if(i===1){for(let k=0;k<3;k++)plate(block,.85,.65,-.3+k*.22);}else{const core=box(block,[.45,.45,.45],[0,0,0],navy);core.rotation.y=Math.PI/4;}});
