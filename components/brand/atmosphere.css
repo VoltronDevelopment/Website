@@ -80,3 +80,10 @@ body:has(.brand-entry) .lattice-atmosphere { display:block; }
   .atmosphere-motion,.atmosphere-wash,.atmosphere-cyan,.atmosphere-reflection { animation:none; }
   :root { transition:none; }
 }
+
+/* The shared motion preference also rests decorative atmosphere layers. */
+:root[data-scene-motion="static"] .atmosphere-motion,
+:root[data-scene-motion="static"] .atmosphere-motion *{animation:none}
+
+/* Keep the architectural background subordinate to foreground artwork and reading. */
+:root[data-theme="dark"] body:has(.site-presentation):not(:has(.home-page)) .atmosphere-lattice{opacity:.48}

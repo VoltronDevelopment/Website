@@ -1,4 +1,4 @@
-type Job={run:()=>void|Promise<unknown>;cancelled:boolean;canPrepare:()=>boolean};
+type Job={run:()=>void|Promise<unknown>;cancelled:boolean;canPrepare:()=>boolean;priority:()=>number};
 
 /** Prepare one nearby scene at a time, yielding to input between jobs. */
 export function createScenePreparationQueue(){
@@ -8,20 +8,22 @@ export function createScenePreparationQueue(){
   function schedule(){
     if(busy||scheduled!==undefined||!jobs.length)return;
     const next=()=>{scheduled=undefined;void drain();};
-    if(!jobs[0].canPrepare())scheduled={id:window.setTimeout(next,120),idle:false};
+    if(!jobs.some(job=>!job.cancelled&&job.canPrepare()))scheduled={id:window.setTimeout(next,120),idle:false};
     else if(idle())scheduled={id:window.requestIdleCallback(next,{timeout:1000}),idle:true};
     else scheduled={id:window.setTimeout(next,32),idle:false};
   }
   async function drain(){
-    if(jobs[0]&&!jobs[0].canPrepare()){schedule();return;}
-    const job=jobs.shift();if(!job){schedule();return;}
+    let index=-1,priority=-Infinity;
+    jobs.forEach((job,i)=>{if(job.cancelled||!job.canPrepare())return;const rank=job.priority();if(index<0||rank>priority){index=i;priority=rank;}});
+    if(index<0){schedule();return;}
+    const [job]=jobs.splice(index,1);if(!job){schedule();return;}
     busy=true;
     try{if(!job.cancelled)await job.run();}
     catch{/* Optional scene failures must not prevent later illustrations from preparing. */}
     finally{busy=false;schedule();}
   }
-  return (run:Job["run"],canPrepare:Job["canPrepare"]=()=>true)=>{
-    const job={run,cancelled:false,canPrepare};jobs.push(job);schedule();
+  return (run:Job["run"],canPrepare:Job["canPrepare"]=()=>true,priority:Job["priority"]=()=>0)=>{
+    const job={run,cancelled:false,canPrepare,priority};jobs.push(job);schedule();
     return ()=>{
       job.cancelled=true;
       const index=jobs.indexOf(job);if(index>=0)jobs.splice(index,1);
@@ -43,4 +45,12 @@ export function canPrepareHomeScene(){
   const rect=stage.getBoundingClientRect();
   const visible=Math.max(0,Math.min(rect.bottom,innerHeight)-Math.max(rect.top,0));
   return visible/Math.max(1,rect.height)<.6;
+}
+
+/** Re-evaluated when a slot becomes free, so a fast scroll promotes the newly visible scene. */
+export function scenePreparationPriority(host:Element|null){
+ if(!host)return -Infinity;
+ const r=host.getBoundingClientRect(),visible=r.bottom>0&&r.top<innerHeight;
+ const distance=Math.max(0,r.top-innerHeight,-r.bottom);
+ return (visible?10000:0)-distance;
 }

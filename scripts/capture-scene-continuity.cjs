@@ -10,7 +10,7 @@ const definitions=[
  ['home','/','[data-lattice-slot]','[data-persistent-stage] canvas','hero-time',openingTimes.home,14,1440,960],
  ['technology','/technology','.engineered-technology .engineered-stage','.engineered-technology canvas','hero-time',openingTimes.technology,9.5,960,640],
  ['commons','/about/voltron-commons','.human-hero-art','.human-hero-art canvas','human-time',openingTimes.commons,10.5,640,640],
- ['intelligence','/intelligence','.intelligence-face-stage','.intelligence-face-stage canvas','intelligence-time',openingTimes.intelligence,7.5,960,640],
+ ['intelligence','/intelligence','.intelligence-face-stage','.intelligence-face-stage canvas','intelligence-time',openingTimes.intelligence,13,960,640],
  ['philosophy','/','.home-cube-philosophy','.home-cube-philosophy canvas','cube-time',openingTimes.philosophy,6.8,480,640],
  ['process','/','.alpha-process-art','.alpha-process-art canvas','process-time',openingTimes.process,28,1120,450],
  ['handCulture','/about/people-culture','.particle-hand-stage','.particle-hand-stage canvas','hand-time',openingTimes.culture,14,960,640],

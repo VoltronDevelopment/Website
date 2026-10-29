@@ -9,7 +9,7 @@ export async function createLatticeResources(canvas:HTMLCanvasElement):Promise<S
   let environment:THREE.WebGLRenderTarget|undefined;
   try{
     if(new URLSearchParams(location.search).get("renderer")==="static")return undefined;
-    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture")});
     await yieldToBrowser();
     environment=createArtworkEnvironment(renderer);
     await yieldToBrowser();

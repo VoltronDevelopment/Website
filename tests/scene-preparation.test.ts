@@ -14,6 +14,22 @@ describe("nearby scene preparation",()=>{
     finish();await vi.advanceTimersByTimeAsync(0);expect(calls).toEqual(["first"]);
     await vi.advanceTimersByTimeAsync(32);expect(calls).toEqual(["first","second"]);
   });
+  it("prepares eligible work behind a blocked scene",async()=>{
+    const enqueue=createScenePreparationQueue(),calls:string[]=[];let allowed=false;
+    enqueue(()=>{calls.push("blocked");},()=>allowed);
+    enqueue(()=>{calls.push("visible");});
+    await vi.advanceTimersByTimeAsync(160);expect(calls).toEqual(["visible"]);
+    allowed=true;await vi.advanceTimersByTimeAsync(160);expect(calls).toEqual(["visible","blocked"]);
+  });
+  it("re-evaluates priority after in-flight work so a fast scroll can promote the visible scene",async()=>{
+    const enqueue=createScenePreparationQueue(),calls:string[]=[];let finish:()=>void=()=>{},near=0,visible=1;
+    enqueue(async()=>{await new Promise<void>(r=>{finish=r;});});
+    await vi.advanceTimersByTimeAsync(32);
+    enqueue(()=>{calls.push("near");},()=>true,()=>near);
+    enqueue(()=>{calls.push("visible");},()=>true,()=>visible);
+    near=5;visible=0;finish();
+    await vi.advanceTimersByTimeAsync(64);expect(calls).toEqual(["near","visible"]);
+  });
   it("does not mount a queued scene that has unmounted",async()=>{
     const enqueue=createScenePreparationQueue(),run=vi.fn();
     const cancel=enqueue(run);cancel();await vi.runAllTimersAsync();

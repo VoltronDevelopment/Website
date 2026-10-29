@@ -1,0 +1,520 @@
+{
+  "technology": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-technology-desktop-light-178c4daac9563002.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 65288
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-technology-desktop-dark-634a5c4d6eb7d186.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 71268
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-technology-mobile-light-ea765d30aece1032.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 28684
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-technology-mobile-dark-52a7d4bd5fc62818.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 30476
+      }
+    }
+  },
+  "manufacturing": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-desktop-light-b19f2774f4b31df4.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 489170
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-desktop-dark-66d6e4d6e853e19f.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 504882
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-mobile-light-8ae7c93dc2dcb729.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 166046
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-mobile-dark-38c98bc3fa78deda.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 166348
+      }
+    },
+    "short": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-short-light-7a4a9c6aeca6e586.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 408194
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-short-dark-930f3193bdc5f944.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 423650
+      }
+    },
+    "tablet": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-tablet-light-4386953b32821404.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 470216
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-tablet-dark-2841a77b56c594ce.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 485384
+      }
+    },
+    "tall": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-tall-light-8f55b5a91bc33fc4.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 492656
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-tall-dark-46c42bed3f61c002.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 503166
+      }
+    },
+    "mobileTall": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-manufacturing-mobileTall-light-5a27514b4f370271.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 166206
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-manufacturing-mobileTall-dark-21950c7ade746741.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 166518
+      }
+    }
+  },
+  "network": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-network-desktop-light-b9be4badaa5aaab1.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 209522
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-network-desktop-dark-347c3719e50c95fd.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 189724
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-network-mobile-light-82b53ac56d3573df.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 74538
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-network-mobile-dark-4e65051362d26c03.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 66178
+      }
+    }
+  },
+  "ontology": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-ontology-desktop-light-f97a559e9ab60960.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 142838
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-ontology-desktop-dark-6cd1b7b6b7e16dd3.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 139968
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-ontology-mobile-light-deb669fc18c16f41.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 77814
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-ontology-mobile-dark-9731d6eb40f16d33.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 75088
+      }
+    }
+  },
+  "commons": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-commons-desktop-light-9282ad495b5ac82e.webp",
+        "width": 1249,
+        "height": 1280,
+        "bytes": 184710
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-commons-desktop-dark-94f9ea27e10bfe7a.webp",
+        "width": 1249,
+        "height": 1280,
+        "bytes": 183832
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-commons-mobile-light-e6958b096c5a1476.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 78728
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-commons-mobile-dark-6f33e930306a1a91.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 78746
+      }
+    }
+  },
+  "handCulture": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-desktop-light-cc4f23c1a7ab8103.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 212340
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-desktop-dark-e5c400345883ac87.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 213898
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-mobile-light-4a20ff4cba573e64.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 106200
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-mobile-dark-891fd7b7b42ea10f.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 106274
+      }
+    },
+    "short": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-short-light-2a84df2530dacef6.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 143350
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-short-dark-d3ac7798a8b88d93.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 145684
+      }
+    },
+    "tablet": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-tablet-light-d8f75f0a9c7b5369.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 166396
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-tablet-dark-d9faf495845b2fbe.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 167286
+      }
+    },
+    "tall": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-tall-light-ba29de2db3d738c0.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 224028
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-tall-dark-87fa2e25602f265a.webp",
+        "width": 1249,
+        "height": 1120,
+        "bytes": 227178
+      }
+    },
+    "mobileTall": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-handCulture-mobileTall-light-02a3511782c7f3db.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 114612
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-handCulture-mobileTall-dark-123cbc83620f5059.webp",
+        "width": 640,
+        "height": 760,
+        "bytes": 113884
+      }
+    }
+  },
+  "partner": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-partner-desktop-light-72b81f8bf9a8c4f3.webp",
+        "width": 1249,
+        "height": 1280,
+        "bytes": 107886
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-partner-desktop-dark-128e2e73df899745.webp",
+        "width": 1249,
+        "height": 1280,
+        "bytes": 106464
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-partner-mobile-light-4c3bd0243ea7e912.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 38976
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-partner-mobile-dark-604183e916ae1828.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 39308
+      }
+    },
+    "tablet": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-partner-tablet-light-3d616e919b5bae00.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 90878
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-partner-tablet-dark-52d06e653018dc86.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 91102
+      }
+    },
+    "short": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-partner-short-light-71744e5efbe6b993.webp",
+        "width": 1249,
+        "height": 920,
+        "bytes": 89688
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-partner-short-dark-f10240d5d1c29ab2.webp",
+        "width": 1249,
+        "height": 920,
+        "bytes": 88662
+      }
+    }
+  },
+  "about": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-about-desktop-light-2f2f803346e545a0.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 111200
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-about-desktop-dark-376d7e43f139520a.webp",
+        "width": 1249,
+        "height": 1080,
+        "bytes": 114796
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-about-mobile-light-d28d9c7fc995ebc1.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 42042
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-about-mobile-dark-552810bfee84d837.webp",
+        "width": 640,
+        "height": 725,
+        "bytes": 43002
+      }
+    },
+    "tablet": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-about-tablet-light-b6527ce1ea18f7cb.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 110948
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-about-tablet-dark-680fabbffe9d3b16.webp",
+        "width": 1428,
+        "height": 920,
+        "bytes": 114286
+      }
+    },
+    "short": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-about-short-light-80852fcaf850357a.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 98454
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-about-short-dark-85067710fda99166.webp",
+        "width": 1249,
+        "height": 840,
+        "bytes": 101026
+      }
+    }
+  },
+  "intelligence": {
+    "generic": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-intelligence-generic-light-cd06fd5d35159a9d.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 49082
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-intelligence-generic-dark-35d50b0d65e06e5a.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 45282
+      }
+    }
+  },
+  "cultureHelix": {
+    "generic": {
+      "light": {
+        "url": "/optimized/scene-hd-opening-cultureHelix-generic-light-6b5ac7a73a40f9b8.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 147044
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-opening-cultureHelix-generic-dark-fe1c88976077bd40.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 139552
+      }
+    }
+  },
+  "home": {
+    "generic": {
+      "light": {
+        "url": "/optimized/home-hd-home-desktop-light-0-6824e0745ec99620.webp",
+        "width": 2880,
+        "height": 1920,
+        "bytes": 167340
+      },
+      "dark": {
+        "url": "/optimized/home-hd-home-desktop-dark-0-0225e203ca6f7a9e.webp",
+        "width": 2880,
+        "height": 1920,
+        "bytes": 176520
+      }
+    }
+  },
+  "philosophy": {
+    "generic": {
+      "light": {
+        "url": "/optimized/home-hd-philosophy-desktop-light-0.8-36449f0ba23dfa1c.webp",
+        "width": 960,
+        "height": 1280,
+        "bytes": 83770
+      },
+      "dark": {
+        "url": "/optimized/home-hd-philosophy-desktop-dark-0.8-c50a97adc0dcc480.webp",
+        "width": 960,
+        "height": 1280,
+        "bytes": 77022
+      }
+    }
+  },
+  "process": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/home-hd-process-desktop-light-0-e0007cd565c5db44.webp",
+        "width": 2240,
+        "height": 1150,
+        "bytes": 338556
+      },
+      "dark": {
+        "url": "/optimized/home-hd-process-desktop-dark-0-b200509947890734.webp",
+        "width": 2240,
+        "height": 1150,
+        "bytes": 330990
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/home-hd-process-mobile-light-0-ea741f177d86e009.webp",
+        "width": 688,
+        "height": 602,
+        "bytes": 58142
+      },
+      "dark": {
+        "url": "/optimized/home-hd-process-mobile-dark-0-5e4da587abfee53a.webp",
+        "width": 688,
+        "height": 602,
+        "bytes": 57354
+      }
+    }
+  },
+  "plant": {
+    "generic": {
+      "light": {
+        "url": "/optimized/scene-hd-plant-light-11646a778322e08d.webp",
+        "width": 2240,
+        "height": 1200,
+        "bytes": 265732
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-plant-dark-6267e2b4b75f841d.webp",
+        "width": 2240,
+        "height": 1200,
+        "bytes": 256578
+      }
+    }
+  }
+}

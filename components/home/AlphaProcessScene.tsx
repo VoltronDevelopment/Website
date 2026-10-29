@@ -76,7 +76,7 @@ export function AlphaProcessScene() {
   return <figure className="alpha-process" aria-label="Illustrated surface treatment line" aria-describedby={description}>
     <div className="alpha-process-art" ref={host} data-ready={ready}>
       <div className="alpha-process-fallback"><ScenePoster kind="process"/></div>
-      <canvas ref={canvas} aria-hidden="true" />
+      <canvas key={motionRevision} ref={canvas} aria-hidden="true" />
     </div>
     <ol className="alpha-process-stages" aria-label="Process chapters">
       {stages.map((label, index) => <li key={label} data-active={stage === index} aria-current={stage === index ? "step" : undefined}>

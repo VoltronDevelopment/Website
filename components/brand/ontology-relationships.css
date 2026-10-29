@@ -13,3 +13,10 @@
 @media(forced-colors:active){.ontology-node,.accountable-action button{border:1px solid CanvasText}.ontology-node[aria-pressed="true"],.accountable-action button[aria-pressed="true"]{outline:2px solid Highlight}.ontology-connections path{stroke:CanvasText}.ontology-connections [data-active="true"]>path{stroke:Highlight}}
 /* Text-only enlargement retains meaningful diagram spacing. */
 .ontology-map{height:max(360px,24em)}
+
+/* Phone records grow with their text; measured connection rails stay outside the cards. */
+@media(max-width:767px){
+ .ontology-map{height:auto;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"lot lot" "part requirements" "process equipment" "evidence evidence";gap:24px;padding:12px;margin-bottom:30px}
+ .ontology-map .ontology-node{position:relative;left:auto!important;top:auto!important;transform:none;width:auto;min-height:96px;padding:16px 12px}
+ .ontology-node[data-ontology-node="lot"]{grid-area:lot}.ontology-node[data-ontology-node="part"]{grid-area:part}.ontology-node[data-ontology-node="requirements"]{grid-area:requirements}.ontology-node[data-ontology-node="process"]{grid-area:process}.ontology-node[data-ontology-node="equipment"]{grid-area:equipment}.ontology-node[data-ontology-node="evidence"]{grid-area:evidence}
+}

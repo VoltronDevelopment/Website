@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {MeshSurfaceSampler} from 'three/addons/math/MeshSurfaceSampler.js';
 
 /** The enclosure and supplied component share one local formation/dissolve field. */
-export function createLotReveal(root:THREE.Group,housing:THREE.BufferGeometry,geometry:<T extends THREE.BufferGeometry>(v:T)=>T,material:<T extends THREE.Material>(v:T)=>T){
+export function createLotReveal(root:THREE.Group,housing:THREE.BufferGeometry,geometry:<T extends THREE.BufferGeometry>(v:T)=>T,material:<T extends THREE.Material>(v:T)=>T,options:{surfaceSamples?:number;componentSamples?:number}={}){
  const uniforms={uLotForm:{value:0},uLotExit:{value:0},uLotCenter:{value:new THREE.Vector3()},uTime:{value:0},uRatio:{value:1},uDark:{value:0}};
  const seen=new Set<THREE.Material>();
  function bind(mat:THREE.Material){if(seen.has(mat))return;seen.add(mat);const prior=mat.onBeforeCompile,key=mat.customProgramCacheKey();
@@ -16,9 +16,11 @@ export function createLotReveal(root:THREE.Group,housing:THREE.BufferGeometry,ge
   };mat.customProgramCacheKey=()=>key+'-lot-reveal-1';
  }
  const positions:number[]=[],seeds:number[]=[];let n=0;const random=()=>{const x=Math.sin(++n*127.1+311.7)*43758.5453;return x-Math.floor(x);};
- for(let i=0;i<2400;i++){const face=i%6,p=[(random()-.5)*1.65,(random()-.5)*1.65,(random()-.5)*1.65];p[Math.floor(face/2)]=(face%2?1:-1)*.826;positions.push(...p);seeds.push(random());}
- const sampler=(new MeshSurfaceSampler(new THREE.Mesh(housing)) as MeshSurfaceSampler&{setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(random).build(),point=new THREE.Vector3();
- for(let i=0;i<2200;i++){sampler.sample(point);positions.push(point.x*.64-.03,point.y*.64-.12,point.z*.64+.07);seeds.push(random());}
+ for(let i=0;i<(options.surfaceSamples??2400);i++){const face=i%6,p=[(random()-.5)*1.65,(random()-.5)*1.65,(random()-.5)*1.65];p[Math.floor(face/2)]=(face%2?1:-1)*.826;positions.push(...p);seeds.push(random());}
+ if((options.componentSamples??2200)>0){
+  const sampler=(new MeshSurfaceSampler(new THREE.Mesh(housing)) as MeshSurfaceSampler&{setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(random).build(),point=new THREE.Vector3();
+  for(let i=0;i<(options.componentSamples??2200);i++){sampler.sample(point);positions.push(point.x*.64-.03,point.y*.64-.12,point.z*.64+.07);seeds.push(random());}
+ }
  const trails:number[]=Array(positions.length/3).fill(0),baseCount=positions.length/3;for(let i=0;i<baseCount;i+=6)for(let lag=1;lag<=2;lag++){positions.push(...positions.slice(i*3,i*3+3));seeds.push(seeds[i]);trails.push(lag);}
  const geo=geometry(new THREE.BufferGeometry());geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('aSeed',new THREE.Float32BufferAttribute(seeds,1));geo.setAttribute('aTrail',new THREE.Float32BufferAttribute(trails,1));
  const mat=material(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms,vertexShader:`attribute float aSeed,aTrail;uniform float uLotForm,uLotExit,uTime,uRatio;varying float vAlpha,vSeed;void main(){

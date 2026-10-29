@@ -219,7 +219,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   host.addEventListener('cube-control',seek);
   try {
     if(new URLSearchParams(location.search).get("renderer")==="static")throw new Error("Static illustration requested");
-    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power"});renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
+    renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:"low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture")});renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;
     if(options.kind==="enclosure"){
       const environment=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer);
       scene.environment=track(pmrem.fromScene(environment,.12)).texture;environment.dispose();pmrem.dispose();

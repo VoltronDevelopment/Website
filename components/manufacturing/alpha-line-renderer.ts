@@ -53,7 +53,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   await yieldToBrowser();
   let renderer: THREE.WebGLRenderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture") });
   } catch {
     canvas.hidden = true;
     handoff.fallback();host.dataset.fallback = "true";

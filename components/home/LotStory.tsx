@@ -4,10 +4,11 @@ import {useHomeMotion,resetHomeScene} from './HomeMotion';
 import { useEffect, useId, useRef, useState } from "react";
 import { Check, ClipboardList, FileText, Settings2, Shield } from "lucide-react";
 import {prefersStaticScene} from "../performance/scene-policy";
-import { canPrepareHomeScene, prepareScene } from "./scene-preparation";
+import { canPrepareHomeScene, prepareScene, scenePreparationPriority } from "./scene-preparation";
 import { lotStageTimes, lotStoryDuration, lotStoryStages, lotStoryStateAt } from "./lot-story-timeline";
 import type { LotStoryController } from "./lot-story-renderer";
 import "./lot-story.css";
+import lotHD from '@/lib/lot-hd-posters.json';
 import lotPosters from "@/lib/lot-posters.json";
 import {DeferredPicture} from '../performance/DeferredArtwork';
 
@@ -15,6 +16,13 @@ const icons = [ClipboardList, Settings2, Shield, FileText];
 const tileMessages = ["Lot identified. Requirements linked.", "Execution recorded. History connected.", "Inspection evidence linked.", "Connected history preserved."];
 const tilePendingMessages = ["Identifying the lot.", "Recording the process.", "Connecting inspection evidence.", "Preparing the dispatch record."];
 const recordCards=lotStoryStages.map((stage,i)=>({title:stage.title,time:lotStageTimes[i],complete:tileMessages[i],pending:tilePendingMessages[i]}));
+
+function lotSrcSet(device:'desktop'|'mobile',theme:'light'|'dark',index:number,initial:boolean,baseline:string){
+ type Capture={url:string};
+ const data=lotHD as {opening?:Record<string,Record<string,Capture>>;desktop?:Record<string,Capture[]>;mobile?:Record<string,Capture[]>};
+ const capture=initial?data.opening?.[device]?.[theme]:data[device]?.[theme]?.[index];
+ return capture?`${baseline} 1x, ${capture.url} 2x`:baseline;
+}
 
 export function HomeLotFlow() {
   const motionRevision=useHomeMotion();
@@ -49,7 +57,7 @@ export function HomeLotFlow() {
         } catch {
           if (!disposed && host.current) { host.current.dataset.renderer = "fallback"; setReady(false); setState(lotStoryStateAt(selectedTime.current ?? lotStoryDuration)); }
         }
-      }, canPrepareHomeScene);
+      }, canPrepareHomeScene,()=>scenePreparationPriority(host.current));
     }
     function preference() {
 
@@ -73,10 +81,10 @@ export function HomeLotFlow() {
     <div className="lot-story-art" ref={host} data-selected={state.stage}>
       <div className="lot-story-posters" aria-hidden="true">
         {(["light", "dark"] as const).map(theme => <div key={theme} data-poster-theme={theme}>
-          <DeferredPicture><source media="(max-width:767px)" srcSet={state.time<1.3?lotPosters.opening.mobile[theme]:lotPosters.mobile[theme][state.stage]}/><img src={state.time<1.3?lotPosters.opening.desktop[theme]:lotPosters.desktop[theme][state.stage]} alt="" decoding="async" loading="lazy"/></DeferredPicture>
+          <DeferredPicture><source media="(max-width:767px)" srcSet={lotSrcSet('mobile',theme,state.stage,state.time<1.3,state.time<1.3?lotPosters.opening.mobile[theme]:lotPosters.mobile[theme][state.stage])}/><img srcSet={lotSrcSet('desktop',theme,state.stage,state.time<1.3,state.time<1.3?lotPosters.opening.desktop[theme]:lotPosters.desktop[theme][state.stage])} src={state.time<1.3?lotPosters.opening.desktop[theme]:lotPosters.desktop[theme][state.stage]} alt="" decoding="async" loading="lazy"/></DeferredPicture>
         </div>)}
       </div>
-      <canvas ref={canvas} className="lot-story-canvas" aria-hidden="true" />
+      <canvas key={motionRevision} ref={canvas} className="lot-story-canvas" aria-hidden="true" />
       <div className="lot-story-snapshots">
         {lotStoryStages.map((stage, index) => <div className="lot-snapshot" key={stage.title} data-active={state.stage === index}>
           <div className="lot-snapshot-anchor" data-lot-story-anchor aria-hidden="true"></div>

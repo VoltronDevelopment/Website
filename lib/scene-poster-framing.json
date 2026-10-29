@@ -18,16 +18,16 @@
     "height": 5.15
   },
   "commons": {
-    "minWidth": 5.7,
-    "minHeight": 5.7,
-    "width": 5.7,
-    "height": 5.7
+    "minWidth": 6,
+    "minHeight": 6,
+    "width": 6,
+    "height": 6
   },
   "intelligence": {
-    "minWidth": 5.1,
-    "minHeight": 5.1,
-    "width": 7.65,
-    "height": 5.1
+    "minWidth": 3.5342477745017895,
+    "minHeight": 4.22284138838881,
+    "width": 4.22284138838881,
+    "height": 4.22284138838881
   },
   "philosophy": {
     "minWidth": 3.6,

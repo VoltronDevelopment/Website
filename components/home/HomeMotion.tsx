@@ -32,7 +32,7 @@ export function HomeMotion(){
 export function resetHomeScene(host:HTMLElement|null,canvas:HTMLCanvasElement|null){
  if(!host||!canvas)return;
  host.querySelectorAll<HTMLElement>('.scene-poster,.lot-story-posters').forEach(p=>{p.style.removeProperty('opacity');p.style.removeProperty('visibility');});
- canvas.style.opacity='0';
+ canvas.style.opacity='0';canvas.hidden=false;delete host.dataset.renderer;
  if(prefersStaticScene()){host.dataset.sceneState='fallback';host.dataset.scenePose='complete';}
  else{host.dataset.sceneState='poster';delete host.dataset.scenePose;delete host.dataset.loadingSlow;}
 }

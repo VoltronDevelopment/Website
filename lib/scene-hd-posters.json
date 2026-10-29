@@ -1,0 +1,226 @@
+{
+  "technology": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-technology-light-b7b08ff9ff3b6b12.webp",
+        "width": 1920,
+        "height": 1280,
+        "bytes": 657382
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-technology-dark-e6b12f3d1e5f361f.webp",
+        "width": 1920,
+        "height": 1280,
+        "bytes": 668858
+      }
+    }
+  },
+  "manufacturing": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-manufacturing-light-2dee3933ee972bd6.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 412674
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-manufacturing-dark-d3d55e66c6c348e5.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 410258
+      }
+    }
+  },
+  "network": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-network-light-f5f18c1c8b091225.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 476534
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-network-dark-93c9bf62c0f771c8.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 417344
+      }
+    }
+  },
+  "ontology": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-ontology-light-57d9120a2535fdbe.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 49074
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-ontology-dark-de5ed4fd1066012d.webp",
+        "width": 1920,
+        "height": 1520,
+        "bytes": 49170
+      }
+    }
+  },
+  "commons": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-commons-light-2b689af26e87eefa.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 225068
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-commons-dark-8d48ee585b61e7fc.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 225702
+      }
+    }
+  },
+  "intelligence": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-intelligence-light-c127b3f2d1a9898c.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 142546
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-intelligence-dark-99dbc71431300831.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 157086
+      }
+    }
+  },
+  "handCulture": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-handCulture-light-61c32a617a8501cc.webp",
+        "width": 1920,
+        "height": 1280,
+        "bytes": 86572
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-handCulture-dark-4e1ac9ec38c37119.webp",
+        "width": 1920,
+        "height": 1280,
+        "bytes": 83908
+      }
+    }
+  },
+  "cultureHelix": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-cultureHelix-light-7f5d4f5de162492a.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 74878
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-cultureHelix-dark-8b6dd01f0a075f74.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 71090
+      }
+    }
+  },
+  "partner": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-partner-light-175abc8ed2c85bf0.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 97546
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-partner-dark-f4d6b92f6e60d1be.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 95678
+      }
+    }
+  },
+  "about": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-about-light-86351cacc3045e66.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 75556
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-about-dark-7326f82cd9d06643.webp",
+        "width": 1280,
+        "height": 1280,
+        "bytes": 78564
+      }
+    }
+  },
+  "home": {
+    "complete": {
+      "light": {
+        "url": "/optimized/home-hd-home-desktop-light-14-ac12491647670167.webp",
+        "width": 2880,
+        "height": 1920,
+        "bytes": 226648
+      },
+      "dark": {
+        "url": "/optimized/home-hd-home-desktop-dark-14-644b99b04429b802.webp",
+        "width": 2880,
+        "height": 1920,
+        "bytes": 230780
+      }
+    }
+  },
+  "philosophy": {
+    "complete": {
+      "light": {
+        "url": "/optimized/home-hd-philosophy-desktop-light-6.8-2229aadf556feeea.webp",
+        "width": 960,
+        "height": 1280,
+        "bytes": 85504
+      },
+      "dark": {
+        "url": "/optimized/home-hd-philosophy-desktop-dark-6.8-95e12e2833612b01.webp",
+        "width": 960,
+        "height": 1280,
+        "bytes": 81676
+      }
+    }
+  },
+  "process": {
+    "complete": {
+      "light": {
+        "url": "/optimized/home-hd-process-desktop-light-28-7931d8853343ab75.webp",
+        "width": 2240,
+        "height": 900,
+        "bytes": 228524
+      },
+      "dark": {
+        "url": "/optimized/home-hd-process-desktop-dark-28-3098b655ed18b77c.webp",
+        "width": 2240,
+        "height": 900,
+        "bytes": 224638
+      }
+    }
+  },
+  "plant": {
+    "complete": {
+      "light": {
+        "url": "/optimized/scene-hd-plant-light-11646a778322e08d.webp",
+        "width": 2240,
+        "height": 1200,
+        "bytes": 265732
+      },
+      "dark": {
+        "url": "/optimized/scene-hd-plant-dark-6267e2b4b75f841d.webp",
+        "width": 2240,
+        "height": 1200,
+        "bytes": 256578
+      }
+    }
+  }
+}

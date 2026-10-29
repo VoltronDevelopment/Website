@@ -12,6 +12,7 @@ export async function yieldToBrowser() {
 
 /** Downgrade only after sustained slow visible frames; never oscillate during a scene. */
 export function createRenderQuality(canvas: HTMLCanvasElement, maximum = 1.5) {
+  if(typeof location!=='undefined'&&new URLSearchParams(location.search).get('poster-dpr')==='2')maximum=Math.max(maximum,2);
   let level=0, previous = 0, count = 0, slow = 0;
   let ratio = Math.min(devicePixelRatio || 1, maximum);
   const apply = () => { ratio=Math.min(devicePixelRatio||1,[maximum,1.25,1][level]);canvas.dataset.renderQuality = ['full','balanced','lightweight'][level]; };

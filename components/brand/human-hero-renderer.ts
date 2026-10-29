@@ -39,6 +39,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
   const direction=offset.clone().normalize(),right=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion),up=new THREE.Vector3(0,1,0).applyQuaternion(camera.quaternion);
   let paused=false;
   let tuning={...artworkDefaults};
+  let preparing=true;
   let renderer:THREE.WebGLRenderer|undefined,disposed=false,visible=false,frame=0,previous=0,time=sceneOpeningTime[kind] as number,fallback=false,sized=false;
   let activity:ReturnType<typeof createLatticeActivity>|undefined;
   const motion=matchMedia("(prefers-reduced-motion: reduce)");
@@ -229,6 +230,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
     state();render();
   }
   function render(){
+    if(preparing)return;
     if(disposed)return;if(fallback){handoff.fallback();return;}if(!renderer||!artwork||!blurTarget||!composite||!compositeScene||!compositeCamera)return;
     const uniforms=(composite.material as THREE.ShaderMaterial).uniforms;
     const projected=artwork.position.clone().project(camera);maskCentre.set((projected.x+1)/2,(projected.y+1)/2);maskExtent.set(artwork.userData.width/(camera.right-camera.left),artwork.userData.height/(camera.top-camera.bottom));
@@ -288,7 +290,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
       track(observeArtworkTuning(kind,value=>{tuning=value;light.position.set(-4+Math.sin(value.keyDirection)*5,7,5);palette();}));
       await yieldToBrowser();if(disposed)return;
       createComposite();
-      camera.layers.enableAll();await renderer.compileAsync(scene,camera);
+      for(const layer of [0,1,2,3]){camera.layers.set(layer);await renderer.compileAsync(scene,camera);if(disposed)return;}camera.layers.enableAll();
       if(compositeScene&&compositeCamera)await renderer.compileAsync(compositeScene,compositeCamera);
       if(disposed)return;
       const nodes=[...nodeMap.values()],indices=new Map(nodes.map((n,i)=>[key(n.point),i]));
@@ -297,7 +299,7 @@ export function mountHumanHero(canvas:HTMLCanvasElement,host:HTMLDivElement,kind
       activity=createLatticeActivity({host,points:nodes.map(n=>n.point.toArray()),links,project:index=>{const p=nodes[index].point.clone().project(camera),r=host.getBoundingClientRect();return {x:(p.x+1)*r.width/2,y:(1-p.y)*r.height/2,visible:nodes[index].front};},onFrame:()=>{if(disposed)return;state();render();}});
     }catch(error){if(disposed)return;fallback=true;canvas.dataset.fallbackReason=error instanceof Error?error.message:String(error);time=duration;}
     if(disposed)return;
-    canvas.hidden=fallback;canvas.dataset.kind=kind;host.dataset.cells=String(cells.length+(culture?1:0));
+    preparing=false;canvas.hidden=fallback;canvas.dataset.kind=kind;host.dataset.cells=String(cells.length+(culture?1:0));
     if(reduced()||fallback||compositionReview)time=duration;
     host.dataset.compositionReview=String(compositionReview);
     palette();resize();activity?.setEnabled(!reduced());

@@ -1,22 +1,28 @@
 import {readFileSync} from 'node:fs';
 import {describe,it,expect} from 'vitest';
 import {commonsRootSurface,commonsCubeCenter,commonsCubeSpan,commonsCornerCount,commonsTreeDuration,commonsTreeState} from '../components/brand/commons-tree-timeline';
+import {durations} from '../components/brand/human-hero-timeline';
 describe('Commons corner cube and tree',()=>{
  it('keeps the tree meeting the same ground plane inside one cube volume',()=>{
   expect(commonsRootSurface).toBeCloseTo(.075);
-  expect(commonsCubeCenter).toEqual([0,1.35,0]);
+  expect(commonsCubeCenter[1]-commonsCubeSpan/2).toBeCloseTo(commonsRootSurface);
   expect(commonsCubeSpan).toBeGreaterThan(3.4);
   expect(commonsCornerCount).toBe(8);
  });
- it('shows only the cube, then pulsing corners, then the tree, and ends with the glow off',()=>{
+ it('forms the corners, glows, grows the tree, then turns twice with the glow off',()=>{
+  expect(commonsTreeDuration).toBe(16);expect(durations.commons).toBe(commonsTreeDuration);
   const opening=commonsTreeState(1.1);
-  expect(opening.cube).toBeGreaterThan(0);expect(opening.cube).toBeLessThan(1);expect(opening.growth).toBe(0);expect(opening.glow).toBe(0);
+  expect(opening.cube).toBeGreaterThan(0);expect(opening.cube).toBeLessThan(1);expect(opening.growth).toBe(0);expect(opening.glow).toBe(0);expect(opening.yaw).toBe(0);
   const nodes=commonsTreeState(3.2);
-  expect(nodes.cube).toBe(1);expect(nodes.glow).toBeGreaterThan(.5);expect(nodes.growth).toBe(0);expect(nodes.nodes).toBe(8);
-  const growing=commonsTreeState(6.2);
-  expect(growing.growth).toBeGreaterThan(0);expect(growing.growth).toBeLessThan(1);expect(growing.glow).toBeGreaterThan(0);
+  expect(nodes.cube).toBe(1);expect(nodes.glow).toBeGreaterThan(.5);expect(nodes.growth).toBe(0);expect(nodes.yaw).toBe(0);expect(nodes.nodes).toBe(8);
+  const growing=commonsTreeState(5.6);
+  expect(growing.growth).toBeGreaterThan(0);expect(growing.growth).toBeLessThan(1);expect(growing.glow).toBeGreaterThan(0);expect(growing.yaw).toBe(0);
+  const grown=commonsTreeState(9.2);
+  expect(grown.growth).toBe(1);expect(grown.glow).toBe(0);expect(grown.yaw).toBe(0);
+  const mid=commonsTreeState(11.7);
+  expect(mid.yaw).toBeGreaterThan(0);expect(mid.yaw).toBeLessThan(Math.PI*4);
   let previous=0;for(let t=0;t<=commonsTreeDuration;t+=.05){const s=commonsTreeState(t);expect(s.growth).toBeGreaterThanOrEqual(previous);previous=s.growth;}
-  const end=commonsTreeState(commonsTreeDuration);expect(end.growth).toBe(1);expect(end.canopy).toBe(1);expect(end.glow).toBe(0);expect(end.done).toBe(true);
+  const end=commonsTreeState(commonsTreeDuration);expect(end.growth).toBe(1);expect(end.canopy).toBe(1);expect(end.glow).toBe(0);expect(end.yaw).toBeCloseTo(Math.PI*4);expect(end.done).toBe(true);
   expect(commonsTreeState(NaN).time).toBe(0);expect(commonsTreeState(99).time).toBe(commonsTreeDuration);
  });
  it('retains the source trunk, two cutout foliage materials and valid compact buffers',()=>{

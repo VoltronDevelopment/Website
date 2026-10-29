@@ -8,7 +8,7 @@ for(const [name,route,query]of [
  ['culture-forming','/about/people-culture','hand-time=2'],['culture-core','/about/people-culture','hand-time=3.8'],['culture-transfer','/about/people-culture','hand-time=5'],
  ['culture-rolling','/about/people-culture','hand-time=9.4'],['culture-delivery','/about/people-culture','hand-time=10.75'],['culture-descending','/about/people-culture','hand-time=11.8'],
  ['partner-solid','/partner','hand-view=solid&hand-time=9.5'],['partner-particles','/partner','hand-time=9.5'],['partner-forming','/partner','hand-time=2'],
- ['planes-final','/intelligence','intelligence-time=7.5'],
+ ['planes-final','/intelligence','intelligence-time=13'],
 ]){await p.goto(base+route+'?'+query);await p.waitForSelector(route==='/intelligence'?'.intelligence-face-stage[data-scene-state="live"]':'.particle-hand-stage[data-scene-state="live"]',{timeout:60000});await p.locator(route==='/intelligence'?'.intelligence-face-stage':'.particle-hand-stage').screenshot({path:path.join(out,name+'.png')});console.log(name);}
 if(errors.length)throw Error(errors.join('\n'));console.log('Authored hand review captured without shader errors.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();fs.closeSync(log);});

@@ -1,0 +1,140 @@
+{
+  "desktop": {
+    "light": [
+      {
+        "url": "/optimized/home-hd-lot-desktop-light-1.9-66cbd146cfc6bd09.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 231110
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-light-4.4-feed05172f0e3c3e.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 241196
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-light-7.7-c98497bd935de81a.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 240250
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-light-12.4-b963a2fa393a252d.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 281642
+      }
+    ],
+    "dark": [
+      {
+        "url": "/optimized/home-hd-lot-desktop-dark-1.9-11c6b0c617ffb124.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 243974
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-dark-4.4-486613f28ac09020.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 257900
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-dark-7.7-a72801f32adaf10f.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 254938
+      },
+      {
+        "url": "/optimized/home-hd-lot-desktop-dark-12.4-148918fd3983dfb6.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 292256
+      }
+    ]
+  },
+  "opening": {
+    "desktop": {
+      "light": {
+        "url": "/optimized/home-hd-lot-desktop-light-0-d90623744dc1dfe9.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 311418
+      },
+      "dark": {
+        "url": "/optimized/home-hd-lot-desktop-dark-0-cd5d4313b7018245.webp",
+        "width": 2240,
+        "height": 1002,
+        "bytes": 317840
+      }
+    },
+    "mobile": {
+      "light": {
+        "url": "/optimized/home-hd-lot-mobile-light-0-e4ee4e8d885faa0d.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 198610
+      },
+      "dark": {
+        "url": "/optimized/home-hd-lot-mobile-dark-0-402a4ab0e0504cd0.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 186194
+      }
+    }
+  },
+  "mobile": {
+    "light": [
+      {
+        "url": "/optimized/home-hd-lot-mobile-light-1.9-efd49dc97c44e9e4.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 91014
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-light-4.4-e9cf9763ed2e7b97.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 94080
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-light-7.7-8a803253dab0a579.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 97950
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-light-12.4-d6c93032898c38a6.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 123832
+      }
+    ],
+    "dark": [
+      {
+        "url": "/optimized/home-hd-lot-mobile-dark-1.9-816bb3048db7874f.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 101626
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-dark-4.4-a21cc87cd98023f0.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 107470
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-dark-7.7-fbb90b420576fd54.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 111064
+      },
+      {
+        "url": "/optimized/home-hd-lot-mobile-dark-12.4-5b6605002770b402.webp",
+        "width": 664,
+        "height": 784,
+        "bytes": 131686
+      }
+    ]
+  }
+}

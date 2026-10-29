@@ -2,7 +2,7 @@
 import {useEffect,useId,useRef,useState,type CSSProperties} from 'react';
 import {Pause,Play,RotateCcw} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
-import {canPrepareHomeScene,prepareScene} from './scene-preparation';
+import {canPrepareHomeScene,prepareScene,scenePreparationPriority} from './scene-preparation';
 import type {FactorySystemsController} from './factory-systems-renderer';
 import type {FactoryPhase} from './factory-systems-timeline';
 import posters from '@/lib/factory-part-posters.json';
@@ -33,7 +33,7 @@ export function FactorySystems(){
   function prepare(){if(!nearby||scheduled||prefersStaticScene()||disposed)return;scheduled=true;cancel=prepareScene(async()=>{try{
    if(motion.matches){scheduled=false;return;}const {mountFactorySystems}=await import('./factory-systems-renderer');if(disposed||!canvas.current||!host.current)return;
    controller.current=mountFactorySystems(canvas.current,host.current,{onReady:v=>{if(!disposed)setReady(v);},onPhase:v=>{if(!disposed)setPhase(v);},onFocus:v=>{if(!disposed)setFocus(v);}});await controller.current.ready;
-  }catch{if(!disposed&&host.current){host.current.dataset.renderer='fallback';setReady(false);setPhase('settled');}}},canPrepareHomeScene);}
+  }catch{if(!disposed&&host.current){host.current.dataset.renderer='fallback';setReady(false);setPhase('settled');}}},canPrepareHomeScene,()=>scenePreparationPriority(host.current));}
   function preference(){setReduced(motion.matches);prepare();}preference();motion.addEventListener('change',preference);
   const observer=new IntersectionObserver(([entry])=>{nearby=entry.isIntersecting;prepare();},{rootMargin:'160px 0px'});if(host.current)observer.observe(host.current);
   return()=>{disposed=true;cancel?.();observer.disconnect();motion.removeEventListener('change',preference);controller.current?.dispose();controller.current=null;};

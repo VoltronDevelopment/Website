@@ -6,6 +6,7 @@ export const voltronRoadmap=[
  {years:'Years 8–10',span:[8,10],title:'Establish the brand.',detail:'Original products, quality and lifecycle support earn lasting trust.',gate:'Repeat demand and support justify more growth.',evidence:['Repeat demand','Sustained quality','Original capability','Lifecycle support']}
 ] as const;
 export const roadmapYears=Array.from({length:10},(_,i)=>i+1);
+export const roadmapCellTone=(index:number):'light'|'dark'=>((index&1)^((index>>1)&1)^((index>>2)&1))===0?'light':'dark';
 export function roadmapPhaseForYear(year:number){return voltronRoadmap.findIndex(m=>year>=m.span[0]&&year<=m.span[1]);}
 
 /** A single two-by-two-by-two capability volume persists inside the future network. */

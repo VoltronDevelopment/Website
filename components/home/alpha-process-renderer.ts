@@ -24,7 +24,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
   let renderer: THREE.WebGLRenderer;
   try {
     if (new URLSearchParams(location.search).get("renderer") === "static") throw new Error("Static illustration requested");
-    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power" });
+    renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: "low-power",preserveDrawingBuffer:new URLSearchParams(location.search).has("scene-capture") });
   } catch {
     canvas.hidden = true;
     handoff.fallback();host.dataset.fallback = "true";

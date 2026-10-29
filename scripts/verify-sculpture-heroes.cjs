@@ -17,7 +17,7 @@ for(const [kind,route,duration,frames]of definitions){
  await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await page.waitForSelector('.particle-hand-stage[data-scene-state="fallback"]');if(await page.locator('.particle-hand-stage[data-live="true"]').count())throw Error('Reduced motion started live renderer');await page.screenshot({path:path.join(out,kind+'-reduced.png')});await page.emulateMedia({reducedMotion:'no-preference'});await page.setViewportSize({width:1440,height:1000});
  console.log('Verified',kind,'themes, sequence, controls, vertical placement, mobile and reduced motion');
 }
-await page.goto(base+'/intelligence?intelligence-time=7.5&scene-capture=1');await page.waitForSelector('.intelligence-face-stage[data-scene-state="live"]');await page.screenshot({path:path.join(out,'intelligence-planes.png')});
+await page.goto(base+'/intelligence?intelligence-time=13&scene-capture=1');await page.waitForSelector('.intelligence-face-stage[data-scene-state="live"]');await page.screenshot({path:path.join(out,'intelligence-planes.png')});
 await page.route('**/sculptures/dosti-mesh.bin',r=>r.fulfill({status:503,body:''}));await page.goto(base+'/partner');await page.waitForSelector('.particle-hand-stage[data-scene-state="fallback"]');await page.unroute('**/sculptures/dosti-mesh.bin');
 if(errors.length)throw Error(errors.join('\n'));console.log('Sculpture heroes passed.');
 })().catch(e=>{console.error(e);process.exitCode=1;}).finally(async()=>{await browser?.close();server.kill();fs.closeSync(log);});

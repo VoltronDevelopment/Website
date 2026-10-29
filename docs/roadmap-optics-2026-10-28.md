@@ -1,0 +1,9 @@
+# Roadmap cube optical alignment — 28 October 2026
+
+The audit found two material overrides on Home’s roadmap: a repeatedly wrapped shader hook suppressed the normal Fresnel reflection and alpha, and the last milestone added .22/.12 emission to every cube face. These differed from Modularity’s pearl/smoked face optics. Repeated phase updates also changed the shader program-cache key unnecessarily.
+
+The shared `lattice-optics.ts` factory now owns six face kinds/roles, material refresh and edge-relative bevels for both scenes. Reflection coordinates normalize to the approved 1.65-unit Modularity cube; Roadmap’s .80-unit cells receive the same relative light bands. Shared internal faces retain 13% of their base optical opacity. Roadmap retains its checkerboard tones, camera, 1/4/8 cell counts, globe geometry, envelope reveal and final-stage brightening. Cube emission remains at its shared material value throughout the final milestone. Filled pearl/smoked SVG faces keep static/reduced-motion artwork consistent. The artwork caption is removed as requested. The full viewport remains available for the cubes and globe.
+
+Unit tests cover face identity in both themes, normalized reflection bands and bevels, stable shader hooks/cache keys across repeated palette updates, and the four-pearl/four-smoked completed volume. Full suite: 260 passing tests. Visual evidence is recorded in `.audit-logs/roadmap-optics-20261028`. These changes are local and are not deployed.
+
+The Network and Roadmap now share envelope geometry, material creation, palette refresh and the authored shell tilt. Roadmap uses exactly one wire envelope; its extra line copy, geographic signal points and route arcs are removed. Only the final milestone raises the shared wire palette brightness. The SVG fallback is generated from the same 270 edges, with a geometry checksum test; latitude/longitude ellipses are removed.

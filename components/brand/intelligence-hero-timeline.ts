@@ -1,14 +1,24 @@
-export const intelligenceHeroDuration = 7.5;
-const clamp=(v:number)=>Math.max(0,Math.min(1,v));
-const smooth=(v:number)=>{const t=clamp(v);return t*t*t*(t*(t*6-15)+10);};
+export const intelligenceHeroDuration = 13;
+const clamp=(value:number)=>Math.max(0,Math.min(1,value));
+const smooth=(value:number)=>{const t=clamp(value);return t*t*t*(t*(t*6-15)+10);};
+/** One flat sheet crosses the formed head. It does not overlap the turn. */
 export function intelligenceScanState(seconds:number){
- const time=Number.isFinite(seconds)?seconds:0;
- const pass=(start:number,end:number)=>{const progress=clamp((time-start)/(end-start));return {progress,strength:Math.sin(Math.PI*progress)};};
- return {horizontal:pass(4.5,5.8),vertical:pass(5.95,7.25)};
+ const time=Number.isFinite(seconds)?Math.max(0,seconds):0;
+ const start=6.2,end=7.6,progress=clamp((time-start)/(end-start));
+ const strength=time<=start||time>=end?0:Math.sin(Math.PI*progress);
+ return {horizontal:{progress,strength},vertical:{progress:0,strength:0}};
 }
+/** Projector, square beam, surface gather, one scan, then two full turns. */
 export function intelligenceHeroState(seconds:number){
- const time=Math.max(0,Math.min(intelligenceHeroDuration,Number.isFinite(seconds)?seconds:0));
- const formation=smooth((time-1.25)/3.2);
- const response=time>=intelligenceHeroDuration?0:smooth((time-5.3)/.6)*(1-smooth((time-6.4)/1.1));
- return {time,formation,wave:1-formation,scans:intelligenceScanState(time),response,enclosure:.18+.82*smooth(time/1.1),settled:time>=intelligenceHeroDuration};
+ const time=Number.isFinite(seconds)?Math.max(0,Math.min(intelligenceHeroDuration,seconds)):0;
+ const cube=smooth(time/1.6);
+ const beam=smooth((time-1.6)/1.2);
+ const head=smooth((time-2.8)/3.4);
+ const turn=smooth((time-7.6)/4.6);
+ return {
+  time,cube,beam,head,formation:head,yaw:turn*Math.PI*4,turn,
+  scans:intelligenceScanState(time),
+  settled:time>=intelligenceHeroDuration,
+  phase:time>=intelligenceHeroDuration?'settled':time>=7.6?'turning':time>=6.2?'scan':time>=2.8?'forming':time>=1.6?'beam':'projecting',
+ };
 }

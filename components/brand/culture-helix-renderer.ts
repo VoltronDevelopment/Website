@@ -8,7 +8,7 @@ import {cultureHelixDuration,cultureHelixState} from './culture-helix-timeline';
 import type {SceneMode} from './engineered-hero-renderer';
 
 export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElement,onMode:(mode:SceneMode)=>void,signal:AbortSignal){
- const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});
+ const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:new URLSearchParams(location.search).has('scene-capture')});
  renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;
  const quality=createRenderQuality(canvas,1.5);renderer.setPixelRatio(quality.ratio);
  const scene=new T.Scene(),camera=new T.OrthographicCamera(-2.8,2.8,2.8,-2.8,.1,40);camera.position.set(4,2.2,8);camera.lookAt(0,0,0);

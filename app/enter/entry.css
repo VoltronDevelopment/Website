@@ -87,3 +87,6 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 .brand-entry[data-motion="reduced"] .entry-face-copy,.brand-entry[data-motion="reduced"] .entry-pulse,.brand-entry[data-motion="reduced"] .entry-radial-grid span { animation:none; }
 .brand-entry[data-motion="reduced"] .entry-pause-control { display:none; }
 @media (prefers-reduced-motion:reduce) { .entry-face-copy,.entry-pulse,.entry-radial-grid span { animation:none; } }
+
+/* Keep the exact lettered mark readable when text is enlarged independently of the scene. */
+.entry-wordmark{flex-wrap:wrap;row-gap:.15em;padding-inline:16px}

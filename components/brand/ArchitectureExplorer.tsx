@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import {useEffect, useId, useRef, useState} from 'react';
-import {Activity, ArrowRight, Boxes, Network, ScanLine, BrainCircuit, X} from 'lucide-react';
+import {Activity, ArrowRight, Boxes, Network, ScanLine, BrainCircuit} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {architectureRoute} from './architecture-route';
+import {DetailsDialog} from './DetailsDialog';
 
 const systems = [
  {id:'ontology', title:'V-MO', role:'Shared manufacturing meaning', Icon:Network, href:'/ontology', detail:'Plant, part, lot, process, equipment and evidence belong to the same manufacturing situation.', records:['Common identity','Meaningful relationships','Traceable evidence'], relation:'The shared model connects each system without taking over its responsibility.'},
@@ -37,7 +38,7 @@ export function ArchitectureExplorer() {
  const [staticMotion,setStaticMotion] = useState(false);
  const [popup,setPopup] = useState(false);
  const [phone,setPhone] = useState(false);
- const dialog = useRef<HTMLDialogElement>(null), trigger = useRef<HTMLButtonElement|null>(null);
+ const trigger = useRef<HTMLButtonElement|null>(null);
  const [routes,setRoutes] = useState<Route[]>([]);
  const host = useRef<HTMLDivElement>(null), map = useRef<HTMLDivElement>(null);
  const id = useId(), active = systems[selected];
@@ -48,14 +49,6 @@ export function ArchitectureExplorer() {
   update();media.addEventListener('change',update);
   return()=>media.removeEventListener('change',update);
  },[]);
- useEffect(()=>{
-  const element=dialog.current;
-  if(!popup||!element)return;
-  const overflow=document.body.style.overflow;
-  element.showModal();document.body.style.overflow='hidden';
-  return()=>{document.body.style.overflow=overflow;if(element.open)element.close();trigger.current?.focus({preventScroll:true});};
- },[popup]);
-
  // Connect real tile edges, including after font loading, zoom or a responsive reflow.
  useEffect(()=>{
   const element=map.current;
@@ -129,16 +122,9 @@ export function ArchitectureExplorer() {
     <ArchitectureDetail active={active} headingId={`${id}-title`}/>
    </aside>
   </div>
-  <dialog ref={dialog} id={`${id}-dialog`} className="architecture-dialog" aria-labelledby={`${id}-popup-title`} onClose={()=>setPopup(false)} onKeyDown={event=>{
-   if(event.key!=='Tab')return;
-   const controls=[...event.currentTarget.querySelectorAll<HTMLElement>('button,a[href]')];
-   const first=controls[0],last=controls.at(-1);
-   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
-   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
-  }} onClick={event=>{if(event.target===event.currentTarget){const bounds=event.currentTarget.getBoundingClientRect();if(event.clientX<bounds.left||event.clientX>bounds.right||event.clientY<bounds.top||event.clientY>bounds.bottom)setPopup(false);}}}>
-   <div className="architecture-dialog-toolbar"><span>System details</span><button type="button" className="icon-button" aria-label="Close system details" onClick={()=>setPopup(false)}><X size={20} aria-hidden="true"/></button></div>
-   <div className="architecture-dialog-body"><ArchitectureDetail active={active} headingId={`${id}-popup-title`}/></div>
-  </dialog>
+  <DetailsDialog open={popup} onClose={()=>setPopup(false)} trigger={trigger} id={`${id}-dialog`} className="architecture-dialog" labelledBy={`${id}-popup-title`} label="System details">
+   <ArchitectureDetail active={active} headingId={`${id}-popup-title`}/>
+  </DetailsDialog>
   <p className="technology-example-note">Illustrative architecture. Connections represent shared identities and relationships, not a live equipment-control interface.</p>
  </div>;
 }

@@ -7,22 +7,22 @@ import {createSceneHandoff} from '../performance/scene-handoff';
 import {globeCoordinate,globeDuration,globeLinks,globeNodes,globeState,globeTextureYaw} from './network-globe-timeline';
 import type {EngineeredController,SceneMode} from './engineered-hero-renderer';
 import {observeArtworkTuning,artworkDefaults} from './artwork-tuning';
-import {createGlobeEnvelope} from './globe-envelope';
+import {createGlobeEnvelope,createGlobeEnvelopeMaterial,updateGlobeEnvelopeMaterial,globeEnvelopeView} from './globe-envelope';
 
 export async function mountNetworkGlobe(canvas:HTMLCanvasElement,host:HTMLDivElement,onMode:(mode:SceneMode)=>void,signal:AbortSignal):Promise<EngineeredController>{
  const responses=await Promise.all(['/globe/land-points.json','/globe/coastlines.bin'].map(url=>fetch(url,{signal})));if(responses.some(r=>!r.ok))throw Error('Globe geography unavailable');const land:number[]=await responses[0].json(),coast=new Float32Array(await responses[1].arrayBuffer());
  if(signal.aborted)throw new DOMException('Aborted','AbortError');
- const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'}),quality=createRenderQuality(canvas,1.5);
+ const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:new URLSearchParams(location.search).has('scene-capture')}),quality=createRenderQuality(canvas,1.5);
  renderer.setClearColor(0,0);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.setPixelRatio(quality.ratio);
  const resources=new Set<{dispose():void}>(),track=<T extends {dispose():void}>(x:T):T=>{resources.add(x);return x;};
- const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(31,1,.1,40);camera.position.set(0,.3,9.1);camera.lookAt(0,0,0);
+ const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(31,1,.1,40);camera.position.set(0,globeEnvelopeView.cameraY,globeEnvelopeView.cameraZ);camera.lookAt(0,0,0);
  const environment=track(createArtworkEnvironment(renderer));scene.environment=environment.texture;
  const key=new THREE.DirectionalLight(0xf6fbff,3.5);key.position.set(-4,5,6);const fill=new THREE.HemisphereLight(0xc4e6ff,0x122b48,1.2);scene.add(key,fill);addArtworkSoftboxes(scene);
- const tilt=new THREE.Group(),geography=new THREE.Group();tilt.rotation.z=-.12;tilt.add(geography);scene.add(tilt);
+ const tilt=new THREE.Group(),geography=new THREE.Group();tilt.rotation.z=globeEnvelopeView.tiltZ;tilt.add(geography);scene.add(tilt);
  const radius=1.8,bodyMaterial=track(new THREE.MeshPhysicalMaterial({color:0xc2deed,metalness:.2,roughness:.38,clearcoat:.45,clearcoatRoughness:.32,envMapIntensity:.75,transparent:true,depthWrite:true}));
  bodyMaterial.metalness=.03;bodyMaterial.roughness=.72;bodyMaterial.clearcoat=.12;
  const envelope=createGlobeEnvelope(radius*1.16),shellGeometry=track(envelope.surface);
- const shellMaterial=track(new THREE.LineBasicMaterial({color:0x397ba6,transparent:true,opacity:.17,depthWrite:false}));
+ const shellMaterial=track(createGlobeEnvelopeMaterial());
  const shell=new THREE.LineSegments(track(envelope.wire),shellMaterial);shell.name='connected-polygon-envelope';tilt.add(shell);
  // A quiet deposition front precedes the fixed polygon edges; no route arcs return.
  const wavePositions=[],waveSeeds=[];const shellPoints=shell.geometry.attributes.position;
@@ -62,7 +62,7 @@ attribute float aSeed;uniform float uProgress,uTime,uRatio;varying float alpha;v
   renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);canvas.dataset.rotationAngle=state.angle.toFixed(6);canvas.dataset.connectionCount='0';canvas.dataset.connectionStyle='polygon-envelope';canvas.dataset.polygonShell='true';canvas.dataset.landStyle='coherent-surface';canvas.dataset.nodeCount=String(nodes.length);canvas.dataset.connectionsComplete=String(state.done);canvas.dataset.renderedFrames=String(++frames);canvas.dataset.envelopeFormation=state.envelope.toFixed(3);host.dataset.phase=state.done?'settled':time<.7?'establishing':time<2.5?'envelope':'rotating';
  }
  function size(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);camera.aspect=width/height;const fit=Math.max(1,(960/760)/camera.aspect);camera.fov=THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(31)/2)*fit));camera.updateProjectionMatrix();draw();}
- function theme(){const night=dark();shellMaterial.color.setHex(night?0x7ba6ba:0x315c77);shellMaterial.opacity=night?.15:.17;paintLand(night);key.intensity=night?2.1:2.4;fill.intensity=night?.85:1;bodyMaterial.envMapIntensity=night?.35:.4;landMaterial.color.setHex(night?0xa4d9e8:0x1c5d7e);landMaterial.opacity=.12;coastMaterial.color.setHex(night?0xb6cfdd:0x153b55);rimMaterial.uniforms.uAlpha.value=night?.28:.16;nodes.forEach(n=>n.material.color.setHex(night?0xc9f4ff:0x167be0));draw();}
+ function theme(){const night=dark();updateGlobeEnvelopeMaterial(shellMaterial,night);paintLand(night);key.intensity=night?2.1:2.4;fill.intensity=night?.85:1;bodyMaterial.envMapIntensity=night?.35:.4;landMaterial.color.setHex(night?0xa4d9e8:0x1c5d7e);landMaterial.opacity=.12;coastMaterial.color.setHex(night?0xb6cfdd:0x153b55);rimMaterial.uniforms.uAlpha.value=night?.28:.16;nodes.forEach(n=>n.material.color.setHex(night?0xc9f4ff:0x167be0));draw();}
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;host.dataset.running='false';}
  function tick(now:number){frame=0;if(disposed||lost||!visible||document.hidden||paused||frozen)return;time=Math.min(globeDuration,time+(last?Math.min(.1,(now-last)/1000):0));last=now;if(quality.sample(now)){renderer.setPixelRatio(quality.ratio);size();}draw();if(time<globeDuration)frame=requestAnimationFrame(tick);else{stop();onMode('settled');}}
  function schedule(){if(!disposed&&!lost&&!frame&&visible&&!document.hidden&&!paused&&!frozen&&time<globeDuration&&host.dataset.sceneState==='live'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){last=0;host.dataset.running='true';frame=requestAnimationFrame(tick);}}

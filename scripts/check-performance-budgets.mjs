@@ -24,6 +24,24 @@ for(const [source,asset] of Object.entries(assets)) {
   if(buffer.length>200000)failures.push('Artwork exceeds 200 KB: '+source);
   if(asset.smallUrl&&fs.statSync('public'+asset.smallUrl).size>15000)failures.push('Header mark exceeds 15 KB');
 }
+// High-density alternatives are separate from the <=200 KB baseline delivery budget.
+const hd=JSON.parse(fs.readFileSync('lib/scene-hd-posters.json','utf8'));
+for(const [kind,poses] of Object.entries(hd))for(const themes of Object.values(poses))for(const capture of Object.values(themes)){
+ const buffer=fs.readFileSync('public'+capture.url),hash=crypto.createHash('sha256').update(buffer).digest('hex').slice(0,16);
+ if(!capture.url.includes(hash))failures.push('HD poster content hash mismatch: '+kind);
+ if(buffer.length>1200000)failures.push('HD poster exceeds 1.2 MB: '+kind);
+ if(capture.width<900||capture.height<800)failures.push('HD poster is undersized: '+kind);
+}
+const hdOpenings=JSON.parse(fs.readFileSync('lib/scene-hd-openings.json','utf8'));
+for(const [kind,devices]of Object.entries(hdOpenings))for(const themes of Object.values(devices))for(const capture of Object.values(themes)){
+ const buffer=fs.readFileSync('public'+capture.url),hash=crypto.createHash('sha256').update(buffer).digest('hex').slice(0,16);
+ if(!capture.url.includes(hash))failures.push('HD opening hash mismatch: '+kind);
+ if(buffer.length>1200000)failures.push('HD opening exceeds 1.2 MB: '+kind);
+ if(capture.width<600)failures.push('HD opening is undersized: '+kind);
+}
+const lotHD=JSON.parse(fs.readFileSync('lib/lot-hd-posters.json','utf8'));
+function checkLotHD(value){if(!value||typeof value!=='object')return;if(value.url){const buffer=fs.readFileSync('public'+value.url),hash=crypto.createHash('sha256').update(buffer).digest('hex').slice(0,16);if(!value.url.includes(hash)||buffer.length>1200000)failures.push('Invalid HD lot capture: '+value.url);}else Object.values(value).forEach(checkLotHD);}
+checkLotHD(lotHD);
 const dist=process.argv[2]||process.env.NEXT_DIST_DIR||'.next';
 const manifest=JSON.parse(fs.readFileSync(path.join(dist,'app-build-manifest.json'),'utf8'));
 const layout=manifest.pages['/layout']||[];

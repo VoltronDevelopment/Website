@@ -1,68 +1,68 @@
 {
   "technology": {
     "desktop": {
-      "light": "/optimized/scene-technology-opening-light-desktop-3d0abb6c7904e8c4.webp",
-      "dark": "/optimized/scene-technology-opening-dark-desktop-be8194d4f97367d5.webp"
+      "light": "/optimized/scene-opening-technology-desktop-light-39445ca67962b2cc.webp",
+      "dark": "/optimized/scene-opening-technology-desktop-dark-f6dc32a5c6289931.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-technology-opening-light-mobile-29673a0178827513.webp",
-      "dark": "/optimized/scene-technology-opening-dark-mobile-4ce9c710e5c25592.webp"
+      "light": "/optimized/scene-opening-technology-mobile-light-da43e43a6266e385.webp",
+      "dark": "/optimized/scene-opening-technology-mobile-dark-fc3e846eb82e4710.webp"
     }
   },
   "process": {
     "desktop": {
-      "light": "/optimized/scene-process-opening-light-desktop-7f75d0570eccc25f.webp",
-      "dark": "/optimized/scene-process-opening-dark-desktop-7b57b1e4185b02e7.webp"
+      "light": "/optimized/home-process-desktop-light-0-2cf88b44a69456da.webp",
+      "dark": "/optimized/home-process-desktop-dark-0-45eb053b4cdc218a.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-process-opening-light-mobile-8cbdfe96d3cdbc86.webp",
-      "dark": "/optimized/scene-process-opening-dark-mobile-869c752bb8107d54.webp"
+      "light": "/optimized/home-process-mobile-light-0-a03817edf4dc4336.webp",
+      "dark": "/optimized/home-process-mobile-dark-0-bc0066f8d5de19e4.webp"
     }
   },
   "manufacturing": {
     "desktop": {
-      "light": "/optimized/scene-manufacturing-opening-light-desktop-3f9b49a7e2aefe15.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-desktop-6e8e9f7d1165fe15.webp"
+      "light": "/optimized/scene-opening-manufacturing-desktop-light-a92c6b0ff5e2ed73.webp",
+      "dark": "/optimized/scene-opening-manufacturing-desktop-dark-ad814e558a5a4c5f.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-manufacturing-opening-light-mobile-541f9dd1f0913fe3.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-mobile-61bdc4a0749ff839.webp"
+      "light": "/optimized/scene-opening-manufacturing-mobile-light-2a11d0da733f11fb.webp",
+      "dark": "/optimized/scene-opening-manufacturing-mobile-dark-473ec3258f235198.webp"
     },
     "short": {
-      "light": "/optimized/scene-manufacturing-opening-light-short-33796a6defcda8cf.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-short-330a29a305a5796e.webp"
+      "light": "/optimized/scene-opening-manufacturing-short-light-e0859e8fefb8317c.webp",
+      "dark": "/optimized/scene-opening-manufacturing-short-dark-3349634b7d5ee710.webp"
     },
     "tablet": {
-      "light": "/optimized/scene-manufacturing-opening-light-tablet-5038d9765b42e26e.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-tablet-a25806128e3d5d81.webp"
+      "light": "/optimized/scene-opening-manufacturing-tablet-light-8135225b14d61386.webp",
+      "dark": "/optimized/scene-opening-manufacturing-tablet-dark-709b8cdc2bd960cb.webp"
     },
     "tall": {
-      "light": "/optimized/scene-manufacturing-opening-light-tall-ea8ca12e650ffc16.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-tall-7e2f0aa714a79339.webp"
+      "light": "/optimized/scene-opening-manufacturing-tall-light-98f8eaa07876be7d.webp",
+      "dark": "/optimized/scene-opening-manufacturing-tall-dark-4d3048b5c99326c8.webp"
     },
     "mobileTall": {
-      "light": "/optimized/scene-manufacturing-opening-light-mobileTall-b70bd1b7b6399252.webp",
-      "dark": "/optimized/scene-manufacturing-opening-dark-mobileTall-a38a3f145b403b4d.webp"
+      "light": "/optimized/scene-opening-manufacturing-mobileTall-light-2848ce9bace0a840.webp",
+      "dark": "/optimized/scene-opening-manufacturing-mobileTall-dark-e016ec80cff84532.webp"
     }
   },
   "network": {
     "desktop": {
-      "light": "/optimized/scene-network-opening-light-desktop-7e619901bc170a7c.webp",
-      "dark": "/optimized/scene-network-opening-dark-desktop-9440293ae63b86dc.webp"
+      "light": "/optimized/scene-opening-network-desktop-light-2b85d0ad750383ba.webp",
+      "dark": "/optimized/scene-opening-network-desktop-dark-74bf97a624338d8b.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-network-opening-light-mobile-d801faf0781e96df.webp",
-      "dark": "/optimized/scene-network-opening-dark-mobile-c2edf2cf725f85af.webp"
+      "light": "/optimized/scene-opening-network-mobile-light-598fe44f66ab89a3.webp",
+      "dark": "/optimized/scene-opening-network-mobile-dark-ad603795083f1d04.webp"
     }
   },
   "ontology": {
     "desktop": {
-      "light": "/optimized/scene-ontology-opening-light-desktop-1f3c85987f7977ef.webp",
-      "dark": "/optimized/scene-ontology-opening-dark-desktop-4b3cd1b416922a1b.webp"
+      "light": "/optimized/scene-opening-ontology-desktop-light-9e9ba14cb8801b95.webp",
+      "dark": "/optimized/scene-opening-ontology-desktop-dark-593b27114f4739f2.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-ontology-opening-light-mobile-20bc47021a9a6227.webp",
-      "dark": "/optimized/scene-ontology-opening-dark-mobile-968187f14cee479a.webp"
+      "light": "/optimized/scene-opening-ontology-mobile-light-04713b5e2bd53b83.webp",
+      "dark": "/optimized/scene-opening-ontology-mobile-dark-080a96db09483891.webp"
     }
   },
   "about": {
@@ -77,28 +77,28 @@
   },
   "handCulture": {
     "desktop": {
-      "light": "/optimized/scene-handCulture-opening-light-desktop-bd3b30aa851828bc.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-desktop-d62ff526f258df31.webp"
+      "light": "/optimized/scene-opening-handCulture-desktop-light-550bba4e5dc3850a.webp",
+      "dark": "/optimized/scene-opening-handCulture-desktop-dark-58bc23959d87ca8c.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-handCulture-opening-light-mobile-876b15c1c0db1830.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-mobile-a53c479323175779.webp"
+      "light": "/optimized/scene-opening-handCulture-mobile-light-5aa0fb6a06f101cb.webp",
+      "dark": "/optimized/scene-opening-handCulture-mobile-dark-b986bb7f3188feea.webp"
     },
     "short": {
-      "light": "/optimized/scene-handCulture-opening-light-short-16842c699f6e1ae3.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-short-9efd924e6f2c3358.webp"
+      "light": "/optimized/scene-opening-handCulture-short-light-e45580b46efee01c.webp",
+      "dark": "/optimized/scene-opening-handCulture-short-dark-c37cee6c61483e30.webp"
     },
     "tablet": {
-      "light": "/optimized/scene-handCulture-opening-light-tablet-de632cd9803f7f7a.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-tablet-ef664c6616303b85.webp"
+      "light": "/optimized/scene-opening-handCulture-tablet-light-55672a40236981af.webp",
+      "dark": "/optimized/scene-opening-handCulture-tablet-dark-614608ac3a8668b7.webp"
     },
     "tall": {
-      "light": "/optimized/scene-handCulture-opening-light-tall-44027671a9fb0649.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-tall-22eab7d64d7ef5a4.webp"
+      "light": "/optimized/scene-opening-handCulture-tall-light-7b1cdc2ed3989ef0.webp",
+      "dark": "/optimized/scene-opening-handCulture-tall-dark-e146ef7a9349b728.webp"
     },
     "mobileTall": {
-      "light": "/optimized/scene-handCulture-opening-light-mobileTall-a7670ceea6b2a573.webp",
-      "dark": "/optimized/scene-handCulture-opening-dark-mobileTall-8ae5a49409904875.webp"
+      "light": "/optimized/scene-opening-handCulture-mobileTall-light-d2c4034ef8192fca.webp",
+      "dark": "/optimized/scene-opening-handCulture-mobileTall-dark-33af6fb52c7843d1.webp"
     }
   },
   "handPartner": {
@@ -113,12 +113,12 @@
   },
   "commons": {
     "desktop": {
-      "light": "/optimized/scene-commons-opening-light-desktop-bdc8c434fb1492d5.webp",
-      "dark": "/optimized/scene-commons-opening-dark-desktop-3a47bb0c1863f207.webp"
+      "light": "/optimized/scene-opening-commons-desktop-light-56a0b75e3528b219.webp",
+      "dark": "/optimized/scene-opening-commons-desktop-dark-2e3b921ce2240c3e.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-commons-opening-light-mobile-77b1cc52e42e4016.webp",
-      "dark": "/optimized/scene-commons-opening-dark-mobile-b6af6147dab90e15.webp"
+      "light": "/optimized/scene-opening-commons-mobile-light-3e13d023e9ee3f6b.webp",
+      "dark": "/optimized/scene-opening-commons-mobile-dark-e2a7eaffcc645450.webp"
     }
   }
 }

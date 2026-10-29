@@ -49,3 +49,7 @@
 .site-header .brand-lockup{min-width:0;flex-shrink:1}.site-header .brand-wordmark{min-width:0;white-space:normal;overflow-wrap:anywhere}.site-header .site-nav{min-width:0;flex-wrap:wrap}
 .skip-link{top:0;transform:translateY(calc(-100% - 12px));max-width:calc(100vw - 32px)}.skip-link:focus{top:12px;transform:none}
 @media(max-width:359px){.site-header .brand-wordmark{display:none}}
+
+/* Diagram labels must reflow with enlarged text instead of escaping their touch surface. */
+.site-presentation #main-content :is(.technology-node,.ontology-node,.accountable-action button,.owned-plant-cycle button,.context-choices button){min-width:0;white-space:normal;overflow-wrap:anywhere}
+.site-presentation #main-content :is(.technology-node,.ontology-node,.accountable-action button,.owned-plant-cycle button,.context-choices button) :is(span,strong,small){min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.5}

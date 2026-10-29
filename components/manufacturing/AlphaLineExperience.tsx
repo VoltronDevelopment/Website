@@ -1,5 +1,7 @@
 "use client";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
+import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
+import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import { AlphaPlantPoster } from "./AlphaPlantPoster";
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
@@ -37,7 +39,10 @@ export function AlphaLineExperience() {
   const panelTitle = useId();
   const tabsId = useId();
 
+  const motionRevision=useSceneMotion(host);
+  const savedMotion=useRef<{playback:AlphaLineState;paused:boolean}|null>(null);
   useEffect(() => {
+    resetScenePoster(host.current,canvas.current);setReady(false);
     let disposed = false, preparing = true;
     const motion = matchMedia("(prefers-reduced-motion: reduce)");
     const query = new URLSearchParams(location.search);
@@ -47,6 +52,7 @@ export function AlphaLineExperience() {
     const updateMotion = () => {
       setReduced(staticScene());
       if (staticScene()) {
+        if(!savedMotion.current)savedMotion.current={playback:playbackRef.current,paused:pausedRef.current};
         if(host.current&&!controller.current){host.current.dataset.sceneState='fallback';host.current.dataset.fallback='true';host.current.dataset.scenePose='complete';}
         pausedRef.current = true; setPaused(true);
         // Keep a useful still overview for visitors who prefer reduced motion.
@@ -55,10 +61,10 @@ export function AlphaLineExperience() {
           controller.current?.seek("route", 0);
         }
         controller.current?.setPaused(true);
-      }
+      }else if(savedMotion.current){playbackRef.current=savedMotion.current.playback;pausedRef.current=savedMotion.current.paused;setPlayback(playbackRef.current);setPaused(pausedRef.current);savedMotion.current=null;}
     };
     updateMotion(); motion.addEventListener("change", updateMotion);
-    const observer = new IntersectionObserver(async ([entry]) => {
+    const observer = new ScenePreparationObserver(async ([entry]) => {
       if (!entry.isIntersecting || staticScene()) return;
       observer.disconnect();
       if (query.get("renderer") === "static") { if (host.current) host.current.dataset.fallback = "true"; return; }
@@ -88,14 +94,14 @@ export function AlphaLineExperience() {
         const pending=playbackRef.current;
         controller.current.seek(pending.mode, pending.time);
         controller.current.setPaused(pausedRef.current);
-      } catch { if (host.current) host.current.dataset.fallback = "true"; }
-    }, { rootMargin: "180px" });
+      } catch { if (!disposed&&host.current){host.current.dataset.fallback="true";host.current.dataset.sceneState="fallback";markSceneFailure(host.current);} }
+    }, { rootMargin: "450px 0px" });
     if (host.current) observer.observe(host.current);
     const sceneMotionPreference=matchMedia("(prefers-reduced-motion: reduce)");
     const retryScene=()=>{if(!prefersStaticScene()&&!controller.current&&host.current){observer.unobserve(host.current);observer.observe(host.current);}};
     sceneMotionPreference.addEventListener("change",retryScene);
     return () => { sceneMotionPreference.removeEventListener("change",retryScene); disposed = true; observer.disconnect(); motion.removeEventListener("change", updateMotion); controller.current?.dispose(); controller.current = null; };
-  }, []);
+  }, [motionRevision]);
 
   function remember(next: boolean) { pausedRef.current = next; setPaused(next); controller.current?.setPaused(next); }
   function frameStage() { host.current?.closest(".alpha-line-stage")?.scrollIntoView({behavior:reduced ? "auto" : "smooth",block:"start"}); }
@@ -162,7 +168,7 @@ export function AlphaLineExperience() {
         <div className="alpha-line-stage-heading"><span>V-Twin <i aria-hidden="true">/</i> Alpha · 13-tank line</span><span>Demo · {playback.chapter === "route" ? "Plant overview" : paused || !ready || reduced ? "Paused" : "Following lot"}</span></div>
         <div className="alpha-line-art" ref={host} data-ready={ready} role="group" aria-label="Interactive thirteen-tank square-U treatment line" aria-describedby={description}>
           <AlphaPlantPoster/>
-          <canvas ref={canvas} aria-hidden="true"/>
+          <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
           {playback.chapter === "route" && <button type="button" className="button alpha-line-follow" onClick={follow}>Follow a lot <ArrowRight size={16} aria-hidden="true"/></button>}
           {selected && <button type="button" className="alpha-line-complete" onClick={showLine}><Maximize2 size={14} aria-hidden="true"/>Complete line</button>}
         </div>

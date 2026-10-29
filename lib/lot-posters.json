@@ -1,40 +1,40 @@
 {
   "desktop": {
     "light": [
-      "/optimized/lot-desktop-light-1.9-01e726f23506c2cc.webp",
-      "/optimized/lot-desktop-light-4.4-c8f4a9ec3679f31b.webp",
-      "/optimized/lot-desktop-light-7.7-bea3a1e6321e8628.webp",
-      "/optimized/lot-desktop-light-12.4-5bd1b2e6158ac945.webp"
+      "/optimized/home-lot-desktop-light-1.9-f8cf8407a3d7a0c2.webp",
+      "/optimized/home-lot-desktop-light-4.4-7dbf64268e72065f.webp",
+      "/optimized/home-lot-desktop-light-7.7-364fbacc639f7ff2.webp",
+      "/optimized/home-lot-desktop-light-12.4-8538495404396015.webp"
     ],
     "dark": [
-      "/optimized/lot-desktop-dark-1.9-9443e9fc843ae508.webp",
-      "/optimized/lot-desktop-dark-4.4-42b3fa8006ec9daa.webp",
-      "/optimized/lot-desktop-dark-7.7-04891b6c023ae7b6.webp",
-      "/optimized/lot-desktop-dark-12.4-7752b6e798b1780b.webp"
+      "/optimized/home-lot-desktop-dark-1.9-ac82f0827f8c97a2.webp",
+      "/optimized/home-lot-desktop-dark-4.4-24de60dc88f89887.webp",
+      "/optimized/home-lot-desktop-dark-7.7-1b92ff86035ae0be.webp",
+      "/optimized/home-lot-desktop-dark-12.4-ed6d19122181f97c.webp"
     ]
   },
   "mobile": {
     "light": [
-      "/optimized/lot-mobile-light-1.9-ead3ae5db2c87dea.webp",
-      "/optimized/lot-mobile-light-4.4-ec39b87bfe3c2095.webp",
-      "/optimized/lot-mobile-light-7.7-b1da5a0181b47881.webp",
-      "/optimized/lot-mobile-light-12.4-525ab59aefc5ad72.webp"
+      "/optimized/home-lot-mobile-light-1.9-a473123fbec38aa8.webp",
+      "/optimized/home-lot-mobile-light-4.4-e1c019ed6719e46f.webp",
+      "/optimized/home-lot-mobile-light-7.7-ab34be9b442950f5.webp",
+      "/optimized/home-lot-mobile-light-12.4-d419635b620531f6.webp"
     ],
     "dark": [
-      "/optimized/lot-mobile-dark-1.9-aba86a82f6091a58.webp",
-      "/optimized/lot-mobile-dark-4.4-34ce7c4caba4525d.webp",
-      "/optimized/lot-mobile-dark-7.7-3fcd2c3a0cc5c15a.webp",
-      "/optimized/lot-mobile-dark-12.4-f30e4b0539d3637d.webp"
+      "/optimized/home-lot-mobile-dark-1.9-c8f902e323972b96.webp",
+      "/optimized/home-lot-mobile-dark-4.4-f1a11c11c0b0ed5b.webp",
+      "/optimized/home-lot-mobile-dark-7.7-5875e1d520f7989c.webp",
+      "/optimized/home-lot-mobile-dark-12.4-c68ff75f5b998552.webp"
     ]
   },
   "opening": {
     "desktop": {
-      "light": "/optimized/lot-desktop-light-0-3ab9b8c3768e0183.webp",
-      "dark": "/optimized/lot-desktop-dark-0-2b5da8373d558f45.webp"
+      "light": "/optimized/home-lot-desktop-light-0-0b9c639616d3dac9.webp",
+      "dark": "/optimized/home-lot-desktop-dark-0-d76c246bfc1081fd.webp"
     },
     "mobile": {
-      "light": "/optimized/lot-mobile-light-0-46c2e2afe097d20a.webp",
-      "dark": "/optimized/lot-mobile-dark-0-25b4f7568778f614.webp"
+      "light": "/optimized/home-lot-mobile-light-0-65249c9e7636578b.webp",
+      "dark": "/optimized/home-lot-mobile-dark-0-d02019ef017afb7c.webp"
     }
   }
 }

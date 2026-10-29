@@ -5,7 +5,7 @@ import {ScenePoster} from "../performance/ScenePoster";
 
 import { useEffect, useRef } from "react";
 import type { CubeKind, mountCubes } from "./cube-renderer";
-import {canPrepareHomeScene,prepareScene} from "./scene-preparation";
+import {canPrepareHomeScene,prepareScene,scenePreparationPriority} from "./scene-preparation";
 
 function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;active?: boolean;sequence?:number;children?: React.ReactNode}) {
   const motionRevision=useHomeMotion();
@@ -25,7 +25,7 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
           controller.current=mountCubes(canvas.current,host.current,{kind,active:activeRef.current,sequence});
           await controller.current.ready;
         }catch{if(host.current)host.current.style.setProperty("--asset-reveal","1");}
-      },canPrepareHomeScene);
+      },canPrepareHomeScene,()=>scenePreparationPriority(host.current));
     },{rootMargin:kind==="enclosure"?"700px 0px":"300px 0px"});
     if(host.current)observer.observe(host.current);
     const sceneMotionPreference=matchMedia("(prefers-reduced-motion: reduce)");
@@ -34,7 +34,7 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
     return ()=>{sceneMotionPreference.removeEventListener("change",retryScene);disposed=true;cancel?.();observer.disconnect();controller.current?.dispose();controller.current=null;};
   },[kind,sequence,motionRevision]);
   useEffect(()=>{controller.current?.setActive(active);},[active]);
-  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true">{kind==="philosophy"&&<ScenePoster kind="philosophy"/>}<canvas ref={canvas}/>{children}</div>;
+  return <div ref={host} className={`home-cube-scene home-cube-${kind}`} aria-hidden="true">{kind==="philosophy"&&<ScenePoster kind="philosophy"/>}<canvas key={motionRevision} ref={canvas}/>{children}</div>;
 }
 
 export { FactorySystems } from "./FactorySystems";
