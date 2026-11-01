@@ -17,7 +17,7 @@ const chapterOrder: (AlphaLineJourneyChapter | "route")[] = ["route", "loading",
 const compactChapters = ["Load", "Process", "Unload"];
 const clock = (time: number) => `${Math.floor(time / 60)}:${String(Math.floor(time % 60)).padStart(2, "0")}`;
 
-export function AlphaLineExperience() {
+export function AlphaLineExperience({scenarioStage,scenarioStation,onScenarioStation}:{scenarioStage?:number;scenarioStation?:string;onScenarioStation?:(station:string)=>void}={}) {
   const host = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const controller = useRef<AlphaLineController | null>(null);
@@ -84,7 +84,7 @@ export function AlphaLineExperience() {
           onSelect: id => {
             if (disposed) return;
             pausedRef.current = true; setPaused(true); controller.current?.setPaused(true);
-            setSelectedId(id); setGuided(false); controller.current?.setGuided(false); controller.current?.focusStation(id);
+            setSelectedId(id); onScenarioStation?.(id); setGuided(false); controller.current?.setGuided(false); controller.current?.focusStation(id);
           },
           onReady: () => { if (!disposed) {if(host.current)host.current.dataset.fallback='false';setReady(true);} },
           onEnded: () => { if (!disposed) { pausedRef.current = true; setPaused(true); } },
@@ -102,6 +102,14 @@ export function AlphaLineExperience() {
     sceneMotionPreference.addEventListener("change",retryScene);
     return () => { sceneMotionPreference.removeEventListener("change",retryScene); disposed = true; observer.disconnect(); motion.removeEventListener("change", updateMotion); controller.current?.dispose(); controller.current = null; };
   }, [motionRevision]);
+
+  useEffect(()=>{
+    if(scenarioStage===undefined)return;
+    const next=scenarioStage>=2?alphaLineDeviationStateAt(([0,0,0,2,5][scenarioStage]??5)*alphaLineDeviationStepDuration):alphaTourStateAt(scenarioStage===0?0:alphaTourTimeAt(alphaLineChapterPreview("processing")));
+    playbackRef.current=next;setPlayback(next);pausedRef.current=true;setPaused(true);
+    controller.current?.seek(next.mode,next.time);controller.current?.setPaused(true);
+    if(scenarioStation){setSelectedId(scenarioStation);controller.current?.focusStation(scenarioStation);}
+  },[scenarioStage,scenarioStation,ready]);
 
   function remember(next: boolean) { pausedRef.current = next; setPaused(next); controller.current?.setPaused(next); }
   function frameStage() { host.current?.closest(".alpha-line-stage")?.scrollIntoView({behavior:reduced ? "auto" : "smooth",block:"start"}); }

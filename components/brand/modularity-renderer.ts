@@ -22,7 +22,8 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
   const reveal=createLotReveal(root,geometry,own,own,{componentSamples:0,surfaceSamples:matchMedia('(max-width:767px)').matches?1200:1800});materials.forEach(reveal.bind);
   return {root,mesh,materials,reveal};
  };
- const cells=modularityCells.map(createCell),focusCell=createCell(configurationPosition,6);
+ const cells=modularityCells.map(createCell),focusCell=createCell(configurationPosition,6),extensionCell=createCell([-.86,.86,.86],7);
+ extensionCell.mesh.userData.pack=0;
  // Thin configuration panes form from their actual sampled surfaces, using the same reveal.
  const panelSources=Array.from({length:3},(_,i)=>new T.PlaneGeometry(1.9-i*.14,1.6-i*.10,1,1).translate(.2*i,.17*i,1.42+i*.21));
  const panelGeometry=own(mergeGeometries(panelSources)!);panelSources.forEach(geometry=>geometry.dispose());
@@ -53,8 +54,14 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
    const active=index===state.selected+1,glow=active?state.configuration*.075:0;
    cell.materials.forEach(material=>material.emissiveIntensity=material.userData.baseEmissive+glow);
   });
+  extensionCell.root.position.set(-.86,.86+(1-state.descent)*2.1,.86);
+  extensionCell.root.visible=state.extension>0;
+  extensionCell.reveal.update(state.extension,0,time,dark,renderer.getPixelRatio());
+  updateLatticeCellMaterials(extensionCell.materials,dark,[false,false,false,false,false,false]);
+  extensionCell.materials.forEach(material=>material.emissiveIntensity=material.userData.baseEmissive+(state.selected===0?state.configuration*.15:0));
+  host.dataset.detailsReady=String(state.detailsReady);host.dataset.extension=state.extension.toFixed(3);host.dataset.descent=state.descent.toFixed(3);
   configuration.position.fromArray(configurationPosition);
-  const configForm=manual===undefined?state.configuration:transition;
+  const configForm=state.configuration;
   focusCell.root.visible=configForm>0;focusCell.reveal.update(configForm,0,time,dark,renderer.getPixelRatio());
   focusCell.materials.forEach((material,face)=>{material.userData.homeCellTone=cells[state.selected+1].materials[face].userData.homeCellTone;setGlass(material,kinds[face],dark);material.emissiveIntensity+=configForm*.035;});
   focusCell.mesh.userData.pack=state.selected;
@@ -68,13 +75,13 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
  function stop(){cancelAnimationFrame(frame);frame=0;previous=0;}
  function tick(now:number){frame=0;if(disposed||!visible||document.hidden)return;const delta=previous?Math.min((now-previous)/1000,.05):0;previous=now;time=Math.min(MODULARITY_DURATION,time+delta);transition=Math.min(1,transition+delta/1.7);draw();if(needsFrame())frame=requestAnimationFrame(tick);}
  function start(){if(!disposed&&visible&&!document.hidden&&!frame&&needsFrame()){previous=0;frame=requestAnimationFrame(tick);}}
- function resize(){const width=canvas.clientWidth,height=canvas.clientHeight;if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height,span=Math.max(6.2,6.4/aspect);camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();draw();}
+ function resize(){const width=canvas.clientWidth,height=canvas.clientHeight;if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height,span=Math.max(7.7,7/aspect);camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();draw();}
  const resizeObserver=new ResizeObserver(resize),themeObserver=new MutationObserver(draw),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)start();else stop();});resizeObserver.observe(canvas);themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});view.observe(canvas);
  const visibility=()=>document.hidden?stop():start();document.addEventListener('visibilitychange',visibility);
  const raycaster=new T.Raycaster(),pointer=new T.Vector2();
- const hit=(event:MouseEvent)=>{const bounds=canvas.getBoundingClientRect();pointer.set((event.clientX-bounds.left)/bounds.width*2-1,-(event.clientY-bounds.top)/bounds.height*2+1);raycaster.setFromCamera(pointer,camera);const target=raycaster.intersectObjects([...cells.map(cell=>cell.mesh),...(focusCell.root.visible?[focusCell.mesh]:[])],false)[0];return target&&target.object.userData.pack>=0?target:undefined;};
+ const hit=(event:MouseEvent)=>{const bounds=canvas.getBoundingClientRect();pointer.set((event.clientX-bounds.left)/bounds.width*2-1,-(event.clientY-bounds.top)/bounds.height*2+1);raycaster.setFromCamera(pointer,camera);const target=raycaster.intersectObjects([...cells.map(cell=>cell.mesh),extensionCell.mesh,...(focusCell.root.visible?[focusCell.mesh]:[])],false)[0];return target&&target.object.userData.pack>=0?target:undefined;};
  const click=(event:MouseEvent)=>{const target=hit(event);if(target)host.dispatchEvent(new CustomEvent('modularity:select',{detail:target.object.userData.pack}));};
  const hover=(event:MouseEvent)=>{canvas.style.cursor=hit(event)?'pointer':'default';};canvas.addEventListener('click',click);canvas.addEventListener('mousemove',hover);
  resize();
- return {select(index:number){held=false;manual=T.MathUtils.clamp(index,0,4);time=MODULARITY_DURATION;transition=0;stop();draw();start();},dispose(){disposed=true;stop();resizeObserver.disconnect();themeObserver.disconnect();view.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('click',click);canvas.removeEventListener('mousemove',hover);resources.forEach(resource=>resource.dispose());environment.dispose();renderer.dispose();renderer.forceContextLoss();}};
+ return {select(index:number){held=false;manual=T.MathUtils.clamp(index,0,4);time=MODULARITY_DURATION;transition=1;stop();draw();start();},dispose(){disposed=true;stop();resizeObserver.disconnect();themeObserver.disconnect();view.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('click',click);canvas.removeEventListener('mousemove',hover);resources.forEach(resource=>resource.dispose());environment.dispose();renderer.dispose();renderer.forceContextLoss();}};
 }

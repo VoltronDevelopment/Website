@@ -1,0 +1,14 @@
+# Product graph refinement — 1 November 2026
+
+The five digital screens now share fine strokes, consistent node proportions and restrained recorded states. V-MO has slightly more width and a fixed six-record topology centred on the lot. Relevant relationships arrive, draw and receive a single finite internal packet; completed links stay quiet. Surface emphasis no longer uses a bright underline.
+
+A pure digital graph model derives emphasis timing from the operating event clock. External pulses target explicit SVG inlet nodes and finish their travel before the internal relationship draw/response. Close inspection/release events are queued for graph emphasis so one response is not interrupted by the next. There are no independent graph timers or infinite graph effects. Chapter jumps and replay reproduce poses from scene time.
+
+V-MES uses continuous movement with the same segment travel/dwell easing as the physical carrier, plus subdued completion checks. Its end label is Unload, reflecting the production route rather than implying shipment release. V-Twin tracks actual carrier coordinates and retains a local station focus. SCADA draws a time-clipped observation history rather than swapping full paths on a condition change; the historical anomaly remains after recovery. V-AI progressively connects three evidence records before revealing a proposed response and subsequent recorded human-review state.
+
+Mobile product ownership is stable within a chapter rather than switching on every brief parallel event. Manual selection remains available. The graph receives a dedicated full-width row, with a constant screen height and a short crossfade. Text and diagram contrast use the existing pearl/navy palette. Reduced-motion preferences disable interpolation and crossfades.
+
+Verification includes five graph-model tests for arrival/draw/packet ordering, queued response completion, SCADA history, carrier hold/evidence ordering, final stillness and deterministic chapter poses. Existing operating, label/layout, product and modularity checks remain in the focused suite. Responsive browser evidence is stored in .audit-logs/graph-polish-20261101, including all five mobile graphs in light/dark, fixed card height, product details, live held Twin position, advancing SCADA history, completed dispatch and offscreen suspension. This is an illustrative platform simulation, not a live operational UI.
+
+Local preview only. No commit, push or public deployment is included.
+Final refinement: mobile expanded screens fill the reserved width and keep a constant height across product changes. Manual selection overrides the introductory fade so a chosen product is readable immediately. Focused verification totals 25 tests across five files. Final browser evidence is stored in .audit-logs/graph-refined-20261101; earlier evidence remains in .audit-logs/graph-polish-20261101.

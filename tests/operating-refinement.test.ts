@@ -1,0 +1,11 @@
+import {describe,it,expect} from 'vitest';
+import {placeOperatingLabel} from '../components/technology/operating-label-layout';
+import {operatingState,operatingEvents} from '../components/technology/operating-model';
+describe('operating artwork refinement',()=>{
+ it('keeps labels within the artwork and away from occupied reading space',()=>{const bounds={width:390,height:440},first=placeOperatingLabel(160,200,110,44,bounds,[]);expect(first).not.toBeNull();const second=placeOperatingLabel(160,200,110,44,bounds,[first!]);expect(second).not.toBeNull();expect(second).not.toEqual(first);for(const r of [first!,second!]){expect(r.x).toBeGreaterThanOrEqual(12);expect(r.x+r.width).toBeLessThanOrEqual(378);expect(r.y+r.height).toBeLessThanOrEqual(374);}});
+ it('suppresses a label if no safe slot exists',()=>expect(placeOperatingLabel(50,50,150,44,{width:100,height:100},[])).toBeNull());
+ it('keeps one panel continuous across processing and inspection transfers',()=>{for(const boundary of [10,11,14,17,20,24,41,50,58,65,66,67,82]){const a=operatingState(boundary-.0001).part,b=operatingState(boundary+.0001).part;expect(Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)).toBeLessThan(.01);}});
+ it('emits signals only inside a defined event window and ends them in stillness',()=>{for(let t=0;t<90;t+=.1){const state=operatingState(t);if(state.signals.length){expect(operatingEvents.some(([time])=>t>=time&&t<time+2)).toBe(true);state.signals.forEach(signal=>expect(operatingEvents.some(([time,entity,products])=>t>=time&&t<time+2&&entity===signal.entity&&products.includes(signal.product))).toBe(true));}}expect(operatingState(90).signals).toHaveLength(0);});
+ it('reverses into a stationary dock before the doors open and stages material before loading',()=>{expect(operatingState(7).incomingX).toBeLessThan(operatingState(9).incomingX);expect(operatingState(10).incomingX).toBe(operatingState(15).incomingX);expect(operatingState(16).part).toEqual(operatingState(16.4).part);expect(operatingState(21).part.z).toBeLessThan(operatingState(17).part.z);});
+ it('closes cargo doors before outbound movement',()=>{for(let t=62;t<68;t+=.1){expect(operatingState(t).outboundDoor).toBe(0);}expect(operatingState(12).doorOpen).toBe(1);expect(operatingState(19).doorOpen).toBe(0);});
+});
