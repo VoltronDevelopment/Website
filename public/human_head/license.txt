@@ -1,0 +1,11 @@
+Model Information:
+* title:	Human head
+* source:	https://sketchfab.com/3d-models/human-head-41319c63c3d34f7ea6b04bf2b8c092f1
+* author:	ADAMA (https://sketchfab.com/tnshwsh)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Human head" (https://sketchfab.com/3d-models/human-head-41319c63c3d34f7ea6b04bf2b8c092f1) by ADAMA (https://sketchfab.com/tnshwsh) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
