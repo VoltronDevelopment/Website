@@ -17,7 +17,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:capture});renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
  const quality=createRenderQuality(canvas,1.5);renderer.setPixelRatio(quality.ratio);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
  const scene=new T.Scene(),camera=new T.OrthographicCamera(-4,4,3,-3,.1,60),target=new T.Vector3(kind==='about'?.15:0,kind==='about'?1.3:1.02,0);
- camera.position.copy(target).add(new T.Vector3(kind==='about'?6:3.8,kind==='about'?3:2.7,kind==='about'?9:10.5));camera.lookAt(target);
+ camera.position.copy(target).add(new T.Vector3(kind==='about'?7:3.8,kind==='about'?5:2.7,kind==='about'?9:10.5));camera.lookAt(target);
  const environment=createArtworkEnvironment(renderer);scene.environment=environment.texture;addArtworkSoftboxes(scene,target);
  const key=new T.DirectionalLight(0xffffff,3.6);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);Object.assign(key.shadow.camera,{left:-6,right:6,top:6,bottom:-6,near:.1,far:20});key.shadow.bias=-.0003;key.shadow.normalBias=.025;
  scene.add(key,new T.HemisphereLight(0xeef8ff,0x344c65,1.1));const rim=new T.DirectionalLight(0x9bcce9,1.4);rim.position.set(4,4,-5);scene.add(rim);

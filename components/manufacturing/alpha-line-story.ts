@@ -102,9 +102,9 @@ export function alphaLineStory(state: AlphaLineState, view: AlphaLineView): { ro
     const disposition = state.processingComplete ? " Dispatch not started." : "";
     return {
       rows: [
-        { label: "Lot", value: `${alphaLineDemo.lot} · ${alphaLineDemo.part} · quantity ${alphaLineDemo.quantity}` },
+        { label: "Lot", value: alphaLineDemo.lot },
         { label: "Route", value: alphaLineDemo.route },
-        { label: "Connected context", value: `${alphaLineDemo.recipe}. ${alphaLineDemo.dwell}. ${alphaLineDemo.measurements}.` },
+        { label: "Recipe", value: alphaLineDemo.recipe },
         { label: "Evidence", value: step ? step.evidence : `${evidence(state)}${disposition}` },
       ],
     };

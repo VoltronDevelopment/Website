@@ -13,7 +13,7 @@ const apps=[
  {id:'mes',name:'V-MES',kind:'Execution + SCADA',copy:'Coordinate work, machines and production records.',href:'/technology#architecture'},
  {id:'twin',name:'V-Twin',kind:'Process representation',copy:'A part is lowered through prepare, coat and finish.',href:'/manufacturing#explore-alpha'},
  {id:'ai',name:'V-AI',kind:'Agents & skills',copy:'A model, context, skills and tools for one defined task.',href:'/intelligence'},
- {id:'ontology',name:'V-MO',kind:'Manufacturing ontology',copy:'Concepts, rules, entities and relationships, one meaning.',href:'/ontology'},
+ {id:'ontology',name:'V-MO',kind:'Manufacturing ontology',copy:'Concepts, rules, entities and relationships, one meaning.',href:'/technology#operating-platform'},
 ];
 
 const labels:Record<string,string>={

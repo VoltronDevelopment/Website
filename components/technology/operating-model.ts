@@ -84,8 +84,9 @@ export function advanceOperatingClock(time:number,delta:number){
 }
 /** Short, illustrative record digits; never a fabricated process measurement. */
 export function operatingNumericActivity(state:ReturnType<typeof operatingState>){
- const start=state.hold?41:state.scanning?62:-1,end=state.hold?50:state.scanning?65:-1;
- if(start<0)return {opacity:0,columns:['','',''],phase:0};
- const fade=Math.min(1,(state.time-start)/.65,(end-state.time)/.65),evidence=state.time>=44?3:state.time>=43?2:1;
- return {opacity:Math.max(0,fade),phase:state.time-start,columns:[state.hold?'060301':'130301',`00000${evidence}`,state.reviewed?'010101':'010010']};
+ const time=state.time;
+ if(time<2||time>=89)return {opacity:0,columns:['','',''],phase:0};
+ const fade=Math.max(0,Math.min(1,(time-2)/.6,(89-time)/.6));
+ const columns=time<6?['042001','001010','010042']:time<24?['017042','003017','042003']:state.hold?['060301','000003','010010']:time<58?['013003','042006','003013']:time<67?['130301','000003','010101']:['042003','017042','010101'];
+ return {opacity:fade*.8,columns,phase:time-2};
 }

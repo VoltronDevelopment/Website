@@ -11,7 +11,7 @@ export async function yieldToBrowser() {
 }
 
 /** Downgrade only after sustained slow visible frames; never oscillate during a scene. */
-export function createRenderQuality(canvas: HTMLCanvasElement, maximum = 1.5) {
+export function createRenderQuality(canvas: HTMLCanvasElement, maximum = 1.5, slowFrameMs = 25) {
   if(typeof location!=='undefined'&&new URLSearchParams(location.search).get('poster-dpr')==='2')maximum=Math.max(maximum,2);
   let level=0, previous = 0, count = 0, slow = 0;
   let ratio = Math.min(devicePixelRatio || 1, maximum);
@@ -24,7 +24,7 @@ export function createRenderQuality(canvas: HTMLCanvasElement, maximum = 1.5) {
     sample(now: number) {
       const delta = previous ? now - previous : 0; previous = now;
       if (document.hidden || delta > 250 || delta <= 0) { count = slow = 0; return false; }
-      if (delta > 25) slow++;
+      if (delta > slowFrameMs) slow++;
       if (++count < 90) return false;
       const degrade = slow / count > .3 && level < 2;
       count = slow = 0;

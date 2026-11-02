@@ -1,27 +1,21 @@
-import type { Metadata } from "next";
-import { ExternalLink } from "lucide-react";
-import { BrandArt } from "@/components/brand/BrandArt";
-import {CollaborationHero} from "@/components/brand/CollaborationHero";
-import { Hero } from "@/components/brand/Hero";
-import { ContextSelector } from "@/components/brand/ContextSelector";
-import { Action, Intro, Section, SiteShell } from "@/components/brand/SiteShell";
-import { HomeRoadmap } from "@/components/home/HomeRoadmap";
-import { artwork as art } from "@/lib/brand-assets";
-import "../home-surfaces.css";
-import "../supporting-pages.css";
-export const metadata: Metadata = { title: "About Voltron Lattice", description: "An industrial systems company connecting physical production, manufacturing knowledge, digital architecture and human judgment." };
-export default function AboutPage() {
-  return <SiteShell><div className="supporting-page about-page"><Hero principles={["Physical production","Manufacturing knowledge","Human progress"]} eyebrow="About" title="Technology should deepen human progress." illustration={<CollaborationHero kind="about"/>}>Voltron Lattice is building an industrial systems company around physical production, manufacturing knowledge, digital architecture and human judgment.</Hero>
-    <Section white><Intro eyebrow="Our direction" title="Manufacturing is our first application.">We connect physical production, manufacturing knowledge and intelligence through one architecture, beginning on the shopfloor.</Intro><div className="entry-grid">{[
-      ["Physical production", art.execution, "The real economy. On the shopfloor."], ["Manufacturing knowledge", art.context, "Domain expertise. Captured and structured."], ["Intelligence", art.intelligence, "Connected systems. Better decisions."],
-    ].map(([title, family, text]) => <div className="entry capability-entry" key={title}><BrandArt family={family} className="entry-art"/><h3>{title}</h3><p>{text}</p></div>)}</div></Section>
-    <Section><div className="split"><div className="split-copy"><p className="eyebrow">Our people</p><h2>Individual excellence.<br/>Aligned to the whole.</h2><p>Each individual strengthens the whole. The whole creates room for individual growth.</p></div><div><BrandArt family="A03-people-lattice" className="split-art" crop/><ContextSelector label="Connected disciplines" choices={[
-      { title: "Engineering", detail: "Process and plant engineering connect physical requirements with dependable execution." },
-      { title: "Operations", detail: "Operating experience brings the realities of the floor into the shared system." },
-      { title: "Technology", detail: "Digital architecture makes manufacturing context usable across disciplines." },
-    ]}/></div></div></Section>
-    <Section className="about-roadmap-section" id="roadmap"><Intro eyebrow="Proposed decade" title="Capability, then original products, then a trusted brand.">Years count from the start of operations. Each step advances through evidence rather than a calendar promise.</Intro><HomeRoadmap expanded/></Section>
-    <Section white><Intro eyebrow="Leadership" title="Leadership"/><div className="leadership-grid"><div className="leadership-entry"><h3>Omkar Todkar / Founder &amp; CEO</h3><p>IIT Madras / B.Tech + M.Tech</p><a href="https://www.linkedin.com/in/omkar-todkar-65982a73/" target="_blank" rel="noopener noreferrer"><ExternalLink size={18} aria-hidden="true"/>LinkedIn<span className="sr-only"> (opens in a new tab)</span></a></div><div className="leadership-entry"><h3>Chief Operating Officer</h3><p>Profile coming soon</p></div><div className="leadership-entry"><h3>Chief Technology Officer</h3><p>Profile coming soon</p></div></div></Section>
-    <Section><Intro eyebrow="Explore more" title="Two parts of a larger whole.">Our people and our shared knowledge ecosystem extend the company&apos;s mission.</Intro><div className="preview-grid"><article className="page-preview"><BrandArt family="A05-people-culture" className="preview-art"/><h3>People Culture</h3><p>Building the human who builds the system.</p><Action href="/about/people-culture" text>Explore our culture</Action></article><article className="page-preview"><BrandArt family="A05-voltron-commons" className="preview-art"/><h3>Voltron Commons</h3><p>Access, learning and possibility beyond the company.</p><Action href="/about/voltron-commons" text>Explore Voltron Commons</Action></article></div></Section>
-  </div></SiteShell>;
-}
+import type {Metadata} from 'next';
+import {ExternalLink} from 'lucide-react';
+import {CollaborationHero} from '@/components/brand/CollaborationHero';
+import {CultureHelix} from '@/components/brand/CultureHelix';
+import {Hero} from '@/components/brand/Hero';
+import {Action,Intro,Section,SiteShell} from '@/components/brand/SiteShell';
+import {HomeRoadmap} from '@/components/home/HomeRoadmap';
+import {AboutStudy} from '@/components/about/AboutStudy';
+import '../home-surfaces.css';
+import '../supporting-pages.css';
+import './about.css';
+export const metadata:Metadata={title:'About Voltron Lattice',description:'Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice.'};
+export default function AboutPage(){return <SiteShell><div className="supporting-page about-page">
+<Hero principles={['Industrial capability','Human judgment','Shared progress']} eyebrow="About Voltron" title="Building industrial capability. Advancing human possibility." illustration={<CollaborationHero kind="about"/>} primary="Our approach" href="#approach" secondary="Build with us" secondaryHref="/partner">Voltron Lattice brings manufacturing, engineering and connected intelligence together—building dependable operations and the people who advance them.</Hero>
+<Section id="approach"><Intro eyebrow="Connected disciplines" title="One company. Connected disciplines.">Manufacturing is our first application. Physical work, engineering knowledge and connected evidence strengthen one another.</Intro><AboutStudy kind="disciplines"/></Section>
+<Section id="culture"><Intro eyebrow="How we work" title="Depth in the work. Care in the details.">The culture we intend to build begins with everyday choices: understanding the situation, improving the work and taking responsibility for its effects.</Intro><AboutStudy kind="principles"/></Section>
+<Section id="people"><div className="about-growth"><CultureHelix/><div className="about-growth-copy"><p className="eyebrow">People and shared practice</p><h2>Individual excellence.<br/>Shared progress.</h2><p>Each individual strengthens the whole. The whole creates room for individual growth.</p><ol className="about-practice"><li><span>01</span><div><h3>Meaningful work</h3><p>Learn through real problems with a clear purpose.</p></div></li><li><span>02</span><div><h3>Shared practice</h3><p>Make knowledge understandable and useful to others.</p></div></li><li><span>03</span><div><h3>Feedback</h3><p>Question assumptions and improve through evidence.</p></div></li><li><span>04</span><div><h3>Greater responsibility</h3><p>Deepen judgment alongside technical capability.</p></div></li></ol></div></div></Section>
+<Section id="leadership"><div className="about-leadership"><Intro eyebrow="Leadership" title="Accountability begins with people.">An industrial company develops through the decisions its people make and the responsibility they take.</Intro><article className="about-founder"><p className="eyebrow">Founder &amp; CEO</p><h3>Omkar Todkar</h3><p>IIT Madras<br/>B.Tech + M.Tech</p><a href="https://www.linkedin.com/in/omkar-todkar-65982a73/" target="_blank" rel="noopener noreferrer">Connect on LinkedIn<ExternalLink size={16} aria-hidden="true"/><span className="sr-only"> (opens in a new tab)</span></a></article></div></Section>
+<Section className="about-roadmap-section" id="roadmap"><Intro eyebrow="Our long-term direction" title="Build capability. Earn trust. Create original products.">Process capability, connected intelligence and quality establish the foundation. Original products and global competitiveness follow through demonstrated progress. Years count from the start of operations; milestones describe ambitions, rather than calendar promises.</Intro><HomeRoadmap expanded/></Section>
+<Section><Intro eyebrow="Build the next chapter" title="Build with us. Extend what is possible."/><div className="about-destinations"><article><p className="eyebrow">Industrial collaboration</p><h3>Partner With Us</h3><p>Bring a production requirement, factory opportunity or capability you want to develop.</p><Action href="/partner" text>Start a conversation</Action></article><article><p className="eyebrow">Access and learning</p><h3>Voltron Commons</h3><p>Explore a developing direction for learning, participation and possibility beyond the company.</p><Action href="/about/voltron-commons" text>Explore the Commons</Action></article></div></Section>
+</div></SiteShell>;}

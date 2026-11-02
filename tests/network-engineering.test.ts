@@ -1,0 +1,4 @@
+import {describe,it,expect} from 'vitest';
+import * as T from 'three';
+import {bracketStudyGeometry} from '../components/network/bracket-study';
+describe('Approved engineering study geometry',()=>{it('preserves the two mounting bores and the upright bore through extrusion',()=>{const {baseGeo,uprightGeo}=bracketStudyGeometry(),mat=new T.MeshBasicMaterial({side:T.DoubleSide}),base=new T.Mesh(baseGeo,mat),upright=new T.Mesh(uprightGeo,mat);base.updateMatrixWorld();upright.updateMatrixWorld();for(const x of [-1.45,1.45])expect(new T.Raycaster(new T.Vector3(x,3,0),new T.Vector3(0,-1,0)).intersectObject(base)).toHaveLength(0);expect(new T.Raycaster(new T.Vector3(0,1.75,3),new T.Vector3(0,0,-1)).intersectObject(upright)).toHaveLength(0);expect(new T.Raycaster(new T.Vector3(0,1,3),new T.Vector3(0,0,-1)).intersectObject(upright).length).toBeGreaterThan(0);baseGeo.dispose();uprightGeo.dispose();mat.dispose();});});

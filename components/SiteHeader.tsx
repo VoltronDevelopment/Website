@@ -8,7 +8,7 @@ import { ThemeToggle } from "./brand/ThemeToggle";
 import { FounderPreviewControl } from "./FounderPreviewControl";
 
 const links = [["Technology", "/technology"], ["Intelligence", "/intelligence"], ["Manufacturing", "/manufacturing"], ["Network", "/network"]] as const;
-const about = [["About Voltron", "/about"], ["People Culture", "/about/people-culture"], ["Voltron Commons", "/about/voltron-commons"]] as const;
+const about = [["About Voltron", "/about"], ["Voltron Commons", "/about/voltron-commons"]] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();

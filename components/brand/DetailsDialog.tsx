@@ -14,7 +14,7 @@ export function DetailsDialog({open,onClose,trigger,id,labelledBy,children,class
  useEffect(()=>{const media=matchMedia('(max-width:767px)');const resize=()=>{if(!media.matches&&dialog.current?.open)onClose();};media.addEventListener('change',resize);return()=>media.removeEventListener('change',resize);},[onClose]);
  return <dialog ref={dialog} id={id} className={`details-dialog ${className}`} aria-labelledby={labelledBy} onClose={onClose} onKeyDown={event=>{
   if(event.key!=='Tab')return;
-  const controls=[...event.currentTarget.querySelectorAll<HTMLElement>('button,a[href]')].filter(element=>!element.hasAttribute('disabled'));
+  const controls=[...event.currentTarget.querySelectorAll<HTMLElement>('button,a[href],input,select,textarea,summary,[tabindex]')].filter(element=>!element.hasAttribute('disabled')&&element.tabIndex>=0&&element.getClientRects().length>0&&getComputedStyle(element).visibility!=='hidden');
   const first=controls[0],last=controls.at(-1);
   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}

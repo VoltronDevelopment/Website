@@ -13,6 +13,7 @@ export function CultureHelix(){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<Awaited<ReturnType<typeof mountCultureHelix>>|null>(null);
  const [mode,setMode]=useState<SceneMode>('static'),[selected,setSelected]=useState(0);
  const motionRevision=useSceneMotion(host);
+ useEffect(()=>{const node=host.current,parent=node?.closest('.about-growth');if(!node||!parent)return;const sync=()=>{const phase=node.dataset.phase;parent.setAttribute('data-growth-stage',phase==='arriving'?'1':phase==='intertwining'?'2':phase==='connecting'?'3':'4');};const observer=new MutationObserver(sync);observer.observe(node,{attributes:true,attributeFilter:['data-phase']});sync();return()=>observer.disconnect();},[]);
  useEffect(()=>{resetScenePoster(host.current,canvas.current);let disposed=false,loading=false;const abort=new AbortController(),query=new URLSearchParams(location.search),motion=matchMedia('(prefers-reduced-motion: reduce)');
   const still=()=>prefersStaticScene()||query.get('renderer')==='static'||query.get('motion')==='reduced'||query.get('animate')==='0';
   const fallback=()=>{if(host.current){host.current.dataset.scenePose='complete';host.current.dataset.sceneState='fallback';}setMode('static');};

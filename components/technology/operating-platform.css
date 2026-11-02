@@ -27,3 +27,5 @@
 :root[data-artwork-motion=off] .operating-numeric-layer{display:none}
 .operating-numeric-column{height:120px;gap:0;transition:none}.operating-numeric-column span{height:10px;line-height:10px;flex-shrink:0}
 @media(max-width:767px){.operating-numeric-column{height:108px}.operating-numeric-column span{height:9px;line-height:9px}}
+.operating-playback-bar{display:flex;gap:16px;align-items:center;padding:0 20px 14px}.operating-playback-bar .operating-timeline{flex:1;padding:0!important;min-width:0}.operating-playback-bar .operating-transport{flex-shrink:0;flex-direction:row}.operating-record-picker .operating-picker-label{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden;white-space:nowrap}.operating-tools{justify-content:flex-end}.operating-description .operating-chain{margin-top:12px;margin-bottom:0}
+@media(max-width:767px){.operating-playback-bar{gap:10px;padding-inline:14px}.operating-playback-bar .operating-timeline>span{position:absolute;clip-path:inset(50%);height:1px;width:1px;overflow:hidden}.operating-tools{justify-content:flex-end!important}.operating-caption{padding-bottom:6px!important}}
