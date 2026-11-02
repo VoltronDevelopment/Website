@@ -106,7 +106,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
     shadow.visible = cubeForm > 0.2;
     (shadow.material as THREE.MeshBasicMaterial).opacity = cubeForm * (dark ? 0.42 : 0.28);
     canvas.dataset.scanHorizontal = state.scans.horizontal.strength.toFixed(4);
-    canvas.dataset.scanVertical = "0.0000";
+    canvas.dataset.scanVertical = state.scans.vertical.strength.toFixed(4);
     canvas.dataset.formationParticles = String(headCount);
     canvas.dataset.particleMotion = "surface-particles";
     canvas.dataset.hologram = "soft-volume";canvas.dataset.ambientParticles="360";

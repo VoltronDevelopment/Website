@@ -1,0 +1,43 @@
+# Intelligence specialist section — fluid agents
+
+The approved sharp-edged cube study now supplies the common material system for all six specialist agents. Each interior is a ray-marched procedural colour volume; there are no diagram meshes inside the agents. This is an authored fluid appearance, rather than a physical liquid solver.
+
+KAVO uses broad folds and measured circulation. RIXA uses higher-frequency, narrow contours. MEKO uses slower radial circulation, a displaced low-density pocket and deeper colour. ZILO uses elongated, vertically layered streams with directional advection. SARO uses radius-dependent spiral coordinates and inward-looking contour accumulation. TEYO uses a moving eddy centre and interacting, modulated folds. Their clocks have separate phases and rates. Agent selection briefly increases internal activity without restarting the shared timeline.
+
+All agents share the same unrounded box geometry, camera, studio environment and face-material arrangement. Top, side and front faces have separate tints and opacity. A clear boundary fade separates the fluid volume from the outer glass. The front remains readable; edge highlights and a more reflective top establish containment.
+
+The specialist section uses a three-column desktop gallery and a two-column phone gallery. Desktop selection updates a larger live cube and its question, action and evidence records. Intentional phone selection opens a native dialog with the selected live cube and details. Dialog dismissal restores native focus. The background gallery stops drawing while the dialog is open.
+
+One WebGL context serves all six gallery previews and the enlarged desktop view using scissor rectangles. Only on-screen rectangles render. Motion is capped at 30 frames per second, pauses offscreen and in hidden tabs, and holds under reduced motion. A mobile dialog creates one additional context only while open. Resize, theme and motion subscriptions are disposed with GPU resources. Gallery context loss reveals the CSS fallback; restoration resumes the scene.
+
+Local review: `/intelligence#specialists`. The comparison study at `/intelligence?study=fluid-cube` provides all six agents and front/three-quarter views. Both remain under the existing server-side access gate. No external shader code, textures or libraries were added.
+
+Validation: 13 focused tests; eight responsive theme/viewport combinations at 360, 768, 1024 and 1440 pixels; all six live selections; mobile live dialog; continuous ambient time, offscreen suspension and reduced-motion hold. Ignored browser evidence lives under `.audit-logs/fluid-agents`.
+
+## Value, motion and texture refinement
+
+Agent palettes now have separate value ranges: pale pearl/cobalt KAVO, clear dark-blue/icy RIXA, smoked navy/steel MEKO, saturated cobalt/cyan ZILO, translucent cyan/pearl SARO and indigo/cyan TEYO. Relative motion rates are shared by gallery, desktop enlargement, mobile detail and study views: 0.6 / 0.8 / 0.4 / 1.5 / 1.0 / 0.85. The volume shader adds restrained background haze only to MEKO and TEYO. Fine deterministic GPU particles follow spiral gathering paths in SARO, limited contour responses in RIXA, sparse suspension in KAVO and short directional streaks in ZILO. Each particle remains within the enclosure. The palette refinement was reviewed in both themes at card size, and responsive interaction plus offscreen/reduced-motion checks were repeated.
+
+The subsequent intensity pass increases the shared per-agent motion rates to 1.5 / 1.9 / 1.0 / 3.3 / 2.3 / 2.0 (roughly 2.2–2.5 times the previous rates), strengthens domain warping from 2.4 to 3.25, and adds smoothly travelling palette regions. Pale blue/pearl, ice/cobalt, navy/teal, royal blue/cyan, turquoise/pearl and indigo/cyan retain their individual value ranges. This also accelerates the particles because they use the same internal clock.
+## Connected investigation — 2 November 2026
+
+The Intelligence page now follows one shared illustrative coating-lot investigation from specialist collaboration into V-AI and human review. Home/Technology layout, global navigation and background remain intact. The portrait retains its existing formation and orthogonal scans; hero actions now lead to evidence and specialists.
+
+Six permanent presets in `agent-presets.ts` own palette, texture family, flow direction, seed, particle density and haze. Activity changes flow without replacing identity. The gallery and investigation each use a single lazy scissored renderer; visibility and reduced-motion policies suspend continuous work. A waiting agent freezes its internal field. Sparse contained particles use the same shader clock.
+
+`scenario.ts` defines reproducible absolute-time tasks and handoffs. KAVO establishes context; SARO gathers records; ZILO and MEKO compare independently; RIXA associates quality evidence; TEYO assembles the next check. The calibration variation stops quality at 18 seconds after the independent checks complete. Providing the record resumes quality and then investigation. The 28-second outcome explicitly awaits human review. This is demonstration data and issues no plant command.
+
+`InvestigationProvider` connects simulation and V-AI review state. Pause, one-second step, speed, reset and advance-to-outcome operate on the scenario clock separately from ambient shader motion. Connector pulses follow measured node edges and the actual message events. Record counts, task tracks and the last three events explain activity without invented confidence metrics.
+
+On phones one readable cube sits above six compact selectors; selecting opens native modal details and pauses scenario playback. Tablet details move below the open artwork. Desktop uses a parallel diagram and selected reading surface. Keyboard focus returns through native dialog behaviour. Details and controls remain usable if WebGL fails.
+
+Verification: 17 tests passed covering scenario dependency/waiting/replay, preset identity, portrait scans and shared product identity. Browser checks passed at 360, 768, 1024 and 1440 pixels in both themes: no horizontal overflow; six selectors; missing-record supply, completion, review and reset; mobile dialog; live pause/step; no page or shader errors. Visual captures inspected for gallery, investigation and phone layout. Production build succeeds; initial Intelligence JavaScript is approximately 130 KB and the existing performance budgets pass. Local preview: http://127.0.0.1:3370/intelligence#investigation. No publication is included in this pass.
+## Fluid-to-particle activity choreography — 2 November 2026
+
+The six gallery agents now repeat staggered 24-second demonstrations: original fluid identity, three-second formation, role-specific activity, resolution, four-second dispersal and a quiet fluid interval. Four-second offsets keep at most three strongly formed targets simultaneously. Selection retains cycle progress. A separate activity label explains the current demonstration.
+
+`agent-motion.ts` defines bounded quintic envelopes and a critically damped transition spring. Persistent particle IDs use the same procedural field as the raymarched volume. Their bounded circulating positions converge through a tangential approach into ordered layers (KAVO), an inspection volume with orthogonal scan sheets (RIXA), layered history rings (MEKO), aligning twin streams (ZILO), gathered evidence clusters (SARO) and connected clusters/organized volume (TEYO). Residual fluid remains during formation. The same particles return to the current, with no reseeding, face wrapping or geometry swapping. This is authored shader motion, not a numerical fluid solver.
+
+Scenario agents use task activity and progress rather than gallery loops. Waiting retains its structure with a frozen field; completed tasks relax to fluid. Interrupted transitions retain spring position and velocity. Reduced motion snaps to a representative arrangement; data saving retains the existing fallback. Mobile uses 896 particles versus 1536 desktop. No external package, model or copied Thinking Orbs code is added.
+
+Verification includes five additional tests for cycle seam continuity, bounded transition rates, staggered emphasis, interrupted settling and task mapping. All 22 relevant tests pass. A complete live cycle was captured and inspected, including selection, both themes, offscreen suspension and shader errors. Eight responsive/theme combinations passed scenario and modal checks. The production route remains approximately 131 KB initial JavaScript. Latest local preview: http://127.0.0.1:3380/intelligence#specialists.

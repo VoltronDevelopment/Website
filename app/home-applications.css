@@ -1,6 +1,6 @@
-html:has(.home-page),html:has(.home-page) *{scrollbar-width:none}
-html:has(.home-page){scrollbar-gutter:auto;overflow-x:clip}
-html:has(.home-page)::-webkit-scrollbar,html:has(.home-page) *::-webkit-scrollbar{display:none;width:0;height:0}
+
+html:has(.home-page){overflow-x:clip}
+
 .home-page{overflow-x:clip}
 .application-previews{position:relative;--app-sticky:96px;--app-pin-height:min(700px,calc(100svh - var(--app-sticky) - 16px))}
 .application-stage{position:relative}.application-pin{min-width:0}.application-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}

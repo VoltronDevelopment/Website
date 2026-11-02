@@ -59,11 +59,11 @@ export function TechnologyConfiguration(){
    </div>
    <aside className="module-insight" id={`${id}-detail`} aria-label="Selected process pack" aria-live={pending.current===undefined?'off':'polite'} aria-atomic="true">{detailsReady?<ProcessDetail index={selected} titleId={`${id}-title`}/>:<div className="module-waiting"><Box size={32}/><p>One foundation.<br/>A new process plugs in.</p></div>}</aside>
   </div>
-  <ol className="modularity-layers" aria-label="Three layers of modularity">{[
+  <details className="module-foundation-details"><summary>Shared core, process pack and factory configuration</summary><ol className="modularity-layers" aria-label="Three layers of modularity">{[
    {title:'Shared core',text:'Common identities, relationships, traceability and governance.',Icon:Boxes},
    {title:'Process pack',text:'Operations, resource context, parameters and quality requirements.',Icon:Box},
    {title:'Factory configuration',text:'Local equipment, integrations, roles and workflows.',Icon:Settings2},
-  ].map(({title,text,Icon},index)=><li key={title} data-active={stage===index}><Icon size={23} aria-hidden="true"/><div><h3>{title}</h3><p>{text}</p></div></li>)}</ol>
+  ].map(({title,text,Icon},index)=><li key={title} data-active={stage===index}><Icon size={23} aria-hidden="true"/><div><h3>{title}</h3><p>{text}</p></div></li>)}</ol></details>
   <div className="modularity-footnote"><p>Process families shown are illustrative. Coverage and configuration are defined for each implementation.</p><Link href="/manufacturing">See a manufacturing example<ArrowRight size={16} aria-hidden="true"/></Link></div>
   <DetailsDialog open={popup} onClose={()=>setPopup(false)} trigger={trigger} id={`${id}-dialog`} labelledBy={`${id}-popup-title`} label="Process details" className="modularity-dialog"><ProcessDetail index={selected} titleId={`${id}-popup-title`}/></DetailsDialog>
  </div>;

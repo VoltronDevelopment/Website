@@ -1,4 +1,5 @@
 "use client";
+import {AgentPreview} from './AgentPreview';
 import {useHomeMotion} from './HomeMotion';
 import Link from 'next/link';
 import {prefersStaticScene} from '../performance/scene-policy';
@@ -80,7 +81,7 @@ export function ApplicationPreviews(){
   };
   const stop=()=>{cancelAnimationFrame(frame);frame=0;previous=0;};
   const place=()=>{
-   if(calm){cards.forEach(card=>{card.style.transform='';card.style.opacity='1';card.inert=false;});return;}
+   if(calm){cards.forEach((card,i)=>{const active=i===Math.round(progress);card.hidden=!active;card.inert=!active;card.style.transform='';card.style.opacity='1';});return;}
    const index=Math.round(progress),narrow=stage.clientWidth<520,radius=Math.min(730,Math.max(narrow?560:350,stage.clientWidth*(narrow?1.7:.63)));
    cards.forEach((card,i)=>{
     const delta=i-progress,pose=convexCardPose(delta,radius),active=i===index;
@@ -101,7 +102,7 @@ export function ApplicationPreviews(){
   };
   const start=()=>{if(!calm&&!document.hidden&&!frame&&!disposed){previous=0;frame=requestAnimationFrame(tick);}};
   choose.current=i=>{
-   if(calm){root.dataset.focus=String(i);setFocus(i);cards.forEach((card,n)=>card.toggleAttribute('data-focused',n===i));return;}
+   if(calm){progress=i;root.dataset.focus=String(i);setFocus(i);place();return;}
    seekFrom=progress;seekTo=i;seekU=0;mode='seek';playing=i;states[i].time=0;direction='forward';start();
   };
   root.dataset.arc=calm?'off':'on';states.forEach(paint);place();
@@ -114,7 +115,7 @@ export function ApplicationPreviews(){
   observer.observe(stage);
   const sizing=new ResizeObserver(()=>place());sizing.observe(stage);
   const visibility=()=>{if(document.hidden)stop();else start();};document.addEventListener('visibilitychange',visibility);
-  return()=>{disposed=true;stop();observer.disconnect();sizing.disconnect();document.removeEventListener('visibilitychange',visibility);cards.forEach(card=>{card.inert=false;});};
+  return()=>{disposed=true;stop();observer.disconnect();sizing.disconnect();document.removeEventListener('visibilitychange',visibility);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
  },[motionRevision]);
- return <div className="application-previews" ref={host} data-focus={focus}><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>choose.current(i)}>{app.name}</button>)}</div><div className="application-grid">{apps.map(app=><article className="application-screen" data-kind={app.id} data-tone={app.id==='twin'||app.id==='ai'?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div><span className="preview-demo">Concept view</span></header><div className="application-diagram"><Diagram kind={app.id}/></div><div className="preview-state" aria-hidden="true"><span className="preview-status-light"/>{phaseLabels[app.id].map((label,step)=><span data-step={step} key={label}>{label}</span>)}<span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div><p className="application-disclaimer">Illustrative interfaces and sample process data.</p></div>;
+ return <div className="application-previews" ref={host} data-focus={focus}><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>choose.current(i)}>{app.name}</button>)}</div><div className="application-grid">{apps.map(app=><article className="application-screen" data-kind={app.id} data-tone={app.id==='twin'||app.id==='ai'?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div><span className="preview-demo">Concept view</span></header><div className="application-diagram">{app.id==='ai'?<AgentPreview/>:<Diagram kind={app.id}/>}</div><div className="preview-state" aria-hidden="true"><span className="preview-status-light"/>{phaseLabels[app.id].map((label,step)=><span data-step={step} key={label}>{label}</span>)}<span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div><p className="application-disclaimer">Illustrative interfaces and sample process data.</p></div>;
 }

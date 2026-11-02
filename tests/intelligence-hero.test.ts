@@ -3,13 +3,13 @@ import {describe,expect,it} from "vitest";
 import {intelligenceHeroDuration,intelligenceHeroState} from "../components/brand/intelligence-hero-timeline";
 import {intelligenceScanState} from '../components/brand/intelligence-hero-timeline';
 import {createPortraitScans} from '../components/brand/portrait-scans';
-it('crosses the formed head with one horizontal sheet and clears it before the turn',()=>{
- const scans=createPortraitScans();scans.update(6.9,false);
- expect(scans.group.children).toHaveLength(1);
+it('crosses the formed head with two sequential sheets and clears it before the turn',()=>{
+ const scans=createPortraitScans();scans.update(6.65,false);
+ expect(scans.group.children).toHaveLength(2);
  const sheet=scans.group.children[0];
  expect(sheet.visible).toBe(true);expect(sheet.rotation.x).toBeCloseTo(-Math.PI/2);expect(sheet.position.y).toBeCloseTo(2.34);
- for(const t of [0,6.2,7.6,13,Infinity,NaN]){scans.update(t,false);expect(scans.group.children.every(plane=>!plane.visible)).toBe(true);}
- for(let t=0;t<=13;t+=.05){const s=intelligenceScanState(t);expect(s.vertical.strength).toBe(0);expect(s.horizontal.strength*s.vertical.strength).toBe(0);}
+ for(const t of [0,6.2,7.1,8.1,13,Infinity,NaN]){scans.update(t,false);expect(scans.group.children.every(plane=>!plane.visible)).toBe(true);}
+ for(let t=0;t<=13;t+=.05){const s=intelligenceScanState(t);expect(s.horizontal.strength*s.vertical.strength).toBe(0);}
  scans.group.traverse(o=>{const m=o as import('three').Mesh;m.geometry?.dispose();if(m.material)(Array.isArray(m.material)?m.material:[m.material]).forEach(v=>v.dispose());});
 });
 it('uses denser finite formation samples without changing other sculpture defaults',async()=>{
@@ -19,17 +19,17 @@ it('uses denser finite formation samples without changing other sculpture defaul
  for(const s of [normal,desktop,mobile]){const points=s.group.children[1] as import('three').Points;expect(Array.from(points.geometry.getAttribute('position').array).every(Number.isFinite)).toBe(true);s.dispose();}
 });
 describe("Hologram choreography",()=>{
- it("gathers the cube, opens the square beam, forms the head, scans once, then turns twice",()=>{
+ it("gathers the cube, opens the square beam, forms the head, scans twice, then turns twice",()=>{
   expect(intelligenceHeroDuration).toBe(13);
   const start=intelligenceHeroState(0);expect(start.cube).toBe(0);expect(start.beam).toBe(0);expect(start.head).toBe(0);expect(start.yaw).toBe(0);
   const cube=intelligenceHeroState(1.6);expect(cube.cube).toBeCloseTo(1);expect(cube.beam).toBe(0);expect(cube.head).toBe(0);
   const beam=intelligenceHeroState(2.8);expect(beam.beam).toBeCloseTo(1);expect(beam.head).toBe(0);
   const formed=intelligenceHeroState(6.2);expect(formed.head).toBeCloseTo(1);expect(formed.scans.horizontal.strength).toBe(0);expect(formed.yaw).toBe(0);
-  expect(intelligenceHeroState(6.9).scans.horizontal.strength).toBeCloseTo(1);expect(intelligenceHeroState(6.9).yaw).toBe(0);
-  const turning=intelligenceHeroState(7.6);expect(turning.scans.horizontal.strength).toBe(0);expect(turning.yaw).toBe(0);
+  expect(intelligenceHeroState(6.65).scans.horizontal.strength).toBeCloseTo(1);expect(intelligenceHeroState(6.65).yaw).toBe(0);
+  const turning=intelligenceHeroState(8.1);expect(turning.scans.horizontal.strength).toBe(0);expect(turning.yaw).toBe(0);
   const mid=intelligenceHeroState(9.9);expect(mid.yaw).toBeGreaterThan(0);expect(mid.yaw).toBeLessThan(Math.PI*4);
   expect(intelligenceHeroState(12.2).yaw).toBeCloseTo(Math.PI*4);
-  let previous=0;for(let t=0;t<=13;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);expect(s.scans.vertical.strength).toBe(0);previous=s.formation;}
+  let previous=0;for(let t=0;t<=13;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);previous=s.formation;}
  });
  it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.yaw).toBeCloseTo(Math.PI*4);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
 });

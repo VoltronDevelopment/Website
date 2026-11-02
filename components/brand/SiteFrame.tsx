@@ -4,6 +4,7 @@ import type {ReactNode} from 'react';
 import {SiteHeader} from '@/components/SiteHeader';
 import './presentation.css';
 import './interaction-finish.css';
+import './layout-polish.css';
 
 /** Marketing chrome persists across client navigation; each page still checks access server-side. */
 export function SiteFrame({children,footer}:{children:ReactNode;footer:ReactNode}){
