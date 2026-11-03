@@ -5,11 +5,11 @@ const actions=['Organizing checks','Scanning evidence','Examining history','Comp
 export function galleryFormation(time:number,agent:number):AgentFormation{
  const t=((time+agent*4)%24+24)%24;
  const amount=ease((t-6)/3)*(1-ease((t-17)/4));
- return {amount,arrangement:ease((t-12)/3),resolve:ease((t-15)/2),label:amount<.025?'Fluid identity':t<9?'Forming from flow':t<15?actions[agent]:t<17?'Resolving evidence':'Returning to flow'};
+ return {amount,arrangement:ease((t-12)/3),resolve:ease((t-15)/2),label:amount<.025?'Ready to investigate':t<9?'Preparing evidence':t<15?actions[agent]:t<17?'Resolving evidence':'Ready for the next question'};
 }
 export function taskFormation(activity:number,progress:number,agent:number):AgentFormation{
  if(activity<0)return {amount:.8,arrangement:.3,resolve:0,label:'Waiting for evidence'};
- if(activity===0)return {amount:0,arrangement:1,resolve:1,label:progress>=1?'Complete · fluid identity':'Fluid identity'};
+ if(activity===0)return {amount:0,arrangement:1,resolve:1,label:progress>=1?'Complete · fluid identity':'Ready to investigate'};
  return {amount:1,arrangement:ease((progress-.35)/.35),resolve:ease((progress-.8)/.2),label:actions[agent]};
 }
 /** Exact critically damped spring; bounded dt prevents a hidden tab causing a leap. */

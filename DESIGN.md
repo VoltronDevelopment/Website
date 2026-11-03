@@ -425,3 +425,39 @@ Retain the six sharp glass enclosures and fluid presets. Gallery demonstrations 
 ## Shared responsive layout — 2 November 2026
 
 Home, Technology and Intelligence use `layout-polish.css`, scoped to those three route bodies. Preserve shared scrollbar reservation, compact phone hero stages, balanced section headings, adjacent desktop specialist details, phone detail sheets and expandable supporting explanations. Home's convex application motion remains; reduced motion and initial rendering show one accessible manual selection. The V-AI preview reuses the actual Intelligence material. Technology screens, labels and physical scene share a compact visual hierarchy; labels retain 44px targets. See `docs/layout-release-2026-11-02.md` for verification.
+
+## Factory screen diagram alignment — 2 November 2026
+
+`screen-diagrams.ts` defines V-MO block centres, ports and routes, plus V-AI evidence rows and split/merge ports. Keep all animated paths on that same geometry. Preserve V-MO symmetry around the lot and V-AI's three evenly spaced parallel evidence checks. The factory has one Inspect records selector, combined playback/timeline controls, and supporting relationship text under Operation details. Plain rising digit columns remain in the factory-to-screen gap; the cube-carrier proposal was rejected. Work remains local until publication is explicitly requested again.
+
+## Manufacturing connected story — 2 November 2026
+
+Manufacturing follows `docs/manufacturing-story-2026-11-02.md`: shared first-three-page proportions, an open plant stage, concise selective-glass inspection, state-derived connected records, six selectable exception steps, four validation diagrams and one conceptual mounting-bracket surface study for three process choices. Preserve the approved physical route/camera, original hero and explicit pending quality disposition. Phone inspection opens only on direct interaction; supporting diagrams add no WebGL context. Publication remains cancelled.
+
+## Network physical factory story — 2 November 2026
+
+Network follows `docs/network-factory-story-2026-11-02.md`. Preserve the approved globe; the body now uses a shared detailed cutaway factory kit for owned operations, partnership assembly, reviewed capability transfer across three sites and a future engineering-development study. The factory materials and studio lighting follow Technology. Keep absolute-time stage selection, local particle formation, reserved digital panels, orthogonal connections, focused phone views, native 2x/3x fallback captures and the explicit future/illustrative qualifications. Publication remains cancelled.
+
+Network's physical continuity refinement uses one supported component and independent operation intervals; connector endpoints derive from screen ports and signals follow their orthogonal paths with acknowledgements. Shared quality-scan optics, stateful mini-screen diagrams, mobile location navigation and overlapping camera transitions replace abrupt stage changes. Installation/prototype formation uses local particle windows; formation sampling and idle update costs are reduced. See the follow-up in `docs/network-factory-story-2026-11-02.md`.
+
+## Distinct Network artwork concepts — 2 November 2026
+
+`docs/network-distinct-artworks-2026-11-02.md` supersedes the repeated factory composition. Network now has an enriched operating facility, a dedicated architectural plan-to-factory assembly, a quality-workflow workspace between different industrial cells and an exploded engineering study using the exact approved Manufacturing bracket profiles. Maintain shared optics and layout but preserve these distinct scene structures and motion languages. Phone has authored close-ups. Native fallbacks cover each new composition. Nothing published.
+
+## Completed plant and shared globe envelope — 2 November 2026
+
+`docs/network-construction-envelope-2026-11-02.md` supersedes the earlier partnership/capability-workspace scenes. Partnership now constructs a plant in six stages, closes its roof and ends with localized foundation/glazing glow. Shared Architecture now contains five smaller factory sites within the exact 270-edge globe envelope; signals follow its real vertices/edges. Preserve the six-stage absolute-time models, subdued shell, bounded mobile close-ups, current owned/engineering artwork and high-resolution fallbacks. Nothing published.
+
+The latest Shared Architecture scene supersedes the enclosing shell: factories form in an isometric ground network, with a smaller exact globe mesh raised above them and connected to every site. Its subdued visible-only pulse continues after introduction while the story clock stays fixed. Preserve the clear roof-to-hub gap and offscreen/static suspension. See the latest follow-up in `docs/network-construction-envelope-2026-11-02.md`.
+
+Shared Architecture now has wider factory spacing verified in isometric projection. Hub links use distinct equatorial ports and a common lower routing level; the same hero mesh has localized pulse strokes tuned for mobile readability. Preserve the latest ground/site coordinates and clear hub gap. See the equatorial-routing follow-up in `docs/network-construction-envelope-2026-11-02.md`.
+
+Network refinement review: `docs/network-refinement-review-2026-11-02.md` records the intended-30fps quality threshold, continuous booth sweep, receiving-door timing, orthogonal construction utility routes and staged axial engineering assembly. Keep the complete phone bench framing and hide assembly guides after seating. Body renderers allow DPR 2 but adapt on sustained slow frames. All native fallbacks follow the updated artwork. Work remains local.
+
+## About consolidation — 2 November 2026
+
+Follow `docs/about-story-2026-11-02.md`. About contains people/culture, three retained stair walkers, shared-component disciplines, selectable working principles, CultureHelix, verified founder information and the expanded roadmap. Keep Commons and Partner separate. Legacy Culture and ontology routes redirect to About culture and Technology operating-platform respectively. New workspaces reuse approved bracket geometry and the Network studio/material system; phone shows a focused selected station. Finite visible-only formation, native theme/device fallbacks and accessible text preserve meaning across motion modes. Nothing published.
+
+About human-centred revision: working principles uses the approved head with an abstract open crown and eight alternating clear/smoked glass cells. Their final circle encloses the entire head, following the user correction. Keep the five distinct internal actions, quintic separation, unblocked face, single-component disciplines scene, higher stair camera and DNA-to-practice highlighting. See the latest About story record. No publication.
+
+About capability refinement: eight named capabilities occupy an exact camera-facing circle around the head. Use sharp faces and edges derived from the same geometry, shared Home per-face glass, stable-size selection and projected labels. Phone/static modes show capability selectors. Principles activate related capabilities only after introduction; keep interior motion bounded. Head forms at final scale and retains its true clipped cross-section. See the About story record.

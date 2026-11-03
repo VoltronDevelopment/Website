@@ -1,14 +1,19 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import { CollaborationHero } from "@/components/brand/CollaborationHero";
-import { Hero } from "@/components/brand/Hero";
-import { Section, SiteShell } from "@/components/brand/SiteShell";
-import { PartnerFormsSection } from "@/components/home/PartnerFormsSection";
-import "../supporting-pages.css";
-export const metadata: Metadata = { title: "Partner With Us", description: "Start a production inquiry or explore factory partnerships, platform collaboration and Voltron Commons." };
-export default function PartnerPage() {
-  return <SiteShell><div className="supporting-page partner-page"><Hero artSide="left" principles={["Production programs", "Factory partnerships", "Shared progress"]} eyebrow="Partner with us" title="Start with what you are building." illustration={<CollaborationHero kind="partner"/>} primary="Production programs" href="#production" secondary="Partnership & JV" secondaryHref="#partnership">Bring a production requirement, a factory opportunity or an industrial capability you want to develop.</Hero>
-    <Section white><Suspense fallback={<div className="form-grid" aria-busy="true" aria-live="polite"><div className="inquiry-panel"><p className="eyebrow">Production programs</p><h2>Loading inquiry form</h2><p>Preparing the production inquiry form.</p></div><div className="inquiry-panel"><p className="eyebrow">Partnership &amp; JV</p><h2>Loading inquiry form</h2><p>Preparing the partnership inquiry form.</p></div></div>}><PartnerFormsSection/></Suspense></Section>
-    <Section className="contact-band"><p className="eyebrow">Get in touch</p><h2>Voltron Lattice / Pune, Maharashtra</h2><p>www.voltronlattice.com</p></Section>
-  </div></SiteShell>;
-}
+import type {Metadata} from 'next';
+import {Suspense} from 'react';
+import {CollaborationHero} from '@/components/brand/CollaborationHero';
+import {Hero} from '@/components/brand/Hero';
+import {Intro,Section,SiteShell} from '@/components/brand/SiteShell';
+import {PartnerFormsSection} from '@/components/home/PartnerFormsSection';
+import {CommonsStudy} from '@/components/commons/CommonsStudy';
+import '../home-surfaces.css';
+import '../supporting-pages.css';
+import '../about/voltron-commons/commons.css';
+import './partner.css';
+export const metadata:Metadata={title:'Partner With Us',description:'Start a production inquiry or explore factory partnerships, platform collaboration and Voltron Commons.'};
+export default function PartnerPage(){return <SiteShell><div className="supporting-page partner-page">
+ <Hero artSide="left" principles={['Production programs','Factory partnerships','Shared progress']} eyebrow="Partner with us" title="Start with what you are building." illustration={<CollaborationHero kind="partner"/>} primary="Explore the opportunities" href="#partner-paths" secondary="Start a conversation" secondaryHref="#inquiry">Bring a production requirement, a factory opportunity or an industrial capability you want to develop.</Hero>
+ <Section id="partner-paths"><Intro eyebrow="Where we begin" title="Different opportunities. A shared commitment.">Choose the direction closest to what you are building. Each conversation begins with its own context and requirements.</Intro><CommonsStudy kind="partner-paths"/></Section>
+ <Section id="collaboration"><Intro eyebrow="From opportunity to a shared plan" title="Understand the work. Define the next step.">A clear conversation connects your opportunity with the capability, information and people it needs.</Intro><CommonsStudy kind="partner-process"/></Section>
+ <Section id="inquiry"><Intro eyebrow="Start a conversation" title="Tell us what you have in mind.">Share what you know today. Optional details can help give the conversation more context.</Intro><Suspense fallback={<p aria-busy="true">Preparing the enquiry form…</p>}><PartnerFormsSection/></Suspense></Section>
+ <Section className="partner-contact"><p className="eyebrow">Voltron Lattice</p><h2>Pune, Maharashtra</h2><p>Manufacturing, engineering and connected intelligence.</p></Section>
+ </div></SiteShell>;}

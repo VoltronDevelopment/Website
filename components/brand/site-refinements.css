@@ -1,0 +1,51 @@
+/* Reading surfaces remain distinct from the continuous architectural atmosphere. */
+.site-presentation {
+ --glass-fill:rgba(247,251,254,.84);
+ --reading-glass:linear-gradient(135deg,rgba(255,255,255,.88),rgba(225,239,249,.72));
+ --reading-shadow:0 12px 32px rgba(25,57,83,.09),inset 0 1px rgba(255,255,255,.8);
+}
+:root[data-theme="dark"] .site-presentation {
+ --glass-fill:rgba(8,17,27,.88);
+ --reading-glass:linear-gradient(135deg,rgba(28,53,74,.88),rgba(11,27,42,.82));
+ --reading-shadow:0 12px 32px rgba(0,5,12,.24),inset 0 1px rgba(176,217,247,.1);
+}
+.site-presentation .commons-detail,.site-presentation .partner-form-panels .inquiry-panel {
+ background:var(--reading-glass);box-shadow:var(--reading-shadow);min-height:0;
+}
+.site-presentation .section-intro h2 {text-wrap:balance;max-width:30ch}
+.site-presentation .section-intro p {text-wrap:pretty}
+.site-presentation .commons-study-copy {align-self:center}
+.site-presentation .commons-detail>p:last-child {line-height:1.7}
+.site-presentation .commons-selectors button span {opacity:1;color:var(--muted)}
+.site-presentation .commons-study-art {contain:layout}
+.site-presentation .home-roadmap:not(.is-expanded) :is(.roadmap-evidence,.roadmap-gate) {display:none}
+/* Agent identities remain distinguishable when motion or WebGL is unavailable. */
+.fluid-agent-gallery .fluid-0 i {background:linear-gradient(150deg,#173e62 10%,#518ead 45%,#c7eaf2 53%,#315d7f 78%)}
+.fluid-agent-gallery .fluid-1 i {background:radial-gradient(ellipse at 45% 42%,#edfaff 5%,#77d3e3 28%,#205a80 65%)}
+.fluid-agent-gallery .fluid-2 i {background:radial-gradient(ellipse at 65% 28%,#76a0b5,transparent 45%),linear-gradient(35deg,#102d48,#386982)}
+.fluid-agent-gallery .fluid-4 i {background:radial-gradient(circle at 32% 36%,#edfaff 1%,transparent 3%),radial-gradient(circle at 62% 58%,#b9edff 1%,transparent 3%),radial-gradient(ellipse at 40% 50%,#9ac1ce,#1e4a6b 75%)}
+.fluid-agent-gallery .fluid-5 i {background:conic-gradient(from 45deg at 50% 50%,#163d5d,#a9dae7,#386d8d,#e1f6fa,#163d5d)}
+.site-presentation .site-footer nav {align-content:start;gap:20px 28px}
+.site-presentation :is(button,a,input,select,textarea):focus-visible {outline:2px solid var(--text-link);outline-offset:4px}
+@media(max-width:1023px) {
+ .site-presentation #main-content .hero .hero-copy {max-width:680px}
+ .site-presentation #main-content .hero .hero-copy h1 {text-wrap:balance}
+ .site-presentation #main-content .hero .hero-copy .eyebrow {min-height:0}
+}
+@media(max-width:767px) {
+ .site-presentation #main-content .hero {--hero-stage:clamp(280px,37svh,330px)}
+ .site-presentation #main-content .hero .hero-principle-strip ul {padding-block:14px;min-height:72px}
+ .site-presentation .commons-study-art {height:clamp(250px,75vw,310px)}
+ .site-presentation .commons-detail {padding:22px}
+ .site-presentation .commons-study {gap:12px}
+ .site-presentation .commons-selectors {margin-bottom:14px}
+ .site-presentation .commons-study-partner-process .commons-study-art {height:270px}
+ .site-presentation .about-practice {gap:18px}
+ .site-presentation .specialist-gallery {gap:14px}
+ .site-presentation .specialist-gallery button {padding:14px 10px 18px}
+ .site-presentation .source-selector {gap:4px}
+}
+@media(prefers-reduced-transparency:reduce),(prefers-contrast:more) {
+ .site-presentation {--glass-fill:var(--canvas);--reading-glass:var(--surface)}
+ .site-presentation .commons-detail {backdrop-filter:none}
+}

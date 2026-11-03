@@ -67,3 +67,8 @@ infra/amplify-env-vars.json
 /public/populate_models_stairs/
 /public/sci-fi-robot-character-pack-9-unique-designs/
 /public/sci-fi_robot_character_pack_9_unique_designs/
+
+# Original figure download; runtime derivative is in public/stories.
+/public/rigged_low_poly_male__female_figures._blender/
+/public/eric_rigged_001_-_rigged_3d_business_man/
+/public/carla_rigged_001_-_rigged_3d_business_women/

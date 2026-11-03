@@ -14,7 +14,7 @@ import "@/components/brand/hero-art-direction.css";
 export default function HomePage() {
   return <SiteShell presentation><div className="home-page">
     <section className="hero home-hero" aria-labelledby="home-title">
-      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s intelligent manufacturing backbone.</h1><p>Connected systems for production, quality and machine records, built and proven on our own factory floor.</p><div className="hero-actions"><Action href="#factory-systems" secondary>Explore Voltron</Action><Action href="/about" text>Our vision</Action></div></div><HomeHeroArtwork/></div>
+      <div className="container hero-grid"><div className="hero-copy"><p className="eyebrow">Voltron Lattice</p><h1 id="home-title">Building India&apos;s intelligent manufacturing backbone.</h1><p>Connecting production, quality and machine records. Developed around the physical work of our own factory.</p><div className="hero-actions"><Action href="#factory-systems" secondary>Explore Voltron</Action><Action href="/about" text>Our vision</Action></div></div><HomeHeroArtwork/></div>
       <HeroPrinciples home labels={["Human ingenuity","Connected intelligence","Shared progress"]}/>
     </section>
     <Section className="home-systems-section" id="factory-systems"><Intro title="What Voltron connects.">Four application views of the same manufacturing reality. Illustrative concepts, not shipping software.</Intro><ApplicationPreviews/></Section>

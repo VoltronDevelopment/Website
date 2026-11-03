@@ -1,0 +1,11 @@
+# Voltron Commons story
+
+Commons now follows access → capability → contribution → shared growth. The existing single glass enclosure/tree hero remains. Its current renderer already delivers root-bound particle energy and authored tree formation; the earlier four-cube tree document is historical.
+
+The program section has five authored studies: opening resource enclosure; bracket locating and inspection; paired research alternatives; contributions seating inside a shared cell; terrain and planting formation. These are developing directions, not announced programs. Learning uses the approved bracket with contribution cells, orthogonal relationships, an axial examination and a wider planted setting. Participation brings three glass contributions into an open receiving enclosure and retains the Commons-prefilled enquiry destination.
+
+All cubes have sharp BoxGeometry faces and matching EdgesGeometry. Materials reuse Home per-face optics, studio environment and clear/smoked treatments. Non-cube physical objects share the Network material kit. Particle targets sample actual scene surfaces, with outlines arriving late in formation. Residency contributions seat at distinct, non-intersecting locations. Selection runs a finite nine-second local story; rendering stops when settled and suspends offscreen or in hidden tabs. Theme and size changes wake drawing. Reduced motion/data saving use native scene captures while selectors and explanations remain usable.
+
+The continuous page uses selective glass detail panels, alternating desktop artwork placement and stacked phone studies. Five program choices, four learning choices and three participation choices update adjacent accessible explanations. All controls have at least 44px targets. No new package or route is required.
+
+`scripts/review-commons-story.cjs` runs a local fixture with temporary credentials, captures all twelve selected studies in two themes and two device compositions at DPR 2/3, checks containment at 390/768/1024/1440 widths, exercises real timed playback and verifies reduced-motion renderer disposal. Credentials are generated in memory. Native fallbacks live in `public/commons-scenes`. No production deployment is part of this pass.
