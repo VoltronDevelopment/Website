@@ -1,4 +1,5 @@
 "use client";
+import {DeferredPicture} from '../performance/DeferredArtwork';
 import {hdPoster,hdOpening} from '../performance/hd-poster';
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
@@ -6,7 +7,6 @@ import type {CSSProperties} from "react";
 import openingFrames from "@/lib/scene-responsive-opening-frames.json";
 import responsiveOpening from "@/lib/scene-responsive-opening-posters.json";
 import {ScenePoster} from "../performance/ScenePoster";
-import {ArtworkControls} from "./ArtworkControls";
 import {useEffect,useRef,useState} from "react";
 import {Pause,Play,RotateCcw} from "lucide-react";
 import {prefersStaticScene} from "../performance/scene-policy";
@@ -19,7 +19,7 @@ function ResponsiveHeroOpening({kind,theme}:{kind:"manufacturing"|"network"|"ont
  const images=responsiveOpening[kind],frame=openingFrames[kind];
  const style=Object.fromEntries(Object.entries(frame).flatMap(([device,capture])=>{const aspect=capture.width/capture.height,h=Math.max(1,(960/760)/aspect);return [[`--hero-native-${device}-width`,h*aspect],[`--hero-native-${device}-height`,h]];})) as CSSProperties;
  const extra=kind==='manufacturing'?responsiveOpening.manufacturing:undefined;
- return <picture style={style} className={`art-theme-${theme} responsive-hero-opening`}><>{extra&&<source media="(max-width:767px) and (min-height:884px)" srcSet={hdOpening(kind,'mobileTall',theme,extra.mobileTall[theme])}/>}<source media="(max-width:767px)" srcSet={hdOpening(kind,'mobile',theme,images.mobile[theme])}/>{extra&&<source media="(min-width:1024px) and (min-height:920px)" srcSet={hdOpening(kind,'tall',theme,extra.tall[theme])}/>}</>{extra&&<><source media="(min-width:768px) and (max-width:1023px)" srcSet={hdOpening(kind,'tablet',theme,extra.tablet[theme])}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={hdOpening(kind,'short',theme,extra.short[theme])}/></>}<img srcSet={hdOpening(kind,'desktop',theme,images.desktop[theme])} src={images.desktop[theme]} alt="" width="625" height="540"/></picture>;
+ return <DeferredPicture style={style} className={`art-theme-${theme} responsive-hero-opening`}><>{extra&&<source media="(max-width:767px) and (min-height:884px)" srcSet={hdOpening(kind,'mobileTall',theme,extra.mobileTall[theme])}/>}<source media="(max-width:767px)" srcSet={hdOpening(kind,'mobile',theme,images.mobile[theme])}/>{extra&&<source media="(min-width:1024px) and (min-height:920px)" srcSet={hdOpening(kind,'tall',theme,extra.tall[theme])}/>}</>{extra&&<><source media="(min-width:768px) and (max-width:1023px)" srcSet={hdOpening(kind,'tablet',theme,extra.tablet[theme])}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={hdOpening(kind,'short',theme,extra.short[theme])}/></>}<img srcSet={hdOpening(kind,'desktop',theme,images.desktop[theme])} src={images.desktop[theme]} alt="" width="625" height="540"/></DeferredPicture>;
 }
 export function EngineeredHero({kind}:{kind:HeroSceneKind}){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<EngineeredController|null>(null);
@@ -44,7 +44,7 @@ export function EngineeredHero({kind}:{kind:HeroSceneKind}){
  return <div className={`engineered-art engineered-${kind}`}><div className="engineered-stage" ref={host} role="img" aria-label={descriptions[kind]}>
   {kind==='technology'?<ScenePoster kind="technology"/>:<div className="engineered-posters" data-scene-poster aria-hidden="true">{(["opening","complete"] as const).map(pose=><div className={`engineered-pose engineered-${pose}`} key={pose}>{["light","dark"].map(theme=>(kind==='manufacturing'||kind==='network'||kind==='ontology'||kind==='about')&&pose==='opening'?<ResponsiveHeroOpening key={theme} kind={kind} theme={theme as 'light'|'dark'}/>:kind==='network'?<img {...(pose==='complete'?hdPoster(kind,pose,theme,`/heroes/${kind}-${pose}-${theme}.webp`):{})} key={theme} className={`art-theme-${theme}`} src={`/heroes/network-${pose}-${theme}.webp`} alt="" width="960" height="760"/>:<img {...(pose==='complete'?hdPoster(kind,pose,theme,`/heroes/${kind}-${pose}-${theme}.webp`):{})} key={theme} className={`art-theme-${theme}`} src={`/heroes/${kind}-${pose}-${theme}.webp`} alt="" width="960" height="760"/>)}</div>)}</div>}
   <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
- </div><ArtworkControls mode={mode} onToggle={()=>controller.current?.toggle()} onReplay={()=>controller.current?.replay()}/>
+ </div>
  {kind==="network"&&<p className="hero-art-caption">Illustrative geography · Future network vision</p>}
  {review&&<label className="hero-review">Artwork time<input aria-label="Artwork time" type="range" min="0" max={heroSceneDurations[kind]} step=".05" defaultValue={heroSceneDurations[kind]} onChange={event=>controller.current?.seek(Number(event.target.value))}/></label>}
  <ArtworkInspector scene={kind} duration={heroSceneDurations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;

@@ -4,7 +4,6 @@ import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/u
 import {useEffect,useRef,useState} from 'react';
 import {ScenePoster} from '../performance/ScenePoster';
 import {prefersStaticScene} from '../performance/scene-policy';
-import {ArtworkControls} from './ArtworkControls';
 import {cultureHelixDuration} from './culture-helix-timeline';
 import type {SceneMode} from './engineered-hero-renderer';
 import type {mountCultureHelix} from './culture-helix-renderer';
@@ -23,8 +22,7 @@ export function CultureHelix(){
   return()=>{disposed=true;abort.abort();view.disconnect();motion.removeEventListener('change',preference);controller.current?.dispose();controller.current=null;};
  },[motionRevision]);
  return <div className="culture-helix"><div className="culture-helix-stage" ref={host} data-selected={selected} role="img" aria-label="Two fine particle ribbons represent individual craft and shared purpose. They intertwine, connect through five groups of bridges, and gather into a contribution cube within a clear enclosure."><ScenePoster kind="cultureHelix"/><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div>
-  <ArtworkControls mode={mode} onToggle={()=>controller.current?.toggle()} onReplay={()=>controller.current?.replay()}/>
-  <div className="context-choices" role="group" aria-label="Individual and whole">{choices.map((choice,i)=><button key={choice.title} type="button" aria-pressed={selected===i} aria-controls="culture-helix-detail" onClick={()=>{setSelected(i);if(mode!=='static')controller.current?.select(i);}}>{choice.title}</button>)}</div>
+  <div className="context-choices" role="group" aria-label="Individual and whole">{choices.map((choice,i)=><button key={choice.title} type="button" aria-pressed={selected===i} aria-controls="culture-helix-detail" onClick={()=>{setSelected(i);}}>{choice.title}</button>)}</div>
   <p id="culture-helix-detail" className="culture-helix-detail" aria-live="polite">{choices[selected].detail}</p>
  </div>;
 }

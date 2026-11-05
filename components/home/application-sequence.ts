@@ -1,4 +1,4 @@
-export const CARD_HOLD = 3.2;
+export const CARD_HOLD = 6.4;
 export const CARD_GLIDE = 0.8;
 export const CARD_RETURN = 0.55;
 
@@ -35,6 +35,12 @@ export function diagramBeat(elapsed: number, duration = CARD_HOLD) {
 export function mesLotX(step: number) {
   return MES_X[Math.min(3, Math.max(0, step))];
 }
+const ease=(v:number)=>{v=Math.max(0,Math.min(1,v));return v*v*(3-2*v);};
+/** Arrival occupies the opening of a beat; work and its record follow the stop. */
+export function mesLotPose(step:number,within:number){
+ const index=Math.min(3,Math.max(0,step)),start=MES_X[Math.max(0,index-1)];
+ return {x:start+(MES_X[index]-start)*ease(within/.32),recorded:within>=.72};
+}
 
 const ROPE_REST = 58;
 const DIP = 76;
@@ -49,8 +55,8 @@ export function twinPartPose(step: number, within: number) {
     else if (within < 0.78) amount = 1;
     else amount = Math.max(0, 1 - (within - 0.78) / 0.22);
   }
-  const dip = amount * DIP;
-  return {x: TWIN_X[index], y: dip, rope: ROPE_REST + dip};
+  const dip = ease(amount) * DIP,start=TWIN_X[Math.max(0,index-1)];
+  return {x:start+(TWIN_X[index]-start)*ease(within/.26), y: dip, rope: ROPE_REST + dip};
 }
 
 export function twinCoated(step: number, within: number) {

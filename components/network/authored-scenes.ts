@@ -1,8 +1,8 @@
 import * as T from 'three';
 import {factoryKit} from './factory-kit';
 import {smooth} from './network-story';
-import {routePoint,engineeringAssembly,type Point} from './network-simulation';
-import {bracketStudyGeometry} from './bracket-study';
+import {routePoint,type Point} from './network-simulation';
+import {requirementArtwork} from './requirement-artwork';
 type Own=<R extends {dispose:()=>void}>(r:R)=>R;
 type Kit=ReturnType<typeof factoryKit>;
 export function operatingFacility(factory:ReturnType<Kit['factory']>,kit:Kit,own:Own){
@@ -44,10 +44,5 @@ export function capabilityArtwork(root:T.Group,kit:Kit,own:Own){
  return {groups:cells,update(time:number,dark:boolean){draw(time,dark);const windows=[[3,7],[12,16],[20,24]];dots.forEach((dot,i)=>{const [a,b]=windows[i];dot.visible=time>=a&&time<b;dot.position.fromArray(routePoint(paths[i],i===0?smooth((time-a)/(b-a)):1-smooth((time-a)/(b-a))));});cutter.position.y=1.8-.3*Math.sin(Math.PI*smooth((time-16)/3));press.position.y=2-.6*Math.sin(Math.PI*smooth((time-21)/2));},span:28,target:new T.Vector3(0,1,0),board};
 }
 export function engineeringArtwork(root:T.Group,kit:Kit,own:Own){
- const bench=new T.Group();root.add(bench);kit.box(bench,[8,.22,5],[0,-.5,0],kit.glass);for(const x of [-3.4,3.4])for(const z of [-2,2])kit.box(bench,[.18,1.1,.18],[x,-1.15,z],kit.steel);
- const {baseGeo,uprightGeo}=bracketStudyGeometry(),base=new T.Mesh(own(baseGeo),kit.steel),upright=new T.Mesh(own(uprightGeo),kit.pearl);root.add(base,upright);
- const collarShape=new T.Shape();collarShape.absarc(0,0,.455,0,Math.PI*2,false);const hole=new T.Path();hole.absarc(0,0,.34,0,Math.PI*2,true);collarShape.holes.push(hole);const collar=new T.Mesh(own(new T.ExtrudeGeometry(collarShape,{depth:.55,bevelEnabled:true,bevelSize:.015,bevelThickness:.015,curveSegments:40})),kit.navy);root.add(collar);collar.position.set(0,1.75,-.275);
- const guides=new T.Group();root.add(guides);const bolts:T.Group[]=[];for(const x of [-1.45,1.45]){const bolt=new T.Group();bolt.position.set(x,0,0);root.add(bolt);const shaft=new T.Mesh(own(new T.CylinderGeometry(.13,.13,.35,24)),kit.steel);shaft.position.y=.12;bolt.add(shaft);const head=new T.Mesh(own(new T.CylinderGeometry(.2,.2,.14,6)),kit.navy);head.position.y=.36;bolt.add(head);bolts.push(bolt);kit.line(guides,[[x,-.2,0],[x,3.7,0]]);}
- const brief=kit.panel(root,-4,1,-1.8);brief.scale.setScalar(1.4);const drawing=new T.Group();drawing.position.set(3.7,.2,-.4);root.add(drawing);kit.line(drawing,[[-.8,0,0],[-.6,2.3,0],[.6,2.3,0],[.8,0,0],[-.8,0,0]]);kit.line(drawing,[[-1.1,-.2,0],[1.1,-.2,0]]);const ring=new T.LineLoop(own(new T.BufferGeometry().setFromPoints(Array.from({length:64},(_,i)=>new T.Vector3(.45*Math.cos(i/64*Math.PI*2),1.6+.45*Math.sin(i/64*Math.PI*2),0)))),own(new T.LineBasicMaterial({color:0x3d8fbc})));drawing.add(ring);
- return {groups:[base,upright,collar,...bolts],update(time:number){const assembly=engineeringAssembly(time);guides.visible=assembly.bolts>.01;base.position.y=-.33+assembly.base;upright.position.y=-.33+assembly.upright;collar.position.set(0,1.42+assembly.collarLift,-.275+assembly.collarAxial);bolts.forEach(b=>b.position.y=-.33+assembly.bolts);brief.visible=time>=2&&!root.userData.phone;drawing.visible=time>=5&&!root.userData.phone;},span:14,target:new T.Vector3(0,1,0)};
+ return requirementArtwork(root,kit,own);
 }

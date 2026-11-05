@@ -24,7 +24,7 @@
 .site-presentation:has(.technology-page) :is(.site-header,.site-footer) {border:0;box-shadow:0 8px 28px rgba(12,35,55,.045)}
 .technology-page {--tech-fill:rgba(250,253,255,.84);--tech-shade:rgba(216,232,244,.64);--tech-shadow:rgba(24,52,78,.13);--tech-line:#648aa6;--tech-accent:#15547b;--tech-selection:rgba(124,181,216,.22);--tech-surface:rgba(244,250,254,.65)}
 :root[data-theme="dark"] .technology-page {--tech-fill:rgba(27,43,59,.88);--tech-shade:rgba(13,25,39,.85);--tech-shadow:rgba(0,0,0,.28);--tech-line:#638ca7;--tech-accent:#b9e4fa;--tech-selection:rgba(83,143,181,.23);--tech-surface:rgba(20,39,56,.7)}
-.technology-page .section {min-height:0;padding-block:88px;scroll-margin-top:100px}
+.technology-page .section {min-height:0;padding-block:88px}
 .technology-page .hero-principle-strip {border:0;box-shadow:0 -8px 30px rgba(12,35,55,.035)}
 .technology-page .hero-principle-strip li+li {border:0}
 .technology-page .section-intro {max-width:780px}

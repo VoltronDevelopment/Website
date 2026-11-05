@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {CARD_GLIDE,CARD_HOLD,CARD_RETURN,applicationCycleDuration,applicationFrame,diagramBeat,mesLotX,twinCoated,twinPartPose} from '../components/home/application-sequence';
+import {CARD_GLIDE,CARD_HOLD,CARD_RETURN,applicationCycleDuration,applicationFrame,diagramBeat,mesLotX,mesLotPose,twinCoated,twinPartPose} from '../components/home/application-sequence';
 
 it('walks the four cards forward slowly and returns in one fast pass',()=>{
  const forward=4*CARD_HOLD+3*CARD_GLIDE;
@@ -13,6 +13,20 @@ it('walks the four cards forward slowly and returns in one fast pass',()=>{
  expect(CARD_RETURN).toBeLessThan(CARD_GLIDE);
  expect(applicationFrame(applicationCycleDuration()).progress).toBeCloseTo(0);
  expect(applicationFrame(applicationCycleDuration()).direction).toBe('forward');
+});
+
+it('finishes horizontal travel before immersion and records the MES result after arrival',()=>{
+ for(let step=1;step<4;step++){
+  expect(twinPartPose(step,0).x).toBeCloseTo(twinPartPose(step-1,1).x);
+  for(let i=1;i<=100;i++){
+   const before=twinPartPose(step,(i-1)/100),after=twinPartPose(step,i/100);
+   if(after.y>0)expect(after.x).toBeCloseTo(twinPartPose(step,1).x);
+   expect(Math.abs(after.x-before.x)).toBeLessThan(7);
+  }
+  expect(mesLotPose(step,0).x).toBe(mesLotPose(step-1,1).x);
+  expect(mesLotPose(step,.2).recorded).toBe(false);
+  expect(mesLotPose(step,.72)).toEqual({x:mesLotX(step),recorded:true});
+ }
 });
 
 it('plays four diagram beats and blackens the part after the coat tank',()=>{

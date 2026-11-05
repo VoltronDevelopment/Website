@@ -90,3 +90,13 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 
 /* Keep the exact lettered mark readable when text is enlarged independently of the scene. */
 .entry-wordmark{flex-wrap:wrap;row-gap:.15em;padding-inline:16px}
+/* Entry remains available while decorative faces progress; preserve focus at the final reveal. */
+.entry-direct-link{position:absolute;z-index:5;bottom:24px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:8px 16px;color:var(--text-link);font-size:13px;white-space:nowrap}.entry-direct-link:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}.brand-entry[data-entry-enhanced=true][data-settled=true] .entry-direct-link:not(:focus){display:none}
+
+/* Short landscape needs a lateral composition rather than a clipped vertical stack. */
+@media (max-height:520px) and (min-width:600px){
+ .brand-entry{--entry-logo-size:clamp(90px,28svh,120px)}
+ .brand-entry .entry-stage{left:25%;top:50%}
+ .brand-entry .entry-wordmark{left:49%;right:3%;top:42%;font-size:clamp(18px,3vw,28px);line-height:1.4;gap:12px;letter-spacing:.08em;padding-inline:0}
+ .brand-entry .entry-direct-link{left:74%;bottom:24px}
+}

@@ -25,3 +25,5 @@
 @media(prefers-reduced-motion:reduce){.meaning-packet{stroke-dasharray:none}.product-demo-body *{transition:none!important;animation:none!important}}
 :root[data-scene-motion=static] .product-showcase *{animation:none!important;transition:none!important}
 .meaning-node{cursor:pointer;outline:none}.meaning-node:hover rect,.meaning-node:focus-visible rect{stroke:var(--product-accent);stroke-width:2}.meaning-node:focus-visible text{font-weight:600}
+.product-record{overflow-wrap:anywhere}.product-record strong,.product-record small{max-width:100%}
+@media(max-width:767px){.meaning-mobile{grid-template-columns:repeat(2,minmax(0,1fr))}.meaning-mobile button{min-width:0;overflow-wrap:anywhere;padding-inline:8px}}

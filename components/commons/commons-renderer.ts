@@ -1,5 +1,6 @@
+import {createCommonsNarrative} from './commons-narrative';
 import * as T from 'three';
-import {MeshSurfaceSampler} from 'three/addons/math/MeshSurfaceSampler.js';
+import {sampleWorldSurface} from '../brand/surface-samples';
 import {factoryKit} from '../network/factory-kit';
 import {bracketStudyGeometry} from '../network/bracket-study';
 import {glassFace,setGlass,type GlassFace} from '../home/lattice-materials';
@@ -33,7 +34,9 @@ export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind
  const count=commonsStudies[kind].length;
  for(let index=0;index<count;index++){
   const g=new T.Group();root.add(g);studies.push(g);
-  if(kind==='partner-paths'&&index===1){
+  const narrative=createCommonsNarrative(kind,index,g,{kit,box,faces,part});
+  if(narrative){updates.push(narrative);}
+  else if(kind==='partner-paths'&&index===1){
    box(g,[5.8,.16,3.4],[0,-.15,0],faces);const structure=new T.Group();g.add(structure);
    for(const x of [-2.4,0,2.4]){for(const z of [-1.3,1.3])box(structure,[.12,2,.12],[x,1,z],kit.steel);box(structure,[.12,.12,2.7],[x,2,0],kit.steel);}
    const bays=[-1.2,1.2].map((x,i)=>cube(g,[x,.65,0],1.1,i===1));
@@ -137,25 +140,25 @@ export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind
  // Surface particles converge onto the actual authored geometry, rather than filling a wireframe.
  const clips=own(new T.PointsMaterial({color:0x318fc5,size:.035,transparent:true,depthWrite:false}));
  let seed=143;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
- const clouds=studies.map(g=>{g.updateMatrixWorld(true);const list:number[]=[];g.traverse(o=>{if(!(o instanceof T.Mesh))return;const sampler=(new MeshSurfaceSampler(o) as MeshSurfaceSampler & {setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(random).build(),v=new T.Vector3();for(let i=0;i<85;i++){sampler.sample(v);o.localToWorld(v);list.push(v.x,v.y,v.z);}});const target=new Float32Array(list),pos=new Float32Array(target),geo=own(new T.BufferGeometry());geo.setAttribute('position',new T.BufferAttribute(pos,3));const cloud=new T.Points(geo,clips);scene.add(cloud);return {cloud,geo,target,pos};});
- const plane=new T.Plane(new T.Vector3(0,-1,0),100);[...faces,...smoked,kit.pearl,kit.navy,kit.steel,kit.glass,kit.active].forEach(m=>m.clippingPlanes=[plane]);
- const capture=new URLSearchParams(location.search).has('commons-capture');let selected=0,time=capture?9:0,visible=false,raf=0,last=0,disposed=false,dirty=true;
+ const clouds=studies.map(g=>{let meshes=0;g.traverse(o=>{if(o instanceof T.Mesh)meshes++;});const target=sampleWorldSurface(g,meshes*85,random),pos=new Float32Array(target),geo=own(new T.BufferGeometry());geo.setAttribute('position',new T.BufferAttribute(pos,3));const cloud=new T.Points(geo,clips);scene.add(cloud);return {cloud,geo,target,pos};});
+ const plane=new T.Plane(new T.Vector3(0,-1,0),100);[...faces,...smoked,kit.pearl,kit.navy,kit.steel,kit.glass,kit.reading,kit.active].forEach(m=>m.clippingPlanes=[plane]);
+ const capture=new URLSearchParams(location.search).has('commons-capture');let selected=0,initialized=false,time=capture?9:0,visible=false,raf=0,last=0,disposed=false,contextLost=false,dirty=true;
  function fit(){const w=host.clientWidth,h=host.clientHeight,aspect=w/Math.max(h,1),height=Math.max(5.3,7.5/aspect);renderer.setSize(w,h,false);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(7,5.2,10);camera.lookAt(0,1,0);camera.updateProjectionMatrix();dirty=true;wake();}
  let previousTheme:boolean|undefined;
- function draw(){const dark=document.documentElement.dataset.theme==='dark';if(previousTheme!==dark){previousTheme=dark;kit.theme(dark);[faces,smoked].forEach((list,n)=>list.forEach((m,i)=>{setGlass(m,faceKinds[i],dark);if(n){m.color.multiplyScalar(dark?.5:.7);m.opacity=Math.min(.6,m.opacity*1.55);}}));edge.color.set(dark?0x7abddd:0x3d7c9e);clips.color.set(dark?0x7acfff:0x267eae);}
+ function draw(){if(disposed||contextLost)return;const dark=document.documentElement.dataset.theme==='dark';if(previousTheme!==dark){previousTheme=dark;kit.theme(dark);[faces,smoked].forEach((list,n)=>list.forEach((m,i)=>{setGlass(m,faceKinds[i],dark);if(n){m.color.multiplyScalar(dark?.5:.7);m.opacity=Math.min(.6,m.opacity*1.55);}}));edge.color.set(dark?0x7abddd:0x3d7c9e);clips.color.set(dark?0x7acfff:0x267eae);}
   const form=ease(time/2.5);plane.constant=form>=1?100:form*4-.8;
   shadowMat.opacity=form*(dark?.5:.8);
   studies.forEach((g,i)=>{g.visible=i===selected;if(i!==selected)return;g.traverse(o=>{if(o instanceof T.Line){const m=o.material as T.LineBasicMaterial;m.opacity=.55*ease((time-1.6)/1.2);}});});updates[selected](time);
   clouds.forEach((c,i)=>{c.cloud.visible=i===selected&&form<1;if(!c.cloud.visible)return;const scatter=1-form;for(let n=0;n<c.pos.length;n+=3){c.pos[n]=c.target[n]+Math.sin(n*.7)*scatter*.8;c.pos[n+1]=c.target[n+1]+scatter*(.5+Math.sin(n)*.3);c.pos[n+2]=c.target[n+2]+Math.cos(n*.5)*scatter*.8;}c.geo.attributes.position.needsUpdate=true;});clips.opacity=.8*(1-form);
   renderer.render(scene,camera);host.dataset.settled=String(time>=9);host.dataset.selected=String(selected);dirty=false;
  }
- function tick(now:number){raf=0;if(disposed||!visible||document.hidden)return;const dt=last?Math.min(.06,(now-last)/1000):0;last=now;if(time<9){time=Math.min(9,time+dt);dirty=true;}if(dirty){draw();if(quality.sample(now))renderer.setPixelRatio(quality.ratio);}if(time<9)raf=requestAnimationFrame(tick);else last=0;}
- function wake(){if(!disposed&&visible&&!document.hidden&&!raf)raf=requestAnimationFrame(tick);}
+ function tick(now:number){raf=0;if(disposed||contextLost||!visible||document.hidden)return;const dt=last?Math.min(.06,(now-last)/1000):0;last=now;if(time<9){time=Math.min(9,time+dt);dirty=true;}if(dirty){draw();if(quality.sample(now))renderer.setPixelRatio(quality.ratio);}if(time<9)raf=requestAnimationFrame(tick);else last=0;}
+ function wake(){if(!disposed&&!contextLost&&visible&&!document.hidden&&!raf)raf=requestAnimationFrame(tick);}
  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;last=0;if(visible)wake();else{cancelAnimationFrame(raf);raf=0;quality.reset();}},{threshold:.1});view.observe(host);
  const resize=new ResizeObserver(fit);resize.observe(host);const theme=new MutationObserver(()=>{dirty=true;wake();});theme.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  const visibility=()=>{last=0;if(document.hidden){cancelAnimationFrame(raf);raf=0;}else wake();};document.addEventListener('visibilitychange',visibility);
- const lost=(e:Event)=>{e.preventDefault();host.dataset.ready='false';cancelAnimationFrame(raf);raf=0;};canvas.addEventListener('webglcontextlost',lost);
+ const lost=(e:Event)=>{e.preventDefault();contextLost=true;host.dataset.ready='false';cancelAnimationFrame(raf);raf=0;};const restored=()=>{contextLost=false;dirty=true;last=0;host.dataset.ready='true';draw();wake();};canvas.addEventListener('webglcontextlost',lost);canvas.addEventListener('webglcontextrestored',restored);
  fit();draw();
- return {select(i:number){selected=T.MathUtils.clamp(i,0,count-1);time=capture?9:0;dirty=true;last=0;wake();},dispose(){disposed=true;cancelAnimationFrame(raf);view.disconnect();resize.disconnect();theme.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('webglcontextlost',lost);resources.forEach(r=>r.dispose());env.dispose();renderer.dispose();}};
+ return {select(i:number){selected=T.MathUtils.clamp(i,0,count-1);time=capture?9:initialized?2.5:0;initialized=true;dirty=true;last=0;wake();},dispose(){disposed=true;cancelAnimationFrame(raf);view.disconnect();resize.disconnect();theme.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('webglcontextlost',lost);canvas.removeEventListener('webglcontextrestored',restored);resources.forEach(r=>r.dispose());env.dispose();renderer.dispose();}};
 }
 

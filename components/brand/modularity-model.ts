@@ -15,5 +15,11 @@ export function modularityFrame(time:number,selection?:number){
  const selected=selection??0;
  const configuration=selection!==undefined?1:smooth(8.9,10.3,t);
  const extension=smooth(5.5,6.9,t),descent=smooth(7,8.5,t);
- return {extension,descent,time:t,core:smooth(0,1.6,t),packs:processPacks.map((_,i)=>smooth(1.2+i*.62,2.7+i*.62,t)),selected,configuration,detailsReady:selection!==undefined||t>=10.3,stage:t<1.6?0:t<8.9?1:2,complete:t>=MODULARITY_DURATION};
+ return {extension,descent,time:t,core:smooth(0,1,t),packs:processPacks.map((_,i)=>smooth(1.2+i*.62,2.7+i*.62,t)),selected,configuration,detailsReady:selection!==undefined||t>=10.3,stage:t<1?0:t<8.9?1:2,complete:t>=MODULARITY_DURATION};
+}
+/** A direct choice continues from the displayed deposition/docking pose rather than restarting it. */
+export function modularitySelectionFrame(from:ReturnType<typeof modularityFrame>,to:ReturnType<typeof modularityFrame>,progress:number){
+ const p=smooth(0,1,progress),mix=(a:number,b:number)=>a+(b-a)*p;
+ const physical=modularityFrame(mix(from.time,to.time)),configuration=physical.descent>=1?mix(from.configuration,to.configuration):0;
+ return {...physical,selected:to.selected,configuration,detailsReady:progress>=1&&to.detailsReady,stage:configuration>0?2:physical.stage,complete:progress>=1&&to.complete};
 }

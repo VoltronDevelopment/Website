@@ -63,7 +63,7 @@ export function createPartnerActor(source:T.Group,index:number,material:T.Materi
  function pose(walk:number,gesture:number,time:number,completion:number,measure=false){
   bind.forEach(({bone,p,q,s})=>{bone.position.copy(p);bone.quaternion.copy(q);bone.scale.copy(s);});
   heading.setFromAxisAngle(up,walkYaw+side*gesture*.10);root.quaternion.copy(heading);root.position.set(side*T.MathUtils.lerp(partnerStart,stopDistance,walk),-(Math.sin(walk*Math.PI*3)**2)*.010,0);root.updateMatrixWorld(true);
-  const sway=Math.sin(walk*Math.PI*3)*(1-gesture),attention=partnerEase(T.MathUtils.clamp((time-5.85)/1.05,0,1));turnWorld(chest,up,sway*.022);turnWorld(head,up,-side*attention*.12);const nod=Math.sin(Math.PI*T.MathUtils.clamp((time-(index?10.55:10.8))/.85,0,1))*.025;turnWorld(head,right.clone().applyQuaternion(heading),attention*.11+nod);
+  const sway=Math.sin(walk*Math.PI*3)*(1-gesture),attention=partnerEase(T.MathUtils.clamp((time-5.85)/1.05,0,1));const presentSettle=Math.sin(Math.PI*T.MathUtils.clamp((time-6.1)/1.7,0,1))*.012;turnWorld(chest,up,sway*.022+side*presentSettle); turnWorld(head,up,-side*attention*.12);const nod=Math.sin(Math.PI*T.MathUtils.clamp((time-(index?10.55:10.8))/.85,0,1))*.025;turnWorld(head,right.clone().applyQuaternion(heading),attention*.11+nod);
   footTargets.length=0;armTargets.length=0;
   feet.forEach((leg,j)=>{
    const step=partnerFootstep(walk,j===(index?0:1)),target=leg.rest.clone().applyQuaternion(walkHeading);target.x+=side*partnerStart-side*(partnerStart-stopDistance)*step.advance;target.y+=step.lift;footTargets.push(target.clone());

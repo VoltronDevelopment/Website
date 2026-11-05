@@ -1,3 +1,5 @@
+import {createAlphaPanelGeometry,alphaPanelReturn} from './alpha-panel-geometry';
+import {createAlphaTrolleyBody} from '../home/alpha-equipment';
 import {createSceneHandoff} from "../performance/scene-handoff";
 import {batchStaticMeshes} from "../performance/static-batching";
 import { alphaLineShotAt, alphaTourStateAt, alphaPlaybackDuration } from "./alpha-line-tour";
@@ -369,18 +371,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
 
   const carrier = new THREE.Group();
   scene.add(carrier);
-  box(carrier, [0.64, 0.16, 1.65], [0, 5.48, 0], metal, true);
-  box(carrier, [0.44, 0.32, 0.43], [0, 5.29, 0], steelDark, true);
-  box(carrier, [.49,.17,.47], [0,5.23,0],polished,true);
-  const wheelGeometry = geometry(new THREE.CylinderGeometry(0.13, 0.13, 0.09, 16));
-  const wheels: THREE.Mesh[] = [];
-  for (const x of [-0.23, 0.23]) for (const z of [-0.69, 0.69]) {
-    const wheel = new THREE.Mesh(wheelGeometry, steelDark);
-    wheel.rotation.x = Math.PI / 2;
-    wheel.position.set(x, 5.46, z);
-    carrier.add(wheel);
-    wheels.push(wheel);
-  }
+  const wheels=createAlphaTrolleyBody(carrier,box,geometry,{metal,steelDark,polished});
   const fixture = new THREE.Group();
   carrier.add(fixture);
   box(fixture, [0.97, 0.07, 0.11], [0, 0, 0], polished, true);
@@ -398,17 +389,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     return jaw;
   });
   const cables = [-0.12, 0.12].map(z => rod(carrier, [0, railY - 0.18, z], [0, alphaLineRaisedY + 0.14, z], 0.012, steelDark));
-  const panelShape = new THREE.Shape();
-  panelShape.moveTo(-0.47, -0.63);
-  panelShape.lineTo(0.47, -0.63);
-  panelShape.lineTo(0.47, 0.63);
-  panelShape.lineTo(-0.47, 0.63);
-  panelShape.closePath();
-  for (const x of [-.36, .36]) for (const y of [-.5, 0, .5]) {
-    const hole = new THREE.Path(); hole.absarc(x, y, .027, 0, Math.PI * 2, true); panelShape.holes.push(hole);
-  }
-  const panelGeometry = geometry(new THREE.ExtrudeGeometry(panelShape, { depth: 0.075, bevelEnabled: true, bevelSegments: 1, steps: 1, bevelSize: 0.012, bevelThickness: 0.01 }));
-  panelGeometry.translate(0, 0, -0.0375);
+  const panelGeometry = geometry(createAlphaPanelGeometry());
   const immersion = { level: { value: -20 }, tint: { value: new THREE.Color(0x238eb8) } };
   function panelMaterial() {
     const mat = material(new THREE.MeshPhysicalMaterial({ color: 0xc9d4db, metalness: 0.8, roughness: 0.27, clearcoat: 0.35, transparent: true }));
@@ -437,7 +418,7 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   loading.position.set(0, alphaLineUnloadY - .83, alphaLineFarZ);
   loading.castShadow = true;
   scene.add(loading);
-  for (const part of [carried,finished,loading]) box(part,[.065,1.24,.16],[.445,0,.065],part.material);
+  for (const part of [carried,finished,loading]) box(part,[...alphaPanelReturn.size],[...alphaPanelReturn.position],part.material);
 
   const dropMaterial = material(new THREE.MeshBasicMaterial({ color: visual.liquid, transparent: true, opacity: .72 }));
   const dropGeometry = geometry(new THREE.SphereGeometry(.024, 6, 5));

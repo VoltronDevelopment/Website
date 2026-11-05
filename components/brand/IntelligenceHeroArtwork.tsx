@@ -1,7 +1,6 @@
 "use client";
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
-import {ArtworkControls} from "./ArtworkControls";
 import {ArtworkInspector} from './ArtworkInspector';
 import {ScenePoster} from "../performance/ScenePoster";
 import { Pause, Play, RotateCcw } from "lucide-react";
@@ -40,11 +39,10 @@ export function IntelligenceHeroArtwork() {
     return () => { disposed = true; observer.disconnect(); motion.removeEventListener("change", change); controller.current?.dispose(); controller.current = null; };
   }, [motionRevision]);
   return <div className="intelligence-hero-artwork">
-    <div ref={host} className="intelligence-face-stage" role="img" aria-label="A glass cube projects a soft light volume. A head forms from particles, is scanned and turns twice. Fine surface particles and rising light remain active while visible.">
+    <div ref={host} className="intelligence-face-stage" role="img" aria-label="A glass cube projects a soft light volume. A prominent head forms from particles above a smaller glass projector, is scanned in two directions and holds a readable view. Fine surface particles and rising light remain active while visible.">
       <ScenePoster kind="intelligence"/>
       <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
     </div>
-    <ArtworkControls mode={mode} className="intelligence-face-controls" onToggle={()=>controller.current?.toggle()} onReplay={()=>controller.current?.replay()}/>
     {review && <div className="intelligence-review"><label>Artwork time <input aria-label="Artwork time" type="range" min="0" max={intelligenceHeroDuration} step=".05" defaultValue={intelligenceHeroDuration} onChange={event=>controller.current?.scrub(Number(event.target.value))}/></label><nav aria-label="Artwork review views">{["solid","particles","complete"].map(view=><a key={view} href={`?intelligence-review=1&intelligence-view=${view}&intelligence-time=${intelligenceHeroDuration}`}>{view}</a>)}</nav></div>}
     <ArtworkInspector scene="intelligence" duration={intelligenceHeroDuration} onSeek={time=>controller.current?.scrub(time)}/>
   </div>;

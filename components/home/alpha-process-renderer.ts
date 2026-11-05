@@ -1,3 +1,5 @@
+import {createAlphaBathSurface} from './alpha-bath-surface';
+import {createAlphaTankShell,createAlphaTrolleyBody} from './alpha-equipment';
 import {createSceneHandoff} from "../performance/scene-handoff";
 import {createRenderQuality,yieldToBrowser} from "../performance/scene-policy";
 import * as THREE from "three";
@@ -157,46 +159,17 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
     const tank = new THREE.Group(); tank.position.x = x; equipment.add(tank);
     const lamp = createAlphaStackLight(geometry, material, polished);
     lamp.group.position.set(-1.39, 2.12, 1.12); tank.add(lamp.group); stackLights.push(lamp);
-    box(tank, [3.13, .16, 2.63], [0, .38, 0], metal, true);
+
     const back = material(new THREE.MeshStandardMaterial({ color: visual.tankBack, metalness: .38, roughness: .31 }));
-    box(tank, [3.04, 1.57, .07], [0, 1.22, -1.19], back);
+
     const front = material(new THREE.MeshPhysicalMaterial({ color: visual.glass, metalness: .05, roughness: .16, transparent: true, opacity: visual.glassOpacity, depthWrite: false, clearcoat: 1, envMapIntensity: .9, side: THREE.DoubleSide }));
     const side = material(front.clone()); side.opacity = .27;
-    const frontPane = box(tank, [3.04, 1.57, .035], [0, 1.22, 1.21], front);
-    frontPane.renderOrder = 5;
-    for (const sx of [-1.51, 1.51]) {
-      const pane = box(tank, [.035, 1.57, 2.38], [sx, 1.22, 0], side); pane.renderOrder = 4;
-      for (const z of [-1.21, 1.21]) box(tank, [.065, 1.66, .065], [sx, 1.24, z], polished);
-    }
+    createAlphaTankShell(tank,box,geometry,{metal,polished,steelDark,back,front,side});
     const volume = material(new THREE.MeshBasicMaterial({ color: index === 1 ? visual.liquidCoat : visual.liquid, transparent: true, opacity: index === 1 ? .64 : .48, depthWrite: false }));
     const waterVolume = box(tank, [2.93, 1.34, 2.29], [0, liquidY - .67, 0], volume); waterVolume.renderOrder = 2;
-    const water = material(new THREE.ShaderMaterial({
-      transparent: true, depthWrite: false, side: THREE.DoubleSide,
-      uniforms: { uTime: { value: 0 }, uImpact: { value: 0 }, uDark: { value: 0 }, uTone: { value: index === 1 ? .48 : 1 } },
-      vertexShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact;
-        void main(){vUv=uv; vec3 p=position; p.z+=sin(p.x*7.+uTime*.8)*cos(p.y*6.-uTime*.6)*(.0015+uImpact*.01); gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);}`,
-      fragmentShader: `varying vec2 vUv; uniform float uTime; uniform float uImpact; uniform float uDark; uniform float uTone;
-        void main(){vec2 p=(vUv-.5)*vec2(1.28,1.); float r=length(p);
-          float ring=sin(r*48.-uTime*5.)*.5+.5; ring=pow(ring,7.)*exp(-r*5.5)*uImpact;
-          float wave=sin(p.x*11.+sin(p.y*6.)*.4+uTime*.35)*cos(p.y*9.-uTime*.3);
-          float reflection=pow(clamp(.52+wave*.25+sin(p.x*4.-p.y*3.)*.12,0.,1.),6.);
-          float edge=1.-smoothstep(0.,.035,min(min(vUv.x,1.-vUv.x),min(vUv.y,1.-vUv.y)));
-          vec3 base=mix(vec3(.025,.38,.62),vec3(.025,.19,.32),uDark)*uTone;
-          vec3 color=base+vec3(.32,.34,.34)*(reflection*.22+ring*.6+edge*.2);
-          gl_FragColor=vec4(color,.78);
-          #include <tonemapping_fragment>
-          #include <colorspace_fragment>
-        }`,
-    }));
+    const water = material(createAlphaBathSurface(index));
     const surface = new THREE.Mesh(geometry(new THREE.PlaneGeometry(2.94, 2.3, 16, 12)), water);
     surface.rotation.x = -Math.PI / 2; surface.position.y = liquidY; surface.renderOrder = 3; tank.add(surface);
-    for (const z of [-1.24, 1.24]) {
-      box(tank, [3.19, .1, .105], [0, 2.065, z], polished, true);
-      box(tank, [3.18, .045, .06], [0, .47, z], steelDark);
-    }
-    for (const sx of [-1.55, 1.55]) box(tank, [.105, .1, 2.48], [sx, 2.065, 0], polished, true);
-    // Sparse panel fasteners and a restrained reflection stripe give the glass a readable thickness.
-    for (const sx of [-1.38, 1.38]) for (const y of [.66, 1.77]) bolt(tank, sx, y, 1.245);
     const reflection = material(new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: .12, depthWrite: false }));
     const stripe = box(tank, [.038, 1.4, .005], [-1.19, 1.23, 1.234], reflection); stripe.renderOrder = 6;
     baths.push({ surface: water, front, side, volume, back });
@@ -213,16 +186,7 @@ export async function mountAlphaProcess(canvas: HTMLCanvasElement, host: HTMLDiv
   }
 
   const trolley = new THREE.Group(); equipment.add(trolley);
-  box(trolley, [.64, .16, 1.65], [0, 5.48, 0], metal, true);
-  box(trolley, [.44, .32, .43], [0, 5.29, 0], steelDark, true);
-  box(trolley, [.49, .17, .47], [0, 5.23, 0], polished, true);
-  const wheelGeometry = geometry(new THREE.CylinderGeometry(.13, .13, .09, 20));
-  const wheels: THREE.Mesh[] = [];
-  for (const x of [-.23, .23]) for (const z of [-.69, .69]) {
-    const wheel = new THREE.Mesh(wheelGeometry, steelDark);
-    wheel.rotation.x = Math.PI / 2; wheel.position.set(x, 5.46, z); trolley.add(wheel); wheels.push(wheel);
-    bolt(trolley, x, 5.46, z + .06);
-  }
+  const wheels=createAlphaTrolleyBody(trolley,box,geometry,{metal,steelDark,polished});
   const fixture = new THREE.Group(); trolley.add(fixture);
   box(fixture, [.97, .07, .11], [0, 0, 0], polished, true);
   const hookGeometry = geometry(new THREE.TorusGeometry(.085, .018, 6, 20, Math.PI * 1.75));

@@ -8,7 +8,9 @@ import framing from '@/lib/scene-poster-framing.json';
 import responsiveOpening from '@/lib/scene-responsive-opening-posters.json';
 
 export function ScenePoster({kind}:{kind:keyof typeof posters}) {
-  const Picture=kind==='process'?DeferredPicture:'picture';
+  if(kind==='philosophy')return <span className="scene-poster" aria-hidden="true">{(['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={'art-theme-'+theme}><source media="(max-width:767px)" srcSet={'/philosophy-scenes/mobile-'+theme+'.webp'}/><img src={'/philosophy-scenes/'+theme+'.webp'} width="1440" height="1080" alt="" decoding="async" loading="lazy" style={{width:'100%',height:'100%',objectFit:'contain'}}/></DeferredPicture>)}</span>;
+  if(kind==='intelligence')return <span className="scene-poster" aria-hidden="true">{(['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={'art-theme-'+theme}><source media="(max-width:767px)" srcSet={'/intelligence/portrait-refined-mobile-'+theme+'.webp'}/><img src={'/intelligence/portrait-refined-desktop-'+theme+'.webp'} width="1440" height="1080" alt="" decoding="async" loading="eager" style={{width:'100%',height:'100%',objectFit:'contain'}}/></DeferredPicture>)}</span>;
+  const Picture=DeferredPicture;
   const responsive=kind in responsiveOpening?responsiveOpening[kind as keyof typeof responsiveOpening]:undefined;
   const fit=framing[kind] as {width:number;height:number;minWidth:number;minHeight:number;padding?:boolean};
   const padding=fit.padding?'clamp(12px,2.5cqw,28px)':'0px';

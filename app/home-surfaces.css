@@ -78,7 +78,6 @@ body:has(.home-page):has(canvas[data-render-quality="lightweight"]) .site-presen
 .home-page .lot-story-tiles .lot-tile-message { color:var(--ink); opacity:1; }
 .home-page .hero-principle-strip { border:0; box-shadow:0 -8px 30px rgba(12,35,55,.035); }
 .home-page .hero-principle-strip li+li { border:0; }
-.home-page .section { scroll-margin-top:100px; }
 .application-caption svg { width:20px; height:20px; margin:0; }
 .home-presentation .home-page .lot-story-tiles .lot-tile-message {color:var(--ink);opacity:1;}
 /* Ten year targets wrap rather than escaping the glass surface on narrow screens. */
@@ -150,3 +149,22 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
 
 :root[data-theme="dark"] .roadmap-still .roadmap-static-globe{stroke:#7ba6ba;opacity:.15}
 :root[data-theme="dark"] .roadmap-art[data-index="4"] .roadmap-static-globe{stroke:#a8e9ff;opacity:.39}
+
+/* Capability ascent: one scene and one readable milestone below. */
+.home-roadmap.roadmap-ascent .roadmap-years{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.home-roadmap.roadmap-ascent .roadmap-composition{grid-template-columns:1fr;gap:16px}
+.home-roadmap.roadmap-ascent .roadmap-art{height:350px}
+.home-roadmap.roadmap-ascent .roadmap-card{height:auto;min-height:190px;max-width:760px;width:100%;margin-inline:auto}
+.site-presentation .home-roadmap.roadmap-ascent .roadmap-gate{display:block;margin-top:16px}
+.home-roadmap.roadmap-ascent .roadmap-detail{min-height:0}
+.home-roadmap.roadmap-ascent .roadmap-year-tablet{animation:none;box-shadow:0 5px 18px var(--card-shadow)}
+.home-roadmap.roadmap-ascent .roadmap-year-tablet[aria-pressed=true]{color:var(--text-link);box-shadow:inset 0 -2px var(--text-link),0 5px 18px var(--card-shadow)}
+.roadmap-ascent .roadmap-ambition-note{font-size:11px;line-height:1.7;color:var(--muted);max-width:760px;margin:20px auto 0}
+.roadmap-ascent .roadmap-more{font-size:12px;line-height:1.8;margin-top:14px;color:var(--muted)}.roadmap-more summary{cursor:pointer;min-height:44px}
+.roadmap-ascent .roadmap-card{transition:opacity .25s}.roadmap-ascent[data-travelling=true] .roadmap-card{opacity:.55}
+@media(max-width:767px){.home-roadmap.roadmap-ascent .roadmap-art{height:290px}.home-roadmap.roadmap-ascent .roadmap-years{gap:4px}.home-roadmap.roadmap-ascent .roadmap-year-tablet{font-size:10px;padding:8px 3px}.home-roadmap.roadmap-ascent .roadmap-card{min-height:220px}}
+@media(prefers-reduced-motion:reduce){.roadmap-ascent .roadmap-card{transition:none}}
+
+/* The five-cube sequence uses a shared horizontal foundation. */
+.home-roadmap.roadmap-ascent .roadmap-art{height:300px}
+@media(max-width:767px){.home-roadmap.roadmap-ascent .roadmap-art{height:210px}}

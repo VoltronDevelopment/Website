@@ -7,7 +7,8 @@ import { ArrowRight, Pause, Play, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
-import { entryDuration, entryStateAt } from "./entry-timeline";
+import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
+import {prefersStaticScene} from '../performance/scene-policy';
 import {IdentityTile} from './IdentityTile';
 import {ComingCube} from '../coming-soon/ComingCube';
 
@@ -33,6 +34,7 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
   useEffect(()=>{
     if(!host.current)return;
     const root=host.current;
+    root.dataset.entryEnhanced='true';
     // Decode the final emblem during the opening hold, rather than on its first visible frame.
     root.querySelectorAll<HTMLImageElement>(".identity-tile-mark img").forEach(image=>{void image.decode().catch(()=>{});});
     let disposed=false,frame=0,time=0,previous=0;
@@ -40,8 +42,9 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     let celebrationRequested=false;
     const duration=entryDuration+(comingSoon?7.8:0);
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
-    const reduced=()=>motion.matches || new URLSearchParams(location.search).get("motion")==="reduced";
+    const reduced=()=>motion.matches || prefersStaticScene() || new URLSearchParams(location.search).get("motion")==="reduced";
     function paint(){
+      time=advanceEntryClock(time,0,duration,reduced());
       const state=entryStateAt(time);
       root.dataset.phase=String(state.phase);root.dataset.settled=String(state.done);root.dataset.elapsed=time.toFixed(2);
       root.dataset.motion=reduced()?"reduced":"full";
@@ -73,7 +76,7 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     function stop(){cancelAnimationFrame(frame);frame=0;previous=0;root.dataset.playing="false";}
     function tick(now: number){
       if(disposed || document.hidden || pausedRef.current){stop();return;}
-      time=Math.min(duration,time+(previous?(now-previous)/1000:0));previous=now;paint();
+      time=advanceEntryClock(time,previous?(now-previous)/1000:0,duration,reduced());previous=now;paint();
       if(time<duration)frame=requestAnimationFrame(tick);else stop();
     }
     function resume(){stop();if(reduced()){time=duration;paint();return;}if(!document.hidden && !pausedRef.current && time<duration){root.dataset.playing="true";frame=requestAnimationFrame(tick);}}
@@ -85,9 +88,9 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
     // motion jumps straight back to the same final face.
     faceRef.current=-1;
     time=reduced()?duration:0;paint();
-    motion.addEventListener("change",preference);document.addEventListener("visibilitychange",visibility);
+    motion.addEventListener("change",preference);window.addEventListener('voltron:motion',preference);document.addEventListener("visibilitychange",visibility);
     resume();
-    return ()=>{disposed=true;stop();celebration?.dispose();motionControl.current=null;motion.removeEventListener("change",preference);document.removeEventListener("visibilitychange",visibility);};
+    return ()=>{disposed=true;stop();celebration?.dispose();motionControl.current=null;motion.removeEventListener("change",preference);window.removeEventListener('voltron:motion',preference);document.removeEventListener("visibilitychange",visibility);};
   },[replay,comingSoon]);
 
   function enter(event: MouseEvent<HTMLAnchorElement>){
@@ -117,6 +120,7 @@ export function BrandEntry({comingSoon=false,children,extraControls}:{comingSoon
         </div>}
       </div>
       <h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>
+      {!comingSoon&&<Link className="entry-direct-link" href="/" aria-label="Enter Lattice without waiting for the introduction">Enter Lattice<ArrowRight size={16} aria-hidden="true"/></Link>}
     </div>
     {children}
     </div>

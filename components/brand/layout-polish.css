@@ -185,3 +185,15 @@
 @media(max-width:767px){.site-presentation #main-content:has(.technology-page) .operating-digital-layer{padding-bottom:48px}.site-presentation #main-content:has(.technology-page) .operating-numeric-layer{height:36px;bottom:5px}}
 @media(prefers-reduced-motion:reduce){.site-presentation #main-content:has(.technology-page) .operating-numeric-layer{display:none}}
 :root[data-artwork-motion=off] .site-presentation #main-content:has(.technology-page) .operating-numeric-layer{display:none}
+/* Tablet gets a readable product view rather than five miniature screens. */
+@media(min-width:768px) and (max-width:1000px){
+ .site-presentation #main-content:has(.technology-page) .digital-mobile-tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-bottom:12px}
+ .site-presentation #main-content:has(.technology-page) .digital-mobile-tabs button{min-height:44px;border:0;border-radius:6px;background:transparent;color:var(--muted);font:inherit;font-size:12px;cursor:pointer}
+ .site-presentation #main-content:has(.technology-page) .digital-mobile-tabs button[aria-pressed=true]{background:var(--op-panel);color:var(--op-accent)}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screens{display:block}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen{display:none}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen[data-mobile-active=true]{display:grid;width:100%;box-sizing:border-box;grid-template-columns:minmax(150px,.8fr) minmax(0,1.2fr);gap:8px 24px;padding:20px;min-height:180px;align-items:center}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen .digital-refined-graph{grid-column:2;grid-row:1/4;height:140px;max-width:360px;justify-self:center}
+ .site-presentation #main-content:has(.technology-page) .digital-screen-heading{font-size:14px}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen small,.site-presentation #main-content:has(.technology-page) .digital-screen-status{font-size:12px;line-height:1.7;min-height:0}
+}

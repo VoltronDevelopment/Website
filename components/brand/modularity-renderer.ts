@@ -5,7 +5,7 @@ import {createLotReveal} from '../home/lot-story-particles';
 import {createLatticeCellMaterials,updateLatticeCellMaterials,latticeFaceKinds as kinds,latticeFaceNormals as normals,latticeBevel} from './lattice-optics';
 import {glassFace,setGlass} from '../home/lattice-materials';
 import {createArtworkEnvironment,addArtworkSoftboxes} from './artwork-studio';
-import {MODULARITY_DURATION,modularityFrame,modularityCells,configurationPosition} from './modularity-model';
+import {MODULARITY_DURATION,modularityFrame,modularitySelectionFrame,modularityCells,configurationPosition} from './modularity-model';
 
 export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSelect:(index:number)=>void){
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});
@@ -39,8 +39,9 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
  const review=new URLSearchParams(location.search).get('modularity-time'),reviewTime=review===null?null:Number(review);
  let held=reviewTime!==null&&Number.isFinite(reviewTime);
  let frame=0,previous=0,time=held?T.MathUtils.clamp(reviewTime!,0,MODULARITY_DURATION):0,transition=1,manual:number|undefined,visible=false,disposed=false,lastSelection=-1,palette='';
+ let transitionDuration=.7,transitionFrom=modularityFrame(time),displayedState=transitionFrom,fromFaces=focusCell.materials.map(m=>({color:m.color.clone(),opacity:m.opacity}));
  function draw(){
-  const dark=document.documentElement.dataset.theme==='dark',state=modularityFrame(time,manual),formation=[state.core,...state.packs];
+  const dark=document.documentElement.dataset.theme==='dark',targetState=modularityFrame(time,manual),state=transition<1?modularitySelectionFrame(transitionFrom,targetState,transition):targetState,formation=[state.core,...state.packs];
   if(palette!==String(dark)){
    palette=String(dark);
    cells.forEach((cell,index)=>{
@@ -59,21 +60,22 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
   extensionCell.reveal.update(state.extension,0,time,dark,renderer.getPixelRatio());
   updateLatticeCellMaterials(extensionCell.materials,dark,[false,false,false,false,false,false]);
   extensionCell.materials.forEach(material=>material.emissiveIntensity=material.userData.baseEmissive+(state.selected===0?state.configuration*.15:0));
+  displayedState=state;host.dataset.selectionProgress=transition.toFixed(3);
   host.dataset.detailsReady=String(state.detailsReady);host.dataset.extension=state.extension.toFixed(3);host.dataset.descent=state.descent.toFixed(3);
   configuration.position.fromArray(configurationPosition);
   const configForm=state.configuration;
   focusCell.root.visible=configForm>0;focusCell.reveal.update(configForm,0,time,dark,renderer.getPixelRatio());
-  focusCell.materials.forEach((material,face)=>{material.userData.homeCellTone=cells[state.selected+1].materials[face].userData.homeCellTone;setGlass(material,kinds[face],dark);material.emissiveIntensity+=configForm*.035;});
+  focusCell.materials.forEach((material,face)=>{material.userData.homeCellTone=cells[state.selected+1].materials[face].userData.homeCellTone;setGlass(material,kinds[face],dark);material.emissiveIntensity+=configForm*.035;if(transition<1){const p=transition*transition*(3-2*transition);material.color.lerpColors(fromFaces[face].color,material.color,p);material.opacity=T.MathUtils.lerp(fromFaces[face].opacity,material.opacity,p);}});
   focusCell.mesh.userData.pack=state.selected;
   panelReveal.update(Math.max(0,(configForm-.2)/.8),0,time,dark,renderer.getPixelRatio());configuration.visible=configForm>.2;
   shadowMaterial.opacity=(dark?.35:.5)*state.core;
   renderer.render(scene,camera);
-  host.dataset.sceneState='live';host.dataset.particleMotion='surface-particles';host.dataset.stage=String(state.stage);host.dataset.selected=String(state.selected);host.dataset.animationTime=time.toFixed(3);host.dataset.formation=formation.map(n=>n.toFixed(3)).join(',');host.dataset.configuration=configForm.toFixed(3);host.dataset.particles=String(cells.some(cell=>cell.reveal.points.visible)||focusCell.root.visible&&focusCell.reveal.points.visible||configuration.visible&&panelReveal.points.visible);host.dataset.complete=String(state.complete&&transition>=1);
+  host.dataset.sceneState='live';host.dataset.particleMotion='surface-particles';host.dataset.stage=String(state.stage);host.dataset.selected=String(state.selected);host.dataset.animationTime=time.toFixed(3);host.dataset.physicalTime=state.time.toFixed(3);host.dataset.formation=formation.map(n=>n.toFixed(3)).join(',');host.dataset.configuration=configForm.toFixed(3);host.dataset.particles=String(cells.some(cell=>cell.reveal.points.visible)||focusCell.root.visible&&focusCell.reveal.points.visible||configuration.visible&&panelReveal.points.visible);host.dataset.complete=String(state.complete&&transition>=1);
   if(lastSelection!==state.selected){lastSelection=state.selected;onSelect(state.selected);}
  }
  const needsFrame=()=>!held&&(time<MODULARITY_DURATION||transition<1);
  function stop(){cancelAnimationFrame(frame);frame=0;previous=0;}
- function tick(now:number){frame=0;if(disposed||!visible||document.hidden)return;const delta=previous?Math.min((now-previous)/1000,.05):0;previous=now;time=Math.min(MODULARITY_DURATION,time+delta);transition=Math.min(1,transition+delta/1.7);draw();if(needsFrame())frame=requestAnimationFrame(tick);}
+ function tick(now:number){frame=0;if(disposed||!visible||document.hidden)return;const delta=previous?Math.min((now-previous)/1000,.05):0;previous=now;time=Math.min(MODULARITY_DURATION,time+delta);transition=Math.min(1,transition+delta/transitionDuration);draw();if(needsFrame())frame=requestAnimationFrame(tick);}
  function start(){if(!disposed&&visible&&!document.hidden&&!frame&&needsFrame()){previous=0;frame=requestAnimationFrame(tick);}}
  function resize(){const width=canvas.clientWidth,height=canvas.clientHeight;if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height,span=Math.max(7.7,7/aspect);camera.left=-span*aspect/2;camera.right=span*aspect/2;camera.top=span/2;camera.bottom=-span/2;camera.updateProjectionMatrix();draw();}
  const resizeObserver=new ResizeObserver(resize),themeObserver=new MutationObserver(draw),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)start();else stop();});resizeObserver.observe(canvas);themeObserver.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});view.observe(canvas);
@@ -83,5 +85,5 @@ export function mountModularity(canvas:HTMLCanvasElement,host:HTMLElement,onSele
  const click=(event:MouseEvent)=>{const target=hit(event);if(target)host.dispatchEvent(new CustomEvent('modularity:select',{detail:target.object.userData.pack}));};
  const hover=(event:MouseEvent)=>{canvas.style.cursor=hit(event)?'pointer':'default';};canvas.addEventListener('click',click);canvas.addEventListener('mousemove',hover);
  resize();
- return {select(index:number){held=false;manual=T.MathUtils.clamp(index,0,4);time=MODULARITY_DURATION;transition=1;stop();draw();start();},dispose(){disposed=true;stop();resizeObserver.disconnect();themeObserver.disconnect();view.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('click',click);canvas.removeEventListener('mousemove',hover);resources.forEach(resource=>resource.dispose());environment.dispose();renderer.dispose();renderer.forceContextLoss();}};
+ return {select(index:number){transitionDuration=Math.min(2.7,Math.max(.7,(MODULARITY_DURATION-displayedState.time)*.25));transitionFrom=displayedState;fromFaces=focusCell.materials.map(m=>({color:m.color.clone(),opacity:m.opacity}));held=false;manual=T.MathUtils.clamp(index,0,4);time=MODULARITY_DURATION;transition=visible?0:1;stop();draw();start();},dispose(){disposed=true;stop();resizeObserver.disconnect();themeObserver.disconnect();view.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('click',click);canvas.removeEventListener('mousemove',hover);resources.forEach(resource=>resource.dispose());environment.dispose();renderer.dispose();renderer.forceContextLoss();}};
 }

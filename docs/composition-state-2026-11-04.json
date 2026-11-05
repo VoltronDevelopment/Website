@@ -1,0 +1,31 @@
+{
+  "DesignSignalPacket": {
+    "scope": "Final bounded composition review; preserve Voltron geometry, materials, routing and typography",
+    "composition_state": {
+      "grid": "Existing responsive page containers and alternating two-column hero/one-column phone composition",
+      "primary_anchor_rule": "One primary subject per section: identity cube, physical operation, portrait, factory network, capability head, tree or shared brief",
+      "supporting_anchor_rule": "Projector/globe/frames support the focal object; labels stay outside its silhouette",
+      "normalized_anchor_targets": {
+        "hero_art_center": [
+          0.5,
+          0.5
+        ],
+        "phone_scene_center": [
+          0.5,
+          0.46
+        ]
+      },
+      "negative_space_policy": "Reserve text/artwork separation and port/label space; do not add background particles to fill useful whitespace",
+      "negative_space_ratio": "Not measured globally; responsive text/artwork geometry varies by section",
+      "safety_margin": "Use existing responsive gutters, plus measured label bounds; skill's general 6–8% rule is guidance rather than a replacement for established page spacing",
+      "tangency_checks": [
+        "Label/face exclusion",
+        "Truck support handoff",
+        "Plant/globe separation",
+        "Partner shadow frame fade"
+      ],
+      "evidence": "Current 96-case responsive matrix, 20 accessibility/text-stress cases, 14 interaction evidence rows and retained scene contact/pose reviews; see final-local-acceptance-2026-11-05.md",
+      "signoff": "Local implementation accepted; physical-device performance remains unverified and no deployment is authorized"
+    }
+  }
+}

@@ -181,7 +181,7 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
   function apply() {
     const state = lotStoryStateAt(elapsed);
     // A motion-free summary keeps the released lot visible before its outgoing dissolve.
-    const visual=(motion.matches||composition)&&state.settled?lotStoryStateAt(lotStageTimes[3]):state;
+    const visual=(motion.matches||composition)&&state.settled?lotStoryStateAt(10.8):state;
     const carrierSegment=Math.min(2,Math.floor(visual.position)),carrierFraction=visual.position-carrierSegment;
     snapshots.forEach(snapshot => {
       snapshot.root.position.lerpVectors(destinations[carrierSegment],destinations[carrierSegment+1],carrierFraction);snapshot.root.visible=true;
@@ -276,7 +276,9 @@ export function mountLotStory(canvas: HTMLCanvasElement, host: HTMLDivElement, o
     width = bounds.width; height = bounds.height; mobile = matchMedia("(max-width:767px)").matches;
     const projectedWidth = 1.65 * (Math.abs(right.x) + Math.abs(right.y) + Math.abs(right.z));
     const projectedHeight = 1.65 * (Math.abs(up.x) + Math.abs(up.y) + Math.abs(up.z));
-    unitPixels = Math.min(...targets.map(target => Math.min(target.width * .88 / projectedWidth, target.height * .73 / projectedHeight)));
+    const footprint=mobile?.88:width>=1000?1.22:1.08;
+    const edgeSpace=Math.min(...targets.map(target=>Math.min(target.left-bounds.left+target.width/2,bounds.left+bounds.width-(target.left+target.width/2))));
+    unitPixels = Math.min(...targets.map(target => Math.min(target.width * footprint / projectedWidth, target.height * (mobile?.73:.9) / projectedHeight)),edgeSpace*1.8/projectedWidth);
     camera.left = -width / unitPixels / 2; camera.right = -camera.left; camera.top = height / unitPixels / 2; camera.bottom = -camera.top; camera.updateProjectionMatrix();
     const rise = mobile ? 0 : Math.abs(up.x / right.x) * (targets[3].left - targets[0].left) / 2;
     host.style?.setProperty("--lot-rise", `${rise}px`);

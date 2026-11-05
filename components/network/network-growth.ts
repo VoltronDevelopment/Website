@@ -4,6 +4,12 @@ import {smooth} from './network-story';
 import type {Point} from './network-simulation';
 export const networkSites:Point[]=[[-8.16,0,5.27],[8.16,0,5.27],[-6.8,0,-6.46],[6.8,0,-6.46],[0,0,-.34]];
 export const envelopeScale=1.2,envelopeCenter:Point=[0,15,0];
+/** Establish the originating plant before opening to ground routes and the elevated mesh. */
+export function networkLearningFrame(time:number,aspect:number,phone=false){
+ const ground=smooth((time-2.8)/2.4),mesh=smooth((time-11)/3.5),span=phone?27:31;
+ const localHeight=Math.max(7,8.5/aspect),groundHeight=Math.max(17,span/aspect),finalHeight=Math.max(23,span/aspect);
+ return {target:[networkSites[0][0]*(1-ground),.9+.1*ground+4.6*mesh,networkSites[0][2]*(1-ground)] as Point,height:localHeight+(groundHeight-localHeight)*ground+(finalHeight-groundHeight)*mesh};
+}
 export function plantBuildState(time:number){
  return {foundation:smooth(time/2.5),frame:smooth((time-3)/3),envelope:smooth((time-7)/3),equipment:smooth((time-11)/3),systems:smooth((time-16)/2),roofClose:smooth((time-18)/2),complete:time>=20,glow:time<20?0:smooth((time-20)/.4)*(.28+.72*Math.sin(Math.PI*smooth((time-20)/4)))};
 }

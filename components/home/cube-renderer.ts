@@ -9,7 +9,7 @@ import {junctionPulse} from "./lattice-lighting";
 import {createLatticeActivity} from "./lattice-activity";
 import {addPhilosophyLighting,createPhilosophyCubes} from "./philosophy-cubes";
 import {philosophyCamera,homePhilosophyDuration,homePhilosophyCubeState} from "./philosophy-cube-timeline";
-import {createPhilosophyWave} from './philosophy-wave';
+
 
 export type CubeKind = "enclosure" | "lot" | "philosophy";
 type Options = {kind: CubeKind; active: boolean; sequence?:number};
@@ -74,7 +74,6 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
     }
   };
   const philosophy=options.kind==="philosophy"?track(createPhilosophyCubes()):undefined;
-  const philosophyWave=philosophy?track(createPhilosophyWave(philosophy.groups[2],{gather:true,reach:1.15})):undefined;if(philosophyWave)root.add(philosophyWave.points);
   if(philosophy)root.add(philosophy.root);
   else {addCube(1.65,0);if(options.kind==="lot"){
     const nodeMaterial=track(new THREE.MeshPhongMaterial({color:0x2894bc}));materials.push({material:nodeMaterial,role:"node"});
@@ -156,7 +155,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function state(){
-    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);philosophy.groups[2].traverse(o=>{if(o instanceof THREE.LineSegments){o.visible=pose.individual>=1;(o.material as THREE.LineBasicMaterial).opacity=(o.material as THREE.LineBasicMaterial).userData.baseOpacity*(1-pose.merge)*ease((pose.time-4)/.3);}if(o instanceof THREE.Mesh&&o.material instanceof THREE.MeshPhongMaterial){o.visible=pose.merge<.85;}});philosophyWave?.update(pose.time,pose.individual,pose.height,dark(),quality.ratio);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.individualMerge=pose.merge.toFixed(3);canvas.dataset.waveVisible=String(philosophyWave?.points.visible);return;}
+    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.individualMerge=pose.merge.toFixed(3);canvas.dataset.waveVisible='false';canvas.dataset.philosophyPhase=pose.phase;return;}
     if(options.kind==="enclosure"){
       const time=motion.matches?6.5:elapsed-sequenceDelay;
       const asset=ease(time/.8),reveal=ease((time-.9)/1.1);

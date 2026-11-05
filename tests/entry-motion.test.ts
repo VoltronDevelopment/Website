@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { entryDuration, entryFlipDuration, entryHoldDuration, entryStateAt } from "../components/entry/entry-timeline";
+import { entryDuration, entryFlipDuration, entryHoldDuration, entryStateAt, advanceEntryClock } from "../components/entry/entry-timeline";
 
 describe("face-flip brand entry",()=>{
+  it('resolves an in-flight introduction when reduced motion becomes active',()=>{
+    const comingDuration=entryDuration+7.8;
+    expect(advanceEntryClock(2,1/60,comingDuration,true)).toBe(comingDuration);
+    expect(entryStateAt(advanceEntryClock(2,1/60,comingDuration,true))).toMatchObject({wordmark:1,done:true});
+    expect(advanceEntryClock(2,30,comingDuration)).toBeCloseTo(2.1);
+  });
   it("holds the original logo until five seconds",()=>{
     expect(entryStateAt(2)).toMatchObject({logo:1,wordmark:0,face:0,turn:0});
     expect(entryStateAt(5)).toMatchObject({face:0,turn:0,entrance:0});

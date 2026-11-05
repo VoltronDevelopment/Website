@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {placeOperatingLabel} from '../components/technology/operating-label-layout';
+import {placeOperatingLabel,operatingLabelPort} from '../components/technology/operating-label-layout';
 import {operatingState,operatingEvents} from '../components/technology/operating-model';
 describe('operating artwork refinement',()=>{
  it('keeps labels within the artwork and away from occupied reading space',()=>{const bounds={width:390,height:440},first=placeOperatingLabel(160,200,110,44,bounds,[]);expect(first).not.toBeNull();const second=placeOperatingLabel(160,200,110,44,bounds,[first!]);expect(second).not.toBeNull();expect(second).not.toEqual(first);for(const r of [first!,second!]){expect(r.x).toBeGreaterThanOrEqual(12);expect(r.x+r.width).toBeLessThanOrEqual(378);expect(r.y+r.height).toBeLessThanOrEqual(374);}});
@@ -9,3 +9,5 @@ describe('operating artwork refinement',()=>{
  it('reverses into a stationary dock before the doors open and stages material before loading',()=>{expect(operatingState(7).incomingX).toBeLessThan(operatingState(9).incomingX);expect(operatingState(10).incomingX).toBe(operatingState(15).incomingX);expect(operatingState(16).part).toEqual(operatingState(16.4).part);expect(operatingState(21).part.z).toBeLessThan(operatingState(17).part.z);});
  it('closes cargo doors before outbound movement',()=>{for(let t=62;t<68;t+=.1){expect(operatingState(t).outboundDoor).toBe(0);}expect(operatingState(12).doorOpen).toBe(1);expect(operatingState(19).doorOpen).toBe(0);});
 });
+
+it('keeps a safe label stable and terminates its leader on the nearest edge',()=>{const r={x:200,y:100,width:100,height:44};expect(placeOperatingLabel(180,170,100,44,{width:500,height:400},[],r)).toEqual(r);expect(operatingLabelPort(350,122,r)).toEqual({x:300,y:122});const next=placeOperatingLabel(180,170,100,44,{width:500,height:400},[r],r);expect(next).not.toEqual(r);});

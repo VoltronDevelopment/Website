@@ -1,7 +1,6 @@
 "use client";
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
-import {ArtworkControls} from "./ArtworkControls";
 import {ArtworkInspector} from './ArtworkInspector';
 import {durations} from './human-hero-timeline';
 import {prefersStaticScene} from "@/components/performance/scene-policy";
@@ -35,5 +34,5 @@ export function HumanHeroArtwork({kind}:{kind:HumanHeroKind}){
     sceneMotionPreference.addEventListener("change",retryScene);
     return ()=>{sceneMotionPreference.removeEventListener("change",retryScene);disposed=true;view.disconnect();cleanup?.();};
   },[kind,motionRevision]);
-  return <div className="human-hero-controlled"><div ref={host} className={`human-hero-art human-hero-${kind}`} role="img" aria-label={kind==="commons"?"Eight extended glass corners and transparent faces form one grounded enclosure. Energy reaches the roots, a tree grows inside, and the scene turns twice.":"A transparent Voltron cube forms with a prominent head. A medium cube leaves the head first. A smaller cube forms from overhead particles and descends into the same centre."}><ScenePoster kind={kind}/><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkControls mode={mode} onToggle={()=>controller.current?.toggle()} onReplay={()=>controller.current?.replay()}/><ArtworkInspector scene={kind} duration={durations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;
+  return <div className="human-hero-controlled"><div ref={host} className={`human-hero-art human-hero-${kind}`} role="img" aria-label={kind==="commons"?"Eight extended glass corners and transparent faces form one grounded enclosure. Energy reaches the roots, a tree grows inside, and the completed scene settles into a stable view.":"A transparent Voltron cube forms with a prominent head. A medium cube leaves the head first. A smaller cube forms from overhead particles and descends into the same centre."}><ScenePoster kind={kind}/><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkInspector scene={kind} duration={durations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;
 }

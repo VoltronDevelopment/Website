@@ -1,4 +1,9 @@
 export type AgentFormation={amount:number;arrangement:number;resolve:number;label:string};
+/** Visible cards resume their local phase; skipped wall time never advances their material or state. */
+export function visibleAgentDelta(previous:number|null,current:number){
+ if(previous===null||!Number.isFinite(previous)||!Number.isFinite(current))return 0;
+ return Math.max(0,Math.min(.1,current-previous));
+}
 const ease=(x:number)=>{const t=Math.max(0,Math.min(1,x));return t*t*t*(t*(t*6-15)+10);};
 const actions=['Organizing checks','Scanning evidence','Examining history','Comparing streams','Gathering records','Connecting findings'];
 /** Six phase offsets keep the strongest formations staggered. Endpoints have zero velocity. */
@@ -9,7 +14,7 @@ export function galleryFormation(time:number,agent:number):AgentFormation{
 }
 export function taskFormation(activity:number,progress:number,agent:number):AgentFormation{
  if(activity<0)return {amount:.8,arrangement:.3,resolve:0,label:'Waiting for evidence'};
- if(activity===0)return {amount:0,arrangement:1,resolve:1,label:progress>=1?'Complete · fluid identity':'Ready to investigate'};
+ if(activity===0)return {amount:0,arrangement:1,resolve:1,label:progress>=1?'Investigation complete':'Ready to investigate'};
  return {amount:1,arrangement:ease((progress-.35)/.35),resolve:ease((progress-.8)/.2),label:actions[agent]};
 }
 /** Exact critically damped spring; bounded dt prevents a hidden tab causing a leap. */

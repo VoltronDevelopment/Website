@@ -6,6 +6,7 @@ import {alphaLineStations} from '../manufacturing/alpha-line-config';
 import {productNames,productScenario} from './product-scenario';
 import {usePresentationClock} from './use-presentation-clock';
 import './product-showcase.css';
+import {containDialogFocus,isDialogBackdropClick} from '../brand/dialog-focus';
 const Twin=dynamic(()=>import('../manufacturing/AlphaLineExperience').then(m=>m.AlphaLineExperience),{loading:()=> <div className="product-twin-loading">Preparing Alpha line…</div>});
 const icons=[Network,Boxes,Activity,ScanLine,BrainCircuit];
 const roles=['Shared meaning','Production execution','Equipment visibility','Process representation','Evidence-led investigation'];
@@ -40,6 +41,6 @@ export function ProductShowcase(){
    <div className="product-outcome" aria-live="off"><span className="outcome-dot"/>{outcomes[product]}<span>{Math.round(progress*100)}%</span></div>
   </div>
   <div className="product-presentation-footer"><p>Illustrative product screens · Tap a product to explore.</p><button onClick={()=>{setRevision(r=>r+1);setAutomatic(false);}}><RotateCcw size={15}/> Replay {productNames[product]}</button></div>
-  <dialog ref={dialog} className="product-detail-dialog" aria-label="Product details" onClose={()=>setSheet(false)}><button onClick={()=>setSheet(false)}>Close details</button><p className="product-overline">{productNames[product]}</p><h3>{record}</h3><p>{['Connect the lot, part, operation, equipment and evidence through shared identities.','Follow production through a recorded route, with each operation attached to the same lot.','Relate equipment observations to the station and current operation.','Explore the same Alpha line represented on the Manufacturing page.','Connect observations to evidence and prepare a response for authorised human review.'][product]}</p><dl><div><dt>Lot</dt><dd>{state.lot}</dd></div><div><dt>Carrier</dt><dd>{state.carrier}</dd></div><div><dt>Station</dt><dd>{station}</dd></div></dl><p>Simulated data. The condition index is illustrative, not an operating recipe.</p></dialog>
+  <dialog onKeyDown={containDialogFocus} onClick={event=>{if(isDialogBackdropClick(event))setSheet(false);}} ref={dialog} className="product-detail-dialog" aria-label="Product details" onClose={()=>setSheet(false)}><button onClick={()=>setSheet(false)}>Close details</button><p className="product-overline">{productNames[product]}</p><h3>{record}</h3><p>{['Connect the lot, part, operation, equipment and evidence through shared identities.','Follow production through a recorded route, with each operation attached to the same lot.','Relate equipment observations to the station and current operation.','Explore the same Alpha line represented on the Manufacturing page.','Connect observations to evidence and prepare a response for authorised human review.'][product]}</p><dl><div><dt>Lot</dt><dd>{state.lot}</dd></div><div><dt>Carrier</dt><dd>{state.carrier}</dd></div><div><dt>Station</dt><dd>{station}</dd></div></dl><p>Simulated data. The condition index is illustrative, not an operating recipe.</p></dialog>
  </div>;
 }

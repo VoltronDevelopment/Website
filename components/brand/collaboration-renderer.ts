@@ -9,6 +9,7 @@ import {partnerStage} from './partner-stage';
 import {collaborationState,collaborationGait,collaborationOpening,partnerOpening,type CollaborationKind} from './collaboration-timeline';
 import {createSceneHandoff} from '../performance/scene-handoff';
 import {createRenderQuality,prefersStaticScene} from '../performance/scene-policy';
+import {createStairContact} from './stair-contact';
 
 export type CollaborationController={toggle():void;replay():void;seek(time:number):void;dispose():void};
 type Mode='static'|'playing'|'paused'|'settled';
@@ -28,6 +29,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
  function box(parent:T.Object3D,size:[number,number,number],p:number[],m:T.Material,r=.045){return mesh(new RoundedBoxGeometry(...size,3,Math.min(r,...size.map(v=>v*.22))),m,parent,p);}
  const foundations:T.Object3D[]=[],people:T.Object3D[]=[],mixers:T.AnimationMixer[]=[],formations:ReturnType<typeof createStoryFormation>[]=[],mobile=matchMedia('(max-width:767px)').matches;
  let partnership:Awaited<ReturnType<typeof createPartnerPresentation>>|undefined;
+ let stairContact:ReturnType<typeof createStairContact>|undefined;
  let panel:T.Group|undefined;
  let teardown:(()=>void)|undefined;
  try {
@@ -42,6 +44,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
    const sourceBounds=new T.Box3().setFromObject(gltf.scene.getObjectByName(setup.stair)!),centre=sourceBounds.getCenter(new T.Vector3()),extent=sourceBounds.getSize(new T.Vector3());box(stairs,[extent.x+.24,.09,extent.z+.24],[centre.x,-.07,centre.z],near,.025);
    const indices=family?[1,2]:[0];for(const i of indices){const root=clone(gltf.scene);for(const entry of arrangements){root.getObjectByName(entry.stair)?.removeFromParent();if(entry.rig!==setup.rig)root.getObjectByName(entry.rig)?.removeFromParent();}root.position.copy(setup.offset);scene.add(root);const mixer=new T.AnimationMixer(root),action=mixer.clipAction(gltf.animations[family]);action.setLoop(T.LoopOnce,1);action.clampWhenFinished=true;action.play();mixer.setTime(collaborationGait(i,0));root.updateMatrixWorld(true);const material=standard([0xd2e1ea,0x36546c,0x99b5c8][i],[0x9ebacb,0x284458,0x637f96][i],.3,.39);root.traverse(o=>{if(o instanceof T.Mesh){geometries.add(o.geometry);o.material=material;o.castShadow=true;}});people.push(root);mixers.push(mixer);}
   }
+  stairContact=createStairContact(people[0]);
   host.dataset.peopleCount='3';host.dataset.stairCount='2';host.dataset.stairOccupancy='1,2';host.dataset.skeletons='3';
  }else{
   partnership=await createPartnerPresentation(scene,signal);people.push(...partnership.figures);panel=partnership.panel;
@@ -49,7 +52,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
 
  }
 
- const floorMaterial=new T.ShadowMaterial({color:0x183e59,transparent:true,opacity:.12});floorMaterial.onBeforeCompile=shader=>{shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vFloorWorld;').replace('#include <project_vertex>','#include <project_vertex>\nvFloorWorld=(modelMatrix*vec4(transformed,1.)).xyz;');shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vFloorWorld;').replace('#include <tonemapping_fragment>','gl_FragColor.a*=exp(-dot(vFloorWorld.xz,vFloorWorld.xz)*.18);\n#include <tonemapping_fragment>');};materials.add(floorMaterial);const floor=mesh(new T.PlaneGeometry(20,20),floorMaterial,scene,[0,kind==='partner'?0:-.125,0]);floor.rotation.x=-Math.PI/2;floor.castShadow=false;
+ const floorFade={value:kind==='partner'?1:0};const floorMaterial=new T.ShadowMaterial({color:0x183e59,transparent:true,opacity:.12});floorMaterial.onBeforeCompile=shader=>{shader.uniforms.uPartnerFloor= floorFade;shader.vertexShader=shader.vertexShader.replace('#include <common>','#include <common>\nvarying vec3 vFloorWorld;varying vec2 vFloorScreen;').replace('#include <project_vertex>','#include <project_vertex>\nvFloorWorld=(modelMatrix*vec4(transformed,1.)).xyz;vFloorScreen=gl_Position.xy/gl_Position.w;');shader.fragmentShader=shader.fragmentShader.replace('#include <common>','#include <common>\nvarying vec3 vFloorWorld;varying vec2 vFloorScreen;uniform float uPartnerFloor;').replace('#include <tonemapping_fragment>','float contactDistance=min(length(vFloorWorld.xz-vec2(-.9,0.)),length(vFloorWorld.xz-vec2(.9,0.)));float partnerFade=1.-smoothstep(.35,1.65,contactDistance);gl_FragColor.a*=mix(exp(-dot(vFloorWorld.xz,vFloorWorld.xz)*.18),partnerFade*(1.-smoothstep(.65,.96,max(abs(vFloorScreen.x),abs(vFloorScreen.y)))),uPartnerFloor);\n#include <tonemapping_fragment>');};materials.add(floorMaterial);const floor=mesh(new T.PlaneGeometry(20,20),floorMaterial,scene,[0,kind==='partner'?0:-.125,0]);floor.rotation.x=-Math.PI/2;floor.castShadow=false;
  for(const [i,root]of [...foundations,...people].entries()){const f=createStoryFormation(root,mobile?i<foundations.length?3000:4200:i<foundations.length?5500:7200,i+1,kind==='partner');formations.push(f);scene.add(f.points);}
  let aspect=1;
  let time=kind==='partner'?partnerOpening:collaborationOpening,paused=false,frozen=false,visible=false,disposed=false,lost=false,frame=0,last=0;
@@ -59,7 +62,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
   foundations.forEach((root,i)=>{formations[i].update(state.structure,time,night,renderer.getPixelRatio());root.traverse(o=>{if(o instanceof T.Mesh)o.castShadow=state.structure>.98;});});
   partnership?.update(time,night,renderer.getPixelRatio());if(capture&&partnership){host.dataset.handPanelGaps=JSON.stringify(partnership.handPanelGaps);host.dataset.footTargets=JSON.stringify(partnership.footTargets);host.dataset.panelProgress=state.surface.toFixed(4);host.dataset.identityProgress=state.stamp.toFixed(4);}
 
-  people.forEach((root,i)=>{if(kind!=='partner')mixers[i]?.setTime(collaborationGait(i,state.walk));formations[foundations.length+i].update(state.people[i],time,night,renderer.getPixelRatio());root.traverse(o=>{if(o instanceof T.Mesh)o.castShadow=state.people[i]>.98;});});
+  people.forEach((root,i)=>{if(kind!=='partner'){if(i===0)stairContact?.restore();mixers[i]?.setTime(collaborationGait(i,state.walk));if(i===0)stairContact?.apply(collaborationGait(i,state.walk));}formations[foundations.length+i].update(state.people[i],time,night,renderer.getPixelRatio());root.traverse(o=>{if(o instanceof T.Mesh)o.castShadow=state.people[i]>.98;});});
   renderer.shadowMap.enabled=quality.shadows;renderer.shadowMap.needsUpdate=quality.shadows;renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);host.dataset.phase=state.phase;host.dataset.figureProgress=state.people.join(',');host.dataset.formingFigures=String(state.people.filter(p=>p>0&&p<1).length);host.dataset.walkProgress=state.walk.toFixed(3);canvas.dataset.theme=night?'dark':'light';
   if(capture){const bound=new T.Box3();const projected=[];for(const root of [...foundations,...people,...panel?[panel]:[]]){bound.setFromObject(root);for(let i=0;i<8;i++)projected.push(new T.Vector3(i&1?bound.max.x:bound.min.x,i&2?bound.max.y:bound.min.y,i&4?bound.max.z:bound.min.z).project(camera));}host.dataset.essentialBounds=JSON.stringify({left:Math.min(...projected.map(p=>p.x)),right:Math.max(...projected.map(p=>p.x)),top:Math.max(...projected.map(p=>p.y)),bottom:Math.min(...projected.map(p=>p.y))});}
  }
@@ -67,7 +70,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;quality.reset();host.dataset.running='false';}
  function schedule(){if(!disposed&&!lost&&!prefersStaticScene()&&!paused&&!frozen&&visible&&!document.hidden&&!frame&&time<12&&host.dataset.sceneState==='live'){host.dataset.running='true';frame=requestAnimationFrame(tick);}}
  function tick(now:number){frame=0;if(disposed||lost||!visible||document.hidden||paused||frozen)return;time=Math.min(12,time+(last?Math.min(.08,(now-last)/1000):0));last=now;if(quality.sample(now)){renderer.setPixelRatio(quality.ratio);size();}draw();if(time<12)frame=requestAnimationFrame(tick);else{stop();onMode('settled');}}
- const sizing=new ResizeObserver(size),themes=new MutationObserver(draw),view=new IntersectionObserver(([e])=>{visible=e.isIntersecting;if(visible)schedule();else stop();},{threshold:.1});
+ const sizing=new ResizeObserver(size),themes=new MutationObserver(draw),view=new IntersectionObserver(([e])=>{visible=e.isIntersecting&&e.intersectionRatio>=.25;if(visible)schedule();else stop();},{threshold:[0,.25]});
  const visibility=()=>document.hidden?stop():schedule(),contextLost=(e:Event)=>{e.preventDefault();lost=true;stop();handoff.fallback();onMode('static');},restore=()=>{lost=false;size();void handoff.reveal().then(()=>{if(!disposed){onMode(time===12?'settled':paused?'paused':'playing');schedule();}});};
  const controller:CollaborationController={toggle(){if(time===12)return;paused=!paused;if(paused)stop();else{frozen=false;schedule();}onMode(paused?'paused':'playing');},replay(){stop();time=0;paused=frozen=false;draw();onMode('playing');schedule();},seek(value){stop();time=Number.isFinite(value)?T.MathUtils.clamp(value,0,12):0;paused=frozen=true;draw();onMode(time===12?'settled':'paused');},dispose(){if(disposed)return;disposed=true;stop();handoff.dispose();sizing.disconnect();themes.disconnect();view.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('webglcontextlost',contextLost);canvas.removeEventListener('webglcontextrestored',restore);signal.removeEventListener('abort',controller.dispose);mixers.forEach(m=>{m.stopAllAction();m.uncacheRoot(m.getRoot());});const skeletons=new Set<T.Skeleton>();people.forEach(root=>root.traverse(o=>{if(o instanceof T.SkinnedMesh)skeletons.add(o.skeleton);}));skeletons.forEach(s=>s.dispose());formations.forEach(f=>f.dispose());partnership?.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());key.shadow.dispose();environment.dispose();renderer.dispose();renderer.forceContextLoss();}};
  teardown=controller.dispose;

@@ -19,4 +19,4 @@ export function scadaTraceValue(time:number){
  return base-27*rise*(1-recover);
 }
 
-export function twinPoint(x:number,z:number){return {x:25+(x+4)/(20.7*.42)*125,y:18+(z+3.898)/(13.8*.42)*78};}
+export function twinPoint(x:number,z:number){return {x:25+(x+4)/9*125,y:18+(z+3.898)/(13.8*.42)*78};}

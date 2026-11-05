@@ -2,138 +2,138 @@
   "desktop": {
     "light": [
       {
-        "url": "/optimized/home-hd-lot-desktop-light-1.9-66cbd146cfc6bd09.webp",
+        "url": "/optimized/home-hd-lot-desktop-light-1.9-d582de80c64ea3f2.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 231110
+        "height": 920,
+        "bytes": 212740
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-light-4.4-feed05172f0e3c3e.webp",
+        "url": "/optimized/home-hd-lot-desktop-light-4.4-fa1427f002ed6e29.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 241196
+        "height": 920,
+        "bytes": 222518
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-light-7.7-c98497bd935de81a.webp",
+        "url": "/optimized/home-hd-lot-desktop-light-7.7-4a21e60beabedad2.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 240250
+        "height": 920,
+        "bytes": 221674
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-light-12.4-b963a2fa393a252d.webp",
+        "url": "/optimized/home-hd-lot-desktop-light-10.8-7f7619d764636367.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 281642
+        "height": 920,
+        "bytes": 231596
       }
     ],
     "dark": [
       {
-        "url": "/optimized/home-hd-lot-desktop-dark-1.9-11c6b0c617ffb124.webp",
+        "url": "/optimized/home-hd-lot-desktop-dark-1.9-391abfbd44ed23e2.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 243974
+        "height": 920,
+        "bytes": 231084
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-dark-4.4-486613f28ac09020.webp",
+        "url": "/optimized/home-hd-lot-desktop-dark-4.4-89d1146d863490b8.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 257900
+        "height": 920,
+        "bytes": 245588
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-dark-7.7-a72801f32adaf10f.webp",
+        "url": "/optimized/home-hd-lot-desktop-dark-7.7-ccd8dff54a787ac0.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 254938
+        "height": 920,
+        "bytes": 237908
       },
       {
-        "url": "/optimized/home-hd-lot-desktop-dark-12.4-148918fd3983dfb6.webp",
+        "url": "/optimized/home-hd-lot-desktop-dark-10.8-c38d8e5082b70ca0.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 292256
+        "height": 920,
+        "bytes": 263088
       }
     ]
   },
   "opening": {
     "desktop": {
       "light": {
-        "url": "/optimized/home-hd-lot-desktop-light-0-d90623744dc1dfe9.webp",
+        "url": "/optimized/home-hd-lot-desktop-light-0-d78d0f40869b385e.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 311418
+        "height": 920,
+        "bytes": 316276
       },
       "dark": {
-        "url": "/optimized/home-hd-lot-desktop-dark-0-cd5d4313b7018245.webp",
+        "url": "/optimized/home-hd-lot-desktop-dark-0-484625882e0ec9e6.webp",
         "width": 2240,
-        "height": 1002,
-        "bytes": 317840
+        "height": 920,
+        "bytes": 309434
       }
     },
     "mobile": {
       "light": {
-        "url": "/optimized/home-hd-lot-mobile-light-0-e4ee4e8d885faa0d.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 198610
+        "url": "/optimized/home-hd-lot-mobile-light-0-f5daffb24eb4b456.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 184170
       },
       "dark": {
-        "url": "/optimized/home-hd-lot-mobile-dark-0-402a4ab0e0504cd0.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 186194
+        "url": "/optimized/home-hd-lot-mobile-dark-0-52f7a955ceda42e7.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 168208
       }
     }
   },
   "mobile": {
     "light": [
       {
-        "url": "/optimized/home-hd-lot-mobile-light-1.9-efd49dc97c44e9e4.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 91014
+        "url": "/optimized/home-hd-lot-mobile-light-1.9-dc5986d6d894a5a8.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 76766
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-light-4.4-e9cf9763ed2e7b97.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 94080
+        "url": "/optimized/home-hd-lot-mobile-light-4.4-fbc07fae9e98d05e.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 79408
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-light-7.7-8a803253dab0a579.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 97950
+        "url": "/optimized/home-hd-lot-mobile-light-7.7-0fa0a6983b7786db.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 85436
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-light-12.4-d6c93032898c38a6.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 123832
+        "url": "/optimized/home-hd-lot-mobile-light-10.8-e2be9f7ebea617b9.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 79162
       }
     ],
     "dark": [
       {
-        "url": "/optimized/home-hd-lot-mobile-dark-1.9-816bb3048db7874f.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 101626
+        "url": "/optimized/home-hd-lot-mobile-dark-1.9-3c12fe1175ad3a05.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 89644
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-dark-4.4-a21cc87cd98023f0.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 107470
+        "url": "/optimized/home-hd-lot-mobile-dark-4.4-50c07a3942d15939.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 92286
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-dark-7.7-fbb90b420576fd54.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 111064
+        "url": "/optimized/home-hd-lot-mobile-dark-7.7-4024ad80541e09df.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 98372
       },
       {
-        "url": "/optimized/home-hd-lot-mobile-dark-12.4-5b6605002770b402.webp",
-        "width": 664,
-        "height": 784,
-        "bytes": 131686
+        "url": "/optimized/home-hd-lot-mobile-dark-10.8-0a25fcc0ab7319ba.webp",
+        "width": 640,
+        "height": 640,
+        "bytes": 90558
       }
     ]
   }

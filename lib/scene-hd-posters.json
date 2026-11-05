@@ -2,16 +2,16 @@
   "technology": {
     "complete": {
       "light": {
-        "url": "/optimized/scene-hd-technology-light-b7b08ff9ff3b6b12.webp",
+        "url": "/optimized/neural-refined-hd-complete-light-a78a528e334294d3.webp",
         "width": 1920,
         "height": 1280,
-        "bytes": 657382
+        "bytes": 638072
       },
       "dark": {
-        "url": "/optimized/scene-hd-technology-dark-e6b12f3d1e5f361f.webp",
+        "url": "/optimized/neural-refined-hd-complete-dark-1bfad1e3b651ff3f.webp",
         "width": 1920,
         "height": 1280,
-        "bytes": 668858
+        "bytes": 650766
       }
     }
   },

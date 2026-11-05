@@ -1,12 +1,12 @@
 {
   "technology": {
     "desktop": {
-      "light": "/optimized/scene-opening-technology-desktop-light-39445ca67962b2cc.webp",
-      "dark": "/optimized/scene-opening-technology-desktop-dark-f6dc32a5c6289931.webp"
+      "light": "/optimized/neural-refined-desktop-light-3e0d53b53a87c203.webp",
+      "dark": "/optimized/neural-refined-desktop-dark-5fa119c386e7ee7e.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-opening-technology-mobile-light-da43e43a6266e385.webp",
-      "dark": "/optimized/scene-opening-technology-mobile-dark-fc3e846eb82e4710.webp"
+      "light": "/optimized/neural-refined-mobile-light-c841ba6449c01ccd.webp",
+      "dark": "/optimized/neural-refined-mobile-dark-6b9d763770870374.webp"
     }
   },
   "process": {

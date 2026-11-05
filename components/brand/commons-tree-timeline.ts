@@ -9,8 +9,8 @@ export function commonsTreeState(seconds:number){
  const time=Math.max(0,Math.min(commonsTreeDuration,Number.isFinite(seconds)?seconds:0));
  const cube=smooth(time/2.2);
  const glow=smooth((time-2.2)/.55)*(1-smooth((time-4.8)/1.2));
- const growth=smooth((time-4.8)/4);
+ const growth=time<4.8?.38*smooth((time-1.2)/2):.38+.62*smooth((time-4.8)/4);
  const canopy=smooth((time-6.6)/2.6);
  const turn=smooth((time-9.2)/5);
- return {time,done:time===commonsTreeDuration,cube,glow,growth,canopy,yaw:turn*Math.PI*4,turn,nodes:commonsCornerCount,settle:smooth((time-14.4)/1.4)};
+ return {time,done:time===commonsTreeDuration,cube,glow,growth,canopy,yaw:0,turn,nodes:commonsCornerCount,settle:smooth((time-14.4)/1.4)};
 }

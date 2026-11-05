@@ -30,3 +30,24 @@ html:has(.home-page){overflow-x:clip}
 @media(forced-colors:active){.application-screen[data-tone]{background:Canvas;--ink:CanvasText;--muted:CanvasText;--diagram-ink:CanvasText;--diagram-line:CanvasText;--diagram-surface:Canvas;--diagram-glass:Canvas;outline:1px solid CanvasText}}
 
 @media(prefers-reduced-transparency:reduce){.application-screen[data-tone="pearl"]{background:#e6f0f7;backdrop-filter:none}.application-screen[data-tone="smoked"]{background:#10293e;backdrop-filter:none}}
+
+/* Compact screens keep the selected product in normal flow, including enlarged text. */
+.application-previews[data-compact="true"] .application-stage{height:auto;overflow:visible}
+.application-previews[data-compact="true"] .application-pin{height:auto;overflow:visible}
+.application-previews[data-compact="true"] .application-grid{display:block;flex:none;overflow:visible;perspective:none}
+.application-previews[data-compact="true"] .application-screen{position:relative;left:auto;top:auto;width:100%;max-width:none;transform:none!important;will-change:auto}
+.application-previews .application-screen[hidden]{display:none!important}
+.application-previews[data-compact="true"] .application-dots{display:none}
+
+/* One lot, one active station and one resulting record; passive equipment stays quiet. */
+.mes-enclosure{fill:var(--diagram-glass);stroke:var(--diagram-line);stroke-width:1;opacity:.55}
+.mes-station .diagram-machine{opacity:.65}
+.application-screen[data-step="0"] .mes-station[data-station="0"] .mes-enclosure,.application-screen[data-step="1"] .mes-station[data-station="1"] .mes-enclosure,.application-screen[data-step="2"] .mes-station[data-station="2"] .mes-enclosure,.application-screen[data-step="3"] .mes-station[data-station="3"] .mes-enclosure{stroke:var(--diagram-ink);stroke-width:2;opacity:1}
+.mes-scan{fill:none;stroke:var(--diagram-ink);stroke-width:2;opacity:0}
+.application-screen[data-step="2"] .mes-scan{opacity:.85;transform:translateY(calc(var(--mes-work,0)*36px))}
+.mes-record-check{fill:none;stroke:var(--diagram-ink);stroke-width:2;opacity:0}
+.application-screen[data-step="3"][data-recorded="true"] .mes-record-check{opacity:1}
+.mes-part-highlight{stroke:var(--diagram-inverse);stroke-width:1.2;opacity:.65}
+.mes-lot,.twin-hoist{transition:none}
+.application-screen[data-step="1"] .mes-cutter{transform:translateY(var(--mes-cut,0px))}
+.preview-status-copy{font-size:12px}

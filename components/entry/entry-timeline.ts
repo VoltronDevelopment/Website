@@ -1,6 +1,11 @@
 export const entryFlipDuration=.8;
 export const entryHoldDuration=3;
 export const entryDuration=5+4*entryFlipDuration+3*entryHoldDuration;
+/** A preference change resolves immediately, including an already queued animation frame. */
+export function advanceEntryClock(time:number,delta:number,duration=entryDuration,reduced=false){
+ if(reduced)return duration;
+ return Math.min(duration,Math.max(0,Number.isFinite(time)?time:0)+Math.max(0,Math.min(.1,Number.isFinite(delta)?delta:0)));
+}
 const ease=(value:number)=>{const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);};
 
 export function entryStateAt(seconds:number){

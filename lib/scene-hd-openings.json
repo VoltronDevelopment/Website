@@ -2,30 +2,30 @@
   "technology": {
     "desktop": {
       "light": {
-        "url": "/optimized/scene-hd-opening-technology-desktop-light-178c4daac9563002.webp",
+        "url": "/optimized/neural-refined-hd-desktop-light-21b1519d17f2c66d.webp",
         "width": 1249,
-        "height": 1120,
-        "bytes": 65288
+        "height": 1280,
+        "bytes": 62958
       },
       "dark": {
-        "url": "/optimized/scene-hd-opening-technology-desktop-dark-634a5c4d6eb7d186.webp",
+        "url": "/optimized/neural-refined-hd-desktop-dark-a23ff4d09839eacd.webp",
         "width": 1249,
-        "height": 1120,
-        "bytes": 71268
+        "height": 1280,
+        "bytes": 69400
       }
     },
     "mobile": {
       "light": {
-        "url": "/optimized/scene-hd-opening-technology-mobile-light-ea765d30aece1032.webp",
+        "url": "/optimized/neural-refined-hd-mobile-light-1b6e059b7bdf9251.webp",
         "width": 640,
-        "height": 760,
-        "bytes": 28684
+        "height": 500,
+        "bytes": 27108
       },
       "dark": {
-        "url": "/optimized/scene-hd-opening-technology-mobile-dark-52a7d4bd5fc62818.webp",
+        "url": "/optimized/neural-refined-hd-mobile-dark-980a1cb882770254.webp",
         "width": 640,
-        "height": 760,
-        "bytes": 30476
+        "height": 500,
+        "bytes": 28624
       }
     }
   },

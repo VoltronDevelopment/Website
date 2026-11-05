@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {ArrowUpRight} from 'lucide-react';
 import {useEffect,useRef,useState} from 'react';
-import {CARD_HOLD,applicationFrame,diagramBeat,mesLotX,twinCoated,twinPartPose} from './application-sequence';
+import {CARD_HOLD,applicationFrame,diagramBeat,mesLotPose,twinCoated,twinPartPose} from './application-sequence';
 import {convexCardPose} from './application-arc';
 import {puzzleLabels,puzzlePiecePath,puzzleRest} from './ontology-puzzle-pieces';
 
@@ -27,8 +27,12 @@ function Diagram({kind}:{kind:string}){
  return <svg viewBox="0 0 440 220" fontSize="14" role="img" aria-label={labels[kind]}>
   {kind==='mes'?<g>
    <path className="diagram-link" d="M40 112H400"/>
-   {['Receive','Process','Verify','Release'].map((name,i)=>{const x=[78,166,254,342][i];return <g key={name}><path className="diagram-machine" d={`M${x} 104V120`}/><text className="diagram-label" x={x} y="156" textAnchor="middle">{name}</text>{i===2?<circle className="mes-verify" cx={x} cy="92" r="3.5"/>:null}</g>;})}
-   <g className="mes-lot"><rect className="diagram-part" y="96" width="28" height="16" rx="3"/></g>
+   {['Receive','Process','Verify','Release'].map((name,i)=>{const x=[78,166,254,342][i];return <g className="mes-station" data-station={i} key={name}>
+    <rect className="mes-enclosure" x={x-31} y="42" width="62" height="80" rx="3"/>
+    {i===0?<path className="diagram-machine" d={`M${x-19} 74V90H${x+19}V74M${x-12} 57H${x+12}M${x-12} 64H${x+5}`}/>:i===1?<><path className="diagram-machine" d={`M${x-20} 91V57H${x+20}V91M${x} 57V70`}/><path className="mes-cutter diagram-machine" d={`M${x-5} 70H${x+5}V80L${x} 84L${x-5} 80Z`}/></>:i===2?<><path className="diagram-machine" d={`M${x-20} 90V57H${x+20}V90`}/><path className="mes-scan" d={`M${x-22} 77H${x+22}`}/></>:<><path className="diagram-machine" d={`M${x-16} 52H${x+9}L${x+16} 60V86H${x-16}ZM${x+9} 52V60H${x+16}M${x-9} 63H${x+3}M${x-9} 70H${x+8}`}/><path className="mes-record-check" d={`M${x-7} 79L${x-2} 84L${x+8} 74`}/></>}
+    <text className="diagram-label" x={x} y="156" textAnchor="middle">{name}</text>
+   </g>;})}
+   <g className="mes-lot"><rect className="diagram-part" y="96" width="28" height="16" rx="3"/><path className="mes-part-highlight" d="M5 100H23"/></g>
   </g>:null}
   {kind==='twin'?<g>
    <path className="diagram-link" d="M40 28H400"/>
@@ -63,6 +67,7 @@ const phaseLabels:Record<string,string[]>={
  ai:['Model','Tools','Context','Skills'],
  ontology:['Concepts','Rules','Entities','Relationships'],
 };
+const workingLabels:Record<string,string[]>={mes:['Identifying lot','Recording execution','Checking evidence','Linking release record'],twin:['Prepare','Coat','Finish','Raising clear'],ai:phaseLabels.ai,ontology:phaseLabels.ontology};
 
 export function ApplicationPreviews(){
  const motionRevision=useHomeMotion(),host=useRef<HTMLDivElement>(null),[focus,setFocus]=useState(0),choose=useRef<(i:number)=>void>(()=>{});
@@ -71,17 +76,22 @@ export function ApplicationPreviews(){
   const cards=[...root.querySelectorAll<HTMLElement>('.application-screen')],stage=root.querySelector<HTMLElement>('.application-stage')!;
   const calm=prefersStaticScene(),states=cards.map(card=>({card,time:calm?CARD_HOLD:0}));
   let frame=0,previous=0,disposed=false,elapsed=0,progress=0,playing=-1,away=false,seen=false,seekFrom=0,seekTo=0,seekU=0;
-  let mode:'auto'|'seek'|'held'='auto',direction:'forward'|'return'='forward';
+  const compact=matchMedia('(max-width:767px), (max-height:620px)');
+  let visible=false;
+  let mode:'auto'|'seek'|'held'=compact.matches?'held':'auto',direction:'forward'|'return'='forward';
   const paint=(state:typeof states[number])=>{
    const beat=diagramBeat(state.time),{card}=state;
    card.dataset.step=String(beat.step);card.dataset.complete=String(beat.travel>=1);card.style.setProperty('--diagram-travel',beat.travel.toFixed(3));card.style.setProperty('--diagram-form','1');
-   const lot=card.querySelector<SVGElement>('.mes-lot');if(lot)lot.style.transform=`translate(${mesLotX(beat.step)}px,0)`;
+   const lotPose=mesLotPose(beat.step,beat.within),lot=card.querySelector<SVGElement>('.mes-lot');if(lot)lot.setAttribute('transform',`translate(${lotPose.x.toFixed(2)} 0)`);
+   card.dataset.recorded=String(lotPose.recorded);const work=Math.max(0,Math.min(1,(beat.within-.32)/.4));card.style.setProperty('--mes-work',work.toFixed(3));card.style.setProperty('--mes-cut',(Math.sin(Math.PI*work)*7).toFixed(2)+'px');
+   const status=card.querySelector('.preview-status-copy'),kind=card.dataset.kind!;const text=(lotPose.recorded?phaseLabels:workingLabels)[kind][beat.step];if(status&&status.textContent!==text)status.textContent=text;
    const pose=twinPartPose(beat.step,beat.within),hoist=card.querySelector<SVGElement>('.twin-hoist'),part=card.querySelector<SVGElement>('.twin-part'),rope=card.querySelector<SVGLineElement>('.twin-rope');
-   if(hoist)hoist.style.transform=`translate(${pose.x}px,0)`;if(part)part.style.transform=`translate(0,${pose.y.toFixed(2)}px)`;if(rope)rope.setAttribute('y2',pose.rope.toFixed(2));card.dataset.coated=String(card.dataset.kind==='twin'&&twinCoated(beat.step,beat.within));
+   if(hoist)hoist.setAttribute('transform',`translate(${pose.x.toFixed(2)} 0)`);if(part)part.setAttribute('transform',`translate(0 ${pose.y.toFixed(2)})`);if(rope)rope.setAttribute('y2',pose.rope.toFixed(2));card.dataset.coated=String(card.dataset.kind==='twin'&&twinCoated(beat.step,beat.within));
   };
   const stop=()=>{cancelAnimationFrame(frame);frame=0;previous=0;};
   const place=()=>{
-   if(calm){cards.forEach((card,i)=>{const active=i===Math.round(progress);card.hidden=!active;card.inert=!active;card.style.transform='';card.style.opacity='1';});return;}
+   if(calm||compact.matches){root.dataset.compact=String(compact.matches);cards.forEach((card,i)=>{const active=i===Math.round(progress);card.hidden=!active;card.inert=!active;card.style.transform='';card.style.opacity='1';card.toggleAttribute('data-focused',active);});const index=Math.round(progress);if(root.dataset.focus!==String(index)){root.dataset.focus=String(index);setFocus(index);}return;}
+   root.dataset.compact='false';cards.forEach(card=>{card.hidden=false;});
    const index=Math.round(progress),narrow=stage.clientWidth<520,radius=Math.min(730,Math.max(narrow?560:350,stage.clientWidth*(narrow?1.7:.63)));
    cards.forEach((card,i)=>{
     const delta=i-progress,pose=convexCardPose(delta,radius),active=i===index;
@@ -91,7 +101,7 @@ export function ApplicationPreviews(){
    if(root.dataset.focus!==String(index)){root.dataset.focus=String(index);setFocus(index);}
   };
   const tick=(now:number)=>{
-   frame=0;if(document.hidden||disposed)return;const delta=previous?Math.min(.05,(now-previous)/1000):0;previous=now;
+   frame=0;if(document.hidden||disposed||!visible)return;const delta=previous?Math.min(.05,(now-previous)/1000):0;previous=now;
    if(mode==='seek'){seekU=Math.min(1,seekU+delta/.4);const eased=1-(1-seekU)**3;progress=seekFrom+(seekTo-seekFrom)*eased;direction='forward';if(seekU>=1){progress=seekTo;mode='held';}}
    else if(mode==='auto'){elapsed+=delta;const next=applicationFrame(elapsed);progress=next.progress;direction=next.direction;const index=Math.round(progress);if(direction==='forward'&&progress===index&&playing!==index){playing=index;states[index].time=0;}if(direction==='return')playing=-1;}
    const index=mode==='seek'?seekTo:Math.round(progress);
@@ -100,22 +110,23 @@ export function ApplicationPreviews(){
    states.forEach(paint);place();
    if(mode==='auto'||mode==='seek'||states[index].time<CARD_HOLD)frame=requestAnimationFrame(tick);else previous=0;
   };
-  const start=()=>{if(!calm&&!document.hidden&&!frame&&!disposed){previous=0;frame=requestAnimationFrame(tick);}};
+  const start=()=>{if(!calm&&visible&&!document.hidden&&!frame&&!disposed){previous=0;frame=requestAnimationFrame(tick);}};
   choose.current=i=>{
-   if(calm){progress=i;root.dataset.focus=String(i);setFocus(i);place();return;}
+   if(calm||compact.matches){progress=i;mode='held';states[i].time=calm?CARD_HOLD:0;root.dataset.focus=String(i);setFocus(i);place();start();return;}
    seekFrom=progress;seekTo=i;seekU=0;mode='seek';playing=i;states[i].time=0;direction='forward';start();
   };
   root.dataset.arc=calm?'off':'on';states.forEach(paint);place();
   const observer=new IntersectionObserver(([entry])=>{
-   const on=entry.isIntersecting&&entry.intersectionRatio>.2;
+   const on=entry.isIntersecting&&entry.intersectionRatio>.2;visible=on;
    if(!on){away=seen;stop();return;}seen=true;
-   if(away&&!calm){away=false;elapsed=0;progress=0;playing=-1;mode='auto';direction='forward';states.forEach(state=>{state.time=0;});}
+   if(away)away=false;
    place();start();
   },{threshold:[0,.2,.45]});
   observer.observe(stage);
+  const recompose=()=>{progress=Math.round(progress);mode='held';place();start();};compact.addEventListener('change',recompose);
   const sizing=new ResizeObserver(()=>place());sizing.observe(stage);
   const visibility=()=>{if(document.hidden)stop();else start();};document.addEventListener('visibilitychange',visibility);
-  return()=>{disposed=true;stop();observer.disconnect();sizing.disconnect();document.removeEventListener('visibilitychange',visibility);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
+  return()=>{disposed=true;stop();observer.disconnect();sizing.disconnect();compact.removeEventListener('change',recompose);document.removeEventListener('visibilitychange',visibility);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
  },[motionRevision]);
- return <div className="application-previews" ref={host} data-focus={focus}><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>choose.current(i)}>{app.name}</button>)}</div><div className="application-grid">{apps.map(app=><article className="application-screen" data-kind={app.id} data-tone={app.id==='twin'||app.id==='ai'?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div><span className="preview-demo">Concept view</span></header><div className="application-diagram">{app.id==='ai'?<AgentPreview/>:<Diagram kind={app.id}/>}</div><div className="preview-state" aria-hidden="true"><span className="preview-status-light"/>{phaseLabels[app.id].map((label,step)=><span data-step={step} key={label}>{label}</span>)}<span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div><p className="application-disclaimer">Illustrative interfaces and sample process data.</p></div>;
+ return <div className="application-previews" ref={host} data-focus={focus}><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>choose.current(i)}>{app.name}</button>)}</div><div className="application-grid">{apps.map(app=><article className="application-screen" data-kind={app.id} data-tone={app.id==='twin'||app.id==='ai'?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div><span className="preview-demo">Concept view</span></header><div className="application-diagram">{app.id==='ai'?<AgentPreview/>:<Diagram kind={app.id}/>}</div><div className="preview-state"><span className="preview-status-light"/><span className="preview-status-copy">{workingLabels[app.id][0]}</span><span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div><p className="application-disclaimer">Illustrative interfaces and sample process data.</p></div>;
 }

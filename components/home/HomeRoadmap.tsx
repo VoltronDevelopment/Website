@@ -1,50 +1,23 @@
 "use client";
-import {Fragment,useEffect,useRef,useState} from 'react';
-import globeEnvelopeStill from '@/lib/globe-envelope-still.json';
-import {roadmapVisualState,voltronRoadmap,roadmapCellTone} from '@/lib/voltron-roadmap';
+import {useEffect,useRef,useState} from 'react';
+import {voltronRoadmap,roadmapAscentPose} from '@/lib/voltron-roadmap';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {useHomeMotion} from './HomeMotion';
+import {roadmapFrame,roadmapLocations,roadmapProject,roadmapYaw} from './roadmap-framing';
 import type {mountRoadmap} from './roadmap-renderer';
-
-function RoadmapStill({visual}:{visual:ReturnType<typeof roadmapVisualState>}){
- const forward=[6.3,4.4,8.4],length=Math.hypot(...forward),normal=forward.map(v=>v/length),right=[normal[2],0,-normal[0]],r=Math.hypot(...right);right.forEach((v,i)=>right[i]=v/r);
- const up=[normal[1]*right[2],normal[2]*right[0]-normal[0]*right[2],-normal[1]*right[0]];
- const point=(p:number[])=>{const v=[p[0]*.92,p[1]*.92+.08,p[2]*.92];return `${250+v.reduce((sum,n,i)=>sum+n*right[i],0)*320/4.8},${160-v.reduce((sum,n,i)=>sum+n*up[i],0)*320/4.8}`;};
- const path=(points:number[][])=>points.map((p,i)=>(i?'L':'M')+point(p)).join('')+'Z';
- return <svg className="roadmap-still" viewBox="0 0 500 320" preserveAspectRatio="xMidYMid slice">
-  {visual.envelope&&<g className="roadmap-static-globe" data-topology={globeEnvelopeStill.topology} transform="translate(250 155.1) scale(61.3333)"><path d={globeEnvelopeStill.path} vectorEffect="non-scaling-stroke"/></g>}
-  {visual.cells.map((p,index)=>({p,index})).sort((a,b)=>a.p.reduce((sum,v,i)=>sum+v*normal[i],0)-b.p.reduce((sum,v,i)=>sum+v*normal[i],0)).map(({p:[x,y,z],index})=>{
-   const h=.4,a=[x-h,y+h,z-h],b=[x+h,y+h,z-h],c=[x+h,y+h,z+h],d=[x-h,y+h,z+h],e=[x+h,y-h,z-h],f=[x+h,y-h,z+h],g=[x-h,y-h,z+h];
-   return <g key={index} className="roadmap-static-cell" data-tone={roadmapCellTone(index)} strokeLinejoin="round"><path className="roadmap-static-front" d={path([d,c,f,g])}/><path className="roadmap-static-side" d={path([b,e,f,c])}/><path className="roadmap-static-top" d={path([a,b,c,d])}/></g>;
-  })}
- </svg>;
+function AscentStill({index,width,height}:{index:number;width:number;height:number}){
+ const frame=roadmapFrame(index,width/height),project=(p:[number,number,number])=>roadmapProject(p,frame,width,height).join(','),path=(points:[number,number,number][])=>'M'+points.map(project).join('L')+'Z';
+ return <svg className="roadmap-still" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Five increasing capability cubes on one shared foundation"><path d={path([[-4.65,.08,-1.4],[4.65,.08,-1.4],[4.65,.08,1.4],[-4.65,.08,1.4]])} fill="var(--diagram-glass)"/>{Array.from({length:index+1},(_,i)=>{
+  const size=roadmapAscentPose(i).size,h=size/2,c=Math.cos(roadmapYaw),s=Math.sin(roadmapYaw),world=(x:number,y:number,z:number):[number,number,number]=>[roadmapLocations[i]+x*c+z*s,.08+y,-x*s+z*c];
+  return <g key={i} className="roadmap-static-cell" data-tone={i%2?'light':'dark'}><path className="roadmap-static-side" d={path([world(-h,0,-h),world(-h,0,h),world(-h,size,h),world(-h,size,-h)])}/><path className="roadmap-static-front" d={path([world(-h,0,h),world(h,0,h),world(h,size,h),world(-h,size,h)])}/><path className="roadmap-static-top" d={path([world(-h,size,-h),world(-h,size,h),world(h,size,h),world(h,size,-h)])}/></g>;
+ })}</svg>;
 }
-
 export function HomeRoadmap({expanded=false}:{expanded?:boolean}){
- const motionRevision=useHomeMotion(),[index,setIndex]=useState(0),host=useRef<HTMLDivElement>(null),root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<Awaited<ReturnType<typeof mountRoadmap>>|null>(null),indexRef=useRef(0),playing=useRef(true);
- const select=(i:number)=>{root.current?.style.setProperty('--roadmap-fill',(i/4).toFixed(3));if(indexRef.current===i&&controller.current)return;indexRef.current=i;setIndex(i);controller.current?.select(i);};
- useEffect(()=>{let disposed=false;const node=host.current;if(!node)return;if(canvas.current)canvas.current.style.opacity=prefersStaticScene()?'0':'1';node.dataset.sceneState=prefersStaticScene()?'fallback':'poster';
-  const observer=new IntersectionObserver(async([entry])=>{if(!entry.isIntersecting||prefersStaticScene())return;observer.disconnect();try{const {mountRoadmap}=await import('./roadmap-renderer');if(disposed||!canvas.current)return;const mounted=await mountRoadmap(canvas.current,node);if(disposed){mounted.dispose();return;}controller.current=mounted;controller.current.select(indexRef.current);controller.current.seek(Number(node.dataset.year)||1);node.dataset.sceneState='live';}catch{node.dataset.fallback='true';node.dataset.sceneState='fallback';}},{rootMargin:'320px'});observer.observe(node);
-  return()=>{disposed=true;observer.disconnect();controller.current?.dispose();controller.current=null;if(node){delete node.dataset.ready;}};
- },[motionRevision]);
- useEffect(()=>{
-  const node=root.current;if(!node)return;
-  let frame=0,previous=0,elapsed=0,visible=false,disposed=false;playing.current=true;delete node.dataset.settled;
-  const stop=()=>{cancelAnimationFrame(frame);frame=0;previous=0;};
-  const tick=(now:number)=>{frame=0;if(disposed||!visible||document.hidden||!playing.current)return;elapsed+=previous?Math.min(.08,(now-previous)/1000):0;previous=now;const phase=Math.min(4,Math.floor(elapsed/3.8)),part=Math.min(1,(elapsed-phase*3.8)/3.8);if(indexRef.current!==phase)select(phase);const eased=part*part*(3-2*part);const range=voltronRoadmap[phase].span,year=range[0]+(range[1]-range[0])*eased;node.dataset.year=year.toFixed(1);controller.current?.seek(year);if(elapsed<19)frame=requestAnimationFrame(tick);else{playing.current=false;node.dataset.settled='true';}};
-  const start=()=>{if(!visible||document.hidden||disposed||!playing.current||frame)return;if(prefersStaticScene()){select(4);node.dataset.settled='true';playing.current=false;return;}if(host.current?.dataset.sceneState!=='live')return;previous=0;frame=requestAnimationFrame(tick);};
-  const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.18;if(visible)start();else stop();},{threshold:[0,.18]});observer.observe(node);
-  const readiness=new MutationObserver(start);if(host.current)readiness.observe(host.current,{attributes:true,attributeFilter:['data-scene-state']});const visibility=()=>document.hidden?stop():start();document.addEventListener('visibilitychange',visibility);
-  return()=>{disposed=true;stop();observer.disconnect();readiness.disconnect();document.removeEventListener('visibilitychange',visibility);};
- },[motionRevision]);
- const choose=(i:number)=>{playing.current=false;if(root.current)root.current.dataset.settled='true';select(i);controller.current?.seek(voltronRoadmap[i].span[1]);};
- const milestone=voltronRoadmap[index],visual=roadmapVisualState(index);
- return <div ref={root} data-roadmap-design="voltron" className={`home-roadmap${expanded?' is-expanded':''}`}>
- <div className="roadmap-journey"><div className="roadmap-pin">
-  <div className="roadmap-path">
-   <div className="roadmap-years" role="group" aria-label="Roadmap milestones">{voltronRoadmap.map((m,i)=><Fragment key={m.years}><button type="button" className="roadmap-year-tablet" aria-label={m.years} aria-pressed={i===index} data-reached={i<=index} onClick={()=>choose(i)}><span className="roadmap-year-kicker">{m.years.startsWith('Years')?'Years':'Year'}</span><span className="roadmap-year-span">{m.years.replace(/^Years?\s/,'')}</span></button>{i<4&&<span className="roadmap-connector" data-reached={i<index} aria-hidden="true"><i/></span>}</Fragment>)}</div>
-  </div>
-  <div className="roadmap-composition"><div className="roadmap-art" ref={host} data-index={index} data-year="1" aria-hidden="true"><RoadmapStill visual={visual}/><canvas key={motionRevision} ref={canvas}/></div>
- <article className="roadmap-card" key={milestone.years} data-phase={index}><span className="roadmap-period"><b>{String(index+1).padStart(2,'0')}</b> / 05 · {milestone.years}</span><h3 className="roadmap-milestone-title">{milestone.title}</h3><p className="roadmap-detail">{milestone.detail}</p><ul className="roadmap-evidence">{milestone.evidence.map(item=><li key={item}>{item}</li>)}</ul><p className="roadmap-gate"><strong>Readiness to advance</strong>{milestone.gate}</p></article></div></div></div>
- </div>;
+ const [dimensions,setDimensions]=useState({width:600,height:260});
+ const revision=useHomeMotion(),[index,setIndex]=useState(0),[detail,setDetail]=useState(0),host=useRef<HTMLDivElement>(null),root=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<Awaited<ReturnType<typeof mountRoadmap>>|null>(null),current=useRef(0),manual=useRef(false);
+ useEffect(()=>{const element=host.current;if(!element)return;const resize=new ResizeObserver(()=>setDimensions({width:element.clientWidth||600,height:element.clientHeight||260}));resize.observe(element);return()=>resize.disconnect();},[]);
+ const select=(i:number,user=false)=>{if(user)manual.current=true;current.current=i;setIndex(i);if(controller.current&&!prefersStaticScene()){root.current?.setAttribute('data-travelling','true');controller.current.select(i);}else setDetail(i);};
+ useEffect(()=>{let disposed=false,loading=false;const node=host.current;if(!node)return;node.dataset.sceneState='fallback';if(canvas.current)canvas.current.style.opacity=prefersStaticScene()?'0':'1';const observer=new IntersectionObserver(async([e])=>{if(!e.isIntersecting||loading||controller.current||prefersStaticScene())return;loading=true;try{const {mountRoadmap}=await import('./roadmap-renderer');if(disposed||!canvas.current)return;const scene=await mountRoadmap(canvas.current,node,()=>{if(!disposed){setDetail(current.current);root.current?.setAttribute('data-travelling','false');}});if(disposed)scene.dispose();else{controller.current=scene;node.dataset.sceneState='live';scene.select(current.current);}}catch{node.dataset.ready='false';}finally{loading=false;}},{rootMargin:'200px'});observer.observe(node);return()=>{disposed=true;observer.disconnect();controller.current?.dispose();controller.current=null;delete node.dataset.ready;};},[revision]);
+ useEffect(()=>{let raf=0,last=0,time=0,visible=false;const stop=()=>{cancelAnimationFrame(raf);raf=0;last=0;};const tick=(now:number)=>{raf=0;if(!visible||document.hidden||manual.current||prefersStaticScene())return;time+=last?Math.min(.08,(now-last)/1000):0;last=now;const next=Math.min(4,Math.floor(time/5.5));if(next!==current.current)select(next);if(time<27.5)raf=requestAnimationFrame(tick);};const start=()=>{if(visible&&!document.hidden&&!raf&&!manual.current&&!prefersStaticScene()&&time<27.5)raf=requestAnimationFrame(tick);};const view=new IntersectionObserver(([e])=>{visible=e.isIntersecting&&e.intersectionRatio>=.3;if(visible)start();else stop();},{threshold:[0,.3]});if(root.current)view.observe(root.current);const visibility=()=>document.hidden?stop():start();document.addEventListener('visibilitychange',visibility);return()=>{stop();view.disconnect();document.removeEventListener('visibilitychange',visibility);};},[revision]);
+ const milestone=voltronRoadmap[detail];return <div ref={root} className={'home-roadmap roadmap-ascent'+(expanded?' is-expanded':'')} data-roadmap-design="capability-ascent"><div className="roadmap-journey"><div className="roadmap-pin"><div className="roadmap-years" role="group" aria-label="Choose a capability milestone">{voltronRoadmap.map((m,i)=><button className="roadmap-year-tablet" key={m.years} type="button" aria-pressed={index===i} aria-controls="roadmap-selected-milestone" onClick={()=>select(i,true)}><span>{m.years}</span></button>)}</div><div className="roadmap-composition"><div className="roadmap-art" ref={host} data-index={index} aria-hidden="true"><AscentStill index={index} {...dimensions}/><canvas key={revision} ref={canvas}/></div><article className="roadmap-card" id="roadmap-selected-milestone" aria-live="polite"><span className="roadmap-period">{milestone.years} · Intended stage</span><h3 className="roadmap-milestone-title">{milestone.title}</h3><p className="roadmap-detail">{milestone.detail}</p><p className="roadmap-gate"><strong>Readiness to advance</strong>{milestone.gate}</p>{expanded&&<details className="roadmap-more"><summary>Capability evidence</summary><ul>{milestone.evidence.map(e=><li key={e}>{e}</li>)}</ul></details>}</article></div><p className="roadmap-ambition-note">A capability-led ambition, counted from the start of operations. Progress depends on demonstrated readiness.</p></div></div></div>;
 }

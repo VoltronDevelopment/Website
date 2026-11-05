@@ -3,9 +3,9 @@ import {MeshSurfaceSampler} from 'three/addons/math/MeshSurfaceSampler.js';
 import {glassFace,type GlassFace} from '../home/lattice-materials';
 import {addHomePaneReflections} from '../home/home-glass';
 
-export const hologramCubeSize=1.15;
-export const hologramHeadHeight=1.55;
-export const hologramHeadGap=0.36;
+export const hologramCubeSize=.86;
+export const hologramHeadHeight=1.95;
+export const hologramHeadGap=0.30;
 export const hologramRestYaw=0.42;
 export const hologramProjectionRadius=.62;
 

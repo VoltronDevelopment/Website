@@ -61,3 +61,5 @@
 
 /* The renderer owns the soft projector contact; avoid a second detached CSS pool. */
 .intelligence-hero-artwork:before,.intelligence-hero-artwork:after { display:none; }
+/* Scale live and fallback projections together so the face leads on compact screens. */
+@media(max-width:1000px){.intelligence-face-stage{overflow:hidden}.intelligence-face-stage>canvas,.intelligence-face-stage>.scene-poster{transform:scale(1.16);transform-origin:50% 50%}}

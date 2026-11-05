@@ -4,7 +4,7 @@ import {createPhilosophyCubes} from '../home/philosophy-cubes';
 import {createSceneHandoff} from '../performance/scene-handoff';
 import {createRenderQuality,prefersStaticScene} from '../performance/scene-policy';
 import {longParticleWaveGLSL as particleWaveGLSL} from './particle-wave';
-import {cultureHelixDuration,cultureHelixState} from './culture-helix-timeline';
+import {cultureHelixDuration,cultureHelixState,cultureHelixPoint} from './culture-helix-timeline';
 import type {SceneMode} from './engineered-hero-renderer';
 
 export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElement,onMode:(mode:SceneMode)=>void,signal:AbortSignal){
@@ -19,10 +19,10 @@ export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElemen
  let seed=814;const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
  for(let i=0;i<count;i++){const t=(i>>1)/(count/2-1),side=i%2;positions.set([t,(random()-.5)*.055,(random()-.5)*.055],i*3);strands[i]=side;seeds[i]=random();const p=[(random()-.5)*.59,(random()-.5)*.59,(random()-.5)*.59];p[Math.floor(i%6/2)]=i%2?.295:-.295;targets.set(p,i*3);}
  const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.BufferAttribute(positions,3));geometry.setAttribute('aSeed',new T.BufferAttribute(seeds,1));geometry.setAttribute('aStrand',new T.BufferAttribute(strands,1));geometry.setAttribute('aTarget',new T.BufferAttribute(targets,3));
- const material=new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:{value:0},uArrival:{value:0},uTwist:{value:0},uGather:{value:0},uDark:{value:0},uRatio:{value:quality.ratio},uSelected:{value:0}},
+ const material=new T.ShaderMaterial({transparent:true,depthWrite:false,toneMapped:false,uniforms:{uTime:{value:0},uArrival:{value:0},uTwist:{value:0},uGather:{value:0},uDark:{value:0},uRatio:{value:quality.ratio},uSelected:{value:0},uSpin:{value:0}},
   vertexShader:`${particleWaveGLSL}
-  attribute float aSeed,aStrand;attribute vec3 aTarget;uniform float uTime,uArrival,uTwist,uGather,uRatio,uSelected;varying float alpha,strand,emphasis;
-  void main(){float t=position.x,spin=(aStrand<.5?1.:-1.)*uTwist*uTime*.22,angle=t*(.6+uTwist*1.4)*6.2831853+aStrand*3.14159265+spin;
+  attribute float aSeed,aStrand;attribute vec3 aTarget;uniform float uTime,uArrival,uTwist,uGather,uRatio,uSelected,uSpin;varying float alpha,strand,emphasis;
+  void main(){float t=position.x,spin=(aStrand<.5?1.:-1.)*uSpin,angle=t*(.6+uTwist*1.4)*6.2831853+aStrand*3.14159265+spin;
    vec3 helix=vec3(cos(angle)*.57+position.y,(t-.5)*3.1,sin(angle)*.57+position.z);
    float deposit=smoothstep(aSeed*.28+aStrand*.08,aSeed*.28+aStrand*.08+.55,uArrival);
    float crest=latticeSheetCrest(aSeed,uTime);
@@ -37,10 +37,10 @@ export async function mountCultureHelix(canvas:HTMLCanvasElement,host:HTMLElemen
  const query=new URLSearchParams(location.search),review=query.get('helix-time'),handoff=createSceneHandoff(host,canvas);
  let time=review===null?.6:T.MathUtils.clamp(Number(review)||0,0,cultureHelixDuration),paused=false,frozen=review!==null,visible=false,disposed=false,lost=false,frame=0,last=0;
  function draw(){if(disposed||lost)return;const s=cultureHelixState(time),dark=document.documentElement.dataset.theme==='dark';
-  Object.entries({uTime:time,uArrival:s.arrival,uTwist:s.twist,uGather:s.gather,uDark:dark?1:0,uRatio:quality.ratio,uSelected:Number(host.dataset.selected)||0}).forEach(([key,value])=>material.uniforms[key].value=value);
+  Object.entries({uTime:time,uArrival:s.arrival,uTwist:s.twist,uGather:s.gather,uSpin:s.spin,uDark:dark?1:0,uRatio:quality.ratio,uSelected:Number(host.dataset.selected)||0}).forEach(([key,value])=>material.uniforms[key].value=value);
   points.visible=!s.done;cubes.setTheme(dark,time>6);cubes.apply({outer:s.enclosure,core:s.gather,individual:0,height:0});
-  for(let i=0;i<5;i++){bridgeMaterials[i].color.setHex(dark?0x9bd6ee:0x247192);bridgeMaterials[i].opacity=s.bridges[i]*(.62+.38*Math.sin(time*3.2-i*.9));
-   for(let j=0;j<3;j++){const t=(i+.55)/5+(j-1)*.013,angle=t*(.6+s.twist*1.4)*Math.PI*2,x=Math.cos(angle)*.57,z=Math.sin(angle)*.57,y=(t-.5)*3.1;bridgePositions.set([x,y,z,-x,y,-z],i*18+j*6);}}
+  for(let i=0;i<5;i++){bridgeMaterials[i].color.setHex(dark?0x9bd6ee:0x247192);bridgeMaterials[i].opacity=s.bridges[i]*.8;
+   for(let j=0;j<3;j++){const t=(i+.55)/5+(j-1)*.013;bridgePositions.set([...cultureHelixPoint(t,0,s),...cultureHelixPoint(t,1,s)],i*18+j*6);}}
   bridgeGeometry.attributes.position.needsUpdate=true;renderer.render(scene,camera);canvas.dataset.animationTime=time.toFixed(3);host.dataset.phase=s.phase;canvas.dataset.particleCount=String(count);
  }
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;quality.reset();host.dataset.running='false';}

@@ -1,4 +1,4 @@
-import {selectedNeuralLinks} from '../components/brand/neural-links';
+import {selectedNeuralLinks,neuralSignals,neuralSignalTiming} from '../components/brand/neural-links';
 import {neuralFaceKinds,neuralNodeIsLight,tuneNeuralGlass} from '../components/brand/neural-optics';
 import {describe,it,expect} from 'vitest';
 import * as T from 'three';
@@ -6,6 +6,17 @@ import layout from '../public/sculptures/neural-network.json';
 import {frameNeuralCamera} from '../components/brand/neural-network-framing';
 import {neuralState,neuralDuration} from '../components/brand/neural-network-timeline';
 describe('Complete source neural-network sculpture',()=>{
+ it('carries three signals along complete adjacent routes with shared handoff times',()=>{
+  const links=selectedNeuralLinks(),signals=neuralSignals(links);
+  expect(signals.paths).toHaveLength(3);expect(signals.seeds.size).toBe(9);
+  signals.paths.forEach(path=>path.forEach((index,layer)=>{
+   const edge=links[index],seed=signals.seeds.get(index)!;expect(edge.layer).toBe(layer);
+   const start=neuralSignalTiming.start+(layer+seed*neuralSignalTiming.stagger)/neuralSignalTiming.speed,end=start+1/neuralSignalTiming.speed;
+   expect(signals.arrivals.get(edge.from)).toContainEqual(start);expect(signals.arrivals.get(edge.to)).toContainEqual(end);
+   if(layer<2){const next=links[path[layer+1]];expect(next.from).toBe(edge.to);const nextStart=neuralSignalTiming.start+(layer+1+signals.seeds.get(path[layer+1])!*neuralSignalTiming.stagger)/neuralSignalTiming.speed;expect(nextStart).toBeCloseTo(end);}
+   expect(end).toBeLessThan(8.25);
+  }));
+ });
  it('uses the Home glass family with readable faces and bounded reflections in both themes',()=>{
   for(const dark of [false,true]){const materials=neuralFaceKinds.map((_,i)=>{const m=new T.MeshPhysicalMaterial();tuneNeuralGlass(m,i,dark);return m;});
    for(const m of materials){expect(m.opacity).toBeGreaterThan(.2);expect(m.opacity).toBeLessThanOrEqual(.8);expect(m.envMapIntensity).toBeLessThan(1);expect(m.roughness).toBeGreaterThanOrEqual(.2);expect(m.color.getHex()).not.toBe(0xffffff);m.dispose();}

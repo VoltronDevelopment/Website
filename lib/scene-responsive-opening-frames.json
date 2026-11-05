@@ -57,12 +57,12 @@
   },
   "technology": {
     "desktop": {
-      "width": 624.71875,
-      "height": 560
+      "width": 624.5,
+      "height": 640
     },
     "mobile": {
       "width": 320,
-      "height": 380
+      "height": 250
     }
   },
   "handCulture": {

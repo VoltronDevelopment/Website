@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {parse} from "postcss";
 import {describe,expect,it} from "vitest";
 
-const sheets=["app/globals.css","app/home.css","components/brand/presentation.css","app/manufacturing/alpha.css"];
+const sheets=["app/globals.css","app/home.css","components/brand/presentation.css","app/manufacturing/alpha.css","app/home-surfaces.css","app/about/about.css","app/about/voltron-commons/commons.css","app/network/network.css","app/supporting-pages.css","app/technology/technology.css","app/partner/partner.css","components/intelligence/intelligence-story.css","components/technology/operating-platform.css","components/brand/responsive-frames.css"];
 function declarations(path:string,selector:string,property:string){
   const values:string[]=[];
   parse(readFileSync(path,"utf8")).walkRules(selector,rule=>{

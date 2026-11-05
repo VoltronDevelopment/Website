@@ -8,8 +8,8 @@ export const commonsStudies = {
  ],
  'partner-process': [
   ['Understand','Begin with the opportunity.','Share the application, context and outcome you want to work toward.','A component and its context gather around a shared brief.'],
-  ['Define the fit','Make requirements and capabilities explicit.','Explore the scope, dependencies and questions that need to be resolved together.','Requirement and capability layers align; a visible gap closes after review.'],
-  ['Agree the next step','Give the conversation a clear direction.','Identify the next discussion, information exchange or study appropriate to the opportunity.','A structured next-step brief resolves between two aligned capability cells.'],
+  ['Define the fit','Make requirements and capabilities explicit.','Explore the scope, dependencies and questions that need to be resolved together.','Requirement and capability records resolve beside a shared brief; checks appear in order.'],
+  ['Agree the next step','Give the conversation a clear direction.','Identify the next discussion, information exchange or study appropriate to the opportunity.','The reviewed brief connects to a distinct next-step record.'],
  ],
  programs: [
   ['Access','Open a pathway to knowledge.','Explore ways to make knowledge, tools and learning opportunities more accessible.','A shared resource opens; knowledge becomes available for someone else to use.'],
@@ -19,7 +19,7 @@ export const commonsStudies = {
   ['Regeneration','Support the places we belong to.','Explore how industry can support ecological renewal and stronger communities.','A grounded network reaches the roots; planting develops above it.'],
  ],
  learning: [
-  ['Creative exchange','Let another perspective change the work.','Ideas across disciplines enrich what we build.','Separate contributions meet around one physical study.'],
+  ['Creative exchange','Let another perspective change the work.','Ideas across disciplines enrich what we build.','Two views of one component are compared against the shared physical reference.'],
   ['Systems thinking','See relationships across the whole.','Connect the part, its purpose and the wider system it belongs to.','A shared reference connects distinct contributions through deliberate routes.'],
   ['Inquiry','Look closer. Ask a better question.','Examine assumptions through observation, experimentation and reflection.','The same component separates along its assembly axis for examination.'],
   ['Nature and reflection','Create space for perspective.','Time in nature and reflection can strengthen judgment and widen possibility.','The wider setting resolves around the study as its movement settles.'],

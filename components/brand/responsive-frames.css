@@ -34,7 +34,7 @@
 .site-presentation #main-content .hero .hero-principle-strip li+li {border:0}
 .site-presentation #main-content .hero .hero-motion-controls {top:auto;bottom:12px;right:8px;margin:0;min-height:44px}
 .site-presentation #main-content .hero .hero-art-caption {bottom:20px;left:8px;max-width:calc(100% - 112px)}
-.site-presentation #main-content :is(.section,.alpha-explore,.alpha-architecture) {padding-block:var(--chapter-space);min-height:0;scroll-margin-top:100px}
+.site-presentation #main-content :is(.section,.alpha-explore,.alpha-architecture) {padding-block:var(--chapter-space);min-height:0}
 .site-presentation #main-content .section-intro {margin-bottom:36px}
 .site-presentation #main-content .section-white {background:linear-gradient(180deg,var(--chapter-light),transparent 42%);box-shadow:0 -20px 38px -36px var(--chapter-shadow);border:0}
 .site-presentation #main-content :is(.alpha-line-tabs,.network-focus) button {min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.5;min-height:44px}

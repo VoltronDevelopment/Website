@@ -19,7 +19,7 @@ it('uses denser finite formation samples without changing other sculpture defaul
  for(const s of [normal,desktop,mobile]){const points=s.group.children[1] as import('three').Points;expect(Array.from(points.geometry.getAttribute('position').array).every(Number.isFinite)).toBe(true);s.dispose();}
 });
 describe("Hologram choreography",()=>{
- it("gathers the cube, opens the square beam, forms the head, scans twice, then turns twice",()=>{
+ it("gathers the cube, opens the square beam, forms the head, scans twice, then holds a stable portrait",()=>{
   expect(intelligenceHeroDuration).toBe(13);
   const start=intelligenceHeroState(0);expect(start.cube).toBe(0);expect(start.beam).toBe(0);expect(start.head).toBe(0);expect(start.yaw).toBe(0);
   const cube=intelligenceHeroState(1.6);expect(cube.cube).toBeCloseTo(1);expect(cube.beam).toBe(0);expect(cube.head).toBe(0);
@@ -27,11 +27,11 @@ describe("Hologram choreography",()=>{
   const formed=intelligenceHeroState(6.2);expect(formed.head).toBeCloseTo(1);expect(formed.scans.horizontal.strength).toBe(0);expect(formed.yaw).toBe(0);
   expect(intelligenceHeroState(6.65).scans.horizontal.strength).toBeCloseTo(1);expect(intelligenceHeroState(6.65).yaw).toBe(0);
   const turning=intelligenceHeroState(8.1);expect(turning.scans.horizontal.strength).toBe(0);expect(turning.yaw).toBe(0);
-  const mid=intelligenceHeroState(9.9);expect(mid.yaw).toBeGreaterThan(0);expect(mid.yaw).toBeLessThan(Math.PI*4);
-  expect(intelligenceHeroState(12.2).yaw).toBeCloseTo(Math.PI*4);
+  const mid=intelligenceHeroState(9.9);expect(mid.yaw).toBe(0);
+  expect(intelligenceHeroState(12.2).yaw).toBeCloseTo(0);
   let previous=0;for(let t=0;t<=13;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);previous=s.formation;}
  });
- it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.yaw).toBeCloseTo(Math.PI*4);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
+ it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.yaw).toBeCloseTo(0);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
 });
 
 it("keeps mesh samples finite and inside the shared cube",()=>{
