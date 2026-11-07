@@ -7,7 +7,8 @@ import {intelligenceHeroDuration, intelligenceHeroState} from "./intelligence-he
 import {addArtworkSoftboxes, createArtworkEnvironment} from "./artwork-studio";
 import {observeArtworkTuning, artworkDefaults} from "./artwork-tuning";
 import {createPortraitScans} from "./portrait-scans";
-import {bindHeadCoverage, createProjectorCube, createSquareBeam, hologramCubeSize, hologramHeadGap, hologramHeadHeight, hologramRestYaw, orientHeadGeometry, sampleHead, createGatherPoints} from "./intelligence-hologram";
+import {isSceneScrollActive} from "../home/scene-preparation";
+import {bindHeadCoverage, createProjectorCube, createProjectionBeam, hologramCubeSize, hologramHeadGap, hologramHeadHeight, hologramRestYaw, orientHeadGeometry, sampleHead, createGatherPoints} from "./intelligence-hologram";
 
 export type IntelligenceHeroController = { toggle(): void; replay(): void; scrub(seconds: number): void; dispose(): void };
 type Mode = "static" | "playing" | "paused" | "settled";
@@ -62,8 +63,8 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   const gather = createGatherPoints(samples.positions, samples.seeds, height,true);
   head.add(gather.points);
   scene.add(head);
-  const beamTop = head.position.y + hologramHeadHeight + 0.14;
-  const beam = createSquareBeam(track, beamTop, 1.05);
+  const beamTop = head.position.y + hologramHeadHeight * .28;
+  const beam = createProjectionBeam(track, beamTop, (geometry.boundingBox!.max.x-geometry.boundingBox!.min.x)*head.scale.x*.46);
   scene.add(beam.group);
   const width = (geometry.boundingBox!.max.x - geometry.boundingBox!.min.x) * head.scale.x;
   const depth = (geometry.boundingBox!.max.z - geometry.boundingBox!.min.z) * head.scale.z;
@@ -97,11 +98,10 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
     headForm.value = formed;
     headMesh.visible = reviewView !== "particles" && formed > 0.02;
     hologramClock.value=time+ambient;gather.update(formed, dark, renderer.getPixelRatio() * tuning.particleScale,time+ambient);
-    projector.gather.update(cubeForm, dark, renderer.getPixelRatio() * tuning.particleScale);
     projector.faces.forEach(({material}) => { material.opacity = (material.userData.restOpacity as number) * cubeForm; });
     (projector.emitter.material as THREE.MeshBasicMaterial).opacity = beamAmount * 0.9;
     projector.emitter.visible = beamAmount > 0.02;
-    beam.set(beamAmount * tuning.glow, dark,time+ambient,camera);
+    beam.set(beamAmount * tuning.glow * 1.35, dark,time+ambient,camera);
     scans.update(diagnostic ? 0 : time, dark, scanSpan);
     shadow.visible = cubeForm > 0.2;
     (shadow.material as THREE.MeshBasicMaterial).opacity = cubeForm * (dark ? 0.42 : 0.28);
@@ -121,6 +121,11 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   function tick(now: number) {
     frame = 0;
     if (disposed || !visible || document.hidden || paused || frozen !== null) return;
+    if (isSceneScrollActive(now)) {
+      last = 0;
+      frame = requestAnimationFrame(tick);
+      return;
+    }
     if(time>=intelligenceHeroDuration&&now-lastAmbientFrame<40){frame=requestAnimationFrame(tick);return;}
     lastAmbientFrame=now;
     const wasSettled=time>=intelligenceHeroDuration;
@@ -175,7 +180,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
       material.envMapIntensity *= tuning.reflection;
       material.userData.restOpacity = material.opacity;
     });
-    headMaterial.color.setHex(dark ? 0x8dafc8 : 0x8ca9bd);
+    headMaterial.color.setHex(dark ? 0x376789 : 0x547c99);
     headMaterial.envMapIntensity = (dark ? 0.55 : 0.65) * tuning.reflection;
     draw();
   }
@@ -234,7 +239,6 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
       canvas.removeEventListener("webglcontextrestored", restored);
       host.dataset.live = "false";
       gather.dispose();
-      projector.gather.dispose();
       scene.traverse(object => {
         const mesh = object as THREE.Mesh;
         mesh.geometry?.dispose();

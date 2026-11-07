@@ -87,3 +87,5 @@
 }
 .capability-cube-target[data-cap-cube="5"]::before,
 .capability-cube-target[data-cap-cube="6"]::before{top:auto;bottom:calc(100% - 3px)}
+
+.leadership-copy a+a{display:flex;width:fit-content;margin-top:8px}

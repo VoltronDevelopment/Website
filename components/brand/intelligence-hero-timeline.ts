@@ -7,7 +7,7 @@ export function intelligenceScanState(seconds:number){
  const pass=(start:number,end:number)=>{const progress=clamp((time-start)/(end-start));return {progress,strength:time<=start||time>=end?0:Math.sin(Math.PI*progress)};};
  return {horizontal:pass(6.2,7.1),vertical:pass(7.2,8.1)};
 }
-/** Projector, square beam, surface gather, one scan, then a readable settled portrait. */
+/** The emitter lights a round projection, the portrait forms, and two scans finish before its turn. */
 export function intelligenceHeroState(seconds:number){
  const time=Number.isFinite(seconds)?Math.max(0,Math.min(intelligenceHeroDuration,seconds)):0;
  const cube=smooth(time/1.6);

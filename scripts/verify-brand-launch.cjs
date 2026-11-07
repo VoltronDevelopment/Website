@@ -60,6 +60,11 @@ async function run(){
   console.log('Brand page opened before launch');
   await p.getByRole('button',{name:'Founder login'}).waitFor();
   await p.getByRole('timer').waitFor();
+  await p.locator('.launch-fireworks').waitFor({state:'attached'});
+  const ring=await p.locator('.entry-radial-grid span').last().boundingBox();
+  const name=await p.locator('.entry-wordmark').boundingBox();
+  assert.ok(name.y>=ring.y+ring.height+6,'The brand wordmark must clear the outer ring');
+
   await p.getByRole('button',{name:/switch to dark/i}).click();
   await p.getByRole('button',{name:'Play music'}).click();
   await p.getByRole('button',{name:'Pause music'}).waitFor();

@@ -26,8 +26,8 @@ export function mountAuthoredNetwork(canvas:HTMLCanvasElement,host:HTMLElement,k
   if(kind==='products'){
    const aspect=host.clientWidth/Math.max(1,host.clientHeight),phone=root.userData.phone;
    const widen=smooth((time-7.8)/3),sideStudy=phone?smooth((time-6.8)/1.2)*(1-widen):0;
-   target.set((phone?0:-2.1)*(1-widen)+sideStudy*.55,(phone?3.6:2.15)*(1-widen)+1.6*widen,(phone?-.65:-.7)*(1-widen));
-   const close=Math.max(5.75,7.8/aspect),wide=Math.max(phone?8.1:7.4,(phone?9:14)/aspect);
+   target.set((phone?0:-2.1)*(1-widen)+sideStudy*.55,(phone?3.6:2.15)*(1-widen)+(phone?2.15:1.8)*widen,(phone?-.65:-.7)*(1-widen));
+   const close=Math.max(phone?6.6:6.15,8.25/aspect),wide=Math.max(phone?9.1:7.8,(phone?9.5:14)/aspect);
    camera.top=(close+(wide-close)*widen)/2;camera.bottom=-camera.top;camera.right=camera.top*aspect;camera.left=-camera.right;
   }
   if(kind==='partnership'){

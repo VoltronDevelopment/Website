@@ -99,7 +99,7 @@ void main(){
  float field=currentField(p,t);
  scanning=agent>.5&&agent<1.5?exp(-pow((p.y-sin(t*.7)*.62)*5.,2.))*formation:0.;
  float embedded=smoothstep(.30,.72,field);
- opacity=particleAmount*(.045+embedded*.17)*(1.+formation*.35);
+ opacity=particleAmount*embedded*smoothstep(.03,.50,formation)*(.12+formation*.20);
  tint=clamp(field*.75+scanning*.2,0.,1.);
  vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
  gl_PointSize=clamp((.9+embedded*.45)*pixelRatio*5./max(3.,-mv.z),.8,2.8);

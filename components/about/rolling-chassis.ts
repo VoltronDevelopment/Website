@@ -52,18 +52,20 @@ export function rollingChassis(subject: T.Group, own: Own, clip: T.Plane) {
     return new T.Vector3(.055*Math.cos(angle),t*.31,.055*Math.sin(angle));
   });
   const spring=own(new T.TubeGeometry(new T.CatmullRomCurve3(coilPath),84,.012,6,false));
+  const suspensions:{group:T.Group;side:number}[]=[];
   const wheels:{hub:T.Group;side:number}[]=[];
   for(const x of [-1.02,1.02]) for(const side of [-1,1]) {
     const z=side*.67;
+    const suspension=new T.Group();model.add(suspension);suspensions.push({group:suspension,side});
     for(const offset of [-.2,.2]) {
-      member(model,[x+offset,.28,side*.31],[x,.245,z],.025,.025,alloy,true);
-      member(model,[x+offset*.75,.52,side*.32],[x,.44,z],.022,.022,rail,true);
+      member(suspension,[x+offset,.28,side*.31],[x,.245,z],.025,.025,alloy,true);
+      member(suspension,[x+offset*.75,.52,side*.32],[x,.44,z],.022,.022,rail,true);
     }
-    member(model,[x,.36,0],[x,.36,z],.032,.032,alloy,true);
+    member(suspension,[x,.36,0],[x,.36,z],.032,.032,alloy,true);
     const strut=new T.Group();strut.position.set(x,.29,side*.55);strut.rotation.x=-side*.40;
-    model.add(strut);strut.add(new T.Mesh(spring,enamel));
+    suspension.add(strut);strut.add(new T.Mesh(spring,enamel));
     member(strut,[0,0,0],[0,.34,0],.025,.025,alloy,true);
-    member(model,[x,.60,side*.42],[x,.5,side*.32],.05,.05,rail,true);
+    member(suspension,[x,.60,side*.42],[x,.5,side*.32],.05,.05,rail,true);
     const hub=new T.Group();model.add(hub);hub.position.set(x,.36,z);
     const disc=new T.Mesh(brake,rotor);
     disc.position.set(x,.36,z);model.add(disc);
@@ -89,9 +91,12 @@ export function rollingChassis(subject: T.Group, own: Own, clip: T.Plane) {
     member(subject,[saddle.x-.095,.022,saddle.z],[saddle.x+.095,.022,saddle.z],.045,.15,rail);
   }
   return (time:number)=>{
+    const suspensionSeat=T.MathUtils.smoothstep(time,.38,1.16);
+    suspensions.forEach(({group,side})=>{group.visible=time>.38;group.position.z=side*.24*(1-suspensionSeat);});
     wheels.forEach(({hub,side})=>{
       const start=hub.position.x<0?1.2:2.65;
       const seated=T.MathUtils.smoothstep(time,start,start+1.22);
+      hub.visible=time>=start-.2;
       hub.position.z=side*(.67+.48*(1-seated));
     });
   };

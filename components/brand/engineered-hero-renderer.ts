@@ -1,4 +1,5 @@
 import {particleWaveGLSL} from './particle-wave';
+import {isSceneScrollActive} from '../home/scene-preparation';
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
 import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
@@ -136,7 +137,7 @@ export async function mountEngineeredHero(canvas:HTMLCanvasElement,host:HTMLDivE
   for(const geometry of [baseGeo,uprightGeo]){const sampler=(new MeshSurfaceSampler(new THREE.Mesh(geometry)) as MeshSurfaceSampler & {setRandomGenerator(fn:()=>number):MeshSurfaceSampler}).setRandomGenerator(()=>random(++index)).build();for(let i=0;i<(matchMedia("(max-width:767px)").matches?4500:9000);i++){sampler.sample(point,normal);positions.push(...point.addScaledVector(normal,.014).toArray());normals.push(...normal.toArray());seed.push(random(++index));}}
   const geo=track(new THREE.BufferGeometry());geo.setAttribute("position",new THREE.Float32BufferAttribute(positions,3));geo.setAttribute("normal",new THREE.Float32BufferAttribute(normals,3));geo.setAttribute("aSeed",new THREE.Float32BufferAttribute(seed,1));
   const mat=track(new THREE.ShaderMaterial({transparent:true,depthWrite:false,uniforms:{uBoundary:boundary,uFormation:formation,uRatio:{value:quality.ratio},uDark:{value:dark()?1:0}},vertexShader:`${particleWaveGLSL}
-uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vAlpha;void main(){float edge=position.x+.09*sin(position.y*4.)+.045*sin(position.z*7.);float field=clamp((position.x+2.1)/4.2,0.,1.)*.8+aSeed*.15;float arrived=smoothstep(field-.18,field+.04,uFormation);vec3 p=latticeWave(position,arrived,aSeed,uFormation*3.,vec3(1.,.12,.1),2.3,.32);vAlpha=uFormation<.999?(1.-smoothstep(field,field+.16,uFormation)):exp(-pow((edge-uBoundary)/.18,2.));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.9+aSeed*.8)*uRatio;}`,fragmentShader:`uniform float uDark;varying float vAlpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.12,.4,.8),vec3(.65,.88,1.),uDark),vAlpha*(1.-smoothstep(.15,.5,r)));}`}));
+uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vAlpha;void main(){float edge=position.x+.09*sin(position.y*4.)+.045*sin(position.z*7.);float field=clamp((position.x+2.1)/4.2,0.,1.)*.8+aSeed*.15;float arrived=smoothstep(field-.18,field+.04,uFormation);vec3 p=latticeWave(position,arrived,aSeed,uFormation*3.,vec3(1.,.12,.1),2.3,.32);vAlpha=uFormation<.999?(1.-smoothstep(field,field+.16,uFormation)):exp(-pow((edge-uBoundary)/.18,2.));gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);gl_PointSize=(.78+aSeed*.48)*uRatio;}`,fragmentShader:`uniform float uDark;varying float vAlpha;void main(){float r=length(gl_PointCoord-.5);if(r>.5)discard;gl_FragColor=vec4(mix(vec3(.12,.4,.8),vec3(.65,.88,1.),uDark),vAlpha*(1.-smoothstep(.15,.5,r)));}`}));
   surfaceParticles=new THREE.Points(geo,mat);component.add(surfaceParticles);
   scanner=createQualityScan(1.8,3.0,track);component.add(scanner.group);scanner.group.rotation.y=Math.PI/2;scanner.group.position.y=1.05;
  }
@@ -164,10 +165,38 @@ uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vA
   echo.update(state.ground*(dark()?.5:.85));catcherMaterial.opacity=state.ground*(dark()?.18:.12);renderer.shadowMap.needsUpdate=true;
   renderer.render(scene,camera);canvas.dataset.partFormation=formation.value.toFixed(3);canvas.dataset.scanPlane=String(scanner?.group.visible??false);canvas.dataset.animationTime=time.toFixed(3);canvas.dataset.scanEnergy=surface.scan.toFixed(3);canvas.dataset.surfacePhase=surface.phase;host.dataset.phase=state.done?"settled":time<2?"establishing":time<4.5?"connecting":"resolving";
  }
- function size(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height;const extent=Math.max(kind==="manufacturing"?4.2:kind==="network"?6.2:5.8,(kind==="manufacturing"?4.2:kind==="network"?6.2:5.8)*(960/760)/aspect);camera.left=-extent*aspect/2;camera.right=extent*aspect/2;camera.top=extent/2;camera.bottom=-extent/2;camera.updateProjectionMatrix();draw();}
+ // Fit both ends of the scan in camera space, including the screen-space rim.
+ function sweepExtent(aspect:number,width:number,height:number){
+  if(!scanner)return 0;
+  camera.updateMatrixWorld();
+  const parent=scanner.group.parent!;
+  parent.updateWorldMatrix(true,false);
+  let halfHeight=0;
+  for(const x of [-2.5,2.5])for(const y of [-.45,2.55])for(const z of [-.9,.9]){
+   const point=new THREE.Vector3(x,y,z).applyMatrix4(parent.matrixWorld).applyMatrix4(camera.matrixWorldInverse);
+   halfHeight=Math.max(halfHeight,Math.abs(point.y)/(1-24/Math.max(48,height)),Math.abs(point.x)/(aspect*(1-24/Math.max(48,width))));
+  }
+  return halfHeight*2;
+ }
+ function size(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);const aspect=width/height;const extent=Math.max(sweepExtent(aspect,width,height),kind==="manufacturing"?4.2:kind==="network"?6.2:5.8,(kind==="manufacturing"?4.2:kind==="network"?6.2:5.8)*(960/760)/aspect);camera.left=-extent*aspect/2;camera.right=extent*aspect/2;camera.top=extent/2;camera.bottom=-extent/2;camera.updateProjectionMatrix();draw();}
  function theme(){outlines.forEach(material=>{material.userData.restOutline??=material.opacity;material.opacity=material.userData.restOutline*tuning.outline;});routes.forEach(route=>route.setTheme(dark()));palette.forEach(({material,light,dark:night})=>material.color.setHex(dark()?night:light));panes.forEach(({material,kind})=>{setGlass(material,kind,dark());material.opacity*=tuning.glassOpacity;material.roughness*=tuning.roughness;material.envMapIntensity*=tuning.reflection;const transmission=kind==="side"?tuning.transmission*.35:0;if((material.transmission>0)!==(transmission>0))material.needsUpdate=true;material.transmission=transmission;material.thickness=.025;});waveMat.uniforms.uDark.value=dark()?1:0;if(surfaceParticles)surfaceParticles.material.uniforms.uDark.value=dark()?1:0;hemi.intensity=dark()?.65:.8;key.position.set(-4+Math.sin(tuning.keyDirection)*5,8,7);draw();}
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;quality.reset();host.dataset.running="false";}
- function tick(now:number){frame=0;if(disposed||lost||!visible||document.hidden||paused||frozen)return;time=Math.min(duration,time+(last?Math.min(.08,(now-last)/1000):0));last=now;if(quality.sample(now)){renderer.setPixelRatio(quality.ratio);waveMat.uniforms.uRatio.value=quality.ratio;if(surfaceParticles)surfaceParticles.material.uniforms.uRatio.value=quality.ratio;size();}draw();if(time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}}
+ function tick(now:number){
+  frame=0;
+  if(disposed||lost||!visible||document.hidden||paused||frozen)return;
+  if(isSceneScrollActive(now)){
+   last=0;quality.reset();frame=requestAnimationFrame(tick);return;
+  }
+  time=Math.min(duration,time+(last?Math.min(.08,(now-last)/1000):0));
+  last=now;
+  if(quality.sample(now)){
+   renderer.setPixelRatio(quality.ratio);waveMat.uniforms.uRatio.value=quality.ratio;
+   if(surfaceParticles)surfaceParticles.material.uniforms.uRatio.value=quality.ratio;
+   size();
+  }
+  draw();
+  if(time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}
+ }
  function schedule(){if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!disposed&&!lost&&visible&&!document.hidden&&!paused&&!frozen&&!frame&&time<duration&&host.dataset.sceneState==="live"){last=0;host.dataset.running="true";frame=requestAnimationFrame(tick);}}
  const resize=new ResizeObserver(size),themes=new MutationObserver(theme),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.25;if(visible)schedule();else stop();},{threshold:[0,.25]});
  function visibility(){if(document.hidden)stop();else schedule();}

@@ -12,11 +12,10 @@ describe('Commons corner cube and tree',()=>{
  it('forms the corners, glows, grows the tree, then holds a stable view with the glow off',()=>{
   expect(commonsTreeDuration).toBe(16);expect(durations.commons).toBe(commonsTreeDuration);
   const opening=commonsTreeState(1.1);
-  expect(opening.cube).toBeGreaterThan(0);expect(opening.cube).toBeLessThan(1);expect(opening.growth).toBe(0);expect(opening.glow).toBe(0);expect(opening.yaw).toBe(0);
-  const nodes=commonsTreeState(3.2);
-  expect(nodes.cube).toBe(1);expect(nodes.glow).toBeGreaterThan(.5);expect(nodes.growth).toBeCloseTo(.38);expect(nodes.yaw).toBe(0);expect(nodes.nodes).toBe(8);
-  const growing=commonsTreeState(5.6);
-  expect(growing.growth).toBeGreaterThan(0);expect(growing.growth).toBeLessThan(1);expect(growing.glow).toBeGreaterThan(0);expect(growing.yaw).toBe(0);
+  expect(opening.cube).toBe(0);expect(opening.growth).toBeGreaterThan(0);expect(opening.yaw).toBe(0);
+  const canopy=commonsTreeState(4.8);expect(canopy.canopy).toBe(1);expect(canopy.cube).toBe(0);
+  const glazing=commonsTreeState(5.6);expect(glazing.growth).toBe(1);expect(glazing.cube).toBeGreaterThan(0);expect(glazing.glow).toBe(0);
+  const pulse=commonsTreeState(7.75);expect(pulse.cube).toBe(1);expect(pulse.glow).toBeGreaterThan(.5);expect(pulse.yaw).toBe(0);
   const grown=commonsTreeState(9.2);
   expect(grown.growth).toBe(1);expect(grown.glow).toBe(0);expect(grown.yaw).toBe(0);
   const mid=commonsTreeState(11.7);

@@ -164,13 +164,13 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   pallet.visible=state.time>=6&&state.time<24;pallet.position.set(state.part.x,state.palletY,state.part.z);
   receiver.g.visible=state.time>=11&&state.time<26;receiver.g.rotation.y=state.handlerYaw;receiver.g.position.set(state.part.x-Math.cos(state.handlerYaw)*1.05,0,state.part.z+Math.sin(state.handlerYaw)*1.05);receiver.forks.position.y=state.palletY+handlingGeometry.receiveForkOffset;
   if(state.time>=24){const p=Math.min(1,(state.time-24)/2);receiver.g.position.set(-5-p*3,0,factoryLayout.wetLineZ);receiver.forks.position.y=.2;}
-  carrier.position.set(state.time>=58?-4:state.carrier.x,0,state.time>=58?factoryLayout.returnLineZ:state.carrier.z);carrier.rotation.y=state.carrierYaw;turntables[0].rotation.y=-Math.PI/2*T.MathUtils.smoothstep(state.time,51.2,51.7);turntables[1].rotation.y=-Math.PI/2-Math.PI/2*T.MathUtils.smoothstep(state.time,52.3,52.8);carrier.visible=true;
+  carrier.position.set(state.time>=58?-4:state.carrier.x,0,state.time>=58?factoryLayout.returnLineZ:state.carrier.z);carrier.rotation.y=state.carrierYaw;turntables[0].rotation.y=-Math.PI/2*T.MathUtils.smoothstep(state.time,39.4,39.9);turntables[1].rotation.y=-Math.PI/2-Math.PI/2*T.MathUtils.smoothstep(state.time,52.3,52.8);carrier.visible=true;
   trolley.position.z=0;
   const attach=T.MathUtils.smoothstep(state.time,23,24)*(1-T.MathUtils.smoothstep(state.time,58,59));
   const fixtureBottom=T.MathUtils.lerp(3.05,(state.time>=58?1.055:state.part.y)+.47,attach);
   fixture.visible=true;fixture.position.z=trolley.position.z;
   ovenDoors.forEach((pair,i)=>pair.forEach((door,j)=>door.position.z=(j===0?-1:1)*(.565+1.2*(i===0?state.ovenExitOpen:state.ovenEntryOpen))));ovenLight.emissiveIntensity=state.ovenActive?1.25:.12;
-  inspected.visible=state.time>=6;inspected.position.set(state.part.x,state.part.y,state.part.z);inspected.rotation.y=state.time>=24&&state.time<58?state.carrierYaw:0;partFoot.visible=inspected.visible;partFoot.position.set(state.part.x,state.part.y-.33,state.part.z);fixture.position.y=fixtureBottom;
+  inspected.visible=state.time>=6;inspected.position.set(state.part.x,state.part.y,state.part.z);inspected.rotation.y=state.time>=24?state.carrierYaw:0;partFoot.visible=inspected.visible;partFoot.position.set(state.part.x,state.part.y-.33,state.part.z);fixture.position.y=fixtureBottom;
   hangers.forEach(h=>{const bottom=fixtureBottom,length=railY-.3-bottom;h.scale.y=length/.8;h.position.y=(railY-.3+bottom)/2;});
   transferCart.visible=state.time>=67&&state.time<73;transferCart.position.set(state.part.x,Math.min(0,state.part.y-1.055),state.part.z);if(state.time>=67&&state.time<68)transferCart.position.z=Math.max(3.5,state.part.z);cartForks.visible=(state.time>=58&&state.time<59.4)||(state.time>=60&&state.time<68);
   const horizontalScan=state.scanning&&state.scanProgress<.5,scanLocal=horizontalScan?state.scanProgress*2:(state.scanProgress-.5)*2;
@@ -195,7 +195,7 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
    drainPositions[i*3+1]=visible?y:-100;
    drainPositions[i*3+2]=origin.z+((i*7%43)/43-.5)*.025;
   }drainGeometry.attributes.position.needsUpdate=true;}
-  wetPart.color.copy(polished.color).lerp(coatColor,T.MathUtils.smoothstep(state.time,51.95,52.08));wetPart.roughness=.2-Math.max(...baths.map(bath=>bath.wetness))*.11;
+  wetPart.color.copy(polished.color).lerp(coatColor,T.MathUtils.smoothstep(state.time,41,50));wetPart.roughness=.2-Math.max(...baths.map(bath=>bath.wetness))*.11;
   gripJaws.forEach((jaw,i)=>jaw.position.x=(i===0?-1:1)*(.24+.07*(1-attach)));
   trolleyWheels.forEach(wheel=>{wheel.rotation.set(Math.PI/2,0,0);wheel.rotateY(-factoryRunningDistance(state.time)/(.13*.7));});
   tanks.forEach(tank=>{const active=Math.abs(state.carrier.x-tank.g.position.x)<.05&&state.time>=24&&Math.abs(state.carrier.z-tank.g.position.z)<.05&&state.time<53;const bath=baths[tank.index];tank.water.uniforms.uTime.value=state.time;tank.water.uniforms.uDark.value=dark?1:0;tank.water.uniforms.uImpact.value=0;tank.water.uniforms.uContacts.value.fromArray(bath.ages);tank.volume.color.setHex(tank.index===3?0x4273ae:tank.index===1?palette.liquidCoat:palette.liquid);tank.lamp.setState(active?'active':state.carrier.x>tank.g.position.x||state.time>=51?'complete':'idle');});links.forEach(l=>l.line.visible=selected!==null&&(l.a===selected||l.b===selected));
@@ -240,7 +240,7 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
    });}
   const partScreen=inspected.position.clone().project(camera);host.dataset.partInFrame=String(Math.abs(partScreen.x)<.95&&Math.abs(partScreen.y)<.9);const numeric=operatingNumericActivity(state);host.querySelectorAll<HTMLElement>('.factory-number-stream').forEach((stream,i)=>{
    const lift=(numeric.phase*(.21+.018*i)+i*.37)%1;
-   const point=new T.Vector3(-8+(i*13%19)*.84,3.1+lift*3.4,-4+(i*7%12)*.56).project(camera);
+   const point=new T.Vector3(-8+(i*13%19)*.84,3.8+lift*3.0,-4+(i*7%12)*.56).project(camera);
    stream.style.left=(50+50*point.x)+'%';stream.style.top=(50-50*point.y)+'%';stream.style.opacity=String(.55*Math.sin(Math.PI*lift));
   });host.dataset.sceneState='live';host.dataset.carrierPosition=[state.carrier.x,state.carrier.z].map(n=>n.toFixed(4)).join(',');host.dataset.hold=String(state.hold);host.dataset.released=String(state.released);host.dataset.qualityPhase=state.qualityPhase;host.dataset.processStage=state.processStage;host.dataset.ovenActive=String(state.ovenActive);host.dataset.partPosition=[state.part.x,state.part.y,state.part.z].map(n=>n.toFixed(3)).join(',');
  }

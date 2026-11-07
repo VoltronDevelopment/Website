@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {useEffect, useId, useRef, useState} from 'react';
-import {Activity, ArrowRight, Boxes, Network, ScanLine, BrainCircuit} from 'lucide-react';
+import {Activity, ArrowRight, Boxes, Network, ScanLine, Box} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {architectureRoute} from './architecture-route';
 import {DetailsDialog} from './DetailsDialog';
@@ -12,7 +12,7 @@ const systems = [
  {id:'mes', title:'V MES', role:'Production execution', Icon:Boxes, href:'/manufacturing', detail:'The lot, operation and production record remain connected as work progresses.', records:['Part and lot identity','Operation record','Production status'], relation:'Production records use the shared identity of the part, lot and operation.'},
  {id:'scada', title:'V SCADA', role:'Machine visibility', Icon:Activity, href:'/manufacturing', detail:'Machine signals become useful evidence when linked to the equipment and operation they describe.', records:['Equipment identity','Signal history','Operating context'], relation:'Equipment signals are associated with the active operation. Physical control remains with the plant systems.'},
  {id:'twin', title:'V Twin', role:'Process representation', Icon:ScanLine, href:'/manufacturing', detail:'A connected process representation brings state and evidence together for investigation.', records:['Process representation','Connected state','Investigation context'], relation:'The process representation uses the same manufacturing identities and records.'},
- {id:'ai', title:'V AI', role:'Evidence-led intelligence', Icon:BrainCircuit, href:'/intelligence', detail:'Connected evidence supports investigation and suggestions. People retain authority over consequential decisions.', records:['Relevant evidence','Suggested action','Human review'], relation:'Shared context grounds each suggestion in evidence, with consequential decisions retained by people.'},
+ {id:'ai', title:'V AI', role:'Evidence-led intelligence', Icon:Box, href:'/intelligence', detail:'Connected evidence supports investigation and suggestions. People retain authority over consequential decisions.', records:['Relevant evidence','Suggested action','Human review'], relation:'Shared context grounds each suggestion in evidence, with consequential decisions retained by people.'},
 ] as const;
 
 const dwell = 3200;

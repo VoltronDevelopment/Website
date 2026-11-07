@@ -94,11 +94,17 @@ export function createCommonsWorkshop(kind:CommonsKind,index:number,root:T.Group
   const enamel=own(new T.MeshStandardMaterial({roughness:.3,metalness:.38,side:T.DoubleSide}));
   bindFinish(enamel.color,0x246bd4,0x69aafa);
   const ribbon=new T.Mesh(geometry,enamel);ribbon.position.x=1.1;root.add(ribbon);
+  const dimension=stroke(sketch.group,[[-.70,.012,.38],[-.70,.012,.59],[.70,.012,.59],[.70,.012,.38]],0x246bd4);
+  const observation=stroke(root,[[.55,.96,.35],[.55,1.15,.35],[.31,1.15,.35]],0x246bd4);
+  const recorded=stroke(sketch.group,[[.45,.014,-.57],[.53,.014,-.48],[.68,.014,-.66]],0x246bd4);
   const nib=box(root,[.075,.075,.075],[0,.17,0],kit.active);
   return (time:number)=>{
    const drawn=ease((time-.2)/1.8);
    sketch.mark.reveal((time-.2)/1.8);construction.reveal((time-2.1)/1.8);
    const tip=sketch.points[Math.round(drawn*64)];
+   observation.reveal((time-5.8)/.65);
+   dimension.reveal((time-6.25)/.85);
+   recorded.reveal((time-7)/.55);
    nib.position.set(-1.35+tip[0],.18,tip[2]);nib.visible=time<2.05;
    const lift=ease((time-4.1)/2.7);
    for(let i=0;i<=32;i++)for(let side=0;side<2;side++){

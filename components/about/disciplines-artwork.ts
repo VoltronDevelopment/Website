@@ -1,7 +1,7 @@
 import * as T from 'three';
 import {factoryKit} from '../network/factory-kit';
 import {bracketStudyGeometry} from '../network/bracket-study';
-import {bracketSheet,draftingPaper} from '../network/bracket-sheet';
+
 import {smooth} from '../network/network-story';
 import {disciplineBore as bore,disciplineMotion} from './discipline-motion';
 type Own=<R extends {dispose:()=>void}>(r:R)=>R;
@@ -15,21 +15,26 @@ export function disciplinesArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
  // A fixture, bench and drawing stay in the same coordinates across discipline choices.
  kit.box(support,[6.3,.13,2.7],[.45,-.64,.02],kit.pearl);
  for(const x of [-2.35,3.1])for(const z of [-1,.99])kit.box(support,[.13,.57,.13],[x,-.99,z],kit.steel);
- const board=new T.Group();root.add(board);board.position.set(-1.98,1.45,-.82);board.rotation.y=.32;
+ const board=new T.Group();root.add(board);board.position.set(-2.55,1.75,-.52);board.rotation.y=.40;board.scale.setScalar(1.17);
  kit.box(board,[1.72,1.19,.08],[0,0,0],kit.navy);
- kit.box(board,[.1,1.62,.1],[0,-1.16,-.09],kit.steel);
+ const boardPost=(board.position.y+.57)/board.scale.y;
+ kit.box(board,[.1,boardPost,.1],[0,-boardPost/2,-.09],kit.steel);
  const page=document.createElement('canvas');page.width=960;page.height=640;
- const ink=page.getContext('2d')!,sheet=bracketSheet();
- let printedDark:boolean|undefined;
- function printSheet(dark:boolean){
-  if(printedDark===dark)return;
-  ink.globalCompositeOperation='source-over';
-  sheet.draw(ink,12,dark);
-  ink.globalCompositeOperation='destination-over';
-  ink.fillStyle=dark?draftingPaper.dark:draftingPaper.light;
-  ink.fillRect(0,0,page.width,page.height);
+ const ink=page.getContext('2d')!;
+ let printed='';
+ function printSheet(dark:boolean,selected:number,complete:boolean){
+  const key=[dark,selected,complete].join('/');
+  if(printed===key)return;
+  printed=key;
+  ink.fillStyle=dark?'#122737':'#edf4f7';ink.fillRect(0,0,960,640);
+  ink.fillStyle=dark?'#8cdef2':'#225676';ink.font='500 62px sans-serif';ink.fillText('MOUNTING BORE',58,105);
+  ink.strokeStyle=dark?'#5a92af':'#7497aa';ink.lineWidth=8;
+  ink.beginPath();ink.arc(194,360,99,0,Math.PI*2);ink.moveTo(68,360);ink.lineTo(320,360);ink.moveTo(194,234);ink.lineTo(194,486);ink.stroke();
+  ink.fillStyle=dark?'#f2f7fb':'#153345';ink.font='600 81px sans-serif';
+  ink.fillText(['Finish','Measure','Review'][selected],364,341);
+  ink.font='500 55px sans-serif';
+  ink.fillText((complete?['Bore finished','Gauge seated','Record linked']:['Cutting pass','Gauge check','Observation'])[selected],364,434,555);
   texture.needsUpdate=true;
-  printedDark=dark;
  }
  const texture=own(new T.CanvasTexture(page));texture.colorSpace=T.SRGBColorSpace;
  const print=new T.Mesh(own(new T.PlaneGeometry(1.59,1.06)),own(new T.MeshBasicMaterial({map:texture})));print.position.z=.05;board.add(print);
@@ -65,7 +70,7 @@ export function disciplinesArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
  const featureRing=ring.clone();featureRing.geometry=ring.geometry;featureRing.material=ring.material;featureRing.position.set(0,bore.y,.31);evidence.add(featureRing);
  const recordLinks=[0,1].map(i=>kit.line(evidence,[[2.56,2.16-i*.62,.31],[2.56,1.98-i*.62,.31]]));
  return {part,update(time:number,phase:number,selected:number,dark:boolean){
-  printSheet(dark);
+  printSheet(dark,selected,phase>=3.85);
   const state=disciplineMotion(phase,selected),review=selected===2,formed=time>=2.5;
   part.scale.setScalar(1);part.position.y=-.1+.38*(1-smooth(time/2.2));
   machining.visible=selected===0&&formed;measurement.visible=(selected===1||review)&&formed;evidence.visible=selected===2&&formed;

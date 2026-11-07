@@ -2,12 +2,17 @@ import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-// Publish both native captures of every existing scene as a single manifest.
+// With scene names after the directory, retain the published frames for all other scenes.
 const directory = process.argv[2];
 if (!directory) throw new Error("Pass the native capture directory from verify-scene-continuity.cjs");
 const manifestPath = "lib/launch-opening-frames.json";
 const manifest = JSON.parse(await readFile(manifestPath, "utf8"));
+const selected = new Set(process.argv.slice(3));
+for (const scene of selected) {
+  if (!Object.hasOwn(manifest, scene)) throw new Error("Unknown opening scene: " + scene);
+}
 for (const [scene, frames] of Object.entries(manifest)) {
+  if (selected.size && !selected.has(scene)) continue;
   for (const [size, themes] of Object.entries(frames)) {
     for (const theme of Object.keys(themes)) {
       const sources = [];

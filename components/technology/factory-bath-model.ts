@@ -5,8 +5,8 @@ export const factoryBathGeometry={surface:1.82*.7,bottom:.48*.7,partHalfHeight:(
 const cycles=[
  {lower:26,dwell:27,raise:28.5,clear:29.7,travel:30},
  {lower:31,dwell:32,raise:34,clear:35.6,travel:36},
- {lower:37,dwell:38,raise:50,clear:50.5,travel:50.6},
- {lower:51.84,dwell:51.95,raise:52.08,clear:52.2,travel:52.24},
+ {lower:37,dwell:37.45,raise:38,clear:38.55,travel:38.65},
+ {lower:40.6,dwell:41,raise:50,clear:50.9,travel:51.2},
 ] as const;
 
 /** Solve contact on the actual authored hoist curve, also deterministic after seeking. */

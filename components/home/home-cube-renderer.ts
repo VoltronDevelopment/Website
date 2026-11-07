@@ -4,6 +4,7 @@ import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js"
 import {addArtworkSoftboxes,createFloorEcho} from "../brand/artwork-studio";
 import type {HeroController, SharedHeroResources} from "./hero-renderer";
 import {sizeHeroSurface} from "./hero-surface";
+import {isSceneScrollActive} from "./scene-preparation";
 import {createRenderQuality, yieldToBrowser} from "../performance/scene-policy";
 import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTurn, type CubeMove} from "./home-cube-timeline";
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
@@ -255,6 +256,12 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   function tick(now: number) {
     frame = 0;
     if (disposed || lost || paused || frozen || !visible || document.hidden) return;
+    if (isSceneScrollActive(now)) {
+      last = 0;
+      quality.reset();
+      frame = requestAnimationFrame(tick);
+      return;
+    }
     const delta = last ? Math.max(0, Math.min(0.05, (now - last) / 1000)) : 0;
     time += delta;
     last = now;

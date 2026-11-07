@@ -35,17 +35,6 @@ export function createGatherPoints(positions:Float32Array,seeds:Float32Array,spa
  return {points,update(form:number,dark:boolean,ratio:number,time=0){material.uniforms.uForm.value=form;material.uniforms.uDark.value=dark?1:0;material.uniforms.uRatio.value=ratio;material.uniforms.uTime.value=time;points.visible=form>.001&&(form<0.995||ambient);},dispose(){geometry.dispose();material.dispose();}};
 }
 
-export function cubeFaceSamples(count:number){
- const positions=new Float32Array(count*3),seeds=new Float32Array(count),half=hologramCubeSize/2;
- for(let i=0;i<count;i++){
-  const face=i%6,axis=Math.floor(face/2),u=(((i*17)%97)/97-.5)*hologramCubeSize,v=(((i*31)%89)/89-.5)*hologramCubeSize;
-  const point=[0,0,0];point[axis]=(face%2?1:-1)*half*.98;point[(axis+1)%3]=u;point[(axis+2)%3]=v;
-  positions.set(point,i*3);seeds[i]=((i*47)%1000)/1000;
- }
- return {positions,seeds};
-}
-
-/** Puts the mesh chin at local y=0 and the longest axis upward. */
 export function orientHeadGeometry(source:THREE.BufferGeometry){
  const geometry=source.clone();geometry.computeBoundingBox();
  const box=geometry.boundingBox!,size=box.getSize(new THREE.Vector3());
@@ -78,32 +67,29 @@ export function createProjectorCube(track:<T extends {dispose():void}>(value:T)=
   const pane=new THREE.Mesh(track(new THREE.PlaneGeometry(hologramCubeSize,hologramCubeSize)),material);
   pane.position.fromArray(position.map(value=>value*half));pane.rotation.set(rotation[0],rotation[1],rotation[2]);group.add(pane);
  }
- const samples=cubeFaceSamples(1600);
- const gather=createGatherPoints(samples.positions,samples.seeds,0);group.add(gather.points);
+
  const emitter=new THREE.Mesh(track(new THREE.BoxGeometry(.12,.014,.12)),track(new THREE.MeshBasicMaterial({color:0x7ec8ff,transparent:true,depthWrite:false,toneMapped:false})));
  emitter.position.y=half;group.add(emitter);
- return {group,faces,gather,emitter,top:hologramCubeSize};
+ return {group,faces,emitter,top:hologramCubeSize};
 }
 
-/** A soft square-footprint light field: no solid cage or closing top frame. */
-export function createSquareBeam(track:<T extends {dispose():void}>(value:T)=>T,topY:number,topHalf:number){
- const group=new THREE.Group(),bottomY=hologramCubeSize+.012,bottomHalf=hologramCubeSize*.36;
+/** An open, circular light field blends into the projected subject. */
+export function createProjectionBeam(track:<T extends {dispose():void}>(value:T)=>T,topY:number,topHalf:number){
+ const group=new THREE.Group(),bottomY=hologramCubeSize+.012,bottomHalf=hologramCubeSize*.13;
  const uniforms={uTime:{value:0},uAmount:{value:0},uDark:{value:0}};
  const material=track(new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,uniforms,
  vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
  fragmentShader:`varying vec2 vUv;uniform float uTime,uAmount,uDark;void main(){
- float vertical=pow(1.-vUv.y,1.65)*smoothstep(0.,.07,vUv.y);
- float softEdge=sin(vUv.x*3.14159);
+ float vertical=pow(1.-vUv.y,.85)*smoothstep(0.,.06,vUv.y);
+ float softEdge=.68+.14*cos(vUv.x*6.28318+uTime*.12)+.12*cos(vUv.x*12.56636-vUv.y*3.);
  float current=.65+.20*sin(vUv.y*11.-uTime*1.2+vUv.x*7.)+.15*sin(vUv.y*23.+uTime*.7);
  vec3 color=mix(vec3(.025,.30,.58),vec3(.12,.65,.95),uDark);
- gl_FragColor=vec4(color,vertical*softEdge*current*uAmount*mix(.075,.12,uDark));
+ gl_FragColor=vec4(color,vertical*softEdge*current*uAmount*mix(.12,.19,uDark));
  #include <colorspace_fragment>
  }`}));
- const corner=(y:number,half:number,i:number)=>[(i===1||i===2?1:-1)*half,y,(i>=2?1:-1)*half];
- for(let i=0;i<4;i++){
-  const a=corner(bottomY,bottomHalf,i),b=corner(bottomY,bottomHalf,(i+1)%4),c=corner(topY,topHalf,(i+1)%4),d=corner(topY,topHalf,i);
-  const g=track(new THREE.BufferGeometry());g.setAttribute('position',new THREE.Float32BufferAttribute([...a,...b,...c,...a,...c,...d],3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,0,1,1,0,1],2));group.add(new THREE.Mesh(g,material));
- }
+ // A continuous, softly fading volume joins the emitter to the bottom of the face.
+ const envelope=track(new THREE.CylinderGeometry(topHalf,bottomHalf,topY-bottomY,48,1,true));
+ const cone=new THREE.Mesh(envelope,material);cone.position.y=(bottomY+topY)/2;group.add(cone);
  const positions=new Float32Array(360*3),seeds=new Float32Array(360);
  for(let i=0;i<360;i++)seeds[i]=((i*73)%359)/359;
  const pg=track(new THREE.BufferGeometry());pg.setAttribute('position',new THREE.BufferAttribute(positions,3));pg.setAttribute('aSeed',new THREE.BufferAttribute(seeds,1));
@@ -138,6 +124,11 @@ export function bindHeadCoverage(material:THREE.MeshPhysicalMaterial,form:{value
   shader.vertexShader='varying vec3 vHeadPoint;\n'+shader.vertexShader;
   shader.fragmentShader=shader.fragmentShader.replace('#include <emissivemap_fragment>','#include <emissivemap_fragment>\nfloat projectionBand=pow(.5+.5*sin(vHeadPoint.y/uHeadHeight*145.-uHoloClock*1.8),12.);totalEmissiveRadiance+=vec3(.012,.06,.10)*projectionBand*uHeadForm;');
   shader.fragmentShader='varying vec3 vHeadPoint;uniform float uHeadForm,uHeadHeight,uHoloClock;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>',`
+   float contour=pow(1.0-clamp(abs(dot(normal,normalize(vViewPosition))),0.0,1.0),2.4);
+   float lowerFaceLight=1.0-smoothstep(0.02,0.40,vHeadPoint.y/uHeadHeight);
+   outgoingLight+=uHeadForm*(contour*vec3(.025,.27,.49)+lowerFaceLight*vec3(.018,.12,.18));
+   #include <opaque_fragment>`);
  };
  material.customProgramCacheKey=()=>(key?key():'')+'-head-gather';
 }

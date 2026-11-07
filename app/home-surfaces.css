@@ -178,3 +178,14 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
     padding-block:28px;
   }
 }
+
+.home-hero .hero-copy {text-align:center}
+.home-hero .hero-actions {justify-content:center}
+.home-hero #home-title {font-size:clamp(2.5rem,5vw,5.25rem);line-height:1.06;margin-inline:auto}
+.home-hero #home-title span {display:inline-block}
+@media(prefers-reduced-motion:no-preference){
+ .home-hero #home-title span {animation:home-word-enter .7s ease-out both;--word-travel:-.5em}
+ .home-hero #home-title span+span {--word-travel:.5em;animation-delay:.15s}
+}
+@keyframes home-word-enter {from{opacity:0;transform:translateX(var(--word-travel))}to{opacity:1;transform:none}}
+@media(max-width:767px){.home-hero #home-title {font-size:clamp(2rem,8vw,2.8rem)}}

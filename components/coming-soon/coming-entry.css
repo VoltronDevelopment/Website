@@ -33,3 +33,13 @@
 }
 
 @media(prefers-reduced-motion: reduce) { .launch-fireworks { visibility: hidden; } }
+
+/* Reserve the outer breathing ring's footprint before laying out the name and timer. */
+@media(min-height:521px),(max-width:599px){
+ .brand-entry.launch-entry .entry-stage {height:calc(var(--entry-logo-size)*2.65)}
+ .brand-entry.launch-entry .entry-wordmark {margin-top:clamp(12px,2svh,24px)}
+}
+.launch-entry .entry-word {--progress:clamp(0,calc(var(--entry-wordmark)*1.6),1);opacity:var(--progress);transform:translateX(calc((1 - var(--progress))*-.65em))}
+.launch-entry .entry-word+.entry-word {--progress:clamp(0,calc(var(--entry-wordmark)*1.6 - .6),1);transform:translateX(calc((1 - var(--progress))*.65em))}
+.launch-entry .entry-letter {transform:none;opacity:1}
+.launch-entry .launch-fireworks {opacity:var(--coming-tagline,1)}

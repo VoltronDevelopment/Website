@@ -32,7 +32,7 @@ export function ManufacturingStory(){
    <div className="alpha-discipline-reading" aria-live="polite"><p className="eyebrow">{d.title}</p><ol key={discipline} className="alpha-proof-flow">{d.nodes.map((node,i)=><li key={node} style={{animationDelay:`${i*.15}s`}}><span>0{i+1}</span><strong>{node}</strong></li>)}</ol><p>{d.note}</p></div></div>
   </section>
   <section className="alpha-container alpha-scope" aria-labelledby={`${id}-scope`}><div className="section-intro"><p className="eyebrow">Process scope</p><h2 id={`${id}-scope`}>Configured around the surface requirement.</h2><p>One component. Different surface requirements. Scope and readiness are confirmed for each inquiry.</p></div>
-   <div className="alpha-scope-layout"><div><div className="alpha-scope-selectors" role="group" aria-label="Surface treatment">{treatments.map((item,i)=><button key={item.name} type="button" aria-pressed={treatment===i} onClick={()=>setTreatment(i)}>{item.name}</button>)}</div>
+   <div className="alpha-scope-layout"><div><div className="alpha-scope-selectors" role="group" aria-label="Surface treatment">{treatments.map((item,i)=><button key={item.name} type="button" aria-pressed={treatment===i} onClick={()=>setTreatment(i)}><span className="scope-label-wide">{item.name}</span><span className="scope-label-short">{["Phosphating","ED","Powder"][i]}</span></button>)}</div>
     <div className="alpha-surface-illustration" data-treatment={treatment}><SurfaceSection treatment={treatment}/></div></div>
     <div className="alpha-scope-reading" aria-live="polite"><p className="eyebrow">{t.name} / {t.kind}</p><h3>{t.title}</h3><p>{t.text}</p><p>{t.detail}</p></div></div>
   </section>

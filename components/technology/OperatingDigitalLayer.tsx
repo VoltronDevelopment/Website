@@ -90,7 +90,7 @@ export function OperatingDigitalLayer({state,onInspect}:{state:ReturnType<typeof
      {product==='SCADA'&&<>
       <rect className="graph-comparison-band" x="13" y="36" width="152" height="42" rx="2"/><path className="graph-structure" d="M13 22 V78 H165 M13 36 H165"/>
       <defs><clipPath id={`${graphId}-trace`}><rect x="13" y="0" width={Math.max(0,Math.min(1,(state.time-24)/34))*152} height="116" className="graph-trace-window"/></clipPath></defs><polyline className="graph-trace" clipPath={`url(#${graphId}-trace)`} points={Array.from({length:90},(_,i)=>`${13+i/89*152},${scadaTraceValue(24+i/89*34)}`).join(' ')}/>
-      {state.time>=41&&<circle cx={13+17/34*152} cy={scadaTraceValue(41)} r="2.5" className="graph-observation"/>}<text x="13" y="97">T03 / Observation history</text><circle data-digital-inlet cx="13" cy="78" r="2.5" className="graph-inlet"/>
+      {state.time>=41&&<circle cx={13+17/34*152} cy={scadaTraceValue(41)} r="2.5" className="graph-observation"/>}<text x="13" y="97">CED / Observation history</text><circle data-digital-inlet cx="13" cy="78" r="2.5" className="graph-inlet"/>
      </>}
      {product==='V-Twin'&&<>
       <path className="graph-structure" d="M25 18 H150 V96 H25"/>{factoryStations.map(station=><rect key={station.id} data-twin-station={station.id} className="graph-node" x={twinPoint(station.x,station.z).x-5} y={twinPoint(station.x,station.z).y-5} width="10" height="10" rx="1.5"/>)}
@@ -113,7 +113,7 @@ export function OperatingDigitalLayer({state,onInspect}:{state:ReturnType<typeof
       <circle data-digital-inlet className="graph-inlet" cx="16" cy="58" r="2.5"/>
      </>}
     </svg>
-    <small>{labels[product]}</small><span className="digital-screen-status">{product==='V-AI'?(state.reviewed?'Review recorded':graph.proposal===1?'Ready for review':state.hold?'Evidence gathering':'Awaiting evidence'):product==='V-Twin'?(state.hold?'Carrier held at T03':state.time>=58?'Process complete':state.time>=24?'Tracking the operation':'Route prepared'):product==='V-MES'?state.lotStatus:product==='SCADA'?(state.hold?'Condition observed':state.time>=58?'History preserved':state.time>=24?'Station data linked':'Equipment ready'):state.time>=2?'Context linked':'Preparing context'}</span>
+    <small>{labels[product]}</small><span className="digital-screen-status">{product==='V-AI'?(state.reviewed?'Review recorded':graph.proposal===1?'Ready for review':state.hold?'Evidence gathering':'Awaiting evidence'):product==='V-Twin'?(state.hold?'Carrier held at CED':state.time>=58?'Process complete':state.time>=24?'Tracking the operation':'Route prepared'):product==='V-MES'?state.lotStatus:product==='SCADA'?(state.hold?'Condition observed':state.time>=58?'History preserved':state.time>=24?'Station data linked':'Equipment ready'):state.time>=2?'Context linked':'Preparing context'}</span>
    </button>;
   })}</div>
  </div>;

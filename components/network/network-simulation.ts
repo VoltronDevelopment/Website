@@ -22,8 +22,9 @@ export function productionState(time:number){
  let part:Point=[-4.5,.805,7.2],support='truck',phase='Receiving';const truckZ=8.5-4*smooth((time-4)/1.4)+4*smooth((time-7.2)/1);
  part[2]=truckZ-1.3;
  if(time>=5.5){support='forks';phase='Transfer';part=[-4.5,lerp(.805,1.12,(time-5.5)/.4),3.2];}
- if(time>=5.9)part[0]=lerp(-4.5,-2.4,(time-5.9)/.9);
- if(time>=6.8)part[2]=lerp(3.2,-1.8,(time-6.8)/1.2);
+ // Pull straight back through the open rear doors before crossing the aisle.
+ if(time>=5.9)part[2]=lerp(3.2,-1.8,(time-5.9)/1.2);
+ if(time>=7.25)part[0]=lerp(-4.5,-2.4,(time-7.25)/.75);
  if(time>=8){support='fixture';phase='Travel';part=[lerp(-2.4,.9,(time-8.35)/.65),lerp(1.12,1.7,(time-8)/.35),-1.8];}
  if(time>=9){phase='Lower';part=[.9,lerp(1.7,.55,(time-9)/.4),-1.8];}
  if(time>=9.4){phase='Dwell';part=[.9,.55,-1.8];}

@@ -364,3 +364,10 @@
  .alpha-page .alpha-decision > div,.alpha-page .alpha-decision > .button{grid-column:2}
  .alpha-page .alpha-decision > .button{width:fit-content;justify-self:start;margin:0}
 }
+
+@media(max-width:767px){
+ .alpha-page .alpha-scope-selectors {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+ .alpha-page .alpha-scope-selectors button {padding:8px 2px;min-width:0}
+}
+.scope-label-short{display:none}
+@media(max-width:767px){.scope-label-wide{display:none}.scope-label-short{display:inline}}

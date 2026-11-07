@@ -6,7 +6,7 @@ export const processPacks = [
  {id:'machining',title:'Machining',summary:'Connect the part, operation and dimensional evidence.',operations:'Operation sequence, tools and setup context.',equipment:'Machine identity, tooling and workholding.',evidence:'Dimensional checks and operation records.'},
  {id:'forming',title:'Forming',summary:'Carry material and tooling context through each forming operation.',operations:'Forming stages and material requirements.',equipment:'Press, die and tooling relationships.',evidence:'Material, process and inspection records.'},
  {id:'casting',title:'Casting',summary:'Relate material batches, moulds and process evidence.',operations:'Casting stages and batch relationships.',equipment:'Mould, tooling and equipment context.',evidence:'Batch traceability and quality checks.'},
- {id:'additive',title:'Additive manufacturing',summary:'Keep the build, machine and inspection context together.',operations:'Build preparation and process steps.',equipment:'Build platform, machine and material context.',evidence:'Build records and inspection evidence.'},
+ {id:'additive',title:'Additive',summary:'Keep the build, machine and inspection context together.',operations:'Build preparation and process steps.',equipment:'Build platform, machine and material context.',evidence:'Build records and inspection evidence.'},
  {id:'surface',title:'Surface treatment',summary:'Connect preparation, treatment and verification for each lot.',operations:'Preparation, treatment and verification stages.',equipment:'Line, station and process-resource mapping.',evidence:'Treatment records and quality evidence.'},
 ] as const;
 export const MODULARITY_DURATION=11.5;

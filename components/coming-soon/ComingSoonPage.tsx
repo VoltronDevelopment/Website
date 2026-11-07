@@ -108,7 +108,7 @@ export function ComingSoonPage({now, opens}: {now:number; opens:number}) {
   const time=[Math.floor(seconds/3600),Math.floor(seconds/60)%60,seconds%60].map(value=>String(value).padStart(2,'0'));
   const festival=clock.now<opens+festivalMs;
   return <BrandEntry locked={!clock.confirmed} extraControls={!clock.confirmed&&<FounderLogin/>}
-    celebration={clock.confirmed && clock.now<opens+celebrationMs && <DiwaliCelebration elapsed={Math.max(0,clock.now-opens)}/>}>
+    celebration={clock.now<opens+celebrationMs && <DiwaliCelebration opens={opens} serverNow={now}/>}>
     {festival&&<div className="launch-details">
       <p className="launch-greeting">Happy Diwali</p>
       {!clock.confirmed&&<div className="launch-clock"><time role="timer" aria-label={time.join(':')}>{time.join(' : ')}</time><small>Midnight IST</small></div>}

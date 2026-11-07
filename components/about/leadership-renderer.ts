@@ -3,8 +3,9 @@ import * as T from 'three';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {addArtworkSoftboxes,releaseStudioLookups,sceneEnvironment,prepareArtworkEnvironment} from '../brand/artwork-studio';
 import {glassFace,setGlass,type GlassFace} from '../home/lattice-materials';
-import {createSquareBeam,hologramCubeSize} from '../brand/intelligence-hologram';
+import {createProjectionBeam,hologramCubeSize} from '../brand/intelligence-hologram';
 import {rollingChassis} from './rolling-chassis';
+import {isSceneScrollActive} from '../home/scene-preparation';
 import {leadershipPose,leadershipStage,leadershipTurn} from './leadership-stage';
 
 export type LeadershipKind='portrait'|'automotive'|'search';
@@ -31,8 +32,8 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
  recess.position.z=-half+.09;cube.add(recess);
  const portrait=kind==='portrait';
  const emitterSide=.48,ground=-1.76;
- const portraitWidth=2.84,portraitBottom=-.86;
- const beam=createSquareBeam(track,1.8,1.05);
+ const portraitWidth=2.84,portraitBottom=-.65;
+ const beam=createProjectionBeam(track,1.8,1.05);
  const spill=portrait?track(new T.ShaderMaterial({
   transparent:true,depthWrite:false,toneMapped:false,
   uniforms:{amount:{value:0},dark:{value:0},join:{value:0}},
@@ -82,18 +83,19 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
   const folio=box(subject,width+.08,height+.07,.075,-.09,.01,.065,ink);
   folio.rotation.z=-.036;
   box(subject,width,height,.048,-.12,0,.14,paper);
-  const sheet=document.createElement('canvas');sheet.width=600;sheet.height=800;
+  const sheet=document.createElement('canvas');sheet.width=1200;sheet.height=1600;
   const ctx=sheet.getContext('2d')!;
+  ctx.scale(2,2);
   const emblem=await new T.ImageLoader().loadAsync(identityMark);
   let printedStage=-1;
   const drawBrief=(time:number)=>{
    const stage=Number(time>=1.3)+Number(time>=2.25)+Number(time>=3.45);
    if(stage===printedStage)return;
    printedStage=stage;
-   ctx.fillStyle='#eaf2f6';ctx.fillRect(0,0,600,800);
+   const wash=ctx.createLinearGradient(0,0,600,800);wash.addColorStop(0,'#f2fafe');wash.addColorStop(.58,'#dcebf1');wash.addColorStop(1,'#b9d3de');ctx.fillStyle=wash;ctx.fillRect(0,0,600,800);
    ctx.fillStyle='#172f45';ctx.fillRect(0,0,600,210);
    ctx.fillStyle='#b2dae9';ctx.font='500 28px sans-serif';ctx.fillText('VOLTRON LATTICE',44,66);
-   ctx.fillStyle='#fff';ctx.font='600 54px sans-serif';ctx.fillText('Technology brief',44,158);
+   ctx.fillStyle='#fff';ctx.font='600 54px sans-serif';ctx.fillText('Technology leadership',44,158,512);
    for(const [i,label] of ['Role','Status'].entries()){
     if(stage<=i)continue;
     const y=296+i*168;
@@ -105,7 +107,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    map.needsUpdate=true;
   };
   const map=track(new T.CanvasTexture(sheet));map.colorSpace=T.SRGBColorSpace;map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
-  const printed=track(new T.MeshStandardMaterial({map,roughness:.84,clippingPlanes:[mask]}));
+  const printed=track(new T.MeshPhysicalMaterial({map,roughness:.38,clearcoat:.55,clearcoatRoughness:.22,clippingPlanes:[mask]}));
   const face=new T.Mesh(track(new T.PlaneGeometry(width,height)),printed);face.position.set(-.12,0,.168);subject.add(face);
   subject.position.set(0,height/2,-.13);
   updateBrief=drawBrief;
@@ -129,7 +131,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    fragmentShader:`varying vec2 uvImage;uniform sampler2D map;uniform float reveal;
     void main(){vec4 texel=texture2D(map,uvImage);float grey=dot(texel.rgb,vec3(.2126,.7152,.0722));
     float delta=reveal-uvImage.y;float light=.065*exp(-abs(delta)*80.);
-    gl_FragColor=vec4(vec3(grey)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.19,uvImage.y)*smoothstep(-.02,.02,delta));
+    gl_FragColor=vec4(mix(vec3(.012,.031,.063),vec3(.91,.97,1.),grey)+vec3(.01,.06,.085)*sin(grey*3.14159)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.19,uvImage.y)*smoothstep(-.02,.02,delta));
     #include <colorspace_fragment>
     }`}));
   const photo=new T.Mesh(face,image);photo.renderOrder=3;subject.add(photo);
@@ -178,9 +180,9 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
   updatePrint?.(formed,dark);
   if(!portrait){
    const automotive=kind==='automotive';
-   content.position.y=automotive?-.55:-.88;
-   content.rotation.set(0,automotive?.77:.13*(1-formed),0);
-   content.scale.setScalar(scale*(automotive?1.46:1));
+   content.position.y=automotive?-.26:-.63;
+   content.rotation.set(automotive?.14:0,automotive?.77:.13*(1-formed),0);
+   content.scale.setScalar(scale*(automotive?1.82:1));
    mask.constant=kind==='search'?2.6:-.65+3*T.MathUtils.smoothstep(time,0,1.2);
    beam.set(.68*formed,dark,time,camera);
    updateBrief?.(time);
@@ -199,11 +201,23 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
  };
  const resize=()=>{const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height,false);
   const chassis=kind==='automotive',aspect=width/height;
-  const span=Math.max(chassis?3.85:4.05,(chassis?4.45:3.05)/aspect);
+  // Leave room for both wheel sets while they are still outside their hubs.
+  const span=Math.max(4.35,(chassis?5.10:3.25)/aspect);
   camera.top=span/2;camera.bottom=-camera.top;camera.right=camera.top*aspect;camera.left=-camera.right;
-  camera.position.set(0,chassis?6.2:1.65,10);
+  camera.position.set(0,3.6,10);
   camera.lookAt(0,0,0);camera.updateProjectionMatrix();render();};
- const tick=(now:number)=>{raf=0;if(disposed||!visible||document.hidden)return;if(last)time=Math.min(duration,time+Math.min((now-last)/1000,.08));last=now;render();if(time<duration)raf=requestAnimationFrame(tick);};
+ const tick=(now:number)=>{
+  raf=0;
+  if(disposed||!visible||document.hidden)return;
+  if(isSceneScrollActive(now)){
+   last=0;
+  }else{
+   if(last)time=Math.min(duration,time+Math.min((now-last)/1000,.08));
+   last=now;
+   render();
+  }
+  if(time<duration)raf=requestAnimationFrame(tick);
+ };
  const start=()=>{last=0;if(!context.isContextLost()&&!raf&&visible&&!document.hidden&&time<duration)raf=requestAnimationFrame(tick);};
  const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)start();else{cancelAnimationFrame(raf);raf=0;last=0;}},{threshold:.12});observer.observe(host);
  const visibility=()=>{if(document.hidden){cancelAnimationFrame(raf);raf=0;last=0;}else start();};document.addEventListener('visibilitychange',visibility);

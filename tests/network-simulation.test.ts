@@ -16,3 +16,15 @@ describe('Network physical continuity and connectors',()=>{
  it('supports the part at inspection and final receiving and never implies release',()=>{expect(productionState(13).part).toEqual([3.4,1.175,1]);expect(productionState(13).support).toBe('rollers');expect(productionState(16).part[1]-.325).toBeCloseTo(.34);expect(productionState(24).reviewPending).toBe(true);});
  it('moves signals along an orthogonal route rather than diagonally between endpoints',()=>{const path:Point[]=[[0,0,0],[0,3,0],[4,3,0],[4,3,2]];for(let i=0;i<=90;i++){const p=routePoint(path,i/90);expect((p[0]===0&&p[2]===0)||(p[1]===3&&p[2]===0)||(p[0]===4&&p[1]===3)).toBe(true);}expect(routePoint(path,1)).toEqual([4,3,2]);});
 });
+
+it('withdraws straight through the rear opening before traversing to the fixture',()=>{
+ const start=productionState(5.9).part;
+ for(let t=5.9;t<7.1;t+=.05){
+  const load=productionState(t);
+  expect(load.support).toBe('forks');
+  expect(load.part[0]).toBeCloseTo(start[0]);
+  expect(load.part[2]).toBeLessThanOrEqual(start[2]);
+ }
+ for(let t=7.25;t<8;t+=.05)expect(productionState(t).part[2]).toBeCloseTo(-1.8);
+ expect(productionState(8).support).toBe('fixture');
+});

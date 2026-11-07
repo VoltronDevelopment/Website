@@ -21,7 +21,7 @@ export function createFireworks(canvas:HTMLCanvasElement,variant:"intro"|"launch
   life:(intro?1.8:2.3)+Math.random()*.65,
   color:i%3
  }));
- function paint(seconds:number){
+ function paint(seconds:number, elapsedSinceBurst?:(start:number)=>number){
   if(disposed)return;
   ctx!.clearRect(0,0,width,height);
   const dark=document.documentElement.dataset.theme==="dark";
@@ -36,7 +36,7 @@ export function createFireworks(canvas:HTMLCanvasElement,variant:"intro"|"launch
    (mobile?[[width*.3,height*.24,.5],[width*.74,height*.37,1.9]]:[[width*.2,height*.27,.5],[width*.8,height*.25,1.9],[width*.53,height*.16,3.3]]);
   ctx!.save();
   for(const [x,y,start] of origins){
-   const age=seconds-start;if(age<0)continue;
+   const age=elapsedSinceBurst ? elapsedSinceBurst(start) : seconds-start;if(age<0)continue;
    for(const p of particles){
     if(age>=p.life)continue;
     const vx=Math.cos(p.angle)*p.speed,vy=Math.sin(p.angle)*p.speed;

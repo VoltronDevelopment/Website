@@ -130,3 +130,8 @@
   .desktop-story-details {display:none}
 }
 @media (min-width:768px) {.mobile-story-details {display:none}}
+
+@media(max-width:767px){
+ .site-presentation #main-content .hero .hero-principle-strip li {display:grid;grid-template-rows:26px auto;justify-items:center;align-content:start;text-align:center;row-gap:6px}
+ .site-presentation #main-content .hero .hero-principle-strip li span {display:block;min-height:2.8em;line-height:1.4}
+}

@@ -23,7 +23,7 @@ export const operatingEntities=[
  {id:'material',title:'Material & receiving',position:[-9,1,factoryLayout.wetLineZ],record:'Material batch / Demo 017',detail:'Receiving records material identity and incoming evidence. Allocation connects that batch to the customer order and production lot.'},
  {id:'lot',title:'Production lot',position:[-4,1,2],record:alphaLineDemo.lot,detail:'One lot identity carries the material, carrier, route, execution history, inspection and shipment relationships.'},
  {id:'operation',title:'Treatment & oven',position:[1,1,-1],record:'Factory / Three-stage treatment + camelback oven',detail:'V MES records execution. V SCADA supplies station observations. V Twin represents the derived situation. Physical control remains with the defined control systems.'},
- {id:'observation',title:'Condition & review',position:[5,1,-5],record:'Station T03 / Review record',detail:'An observation connects the station, operation, lot and requirement. V AI prepares an investigation and proposed hold; an authorised person records the disposition.'},
+ {id:'observation',title:'Condition & review',position:[5,1,-5],record:'CED T04 / Review record',detail:'An observation connects the station, operation, lot and requirement. V AI prepares an investigation and proposed hold; an authorised person records the disposition.'},
  {id:'quality',title:'Quality & release',position:[-4,1,factoryLayout.returnLineZ],record:'Inspection / Release evidence',detail:'Inspection evidence is attached to the same lot. Dispatch is permitted in this story only after the authorised review and quality release are recorded.'},
  {id:'shipment',title:'Packing & dispatch',position:[-9,1,5.2],record:'Shipment / Demo 042',detail:'Packing and shipment preserve the link to the released lot, quality evidence and original customer order.'},
 ] as const;
@@ -73,8 +73,8 @@ export const FACTORY_PROCESS_PATH:readonly (readonly [number,number,number,numbe
  [24,-4,1.055,factoryLayout.wetLineZ],[25,-4,2.3,factoryLayout.wetLineZ],[26,-1,2.3,factoryLayout.wetLineZ],
  [27,-1,.9,factoryLayout.wetLineZ],[28.5,-1,.9,factoryLayout.wetLineZ],[29.7,-1,2.3,factoryLayout.wetLineZ],[30,-1,2.3,factoryLayout.wetLineZ],
  [31,2,2.3,factoryLayout.wetLineZ],[32,2,.9,factoryLayout.wetLineZ],[34,2,.9,factoryLayout.wetLineZ],[35.6,2,2.3,factoryLayout.wetLineZ],[36,2,2.3,factoryLayout.wetLineZ],
- [37,5,2.3,factoryLayout.wetLineZ],[38,5,.9,factoryLayout.wetLineZ],[50,5,.9,factoryLayout.wetLineZ],[50.5,5,2.3,factoryLayout.wetLineZ],[50.6,5,2.3,factoryLayout.wetLineZ],[51.2,8,2.3,factoryLayout.wetLineZ],[51.7,8,2.3,factoryLayout.wetLineZ],
- [51.84,8,2.3,-1.25],[51.95,8,.9,-1.25],[52.08,8,.9,-1.25],[52.2,8,2.3,-1.25],[52.24,8,2.3,-1.25],[52.3,8,2.3,factoryLayout.returnLineZ],[52.8,8,2.3,factoryLayout.returnLineZ],[53.05,5.8,1.94,factoryLayout.returnLineZ],[53.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],
+ [37,5,2.3,factoryLayout.wetLineZ],[37.45,5,.9,factoryLayout.wetLineZ],[38,5,.9,factoryLayout.wetLineZ],[38.55,5,2.3,factoryLayout.wetLineZ],[38.65,5,2.3,factoryLayout.wetLineZ],[39.4,8,2.3,factoryLayout.wetLineZ],[39.9,8,2.3,factoryLayout.wetLineZ],
+ [40.6,8,2.3,-1.25],[41,8,.9,-1.25],[50,8,.9,-1.25],[50.9,8,2.3,-1.25],[51.2,8,2.3,-1.25],[52.3,8,2.3,factoryLayout.returnLineZ],[52.8,8,2.3,factoryLayout.returnLineZ],[53.05,5.8,1.94,factoryLayout.returnLineZ],[53.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],
  [56.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[57.05,-1.8,1.94,factoryLayout.returnLineZ],[57.4,-4,2.3,factoryLayout.returnLineZ],[58,-4,1.055,factoryLayout.returnLineZ],
 ];
 /** Horizontal running distance excludes hoisting and stationary indexing; reversible on seek. */
@@ -115,7 +115,7 @@ export function operatingState(input:number){
  const handlerYaw=Math.PI*(1-smooth((time-17.3)/.7))+Math.PI/2*smooth((time-19.7)/.6)-Math.PI/2*smooth((time-21.7)/.6);
  const qualityPhase=time<58?'Waiting for lot':time<61.5?'Positioning':time<62?'Fixture clamping':time<65?'Inspection in progress':time<66?'Evidence recorded':time<67?'Released':'Ready for next lot';
  const scanning=time>=62&&time<65;
- return {time,chapter,hold,reviewed,released,dispatched:time>=87,routeIndex,carrier:{x:carrierX,z:carrierZ},railProgress:routeIndex,carrierYaw:-Math.PI/2*smooth((time-51.2)/.5)-Math.PI/2*smooth((time-52.3)/.5),ovenDoor,ovenEntryOpen,ovenExitOpen,ovenActive,processStage:time<24?'Receiving':time<30?'Tank 01':time<36?'Tank 02':time<51?'Tank 03':time<52.3?'Paint bath':time<58?'Oven':time<67?'Inspection':'Dispatch',part,incomingX,handlerYaw,outboundX,
+ return {time,chapter,hold,reviewed,released,dispatched:time>=87,routeIndex,carrier:{x:carrierX,z:carrierZ},railProgress:routeIndex,carrierYaw:-Math.PI/2*smooth((time-39.4)/.5)-Math.PI/2*smooth((time-52.3)/.5),ovenDoor,ovenEntryOpen,ovenExitOpen,ovenActive,processStage:time<24?'Receiving':time<30?'Tank 01':time<36?'Tank 02':time<38.65?'Tank 03':time<40.6?'Transfer to CED':time<51.2?'CED · T04':time<53.5?'Oven infeed':time<56.5?'Curing oven':time<58?'Transfer to quality':time<67?'Inspection':'Dispatch',part,incomingX,handlerYaw,outboundX,
   palletY:part.y-.455,bridge:smooth(time-10)-smooth(time-16),doorOpen:smooth(time-10)-smooth(time-17),outboundDoor:smooth(time-70)-smooth(time-80),depart,
   chain:operatingChains[chapter],receiving:clamp((time-14.7)/1.8),packing:smooth((time-70.3)/1.7),dispatch:depart,formation:clamp(time/3),signals,eventText:event?.[3]??'Preparing manufacturing context',eventProgress,qualityPhase,scanning,scanProgress:clamp((time-62)/3),clamp:smooth((time-61.5)/.5)-smooth((time-66.5)/.5),
   lotStatus:time<6?'Order linked':time<15?'Receiving material':time<24?'Material allocated':hold?'Awaiting review':time<58?'In production':!released?qualityPhase:time<67?'Released':time<87?'Packing & loading':'Dispatched',
@@ -127,22 +127,21 @@ export function operatingAnchor(id:OperatingEntity,state:ReturnType<typeof opera
  if(id==='material')return {x:-8.8,y:1.9,z:factoryLayout.wetLineZ};
  if(id==='lot')return {x:state.part.x,y:state.part.y+.5,z:state.part.z};
  if(id==='operation')return {...state.carrier,y:1.7};
- if(id==='observation')return {x:5,y:2.1,z:factoryLayout.wetLineZ};
+ if(id==='observation')return {x:8,y:2.1,z:-1.25};
  if(id==='quality')return {x:-4,y:2.25,z:factoryLayout.returnLineZ+1};
  if(id==='shipment')return {x:-9,y:1.6,z:5.2};
  return {x:-9,y:2,z:-5};
 }
 /** Scene time stays canonical; only tank travel is compressed during automatic playback. */
 export function operatingPlaybackRate(time:number){
- // Short indexed turns and the oven approach need readable physical time, not the tank-travel multiplier.
- // Give the paint dip four seconds of screen time across lowering, coating and drainage.
- if(time>=51.84&&time<52.24)return .1;
- if(time>=50&&time<58)return time>=53.5&&time<56.5?1:.25;
- return time>=24&&time<41?2:1;
+ if(time>=41&&time<50)return 2.25;
+ if(time>=38&&time<41)return .6;
+ if(time>=50&&time<58)return time>=53.5&&time<56.5?1:.48;
+ return time>=24&&time<38?2:1;
 }
 export function advanceOperatingClock(time:number,delta:number){
  let current=Math.max(0,Math.min(OPERATING_DURATION,time)),remaining=Math.max(0,Math.min(.1,delta));
- for(const boundary of [24,41,50,51.84,52.24,53.5,56.5,58,OPERATING_DURATION]){if(current>=boundary)continue;const rate=operatingPlaybackRate(current),needed=(boundary-current)/rate;if(remaining<needed)return current+remaining*rate;current=boundary;remaining-=needed;if(remaining<=0)break;}
+ for(const boundary of [24,38,41,50,53.5,56.5,58,OPERATING_DURATION]){if(current>=boundary)continue;const rate=operatingPlaybackRate(current),needed=(boundary-current)/rate;if(remaining<needed)return current+remaining*rate;current=boundary;remaining-=needed;if(remaining<=0)break;}
  return Math.min(OPERATING_DURATION,current);
 }
 /** Short, illustrative record digits; never a fabricated process measurement. */

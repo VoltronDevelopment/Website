@@ -28,7 +28,7 @@ describe('factory load crossing a liquid surface',()=>{
   });
  });
  it('decays surface movement during the review hold and reproduces it when seeking',()=>{
-  const held=factoryBathState(49,2);
+  const held=factoryBathState(49,3);
   expect(held.immersion).toBe(1);
   expect(held.ages.slice(0,2).every(age=>age>3)).toBe(true);
   expect(held.ages.slice(2)).toEqual([-1,-1]);
