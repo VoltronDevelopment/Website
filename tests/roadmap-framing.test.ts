@@ -1,11 +1,11 @@
 import {expect,it} from 'vitest';
 import * as T from 'three';
-import {roadmapFrame,roadmapLocations,roadmapProject,roadmapYaw} from '../components/home/roadmap-framing';
+import {roadmapFrame,roadmapLocations,roadmapProject,roadmapYaw,roadmapRise} from '../components/home/roadmap-framing';
 import {roadmapAscentPose} from '../lib/voltron-roadmap';
 it('keeps every arrived cube in frame and matches the still projection to the live camera',()=>{
  for(const aspect of [.6,1.4,3.7])for(let stage=0;stage<5;stage++){
   const frame=roadmapFrame(stage,aspect),camera=new T.OrthographicCamera(-frame.spanX/2,frame.spanX/2,frame.spanY/2,-frame.spanY/2,.1,50);
-  camera.position.set(frame.x,frame.y+2,16);camera.lookAt(frame.x,frame.y,0);camera.updateMatrixWorld();
+  camera.position.set(frame.x,frame.y+16*roadmapRise,16);camera.lookAt(frame.x,frame.y,0);camera.updateMatrixWorld();
   for(let i=0;i<=stage;i++)for(let corner=0;corner<8;corner++){
    const size=roadmapAscentPose(i).size,p=new T.Vector3(corner&1?size/2:-size/2,0,corner&4?size/2:-size/2).applyAxisAngle(new T.Vector3(0,1,0),roadmapYaw);
    p.x+=roadmapLocations[i];p.y=.08+(corner&2?size:0);

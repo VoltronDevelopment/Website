@@ -1,5 +1,6 @@
 import * as THREE from "three";
 
+import {matteFaces,tintMatte} from './matte-faces';
 import {philosophyDimensions} from "./philosophy-cube-timeline";
 import {glassFace,setGlass,type GlassFace} from './lattice-materials';
 export {philosophyCubeState} from "./philosophy-cube-timeline";
@@ -8,6 +9,38 @@ export function addPhilosophyLighting(scene:THREE.Scene){
  scene.add(new THREE.HemisphereLight(0xeaf6ff,0x314d6b,2));
  const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(-4,6,4);scene.add(key);
  const fill=new THREE.DirectionalLight(0x81c9ff,.65);fill.position.set(4,1,3);scene.add(fill);
+}
+
+/** The outer frame stays open toward the viewer as the individual joins the core. */
+export function createMattePhilosophyCubes(){
+ const root=new THREE.Group();
+ const levels=[philosophyDimensions.outer,philosophyDimensions.core,philosophyDimensions.individual].map((size,level)=>{
+  const group=new THREE.Group(),geometry=new THREE.BoxGeometry(size,size,size);
+  const faces=matteFaces();
+  for(const [i,m] of faces.entries()){
+   m.transparent=true;m.depthWrite=level!==0;
+   m.userData.coverage=level===0?([1,3,5].includes(i)?.16:0):1;
+   m.visible=m.userData.coverage>0;
+   if(level===0)m.side=THREE.DoubleSide;
+  }
+  const edges=new THREE.EdgesGeometry(geometry),line=new THREE.LineBasicMaterial({transparent:true,toneMapped:false});
+  group.add(new THREE.Mesh(geometry,faces),new THREE.LineSegments(edges,line));root.add(group);
+  return {group,geometry,faces,edges,line};
+ });
+ function setTheme(dark:boolean,_active=false){
+  levels.forEach(({faces,line},i)=>{
+   tintMatte(faces,(dark?[0x91afc3,0x5f9bca,0x87abbc]:[0x819caf,0x417aa7,0x7797a8])[i]);
+   line.color.setHex(dark?0x89a6b9:0x526f83);
+  });
+ }
+ function apply(s:{outer:number;core:number;individual:number;height:number;merge?:number}){
+  levels.forEach(({group,faces,line},i)=>{
+   const reveal=[s.outer,s.core,s.individual*(1-(s.merge??0))][i];
+   group.visible=reveal>.001;group.position.y=i===2?s.height:0;group.scale.setScalar(.94+.06*reveal);
+   faces.forEach(m=>m.opacity=m.userData.coverage*reveal);line.opacity=(i===0?.85:.35)*reveal;
+  });
+ }
+ setTheme(false);return {root,groups:levels.map(l=>l.group),setTheme,apply,dispose(){levels.forEach(l=>{l.geometry.dispose();l.edges.dispose();l.line.dispose();l.faces.forEach(f=>f.dispose());});}};
 }
 
 /** Canonical geometry and materials for both Individual Excellence illustrations. */

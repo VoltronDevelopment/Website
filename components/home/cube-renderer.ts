@@ -7,7 +7,7 @@ import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 import {glassFace,setGlass,strokeMaterial,stroke,nodeHaloTexture,type GlassFace} from "./lattice-materials";
 import {junctionPulse} from "./lattice-lighting";
 import {createLatticeActivity} from "./lattice-activity";
-import {addPhilosophyLighting,createPhilosophyCubes} from "./philosophy-cubes";
+import {addPhilosophyLighting,createMattePhilosophyCubes} from "./philosophy-cubes";
 import {philosophyCamera,homePhilosophyDuration,homePhilosophyCubeState} from "./philosophy-cube-timeline";
 
 
@@ -73,7 +73,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
       }
     }
   };
-  const philosophy=options.kind==="philosophy"?track(createPhilosophyCubes()):undefined;
+  const philosophy=options.kind==="philosophy"?track(createMattePhilosophyCubes()):undefined;
   if(philosophy)root.add(philosophy.root);
   else {addCube(1.65,0);if(options.kind==="lot"){
     const nodeMaterial=track(new THREE.MeshPhongMaterial({color:0x2894bc}));materials.push({material:nodeMaterial,role:"node"});

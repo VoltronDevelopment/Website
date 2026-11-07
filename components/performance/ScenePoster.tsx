@@ -15,7 +15,10 @@ export function ScenePoster({kind}:{kind:keyof typeof posters}) {
       : kind==='intelligence'?'/intelligence/portrait-refined-'+(mobile?'mobile':'desktop')+'-'+theme+'.webp'
       : '/commons-scenes/tree-complete-'+(mobile?'mobile':'desktop')+'-'+theme+'.webp';
     return <span className="scene-poster" aria-hidden="true">
-      <span className="scene-pose-opening"><NativeOpening scene={kind}/></span>
+      <span className="scene-pose-opening">{kind==='philosophy'?(['light','dark'] as const).map(theme=><picture key={theme} className={'art-theme-'+theme}>
+        <source media="(max-width:767px)" srcSet={'/philosophy-scenes/open-mobile-'+theme+'.webp'}/>
+        <img loading="lazy" src={'/philosophy-scenes/open-'+theme+'.webp'} alt="" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
+      </picture>):<NativeOpening scene={kind}/>}</span>
       <span className="scene-pose-complete">{(['light','dark'] as const).map(theme=>
         <DeferredPicture initial={kind==='commons'} key={theme} className={'art-theme-'+theme}>
           <source media="(max-width:767px)" srcSet={complete(true,theme)}/>
