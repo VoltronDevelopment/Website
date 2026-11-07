@@ -31,7 +31,7 @@ export function PerformanceMonitor() {
     const observer=new MutationObserver(records=>records.forEach(r=>ready(r.target as Element)));
     observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['data-ready']});
     let long:PerformanceObserver|undefined;
-    try { long=new PerformanceObserver(list=>{for(const entry of list.getEntries())if(entry.duration>=200)publish('long-task',entry.duration);});long.observe({type:'longtask',buffered:true}); }catch{}
+    try { long=new PerformanceObserver(list=>{for(const entry of list.getEntries())if(entry.startTime>=started&&entry.duration>=200)publish('long-task',entry.duration);});long.observe({type:'longtask',buffered:true}); }catch{}
     return ()=>{observer.disconnect();long?.disconnect();};
   },[pathname]);
   return null;

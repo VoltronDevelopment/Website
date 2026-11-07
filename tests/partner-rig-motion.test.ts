@@ -18,6 +18,17 @@ it('poses both real rigs reversibly with clear presentation hands and non-twisti
  vi.stubGlobal('ProgressEvent',class{constructor(_name:string,init:object){Object.assign(this,init);}});
  const loaded=await Promise.all(['carla','eric'].map(async name=>{const g=JSON.parse(fs.readFileSync(`public/stories/partner-${name}.gltf`,'utf8'));expect(g.images).toBeUndefined();expect(g.textures).toBeUndefined();g.buffers[0].uri='data:application/octet-stream;base64,'+fs.readFileSync(`public/stories/partner-${name}.bin`).toString('base64');return new GLTFLoader().parseAsync(JSON.stringify(g),'');}));const material=new T.MeshPhysicalMaterial();const actors=[0,1].map(i=>createPartnerActor(loaded[i].scene,i,material));
  expect(actors.map(a=>a.bones)).toEqual([89,89]);expect(actors.map(a=>a.meshes.length)).toEqual([1,1]);
+
+ // Sample real limb lengths through the whole arrival and presentation, not only its end pose.
+ const segments=actors.map(actor=>{
+  const pairs:[T.Object3D,T.Object3D][]=[];
+  for(const side of ['l','r'])for(const [first,second]of [['upperarm','lowerarm'],['lowerarm','hand'],['upperleg','lowerleg'],['lowerleg','foot']]){
+   const start=actor.root.getObjectsByProperty('type','Bone').find(b=>b.name.startsWith(first+'_'+side+'_')&&!b.name.includes('twist'))!;
+   const end=actor.root.getObjectsByProperty('type','Bone').find(b=>b.name.startsWith(second+'_'+side+'_')&&!b.name.includes('twist'))!;pairs.push([start,end]);
+  }
+  return pairs.map(([a,b])=>({a,b,length:a.getWorldPosition(new T.Vector3()).distanceTo(b.getWorldPosition(new T.Vector3()))}));
+ });
+ for(let t=0;t<=12;t+=.1){const state=collaborationState('partner',t);actors.forEach((actor,i)=>{actor.pose(state.walks[i],state.gesture,t,state.stamp);expect(Math.abs(actor.root.userData.partnerGroundShift)).toBeLessThan(.08);for(const segment of segments[i]){const length=segment.a.getWorldPosition(new T.Vector3()).distanceTo(segment.b.getWorldPosition(new T.Vector3()));expect(Math.abs(length-segment.length),segment.a.name+' at '+t.toFixed(1)).toBeLessThan(.002);}});}
  const poses=new Map<number,number[]>();
  for(const p of [0,.125,.25,.375,.5,.625,.75,.875,1,.5,0,1]){
   actors.forEach(a=>a.pose(p,p===1?1:0,p===1?12:3.5+p*3.5,p===1?1:0));
@@ -27,6 +38,8 @@ it('poses both real rigs reversibly with clear presentation hands and non-twisti
  }
  // Exercise the whole curved reach, including the intermediate poses absent from the final tableau.
  for(let time=6.1;time<=12;time+=.1){const state=collaborationState('partner',time);actors.forEach((a,i)=>{a.pose(state.walks[i],state.gesture,time,state.stamp);expect(a.activePalm.getWorldPosition(new T.Vector3()).distanceTo(a.armTargets[i?0:1])).toBeLessThan(.015);expect(a.footTargets.every(t=>t.y<.20)).toBe(true);const point=a.activePalm.getWorldPosition(new T.Vector3()).applyMatrix4(partnerPanelInverse);if(Math.abs(point.x)<partnerStage.panel.width/2&&Math.abs(point.y)<partnerStage.panel.height/2)expect(point.z-partnerStage.panel.depth/2).toBeGreaterThan(.04);});}
+
+ for(const time of [0,3.7,4.2,4.7,5.2,5.8,7.5,9.4,12]){const state=collaborationState('partner',time);actors.forEach((actor,i)=>{actor.pose(state.walks[i],state.gesture,time,state.stamp);const mesh=actor.meshes[0];mesh.computeBoundingBox();expect(mesh.boundingBox!.clone().applyMatrix4(mesh.matrixWorld).min.y,'sole clearance at '+time).toBeGreaterThan(-.006);});}
  actors.forEach(a=>a.pose(1,1,12,1));
  for(const [i,a]of actors.entries()){
   const armSide=i?'l':'r',upper=a.root.getObjectByName(i?'upperarm_l_024':'upperarm_r_049')!,elbow=a.root.getObjectByName(i?'lowerarm_l_025':'lowerarm_r_050')!,hand=a.activePalm;

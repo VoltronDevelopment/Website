@@ -5,26 +5,19 @@
       "Sid": "VoltronWebsiteDynamoAccess",
       "Effect": "Allow",
       "Action": [
-        "dynamodb:GetItem",
         "dynamodb:PutItem",
-        "dynamodb:UpdateItem",
-        "dynamodb:DeleteItem",
-        "dynamodb:Scan",
-        "dynamodb:Query",
-        "dynamodb:BatchGetItem",
-        "dynamodb:BatchWriteItem",
-        "dynamodb:TransactWriteItems",
-        "dynamodb:DescribeTable"
+        "dynamodb:UpdateItem"
       ],
       "Resource": [
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries",
-        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries/index/*"
+        "arn:aws:dynamodb:ap-south-1:328833518871:table/VoltronWebsiteInquiries"
       ]
     },
     {
       "Sid": "VoltronWebsiteSesSend",
       "Effect": "Allow",
-      "Action": ["ses:SendEmail", "ses:SendRawEmail"],
+      "Action": [
+        "ses:SendEmail"
+      ],
       "Resource": "*"
     }
   ]

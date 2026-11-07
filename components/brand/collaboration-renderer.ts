@@ -5,7 +5,7 @@ import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js'
 import {createArtworkEnvironment,addArtworkSoftboxes} from './artwork-studio';
 import {createStoryFormation} from './story-formation';
 import {createPartnerPresentation} from './partner-presentation';
-import {partnerStage} from './partner-stage';
+import {partnerStage,partnerFrame} from './partner-stage';
 import {collaborationState,collaborationGait,collaborationOpening,partnerOpening,type CollaborationKind} from './collaboration-timeline';
 import {createSceneHandoff} from '../performance/scene-handoff';
 import {createRenderQuality,prefersStaticScene} from '../performance/scene-policy';
@@ -16,9 +16,9 @@ type Mode='static'|'playing'|'paused'|'settled';
 export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLElement,kind:CollaborationKind,onMode:(mode:Mode)=>void,signal:AbortSignal):Promise<CollaborationController>{
  const handoff=createSceneHandoff(host,canvas),query=new URLSearchParams(location.search),capture=query.has('scene-capture');
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:capture});renderer.setClearColor(0,0);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
- const quality=createRenderQuality(canvas,1.5);renderer.setPixelRatio(quality.ratio);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
+ const quality=createRenderQuality(canvas,capture?3:1.5);renderer.setPixelRatio(quality.ratio);renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFShadowMap;renderer.shadowMap.autoUpdate=false;
  const scene=new T.Scene(),camera=new T.OrthographicCamera(-4,4,3,-3,.1,60),target=new T.Vector3(kind==='about'?.15:0,kind==='about'?1.3:1.02,0);
- camera.position.copy(target).add(new T.Vector3(kind==='about'?7:3.8,kind==='about'?5:2.7,kind==='about'?9:10.5));camera.lookAt(target);
+ camera.position.copy(target).add(new T.Vector3(kind==='about'?5.3:3.8,kind==='about'?5.7:2.7,kind==='about'?9:10.5));camera.lookAt(target);
  const environment=createArtworkEnvironment(renderer);scene.environment=environment.texture;addArtworkSoftboxes(scene,target);
  const key=new T.DirectionalLight(0xffffff,3.6);key.position.set(-3,7,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);Object.assign(key.shadow.camera,{left:-6,right:6,top:6,bottom:-6,near:.1,far:20});key.shadow.bias=-.0003;key.shadow.normalBias=.025;
  scene.add(key,new T.HemisphereLight(0xeef8ff,0x344c65,1.1));const rim=new T.DirectionalLight(0x9bcce9,1.4);rim.position.set(4,4,-5);scene.add(rim);
@@ -58,7 +58,7 @@ export async function mountCollaboration(canvas:HTMLCanvasElement,host:HTMLEleme
  let time=kind==='partner'?partnerOpening:collaborationOpening,paused=false,frozen=false,visible=false,disposed=false,lost=false,frame=0,last=0;
  const review=query.get('story-time')??query.get(kind==='about'?'hero-time':'hand-time');if(review!==null&&Number.isFinite(+review)){time=T.MathUtils.clamp(+review,0,12);paused=frozen=true;}
  const dark=()=>document.documentElement.dataset.theme==='dark';
- function draw(){if(disposed||lost)return;const state=collaborationState(kind,time),night=dark();palette.forEach(p=>p.material.color.setHex(night?p.dark:p.light));floorMaterial.opacity=night?.24:.12;
+ function draw(){if(disposed||lost)return;const state=collaborationState(kind,time),night=dark();if(kind==='partner'){const frame=partnerFrame(time,aspect);camera.left=-frame.width/2;camera.right=frame.width/2;camera.top=frame.height/2;camera.bottom=-frame.height/2;camera.updateProjectionMatrix();}palette.forEach(p=>p.material.color.setHex(night?p.dark:p.light));floorMaterial.opacity=night?.24:kind==='partner'?.21:.12;rim.intensity=kind==='partner'&&!night?1.8:1.4;
   foundations.forEach((root,i)=>{formations[i].update(state.structure,time,night,renderer.getPixelRatio());root.traverse(o=>{if(o instanceof T.Mesh)o.castShadow=state.structure>.98;});});
   partnership?.update(time,night,renderer.getPixelRatio());if(capture&&partnership){host.dataset.handPanelGaps=JSON.stringify(partnership.handPanelGaps);host.dataset.footTargets=JSON.stringify(partnership.footTargets);host.dataset.panelProgress=state.surface.toFixed(4);host.dataset.identityProgress=state.stamp.toFixed(4);}
 

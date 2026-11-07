@@ -1,4 +1,5 @@
 "use client";
+import {ArtworkControls} from './ArtworkControls';
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
 import {ArtworkInspector} from './ArtworkInspector';
@@ -44,6 +45,6 @@ export function IntelligenceHeroArtwork() {
       <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
     </div>
     {review && <div className="intelligence-review"><label>Artwork time <input aria-label="Artwork time" type="range" min="0" max={intelligenceHeroDuration} step=".05" defaultValue={intelligenceHeroDuration} onChange={event=>controller.current?.scrub(Number(event.target.value))}/></label><nav aria-label="Artwork review views">{["solid","particles","complete"].map(view=><a key={view} href={`?intelligence-review=1&intelligence-view=${view}&intelligence-time=${intelligenceHeroDuration}`}>{view}</a>)}</nav></div>}
-    <ArtworkInspector scene="intelligence" duration={intelligenceHeroDuration} onSeek={time=>controller.current?.scrub(time)}/>
+    <ArtworkControls mode={mode} onReplay={()=>controller.current?.replay()}/><ArtworkInspector scene="intelligence" duration={intelligenceHeroDuration} onSeek={time=>controller.current?.scrub(time)}/>
   </div>;
 }

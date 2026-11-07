@@ -8,14 +8,13 @@
 .about-study-choices{display:flex;gap:8px;flex-wrap:wrap;margin-block:16px}.about-study-choices button{min-height:48px;padding:12px 18px;display:flex;align-items:center;gap:12px;background:transparent;border:0;border-radius:8px;color:var(--muted);font:inherit;font-size:13px;cursor:pointer}.about-study-choices button span{font-size:10px;color:var(--text-link)}.about-study-choices button[aria-pressed=true]{color:var(--ink);background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 8px 26px var(--about-shadow)}.about-study-choices button:focus-visible{outline:2px solid var(--text-link);outline-offset:3px}
 .about-study-detail{padding:24px 28px;min-height:128px;border-radius:14px;background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 12px 32px var(--about-shadow)}.about-study-detail h3{font-size:20px;line-height:1.4;font-weight:500}.about-study-detail p{font-size:14px;line-height:1.8;color:var(--muted);margin-top:10px;max-width:68ch}
 .about-study-principles{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center}.about-study-principles .about-study-art{height:410px}.about-study-principles .about-study-detail{min-height:180px}
-.about-growth{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:64px}.about-growth>*{min-width:0}.about-growth-copy>p:not(.eyebrow){font-size:15px;line-height:1.9;color:var(--muted);margin-top:20px}.about-practice{padding:0;margin:28px 0 0;list-style:none;display:grid;gap:20px}.about-practice li{display:flex;gap:18px}.about-practice li>span{font-size:10px;color:var(--text-link);padding-top:6px}.about-practice h3{font-weight:500;font-size:16px}.about-practice p{font-size:13px;line-height:1.8;color:var(--muted);margin-top:4px}.about-page .culture-helix-stage{height:420px;min-height:0}.about-page .culture-helix-detail{font-size:12px;line-height:1.85}.about-leadership{display:grid;grid-template-columns:1.1fr 1fr;gap:64px;align-items:center}.about-founder{padding:36px;border-radius:16px;background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 14px 36px var(--about-shadow)}.about-founder h3{font-size:30px;font-weight:500;margin-top:16px}.about-founder>p:not(.eyebrow){font-size:14px;line-height:1.9;color:var(--muted);margin-top:18px}.about-founder a{display:inline-flex;gap:12px;align-items:center;font-size:13px;color:var(--text-link);min-height:44px;margin-top:18px}.about-page .about-roadmap-section{background:none}.about-destinations{display:grid;grid-template-columns:1fr 1fr;gap:28px}.about-destinations article{padding:32px;border-radius:14px;background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 12px 32px var(--about-shadow)}.about-destinations h3{font-size:24px;font-weight:500;margin-top:16px}.about-destinations p:not(.eyebrow){font-size:14px;line-height:1.9;color:var(--muted);margin-block:16px 24px}
+.about-growth{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:64px}.about-growth>*{min-width:0}.about-growth-copy>p:not(.eyebrow){font-size:15px;line-height:1.9;color:var(--muted);margin-top:20px}.about-practice{padding:0;margin:0;list-style:none;display:grid;gap:20px}.about-practice li{display:flex;gap:18px}.about-practice li>span{font-size:10px;color:var(--text-link);padding-top:6px}.about-practice h3{font-weight:500;font-size:16px}.about-practice p{font-size:13px;line-height:1.8;color:var(--muted);margin-top:4px}.about-page .culture-helix-stage{height:420px;min-height:0}.about-page .culture-helix-detail{font-size:12px;line-height:1.85}.about-leadership{display:grid;grid-template-columns:1.1fr 1fr;gap:64px;align-items:center}.about-founder{padding:36px;border-radius:16px;background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 14px 36px var(--about-shadow)}.about-founder h3{font-size:30px;font-weight:500;margin-top:16px}.about-founder>p:not(.eyebrow){font-size:14px;line-height:1.9;color:var(--muted);margin-top:18px}.about-founder a{display:inline-flex;gap:12px;align-items:center;font-size:13px;color:var(--text-link);min-height:44px;margin-top:18px}.about-page .about-roadmap-section{background:none}.about-destinations{display:grid;grid-template-columns:1fr 1fr;gap:28px}.about-destinations article{padding:32px;border-radius:14px;background:linear-gradient(140deg,var(--about-fill),var(--about-shade));box-shadow:0 12px 32px var(--about-shadow)}.about-destinations h3{font-size:24px;font-weight:500;margin-top:16px}.about-destinations p:not(.eyebrow){font-size:14px;line-height:1.9;color:var(--muted);margin-block:16px 24px}
 @media(max-width:1023px){.about-study-principles,.about-growth,.about-leadership{gap:32px}.about-study-principles{grid-template-columns:1fr}.about-study-principles .about-study-art{height:340px}}
 @media(max-width:767px){.about-page .section{padding-block:52px}.about-page .section-intro{margin-bottom:24px}.about-page .hero{padding-top:16px}.about-page .hero h1{font-size:clamp(30px,8vw,42px);line-height:1.16}.about-page .hero .engineered-stage{height:clamp(290px,40svh,360px)}.about-study-art,.about-study-principles .about-study-art{height:300px}.about-study-principles{gap:8px}.about-study-choices{gap:6px}.about-study-choices button{padding:10px;font-size:11px;gap:7px}.about-study-detail{padding:20px;min-height:162px}.about-study-detail h3{font-size:18px}.about-study-principles .about-study-detail{min-height:180px}.about-growth,.about-leadership,.about-destinations{grid-template-columns:1fr;gap:28px}.about-page .culture-helix-stage{height:310px}.about-growth-copy{order:-1}.about-founder,.about-destinations article{padding:24px}.about-founder h3{font-size:26px}.about-page .roadmap-art{height:280px}}
 @media(prefers-reduced-motion:reduce){.about-page *{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 @media(prefers-reduced-transparency:reduce){.about-study-detail,.about-founder,.about-destinations article{background:var(--surface)}}
 @media(forced-colors:active){.about-study-choices button,.about-founder,.about-destinations article{border:1px solid CanvasText}.about-study-choices button[aria-pressed=true]{outline:2px solid Highlight}}
 
-.about-practice li{transition:opacity .35s ease}.about-growth[data-growth-stage="1"] .about-practice li:nth-child(1) h3,.about-growth[data-growth-stage="2"] .about-practice li:nth-child(2) h3,.about-growth[data-growth-stage="3"] .about-practice li:nth-child(3) h3,.about-growth[data-growth-stage="4"] .about-practice li:nth-child(4) h3{color:var(--text-link)}
 
 .about-page .collaboration-about .story-posters picture>img{width:100%;height:100%;object-fit:contain}
 
@@ -56,3 +55,35 @@
 .capability-sheet-navigation button:focus-visible{outline:2px solid var(--text-link);outline-offset:2px}
 @media(max-width:767px){.about-study-principles .capability-labels,.about-study-principles .capability-description{display:none}.capability-hint{display:block;text-align:center;font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:20px}.about-study-principles .about-study-content{margin-top:0}}
 @media(forced-colors:active){.capability-cube-target[aria-pressed=true]{outline:2px solid Highlight}}
+
+/* Projection sources and role copy share a quiet baseline. */
+.about-leadership{display:block}.about-leadership>.section-intro{max-width:660px}
+.leadership-projections{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;align-items:start}
+.leadership-projections article{min-width:0}
+.leadership-projection{position:relative;height:340px;isolation:isolate;overflow:hidden}
+.leadership-projection canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.leadership-projection[data-live=true] canvas{opacity:1}
+.leadership-projection[data-live=true] picture{visibility:hidden}
+.leadership-native-still{position:absolute;inset:0}
+.leadership-native-still img{width:100%;height:100%;object-fit:contain}
+.leadership-copy{padding-top:16px}.leadership-copy h3{font-size:clamp(21px,2vw,28px);font-weight:500;line-height:1.25;margin:12px 0;text-wrap:balance}
+.leadership-copy>p:not(.eyebrow){font-size:13px;line-height:1.8;color:var(--muted)}
+.leadership-copy a{display:inline-flex;align-items:center;gap:12px;min-height:44px;font-size:13px;color:var(--text-link);margin-top:12px}
+.leadership-copy a:focus-visible{outline:2px solid var(--text-link);outline-offset:4px}
+.leadership-state{padding-top:8px}
+@media(min-width:768px) and (max-width:1023px){.leadership-projections{gap:24px}.leadership-projection{height:280px}.leadership-copy .eyebrow{font-size:10px;letter-spacing:.08em}}
+@media(max-width:767px){.leadership-projections{grid-template-columns:1fr;gap:40px}.leadership-projection{height:330px;max-width:440px;margin-inline:auto}.leadership-copy h3{font-size:24px}.leadership-copy .eyebrow{font-size:11px}}
+.about-study-disciplines .about-study-art{max-width:980px;margin-inline:auto;height:clamp(340px,38vw,440px)}
+.discipline-stage{position:absolute;left:16px;bottom:12px;font-size:12px;line-height:1.4;color:var(--muted);pointer-events:none}
+@media(max-width:767px){.about-study-disciplines .about-study-art{height:330px}.discipline-stage{left:0;bottom:4px;font-size:11px}}
+
+/* One name follows the selected cube. Its hit area stays clear for touch. */
+.capability-cube-target[aria-pressed=true]::before{
+ content:attr(aria-label);
+ position:absolute;top:calc(100% - 3px);left:50%;transform:translateX(-50%);
+ background:var(--surface,Canvas);color:var(--ink);border-radius:4px;
+ padding:3px 6px;font-weight:500;font-family:inherit;font-size:12px;
+ line-height:1.3;white-space:nowrap;pointer-events:none;
+}
+.capability-cube-target[data-cap-cube="5"]::before,
+.capability-cube-target[data-cap-cube="6"]::before{top:auto;bottom:calc(100% - 3px)}

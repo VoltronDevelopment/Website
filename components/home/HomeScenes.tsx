@@ -21,7 +21,7 @@ function CubeScene({kind,active=false,sequence=0,children}: {kind: CubeKind;acti
       cancel=prepareScene(async()=>{
         try{
           const {mountCubes}=await import("./cube-renderer");
-          if(disposed || !host.current || !canvas.current)return;
+          if(disposed || prefersStaticScene() || !host.current || !canvas.current)return;
           controller.current=mountCubes(canvas.current,host.current,{kind,active:activeRef.current,sequence});
           await controller.current.ready;
         }catch{if(host.current)host.current.style.setProperty("--asset-reveal","1");}

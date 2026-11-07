@@ -12,5 +12,5 @@ export function commonsTreeState(seconds:number){
  const growth=time<4.8?.38*smooth((time-1.2)/2):.38+.62*smooth((time-4.8)/4);
  const canopy=smooth((time-6.6)/2.6);
  const turn=smooth((time-9.2)/5);
- return {time,done:time===commonsTreeDuration,cube,glow,growth,canopy,yaw:0,turn,nodes:commonsCornerCount,settle:smooth((time-14.4)/1.4)};
+ return {time,done:time===commonsTreeDuration,cube,glow,growth,canopy,yaw:Math.PI/9*turn,turn,nodes:commonsCornerCount,settle:smooth((time-14.4)/1.4)};
 }

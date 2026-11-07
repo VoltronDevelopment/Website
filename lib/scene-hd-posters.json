@@ -34,16 +34,16 @@
   "network": {
     "complete": {
       "light": {
-        "url": "/optimized/scene-hd-network-light-f5f18c1c8b091225.webp",
+        "url": "/optimized/scene-hd-network-light-8f5e2b4a6b2565b1.webp",
         "width": 1920,
         "height": 1520,
-        "bytes": 476534
+        "bytes": 420910
       },
       "dark": {
-        "url": "/optimized/scene-hd-network-dark-93c9bf62c0f771c8.webp",
+        "url": "/optimized/scene-hd-network-dark-0b1e5bbc838ab359.webp",
         "width": 1920,
         "height": 1520,
-        "bytes": 417344
+        "bytes": 409342
       }
     }
   },

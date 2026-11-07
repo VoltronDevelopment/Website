@@ -98,3 +98,16 @@
 .architecture-dialog .architecture-explore {margin-top:20px}
 @media(max-width:767px){.architecture-insight{display:none}.architecture-desktop-hint{display:none}.architecture-phone-hint{display:inline}.architecture-selection-hint{font-size:12px;margin-top:16px}}
 .technology-integration{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:36px 0 44px;padding:24px 0;color:var(--muted);font-size:14px}.technology-integration strong{color:var(--ink);font-weight:500}.technology-integration>span[aria-hidden]{color:var(--tech-accent);font-size:24px}@media(max-width:767px){.technology-integration{flex-direction:column;text-align:center}.technology-integration>span[aria-hidden]{transform:rotate(90deg)}}
+
+/* Keep controls and their drawings together across the three long studies. */
+.site-presentation #main-content .technology-page :is(#operating-platform,#architecture,#configuration){
+  padding-block:clamp(52px,6svh,72px);
+}
+@media(max-width:767px){
+  .site-presentation #main-content .technology-page :is(#operating-platform,#architecture,#configuration){
+    padding-block:32px;
+  }
+  .site-presentation #main-content .technology-page .section:has(.closing){
+    min-height:0;
+  }
+}

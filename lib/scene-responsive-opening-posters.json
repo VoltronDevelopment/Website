@@ -47,12 +47,12 @@
   },
   "network": {
     "desktop": {
-      "light": "/optimized/scene-opening-network-desktop-light-2b85d0ad750383ba.webp",
-      "dark": "/optimized/scene-opening-network-desktop-dark-74bf97a624338d8b.webp"
+      "light": "/optimized/scene-opening-network-desktop-light-37fa2589716a2af0.webp",
+      "dark": "/optimized/scene-opening-network-desktop-dark-f4569440031b895f.webp"
     },
     "mobile": {
-      "light": "/optimized/scene-opening-network-mobile-light-598fe44f66ab89a3.webp",
-      "dark": "/optimized/scene-opening-network-mobile-dark-ad603795083f1d04.webp"
+      "light": "/optimized/scene-opening-network-mobile-light-0220a8933c75f482.webp",
+      "dark": "/optimized/scene-opening-network-mobile-dark-9f1e4dfa507b5978.webp"
     }
   },
   "ontology": {

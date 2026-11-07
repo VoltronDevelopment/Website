@@ -1,4 +1,6 @@
 import * as T from 'three';
+import {createAlphaPanelGeometry} from '../manufacturing/alpha-panel-geometry';
+import {createAlphaBathSurface} from '../home/alpha-bath-surface';
 import {createQualityScan} from '../brand/quality-scan';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {createSupportingGlass,updateSupportingGlass} from '../brand/supporting-materials';
@@ -17,17 +19,39 @@ export function factoryKit(own:<R extends {dispose:()=>void}>(r:R)=>R){
   for(const x of [-5.8,-2,2,5.8])for(const z of [-3.8,2.1])box(shell,[.13,3.1,.13],[x,1.55,z],steel);
   for(const x of [-3.9,0,3.9]){box(shell,[3.7,.16,1.9],[x,3.05,-3.1],navy).rotation.z=variant?.06:-.07;for(let i=0;i<5;i++)box(shell,[.04,.06,1.8],[x-1.5+i*.7,3.18,-3.1],steel);}
   box(shell,[2.15,2.35,2.4],[-4.7,1.2,.7],glass);for(const x of [-5.75,-4.7,-3.65])box(shell,[.06,2.35,.06],[x,1.2,1.9],steel);box(shell,[2.2,.1,2.5],[-4.7,2.4,.7],navy);
-  for(const x of [-4.5,4.5]){box(shell,[2,.25,1.45],[x,.15,3.1],navy);for(let i=0;i<5;i++)box(shell,[1.8,.06,.1],[x,.31,2.6+i*.22],steel);}
-  const tanks=[];for(let i=0;i<5;i++){const x=-2.4+i*1.65;box(equipment,[1.35,.12,1.7],[x,.12,-1.8],steel);for(const z of [-2.6,-1])box(equipment,[1.35,.84,.1],[x,.52,z],steel);for(const side of [-.63,.63])box(equipment,[.1,.84,1.5],[x+side,.52,-1.8],steel);box(equipment,[1.15,.035,1.45],[x,.76,-1.8],navy);box(equipment,[1.15,.025,1.45],[x,.79,-1.8],glass);tanks.push(box(equipment,[.1,.1,.1],[x+.55,1.13,-1.1],navy));}
+  box(shell,[2,.25,1.45],[-4.5,.15,3.1],navy);for(let i=0;i<5;i++)box(shell,[1.8,.06,.1],[-4.5,.31,2.6+i*.22],steel);
+  const tanks:T.Mesh[]=[],water=own(createAlphaBathSurface(0)),quietWater=own(createAlphaBathSurface(1));
+  const surface=own(new T.PlaneGeometry(1.15,1.45,12,10));
+  // The fifth rail position is the dry handoff to inspection.
+  for(const [index,x] of [-2.4,-.75,.9,2.29].entries()){
+   const vessel=new T.Group();equipment.add(vessel);vessel.position.set(x,0,-1.8);
+   box(vessel,[1.35,.12,1.7],[0,.12,0],steel);
+   for(const z of [-.8,.8]){
+    box(vessel,[1.35,.84,.08],[0,.52,z],z>0?glass:steel);
+    box(vessel,[1.39,.055,.09],[0,.95,z],steel);
+   }
+   for(const side of [-.635,.635]){
+    box(vessel,[.08,.84,1.54],[side,.52,0],steel);
+    box(vessel,[.09,.055,1.53],[side,.95,0],steel);
+    for(const z of [-.8,.8])box(vessel,[.055,.82,.06],[side,.53,z],steel);
+   }
+   box(vessel,[1.18,.04,1.46],[0,.21,0],navy);
+   const liquid=new T.Mesh(surface,index===2?water:quietWater);
+   liquid.name='owned-liquid-'+index;liquid.rotation.x=-Math.PI/2;liquid.position.y=.79;liquid.renderOrder=3;vessel.add(liquid);
+   tanks.push(box(vessel,[.09,.09,.09],[.55,1.02,.8],navy));
+  }
   for(const x of [-3.2,5])box(equipment,[.1,2.5,.1],[x,1.25,-1.8],steel);box(equipment,[8.4,.14,.2],[.9,2.5,-1.8],steel);
-  const carrier=new T.Group();equipment.add(carrier);box(carrier,[.9,.14,.7],[0,2.38,0],navy);const hook=new T.Group();carrier.add(hook);box(hook,[.06,.9,.06],[0,1.85,0],steel);const part=box(hook,[.65,.65,.12],[0,1.12,0],pearl);
-  const booth=new T.Group();booth.position.set(3.4,0,1);equipment.add(booth);box(booth,[2,.8,1.2],[0,.4,0],navy);for(const x of [-.9,.9])box(booth,[.08,1.7,.08],[x,1.6,0],steel);box(booth,[1.9,.1,.15],[0,2.4,0],steel);const scanner=createQualityScan(1.7,1,own),scan=scanner.group;scan.position.set(0,1.6,0);scan.rotation.x=-Math.PI/2;booth.add(scan);scan.userData.scanner=scanner;
+  const carrier=new T.Group();equipment.add(carrier);box(carrier,[.9,.14,.7],[0,2.38,0],navy);const hook=new T.Group();carrier.add(hook);const stem=box(hook,[.06,1,.06],[0,1.85,0],steel);const panelGeometry=own(createAlphaPanelGeometry());panelGeometry.computeBoundingBox();
+  const panelHeight=panelGeometry.boundingBox!.max.y-panelGeometry.boundingBox!.min.y;
+  const part=new T.Mesh(panelGeometry,steel);part.name='owned-workpiece';part.scale.setScalar(.65/panelHeight);
+  part.position.y=1.12;hook.add(part);
+  const booth=new T.Group();booth.position.set(3.4,0,1);equipment.add(booth);box(booth,[2,.68,1.2],[0,.34,0],navy);for(const x of [-.9,.9])box(booth,[.08,1.7,.08],[x,1.6,0],steel);box(booth,[1.9,.1,.15],[0,2.4,0],steel);const scanner=createQualityScan(1.7,1,own),scan=scanner.group;scan.position.set(0,1.6,0);scan.rotation.x=-Math.PI/2;booth.add(scan);scan.userData.scanner=scanner;
   const record=panel(g,-4.5,2.6,.5);const capability=panel(g,1,3.3,-2);record.visible=false;capability.visible=false;
   for(const x of [2.8,5.8]){box(shell,[.9,.06,.8],[x,.09,3.9],steel);box(shell,[.65,.4,.55],[x,.33,3.9],navy);}
   const cargo=box(g,[.8,.6,.7],[-4.5,.7,3.2],pearl);
   // Site-specific equipment and storage layout retain a common architecture.
   if(variant===1){equipment.position.x=-.4;equipment.scale.x=.88;box(shell,[1.8,1.4,.65],[4.8,.75,-3.4],navy);for(let i=0;i<3;i++)box(shell,[1.9,.06,.7],[4.8,.35+i*.5,-3.4],steel);}
-  return {g,shell,equipment,carrier,hook,part,scan,record,capability,cargo,tanks};
+  return {g,shell,equipment,carrier,hook,stem,part,scan,record,capability,cargo,tanks,water,quietWater};
  }
  function truck(parent:T.Object3D){const g=new T.Group();parent.add(g);box(g,[2.7,.15,1.2],[0,.4,0],steel);box(g,[1.8,.08,1.15],[-.4,1.65,0],pearl);for(const z of [-.55,.55])box(g,[1.8,1.2,.07],[-.4,1.05,z],pearl);box(g,[.08,1.2,1.15],[.5,1.05,0],pearl);box(g,[.85,.95,1.2],[1,.9,0],navy);box(g,[.04,.4,1.05],[1.44,1.12,0],glass);for(const z of [-.61,.61])box(g,[.6,.35,.03],[1,1.12,z],glass);const wheels:T.Mesh[]=[];const geo=own(new T.CylinderGeometry(.24,.24,.15,16));for(const x of [-.9,.65,1.15])for(const z of [-.62,.62]){const w=new T.Mesh(geo,navy);w.rotation.x=Math.PI/2;w.position.set(x,.27,z);g.add(w);wheels.push(w);}const doors:T.Group[]=[];for(const side of [-1,1]){const hinge=new T.Group();hinge.position.set(-1.3,1.05,side*.55);g.add(hinge);box(hinge,[.07,1.2,.55],[0,0,-side*.275],pearl);doors.push(hinge);}return {g,wheels,doors};}
  return {box,line,panel,factory,truck,pearl,navy,steel,glass,reading,active,theme(dark:boolean){pearl.color.set(dark?0x91a9bf:0xdbe8f3);navy.color.set(dark?0x152e46:0x254760);updateSupportingGlass(glass,dark);updateSupportingGlass(reading,dark);}};

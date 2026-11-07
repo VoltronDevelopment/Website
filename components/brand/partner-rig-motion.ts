@@ -1,6 +1,6 @@
 import * as T from 'three';
 import {clone} from 'three/addons/utils/SkeletonUtils.js';
-import {partnerStage} from './partner-stage';
+import {partnerStage,partnerActing} from './partner-stage';
 import {partnerHandTargets} from './partner-stage-space';
 
 export const partnerStart=partnerStage.start,partnerStop=partnerStage.stop;
@@ -9,7 +9,7 @@ export const partnerEase=(x:number)=>{const t=T.MathUtils.clamp(x,0,1);return t*
 export function partnerFootstep(progress:number,first:boolean){
  const p=T.MathUtils.clamp(progress,0,1),intervals=first?[[0,1/3,.5],[2/3,1,.5]]:[[1/3,2/3,1]];
  let advance=0,lift=0,pitch=0;
- for(const [start,end,distance]of intervals){const u=T.MathUtils.clamp((p-start)/(end-start),0,1);advance+=partnerEase(u)*distance;if(u>0&&u<1){lift=Math.sin(Math.PI*u)**2*(start===2/3?.045:.060);pitch=Math.sin(Math.PI*2*u)*.08;}}
+ for(const [start,end,distance]of intervals){const u=T.MathUtils.clamp((p-start)/(end-start),0,1);advance+=partnerEase(u)*distance;if(u>0&&u<1){pitch=Math.sin(Math.PI*2*u)*.08;lift=Math.sin(Math.PI*u)**2*(start===2/3?.045:.060)+Math.abs(pitch)*.14;}}
  return {advance,lift,pitch};
 }
 function turnWorld(bone:T.Object3D,axis:T.Vector3,angle:number){
@@ -54,7 +54,7 @@ export function createPartnerActor(source:T.Group,index:number,material:T.Materi
  const names:Record<string,string>={Hip:'upperleg',Shin:'lowerleg',Foot:'foot',UpperArm:'upperarm',Forearm:'lowerarm',Palm:'hand',Chest:'spine_03',Head:'head'};
  const find=(prefix:string,side?:string)=>{const finger=prefix.match(/^(Middle|Index|Ring|Pinky|Thumb)([123])$/),stem=finger?finger[1].toLowerCase()+'_0'+finger[2]:names[prefix]||prefix,pattern=new RegExp('^'+stem+(side?'_'+side.toLowerCase():'')+'_\\d+$');const b=bones.find(o=>pattern.test(o.name));if(!b)throw Error('Business joint missing '+prefix+' '+side);return b;};
  const bind=bones.map(b=>({bone:b,p:b.position.clone(),q:b.quaternion.clone(),s:b.scale.clone()}));
- const feet=['L','R'].map(side=>{const upper=find('Hip',side),lower=find('Shin',side),foot=find('Foot',side),rest=foot.getWorldPosition(new T.Vector3()),worldQ=foot.getWorldQuaternion(new T.Quaternion()),ankle=new T.Object3D();ankle.position.copy(lower.worldToLocal(rest.clone()));lower.add(ankle);return {upper,lower,foot,ankle,rest,worldQ};});
+ const feet=['L','R'].map(side=>{const upper=find('Hip',side),lower=find('Shin',side),foot=find('Foot',side),rest=foot.getWorldPosition(new T.Vector3()),worldQ=foot.getWorldQuaternion(new T.Quaternion()),ankle=new T.Object3D(),length=upper.getWorldPosition(new T.Vector3()).distanceTo(lower.getWorldPosition(new T.Vector3()))+lower.getWorldPosition(new T.Vector3()).distanceTo(rest);ankle.position.copy(lower.worldToLocal(rest.clone()));lower.add(ankle);return {upper,lower,foot,ankle,rest,worldQ,length};});
  const arms=['L','R'].map(side=>{const upper=find('UpperArm',side),lower=find('Forearm',side),palm=find('Palm',side),shoulder=upper.getWorldPosition(new T.Vector3()),elbow=lower.getWorldPosition(new T.Vector3()),wrist=palm.getWorldPosition(new T.Vector3()),rest=new T.Vector3(Math.sign(shoulder.x)*(Math.abs(shoulder.x)+.11),shoulder.y-(shoulder.distanceTo(elbow)+elbow.distanceTo(wrist))*.95,shoulder.z+.07),twist=bones.find(o=>o.name.startsWith('lowerarm_twist_'+side.toLowerCase()+'_'));return {upper,lower,palm,rest,twist};});
  const palm=arms[1].palm;
  const handBases=['L','R'].map((side,j)=>{const hand=arms[j].palm,middle=find('Middle1',side),pinky=find('Pinky1',side),fingerIndex=find('Index1',side),long=middle.getWorldPosition(new T.Vector3()).sub(hand.getWorldPosition(new T.Vector3())).normalize(),across=fingerIndex.getWorldPosition(new T.Vector3()).sub(pinky.getWorldPosition(new T.Vector3())).normalize();across.addScaledVector(long,-across.dot(long)).normalize();return new T.Quaternion().setFromRotationMatrix(new T.Matrix4().makeBasis(long,across,new T.Vector3().crossVectors(long,across))).invert().multiply(hand.getWorldQuaternion(new T.Quaternion()));});
@@ -65,14 +65,19 @@ export function createPartnerActor(source:T.Group,index:number,material:T.Materi
   heading.setFromAxisAngle(up,walkYaw+side*gesture*.10);root.quaternion.copy(heading);root.position.set(side*T.MathUtils.lerp(partnerStart,stopDistance,walk),-(Math.sin(walk*Math.PI*3)**2)*.010,0);root.updateMatrixWorld(true);
   const sway=Math.sin(walk*Math.PI*3)*(1-gesture),attention=partnerEase(T.MathUtils.clamp((time-5.85)/1.05,0,1));const presentSettle=Math.sin(Math.PI*T.MathUtils.clamp((time-6.1)/1.7,0,1))*.012;turnWorld(chest,up,sway*.022+side*presentSettle); turnWorld(head,up,-side*attention*.12);const nod=Math.sin(Math.PI*T.MathUtils.clamp((time-(index?10.55:10.8))/.85,0,1))*.025;turnWorld(head,right.clone().applyQuaternion(heading),attention*.11+nod);
   footTargets.length=0;armTargets.length=0;
+  const plannedFeet=feet.map((leg,j)=>{const step=partnerFootstep(walk,j===(index?0:1)),target=leg.rest.clone().applyQuaternion(walkHeading);target.x+=side*partnerStart-side*(partnerStart-stopDistance)*step.advance;target.y+=step.lift;return {step,target};});
+  // Preserve planted world targets by lowering the pelvis, never lengthening a shin.
+  let groundShift=0;
+  feet.forEach((leg,j)=>{const hip=leg.upper.getWorldPosition(new T.Vector3()),target=plannedFeet[j].target,horizontal=Math.hypot(hip.x-target.x,hip.z-target.z),vertical=Math.sqrt(Math.max(0,(leg.length-.001)**2-horizontal**2));groundShift=Math.min(groundShift,target.y+vertical-hip.y);});
+  root.position.y+=groundShift;root.userData.partnerGroundShift=groundShift;root.updateMatrixWorld(true);
   feet.forEach((leg,j)=>{
-   const step=partnerFootstep(walk,j===(index?0:1)),target=leg.rest.clone().applyQuaternion(walkHeading);target.x+=side*partnerStart-side*(partnerStart-stopDistance)*step.advance;target.y+=step.lift;footTargets.push(target.clone());
+   const {step,target}=plannedFeet[j];footTargets.push(target.clone());
    solvePartnerLimb(leg.upper,leg.lower,leg.ankle,target,new T.Vector3(root.position.x-side*.5,.55,target.z));
    leg.foot.position.copy(leg.foot.parent!.worldToLocal(target.clone()));const desired=walkHeading.clone().multiply(new T.Quaternion().setFromAxisAngle(right,step.pitch)).multiply(leg.worldQ);leg.foot.quaternion.copy(leg.foot.parent!.getWorldQuaternion(new T.Quaternion()).invert().multiply(desired));leg.foot.updateWorldMatrix(false,true);
   });
   arms.forEach((arm,j)=>{
-   const active=j===(index?0:1),reach=partnerEase(T.MathUtils.clamp((gesture-(index?0:.08))/(index?1:.92),0,1)),target=arm.rest.clone().applyQuaternion(heading).add(root.position);target.x+=-side*sway*.055*(j?-1:1);target.y+=Math.abs(sway)*.009;
-   if(active){const relaxedGesture=partnerHandTargets[index].clone();relaxedGesture.y-=completion*.025;target.lerp(relaxedGesture,reach);const arc=Math.sin(Math.PI*reach);target.y+=arc*(index?.065:.045);target.z+=arc*.055;}armTargets.push(target.clone());
+   const active=j===(index?0:1),acting=partnerActing(time,index),reach=Math.min(acting.reach,partnerEase(gesture)),target=arm.rest.clone().applyQuaternion(heading).add(root.position);target.x+=-side*sway*.055*(j?-1:1);target.y+=Math.abs(sway)*.009;
+   if(active){const relaxedGesture=partnerHandTargets[index].clone();relaxedGesture.y-=completion*.025;relaxedGesture.y+=acting.explain*.07;target.lerp(relaxedGesture,reach);const arc=Math.sin(Math.PI*reach);target.y+=arc*(index?.065:.045);target.z+=arc*.055;}armTargets.push(target.clone());
    // Anatomical outward poles rotate with the actor: never send Eric's idle elbow through his torso.
    const outward=Math.sign(arm.rest.x),pole=new T.Vector3(outward*.48,1.12,.16).applyQuaternion(heading).add(root.position);if(active)pole.lerp(new T.Vector3(root.position.x+side*.08,1.10,.40),reach);
    solvePartnerArm(arm.upper,arm.lower,arm.palm,target,pole);

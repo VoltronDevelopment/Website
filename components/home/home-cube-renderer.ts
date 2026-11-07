@@ -1,7 +1,7 @@
 import {identityMark, identityMark2x} from '@/lib/identity-assets';
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
-import {addArtworkSoftboxes} from "../brand/artwork-studio";
+import {addArtworkSoftboxes,createFloorEcho} from "../brand/artwork-studio";
 import type {HeroController, SharedHeroResources} from "./hero-renderer";
 import {sizeHeroSurface} from "./hero-surface";
 import {createRenderQuality, yieldToBrowser} from "../performance/scene-policy";
@@ -130,18 +130,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     cubies.push({mesh: group, sx: x, sy: y, sz: z, x, y, z, q: new THREE.Quaternion()});
   }
 
-  const shadowCanvas = document.createElement("canvas");
-  shadowCanvas.width = shadowCanvas.height = 128;
-  const shadowContext = shadowCanvas.getContext("2d")!;
-  const shadowGradient = shadowContext.createRadialGradient(64, 64, 8, 64, 64, 64);
-  shadowGradient.addColorStop(0, "rgba(18,42,66,.28)");
-  shadowGradient.addColorStop(1, "rgba(18,42,66,0)");
-  shadowContext.fillStyle = shadowGradient;
-  shadowContext.fillRect(0, 0, 128, 128);
-  const shadow = new THREE.Mesh(track(new THREE.PlaneGeometry(3.4, 2.4)), track(new THREE.MeshBasicMaterial({map: track(new THREE.CanvasTexture(shadowCanvas)), transparent: true, depthWrite: false, toneMapped: false})));
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.y = -1.62;
-  scene.add(shadow);
+  const echo=track(createFloorEcho([cube],-1.62));
+  scene.add(echo.group);
   scene.add(new THREE.HemisphereLight(0xe7f4fc, 0x24384c, 0.9));
   addArtworkSoftboxes(scene, new THREE.Vector3());
 
@@ -233,6 +223,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   function draw() {
     if (disposed || !renderer || lost) return;
     pose(time);
+    echo.update(.65);
     renderer.autoClear = true;
     renderer.setRenderTarget(null);
     renderer.render(scene, camera);

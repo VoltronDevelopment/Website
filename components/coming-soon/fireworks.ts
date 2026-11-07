@@ -25,7 +25,7 @@ export function createFireworks(canvas:HTMLCanvasElement,variant:"intro"|"launch
   if(disposed)return;
   ctx!.clearRect(0,0,width,height);
   const dark=document.documentElement.dataset.theme==="dark";
-  const colors=dark?["#78b0ff","#fff1c5","#d0eaff"]:["#246bd4","#946919","#3e7d9a"];
+  const colors=dark?["#78b0ff","#eff8ff","#d0eaff"]:["#246bd4","#1574a0","#3e7d9a"];
   const origins=intro?
    [[width*(mobile?.14:.22),height*.24,.05],
     [width*(mobile?.86:.78),height*.34,.7],

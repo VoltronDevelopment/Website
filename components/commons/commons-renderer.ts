@@ -1,15 +1,18 @@
+import {waitForScrollPause} from '../home/scene-preparation';
+export {prepareArtworkEnvironment} from '../brand/artwork-studio';
+import {createCommonsWorkshop} from './commons-workshop';
 import {createCommonsNarrative} from './commons-narrative';
 import * as T from 'three';
 import {sampleWorldSurface} from '../brand/surface-samples';
 import {factoryKit} from '../network/factory-kit';
 import {bracketStudyGeometry} from '../network/bracket-study';
 import {glassFace,setGlass,type GlassFace} from '../home/lattice-materials';
-import {createArtworkEnvironment,addArtworkSoftboxes} from '../brand/artwork-studio';
+import {sceneEnvironment,addArtworkSoftboxes} from '../brand/artwork-studio';
 import {createRenderQuality} from '../performance/scene-policy';
 import {commonsStudies,type CommonsKind} from './commons-content';
 
 const ease=(v:number)=>{const x=T.MathUtils.clamp(v,0,1);return x*x*x*(x*(x*6-15)+10);};
-export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind:CommonsKind){
+export async function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind:CommonsKind){
  const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:new URLSearchParams(location.search).has('commons-capture')});
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.localClippingEnabled=true;
  const quality=createRenderQuality(canvas,2,55);renderer.setPixelRatio(quality.ratio);
@@ -18,7 +21,7 @@ export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind
  const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;
  const ctx=shadowCanvas.getContext('2d')!,gradient=ctx.createRadialGradient(64,64,8,64,64,64);gradient.addColorStop(0,'rgba(12,40,64,.26)');gradient.addColorStop(1,'rgba(12,40,64,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);
  const shadowMat=own(new T.MeshBasicMaterial({map:own(new T.CanvasTexture(shadowCanvas)),transparent:true,depthWrite:false})),shadow=new T.Mesh(own(new T.PlaneGeometry(9,6)),shadowMat);shadow.rotation.x=-Math.PI/2;shadow.position.y=-.84;scene.add(shadow);
- const camera=new T.OrthographicCamera(-6,6,4,-4,.1,80),env=createArtworkEnvironment(renderer);scene.environment=env.texture;addArtworkSoftboxes(scene);
+ const camera=new T.OrthographicCamera(-6,6,4,-4,.1,80),env=sceneEnvironment(renderer);scene.environment=env.texture;addArtworkSoftboxes(scene);
  scene.add(new T.HemisphereLight(0xe9f5ff,0x183047,2));const sun=new T.DirectionalLight(0xffffff,3);sun.position.set(-5,10,8);scene.add(sun);
  const kit=factoryKit(own),cubeGeo=own(new T.BoxGeometry(1,1,1)),edgeGeo=own(new T.EdgesGeometry(cubeGeo));
  const faceKinds:GlassFace[]=['side','side','top','bottom','front','rear'];
@@ -30,11 +33,18 @@ export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind
  function part(parent:T.Object3D,p:number[],scale=.7){const g=new T.Group();parent.add(g);g.position.fromArray(p);g.scale.setScalar(scale);const base=new T.Mesh(baseGeo,kit.steel),up=new T.Mesh(uprightGeo,kit.pearl);g.add(base,up);return {g,up};}
  function bench(parent:T.Object3D,p:number[],w=4,d=2.7){const g=new T.Group();g.position.fromArray(p);parent.add(g);box(g,[w,.15,d],[0,0,0],faces);for(const x of [-w*.4,w*.4])for(const z of [-d*.36,d*.36])box(g,[.09,.8,.09],[x,-.47,z],kit.steel);return g;}
  function sprout(parent:T.Object3D,x:number,z:number,scale=1){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(scale);parent.add(g);box(g,[.07,1.2,.07],[0,.6,0],kit.steel);for(let i=0;i<5;i++){const leaf=new T.Mesh(own(new T.SphereGeometry(.3,12,8)),i%2?kit.glass:kit.pearl);leaf.scale.set(1,.28,.6);leaf.position.set((i%2?1:-1)*.22,.35+i*.18,0);leaf.rotation.z=(i%2?1:-1)*.55;g.add(leaf);}return g;}
+ const finishes:{color:T.Color,light:number,dark:number}[]=[];
+ function bindFinish(color:T.Color,light:number,dark:number){
+  finishes.push({color,light,dark});
+ }
  const studies:T.Group[]=[],updates:((t:number)=>void)[]=[];
  const count=commonsStudies[kind].length;
+ const workshop=['workshop','resources','learning'].includes(kind);
+ shadow.position.y=kind==='workshop'?-.84:workshop?-.04:-.84;
  for(let index=0;index<count;index++){
+  await waitForScrollPause();
   const g=new T.Group();root.add(g);studies.push(g);
-  const narrative=createCommonsNarrative(kind,index,g,{kit,box,faces,part});
+  const narrative=createCommonsWorkshop(kind,index,g,{kit,box,own,bindFinish})??createCommonsNarrative(kind,index,g,{kit,box,faces,part});
   if(narrative){updates.push(narrative);}
   else if(kind==='partner-paths'&&index===1){
    box(g,[5.8,.16,3.4],[0,-.15,0],faces);const structure=new T.Group();g.add(structure);
@@ -140,25 +150,47 @@ export function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElement,kind
  // Surface particles converge onto the actual authored geometry, rather than filling a wireframe.
  const clips=own(new T.PointsMaterial({color:0x318fc5,size:.035,transparent:true,depthWrite:false}));
  let seed=143;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
- const clouds=studies.map(g=>{let meshes=0;g.traverse(o=>{if(o instanceof T.Mesh)meshes++;});const target=sampleWorldSurface(g,meshes*85,random),pos=new Float32Array(target),geo=own(new T.BufferGeometry());geo.setAttribute('position',new T.BufferAttribute(pos,3));const cloud=new T.Points(geo,clips);scene.add(cloud);return {cloud,geo,target,pos};});
+ const clouds:{cloud:T.Points;geo:T.BufferGeometry;target:Float32Array;pos:Float32Array}[]=[];
+ for(const study of workshop?[]:studies){
+  await waitForScrollPause();
+  let meshes=0;
+  study.traverse(object=>{if(object instanceof T.Mesh)meshes++;});
+  const target=sampleWorldSurface(study,meshes*85,random),pos=new Float32Array(target);
+  const geo=own(new T.BufferGeometry());
+  geo.setAttribute('position',new T.BufferAttribute(pos,3));
+  const cloud=new T.Points(geo,clips);
+  scene.add(cloud);
+  clouds.push({cloud,geo,target,pos});
+ }
  const plane=new T.Plane(new T.Vector3(0,-1,0),100);[...faces,...smoked,kit.pearl,kit.navy,kit.steel,kit.glass,kit.reading,kit.active].forEach(m=>m.clippingPlanes=[plane]);
  const capture=new URLSearchParams(location.search).has('commons-capture');let selected=0,initialized=false,time=capture?9:0,visible=false,raf=0,last=0,disposed=false,contextLost=false,dirty=true;
- function fit(){const w=host.clientWidth,h=host.clientHeight,aspect=w/Math.max(h,1),height=Math.max(5.3,7.5/aspect);renderer.setSize(w,h,false);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(7,5.2,10);camera.lookAt(0,1,0);camera.updateProjectionMatrix();dirty=true;wake();}
+ function fit(){const w=host.clientWidth,h=host.clientHeight,aspect=w/Math.max(h,1),height=kind==='learning'?Math.max(4.35,6.1/aspect):workshop?Math.max(4.8,6.8/aspect):Math.max(5.3,7.5/aspect);renderer.setSize(w,h,false);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(...(kind==='learning'?[.5,10,6]:workshop?[5,7.5,9]:[7,5.2,10]) as [number,number,number]);camera.lookAt(0,workshop?.35:1,0);camera.updateProjectionMatrix();dirty=true;wake();}
  let previousTheme:boolean|undefined;
- function draw(){if(disposed||contextLost)return;const dark=document.documentElement.dataset.theme==='dark';if(previousTheme!==dark){previousTheme=dark;kit.theme(dark);[faces,smoked].forEach((list,n)=>list.forEach((m,i)=>{setGlass(m,faceKinds[i],dark);if(n){m.color.multiplyScalar(dark?.5:.7);m.opacity=Math.min(.6,m.opacity*1.55);}}));edge.color.set(dark?0x7abddd:0x3d7c9e);clips.color.set(dark?0x7acfff:0x267eae);}
-  const form=ease(time/2.5);plane.constant=form>=1?100:form*4-.8;
-  shadowMat.opacity=form*(dark?.5:.8);
-  studies.forEach((g,i)=>{g.visible=i===selected;if(i!==selected)return;g.traverse(o=>{if(o instanceof T.Line){const m=o.material as T.LineBasicMaterial;m.opacity=.55*ease((time-1.6)/1.2);}});});updates[selected](time);
+ function draw(){if(disposed||contextLost)return;const dark=document.documentElement.dataset.theme==='dark';if(previousTheme!==dark){previousTheme=dark;kit.theme(dark);
+   for(const finish of finishes)finish.color.setHex(dark?finish.dark:finish.light);
+   [faces,smoked].forEach((list,n)=>list.forEach((m,i)=>{setGlass(m,faceKinds[i],dark);if(n){m.color.multiplyScalar(dark?.5:.7);m.opacity=Math.min(.6,m.opacity*1.55);}}));edge.color.set(dark?0x7abddd:0x3d7c9e);clips.color.set(dark?0x7acfff:0x267eae);}
+  const form=ease(time/2.5);plane.constant=workshop||form>=1?100:form*4-.8;
+  shadowMat.opacity=(workshop?1:form)*(dark?.5:.8);
+  studies.forEach((g,i)=>{g.visible=i===selected;if(i!==selected)return;g.traverse(o=>{if(o instanceof T.Line){const m=o.material as T.LineBasicMaterial;m.opacity=workshop?.7:.55*ease((time-1.6)/1.2);}});});updates[selected](time);
   clouds.forEach((c,i)=>{c.cloud.visible=i===selected&&form<1;if(!c.cloud.visible)return;const scatter=1-form;for(let n=0;n<c.pos.length;n+=3){c.pos[n]=c.target[n]+Math.sin(n*.7)*scatter*.8;c.pos[n+1]=c.target[n+1]+scatter*(.5+Math.sin(n)*.3);c.pos[n+2]=c.target[n+2]+Math.cos(n*.5)*scatter*.8;}c.geo.attributes.position.needsUpdate=true;});clips.opacity=.8*(1-form);
-  renderer.render(scene,camera);host.dataset.settled=String(time>=9);host.dataset.selected=String(selected);dirty=false;
+  renderer.render(scene,camera);host.dataset.storyTime=time.toFixed(2);host.dataset.settled=String(time>=9);host.dataset.selected=String(selected);dirty=false;
  }
  function tick(now:number){raf=0;if(disposed||contextLost||!visible||document.hidden)return;const dt=last?Math.min(.06,(now-last)/1000):0;last=now;if(time<9){time=Math.min(9,time+dt);dirty=true;}if(dirty){draw();if(quality.sample(now))renderer.setPixelRatio(quality.ratio);}if(time<9)raf=requestAnimationFrame(tick);else last=0;}
- function wake(){if(!disposed&&!contextLost&&visible&&!document.hidden&&!raf)raf=requestAnimationFrame(tick);}
+ let prepared=false;
+ function wake(){if(prepared&&!disposed&&!contextLost&&visible&&!document.hidden&&!raf)raf=requestAnimationFrame(tick);}
  const view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;last=0;if(visible)wake();else{cancelAnimationFrame(raf);raf=0;quality.reset();}},{threshold:.1});view.observe(host);
  const resize=new ResizeObserver(fit);resize.observe(host);const theme=new MutationObserver(()=>{dirty=true;wake();});theme.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
  const visibility=()=>{last=0;if(document.hidden){cancelAnimationFrame(raf);raf=0;}else wake();};document.addEventListener('visibilitychange',visibility);
  const lost=(e:Event)=>{e.preventDefault();contextLost=true;host.dataset.ready='false';cancelAnimationFrame(raf);raf=0;};const restored=()=>{contextLost=false;dirty=true;last=0;host.dataset.ready='true';draw();wake();};canvas.addEventListener('webglcontextlost',lost);canvas.addEventListener('webglcontextrestored',restored);
- fit();draw();
- return {select(i:number){selected=T.MathUtils.clamp(i,0,count-1);time=capture?9:initialized?2.5:0;initialized=true;dirty=true;last=0;wake();},dispose(){disposed=true;cancelAnimationFrame(raf);view.disconnect();resize.disconnect();theme.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('webglcontextlost',lost);canvas.removeEventListener('webglcontextrestored',restored);resources.forEach(r=>r.dispose());env.dispose();renderer.dispose();}};
+ fit();
+ const controller={select(i:number){selected=T.MathUtils.clamp(i,0,count-1);time=capture?9:workshop?0:initialized?2.5:0;initialized=true;dirty=true;last=0;wake();},dispose(){disposed=true;cancelAnimationFrame(raf);view.disconnect();resize.disconnect();theme.disconnect();document.removeEventListener('visibilitychange',visibility);canvas.removeEventListener('webglcontextlost',lost);canvas.removeEventListener('webglcontextrestored',restored);resources.forEach(r=>r.dispose());env.dispose();renderer.dispose();}};
+ try{
+  await renderer.compileAsync(scene,camera);
+  await waitForScrollPause();
+  prepared=true;
+  draw();
+  wake();
+  return controller;
+ }catch(error){controller.dispose();throw error;}
 }
 

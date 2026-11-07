@@ -18,7 +18,11 @@ export function constructionArtwork(root:T.Group,kit:ReturnType<typeof factoryKi
  const glazing=own(kit.glass.clone());glazing.emissive.setHex(0x1c8ebc);
  kit.box(skin,[3.4,2.4,.12],[-4.2,1.25,2.9],glazing);for(const x of [-5.9,-4.2,-2.5])kit.box(skin,[.065,2.5,.16],[x,1.25,2.9],kit.steel);
  for(const x of [.2,4.1]){for(const side of [-1,1])kit.box(skin,[.12,2.5,.16],[x+side*1.3,1.25,2.9],kit.steel);kit.box(skin,[2.7,.15,.2],[x,2.5,2.9],kit.navy);kit.box(skin,[2.5,2.2,.09],[x,1.1,2.88],kit.navy);for(let i=0;i<7;i++)kit.box(skin,[2.4,.025,.04],[x,.3+i*.27,2.95],kit.steel);kit.box(site,[2.8,.2,1.4],[x,.05,3.6],kit.steel);}
- const machines:T.Group[]=[];for(let i=0;i<3;i++){const machine=new T.Group();machine.position.x=-3.8+i*3.8;equipment.add(machine);kit.box(machine,[2.4,.2,2],[0,.15,-.7],kit.navy);for(const x of [-.9,.9])kit.box(machine,[.2,1.5,1.5],[x,1,-.7],kit.pearl);kit.box(machine,[2, .2,1.6],[0,1.8,-.7],kit.pearl);kit.box(machine,[1.7,1,.05],[0,1,.1],kit.glass);kit.box(machine,[.65,.4,.6],[0,.55,-.6],kit.steel);machines.push(machine);}
+ const machines:T.Group[]=[];for(let i=0;i<3;i++){const machine=new T.Group();machine.position.x=-3.8+i*3.8;equipment.add(machine);kit.box(machine,[2.4,.2,2],[0,.15,-.7],kit.navy);for(const x of [-.9,.9])kit.box(machine,[.2,1.5,1.5],[x,1,-.7],kit.pearl);kit.box(machine,[2, .2,1.6],[0,1.8,-.7],kit.pearl);kit.box(machine,[1.7,1,.05],[0,1,.1],kit.glass);kit.box(machine,[.65,.4,.6],[0,.55,-.6],kit.steel);for(const x of [-.85,.85])for(const z of [-1.4,0])kit.box(machine,[.3,.08,.3],[x,.04,z],kit.steel);
+ for(const x of [-.62,.62])kit.box(machine,[.09,.16,1.2],[x,.33,-.7],kit.steel);
+ kit.box(machine,[.4,.32,.15],[1.1,1.32,.14],kit.navy);
+ kit.box(machine,[.28,.18,.025],[1.1,1.34,.23],kit.reading);
+ machines.push(machine);}
  kit.panel(systems,-4.2,.7,1);for(const x of [-6.9,6.9]){kit.box(systems,[.65,1.5,1.1],[x,.75,-2],kit.navy);for(let i=0;i<4;i++)kit.box(systems,[.7,.04,1.15],[x,.25+i*.3,-2],kit.steel);}
  const paths:Point[][]=[[[-6.9,1.6,-2],[-6.9,2.6,-2],[-3.8,2.6,-2],[-3.8,2.6,-.7],[-3.8,1.8,-.7]],[[6.9,1.6,-2],[6.9,2.6,-2],[3.8,2.6,-2],[3.8,2.6,-.7],[3.8,1.8,-.7]]];const signals=paths.map(path=>{kit.line(systems,path);return kit.box(systems,[.09,.09,.09],path[0],kit.active);});
  for(const x of [-4,0,4])for(const side of [-1,1]){const panel=kit.box(roof,[2.06,.12,7.2],[x+side,3.65,-.5],kit.navy);panel.rotation.z=-side*.15;for(let j=0;j<3;j++)kit.box(roof,[1.55,.05,.25],[x+side,3.85,-2.4+j*1.8],kit.glass);}

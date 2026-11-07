@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
-  async headers() { return [{source:"/optimized/:path*",headers:[{key:"Cache-Control",value:"public, max-age=31536000, immutable"}]}]; },
+  async headers() { return [{source:"/optimized/:path*",headers:[{key:"Cache-Control",value:"public, max-age=3600, must-revalidate"}]}, {source:"/optimized/:file(.*-[0-9a-f]{16}\\.[a-z0-9]+)",headers:[{key:"Cache-Control",value:"public, max-age=31536000, immutable"}]}]; },
   poweredByHeader: false,
   devIndicators: false,
   images: {

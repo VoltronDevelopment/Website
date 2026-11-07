@@ -10,6 +10,24 @@ export function addArtworkSoftboxes(scene:THREE.Scene,target=new THREE.Vector3()
   scene.add(key,strip);
 }
 
+/** Three r186 caches the DFG and area-light lookup textures at module scope.
+ * Their dispose listeners close over GL contexts. Release uploads before renderer
+ * teardown; another live renderer can upload the same immutable pixels again. */
+export function releaseStudioLookups(renderer:THREE.WebGLRenderer,scene:THREE.Scene){
+  let dfg:THREE.Texture|undefined;
+  scene.traverse(object=>{
+    if(dfg||!(object instanceof THREE.Mesh))return;
+    const materials=Array.isArray(object.material)?object.material:[object.material];
+    for(const material of materials){
+      const texture=(renderer.properties.get(material) as {uniforms?:{dfgLUT?:{value:unknown}}}).uniforms?.dfgLUT?.value;
+      if(texture instanceof THREE.Texture&&texture.name==='DFG_LUT'){dfg=texture;break;}
+    }
+  });
+  dfg?.dispose();
+  const library=THREE.UniformsLib as unknown as Record<string,THREE.Texture|undefined>;
+  for(const key of ['LTC_FLOAT_1','LTC_FLOAT_2','LTC_HALF_1','LTC_HALF_2'])library[key]?.dispose();
+}
+
 /** A small, locally authored studio: reflections have shape even without bloom. */
 export function createArtworkEnvironment(renderer:THREE.WebGLRenderer){
   const studio=new THREE.Scene();studio.background=new THREE.Color(0x60768d);
@@ -28,6 +46,35 @@ export function createArtworkEnvironment(renderer:THREE.WebGLRenderer){
   const target=pmrem.fromScene(studio,.025,.1,30);
   pmrem.dispose();geometry.dispose();materials.forEach(material=>material.dispose());
   return target;
+}
+
+// All scenes use the same studio. Share the pixels while each renderer owns its GPU texture.
+let studioPixels:{width:number;height:number;pixels:Uint16Array}|undefined;
+let preparingStudio:Promise<void>|undefined;
+export function prepareArtworkEnvironment(){
+  if(!preparingStudio)preparingStudio=(async()=>{
+    const response=await fetch('/studio-lighting.bin.gz');
+    if(!response.ok)throw new Error('Studio lighting unavailable');
+    const blob=await response.blob();
+    const signature=new Uint8Array(await blob.slice(0,2).arrayBuffer());
+    const buffer=signature[0]===31&&signature[1]===139
+      ?await new Response(blob.stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer()
+      :await blob.arrayBuffer();
+    const [width,height]=new Uint32Array(buffer,0,2);
+    if(width!==768||height!==1024||buffer.byteLength!==8+width*height*8)throw new Error('Invalid studio lighting');
+    studioPixels={width,height,pixels:new Uint16Array(buffer,8)};
+  })().catch(()=>{preparingStudio=undefined;});
+  return preparingStudio;
+}
+export function sceneEnvironment(renderer:THREE.WebGLRenderer){
+  if(!studioPixels)return createArtworkEnvironment(renderer);
+  const {pixels,width,height}=studioPixels;
+  const texture=new THREE.DataTexture(pixels,width,height,THREE.RGBAFormat,THREE.HalfFloatType);
+  texture.mapping=THREE.CubeUVReflectionMapping;
+  texture.minFilter=texture.magFilter=THREE.LinearFilter;
+  texture.colorSpace=THREE.LinearSRGBColorSpace;
+  texture.needsUpdate=true;
+  return {texture,dispose:()=>texture.dispose()};
 }
 
 /** Geometric edge thickness, separate from the thin graphic connection strokes. */

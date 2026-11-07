@@ -1,3 +1,4 @@
+import {withinRequestWindow} from "@/lib/request-window";
 import { NextResponse } from "next/server";
 import { scryptSync, timingSafeEqual } from "node:crypto";
 import { launchAt } from "@/lib/launch";
@@ -46,6 +47,9 @@ export async function POST(request: Request) {
 
   const { username, password } = body as { username?: unknown; password?: unknown };
   if (typeof username !== "string" || typeof password !== "string" || password.length > 256) return response({ ok: false, message: "Those sign-in details did not match." }, 401);
+  try {
+    if(!await withinRequestWindow(request,"founder",MAX_ATTEMPTS))return response({ok:false,message:"Too many sign-in attempts. Please wait a minute and try again."},429);
+  }catch{return response({ok:false,message:"Sign-in is temporarily unavailable."},503);}
   const credential = founderCredentials().get(username.trim().toLowerCase());
   const salt = credential?.salt || Buffer.alloc(16);
   const expected = credential?.digest || Buffer.alloc(32);

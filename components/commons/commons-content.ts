@@ -1,5 +1,11 @@
-export type CommonsKind = 'programs' | 'learning' | 'participation' | 'partner-paths' | 'partner-process';
+export type CommonsKind = 'workshop' | 'resources' | 'programs' | 'learning' | 'participation' | 'partner-paths' | 'partner-process';
 export const commonsStudies = {
+ workshop: [
+  ['Regeneration','Caring for a shared place.','Two people plant, stake and water a sapling in a courtyard.','One gardener steadies the sapling while another waters the planting bed. A field notebook rests beside them.'],
+ ],
+ resources: [
+  ['Explore','Learn from an example you can inspect.','Follow an illustrative manufacturing example from receiving through treatment, inspection and dispatch. See how each physical action connects to its record.','A marked hole in the field book matches a hole on the seated panel. An inspection sweep locates the same feature.'],
+ ],
  'partner-paths': [
   ['Production programs','Build a dependable production program.','Bring a part, process requirement, expected volume or quality objective. We can begin by understanding the application.','A component seats in a fixture and passes through an inspection study.'],
   ['Factory partnerships','Develop the next industrial capability.','Explore a factory opportunity, joint venture or capability you want to develop with Voltron.','A foundation receives structural bays and connected capability modules.'],
@@ -19,10 +25,10 @@ export const commonsStudies = {
   ['Regeneration','Support the places we belong to.','Explore how industry can support ecological renewal and stronger communities.','A grounded network reaches the roots; planting develops above it.'],
  ],
  learning: [
-  ['Creative exchange','Let another perspective change the work.','Ideas across disciplines enrich what we build.','Two views of one component are compared against the shared physical reference.'],
-  ['Systems thinking','See relationships across the whole.','Connect the part, its purpose and the wider system it belongs to.','A shared reference connects distinct contributions through deliberate routes.'],
-  ['Inquiry','Look closer. Ask a better question.','Examine assumptions through observation, experimentation and reflection.','The same component separates along its assembly axis for examination.'],
-  ['Nature and reflection','Create space for perspective.','Time in nature and reflection can strengthen judgment and widen possibility.','The wider setting resolves around the study as its movement settles.'],
+  ['Creative exchange','Let another perspective change the work.','Ideas across disciplines enrich what we build.','A drawn curve and a rectangular construction guide form a folded cobalt ribbon.'],
+  ['Systems thinking','See relationships across the whole.','Connect the part, its purpose and the wider system it belongs to.','The panel travels from loading through the inspection gate. A check is entered at the receiving station.'],
+  ['Inquiry','Look closer. Ask a better question.','Examine assumptions through observation, experimentation and reflection.','A lens settles over a mounting hole. The observed feature is drawn in the field notes beside it.'],
+  ['Nature and reflection','Create space for perspective.','Time in nature and reflection can strengthen judgment and widen possibility.','Layered terrain, a reflective pool and a small tree form a quiet place for observation.'],
  ],
  participation: [
   ['Share experience','Make knowledge useful to someone else.','Bring practical experience, teaching or a practice you would like to share.',''],

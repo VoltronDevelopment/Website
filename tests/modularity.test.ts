@@ -1,6 +1,6 @@
 import {describe,it,expect,afterEach} from 'vitest';
 import * as T from 'three';
-import {modularityFrame,modularitySelectionFrame,MODULARITY_DURATION,modularityCells,processPacks} from '../components/brand/modularity-model';
+import {modularityFrame,modularitySelectionFrame,MODULARITY_DURATION,modularityCells,processPacks,processPackExchange,processSocket} from '../components/brand/modularity-model';
 import {createLotReveal} from '../components/home/lot-story-particles';
 const resources=new Set<{dispose:()=>void}>();
 const own=<R extends {dispose:()=>void}>(resource:R)=>{resources.add(resource);return resource;};
@@ -28,4 +28,19 @@ describe('manufacturing modularity sequence',()=>{
 describe('Connected Lot surface deposition reuse',()=>{
  it('preserves the original lot sample count by default',()=>{const root=new T.Group(),box=own(new T.BoxGeometry(1,1,1));const reveal=createLotReveal(root,box,own,own);expect(reveal.points.geometry.attributes.position.count).toBe(6134);});
  it('forms just cube surfaces when no component is requested',()=>{const root=new T.Group(),box=own(new T.BoxGeometry(1,1,1)),reveal=createLotReveal(root,box,own,own,{surfaceSamples:1800,componentSamples:0});expect(reveal.points.geometry.attributes.position.count).toBe(2400);reveal.update(.5,0,1,false,1);expect(reveal.points.visible).toBe(true);reveal.update(1,0,2,false,1);expect(reveal.points.visible).toBe(false);});
+});
+
+describe('process pack exchange clearance',()=>{
+ it('clears neighbouring cells before travelling and keeps both packs separated',()=>{
+  let previous=processPackExchange(0);
+  for(let i=0;i<=1000;i++){
+   const pose=processPackExchange(i/1000);
+   if(pose.outgoing[0]!==processSocket[0])expect(pose.outgoing[1]-processSocket[1]).toBeGreaterThan(1.65);
+   if(pose.incoming[2]!==processSocket[2])expect(pose.incoming[1]-processSocket[1]).toBeGreaterThan(1.65);
+   if(pose.incomingOpacity>.01&&pose.outgoingOpacity>.01)expect(pose.incoming.some((n,axis)=>Math.abs(n-pose.outgoing[axis])>=1.65)).toBe(true);
+   expect(Math.hypot(...pose.incoming.map((n,j)=>n-previous.incoming[j]))).toBeLessThan(.1);
+   expect(pose.detailsReady).toBe(i===1000);previous=pose;
+  }
+  expect(processPackExchange(1).incoming).toEqual([...processSocket]);
+ });
 });

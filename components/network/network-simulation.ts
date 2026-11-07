@@ -1,3 +1,4 @@
+import {cubeIntroDuration,cubeTransfer} from './cube-layout';
 import {smooth} from './network-story';
 export type Point=[number,number,number];
 /** A complete booth sweep, with zero velocity at both limits and no modulo reset. */
@@ -23,7 +24,7 @@ export function productionState(time:number){
  if(time>=5.5){support='forks';phase='Transfer';part=[-4.5,lerp(.805,1.12,(time-5.5)/.4),3.2];}
  if(time>=5.9)part[0]=lerp(-4.5,-2.4,(time-5.9)/.9);
  if(time>=6.8)part[2]=lerp(3.2,-1.8,(time-6.8)/1.2);
- if(time>=8){support='fixture';phase='Travel';part=[lerp(-2.4,.9,(time-8)/1),lerp(1.12,1.7,(time-8)/.35),-1.8];}
+ if(time>=8){support='fixture';phase='Travel';part=[lerp(-2.4,.9,(time-8.35)/.65),lerp(1.12,1.7,(time-8)/.35),-1.8];}
  if(time>=9){phase='Lower';part=[.9,lerp(1.7,.55,(time-9)/.4),-1.8];}
  if(time>=9.4){phase='Dwell';part=[.9,.55,-1.8];}
  if(time>=10){phase='Raise';part=[.9,lerp(.55,1.7,(time-10)/.4),-1.8];}
@@ -36,4 +37,21 @@ export function productionState(time:number){
  if(time>=15.7){support='receiving support';phase='Release pending';part=[4.3,lerp(1.175,.665,(time-15.7)/.3),3.2];}
  return {part,support,phase,truckZ,scan:time>=13&&time<15,record:time>=15,reviewPending:true};
 }
-export function networkStatus(kind:string,time:number){if(kind==='owned')return productionState(time).phase;if(kind==='learning')return time<4?'Originating factory':time<8?'Connecting sites':time<12?'Ground network forming':time<16?'Shared mesh forming':time<20?'Architecture connected':'Connected network';if(kind==='partnership')return time<4?'Site preparation':time<8?'Structure assembly':time<12?'Building enclosure':time<16?'Equipment installation':time<20?'Systems connection':'Completed facility';return time<4?'Requirement drawing':time<8?'Interface requirements':time<12?'Component comparison':'Connected concept study';}
+export function ownedBathContact(rising:boolean){
+ let lo=rising?10:9,hi=lo+.4;
+ for(let i=0;i<24;i++){
+  const mid=(lo+hi)/2;
+  if((productionState(mid).part[1]-.325<.79)===rising)lo=mid;else hi=mid;
+ }
+ return (lo+hi)/2;
+}
+export function networkStatus(kind:string,time:number){if(kind==='owned')return productionState(time).phase;if(kind==='learning'){
+ if(time<1.65)return 'Individual excellence';
+ if(time<4.85)return 'Factories forming';
+ if(time<cubeIntroDuration)return 'Glass faces forming';
+ const transfer=cubeTransfer(time-cubeIntroDuration);
+ if(transfer.arrived)return 'Signal received';
+ if(transfer.first===0)return 'Source port active';
+ if(transfer.first===1&&transfer.last===0)return 'Relay port active';
+ return 'Signal in transit';
+ }if(kind==='partnership')return time<4?'Site preparation':time<8?'Structure assembly':time<12?'Building enclosure':time<16?'Equipment installation':time<20?'Systems connection':'Completed facility';return time<4?'Requirement drawing':time<8?'Interface requirements':time<12?'Component comparison':'Connected concept study';}

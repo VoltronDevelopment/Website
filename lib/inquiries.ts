@@ -1,9 +1,10 @@
+import {formatInquiryEmail,sanitizeEmailSubjectPart} from "./inquiry-email";
 import { mkdir, rename, rm, writeFile } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { readLocalLedger } from "@/lib/local-ledger";
 import path from "node:path";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { validationError } from "@/lib/errors";
 import { isAllowedInquiryType } from "@/lib/inquiry-intents";
@@ -15,6 +16,11 @@ export type InquiryPayload = {
   email: string;
   phone?: string;
   requirement: string;
+  submissionKey?: string;
+  partOrApplication?: string;
+  expectedVolume?: string;
+  timing?: string;
+  qualityRequirements?: string;
   componentType?: string;
   material?: string;
   monthlyVolume?: string;
@@ -38,6 +44,7 @@ const awsRegion = process.env.VOLTRON_AWS_REGION || process.env.AWS_REGION || "a
 const inquiriesTableName = process.env.INQUIRIES_TABLE_NAME;
 const inquiryToEmail = process.env.INQUIRY_TO_EMAIL || defaultInquiryEmail;
 const sesFromEmail = process.env.SES_FROM_EMAIL;
+const notifyByEmail = process.env.VOLTRON_INQUIRY_EMAIL === "1";
 
 export function validateInquiry(input: unknown): InquiryPayload {
   if (!input || typeof input !== "object") {
@@ -51,7 +58,14 @@ export function validateInquiry(input: unknown): InquiryPayload {
     validationError("Select a valid inquiry intent.");
   }
 
+  const submissionKey = normalizeOptional(body.submissionKey);
+  if (submissionKey && !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(submissionKey)) validationError("Invalid submission reference.");
   const payload: InquiryPayload = {
+    submissionKey,
+    partOrApplication: normalizeOptional(body.partOrApplication),
+    expectedVolume: normalizeOptional(body.expectedVolume),
+    timing: normalizeOptional(body.timing),
+    qualityRequirements: normalizeOptional(body.qualityRequirements),
     inquiryType,
     name: normalizeRequired(body.name, "Name"),
     company: normalizeOptional(body.company) || "",
@@ -69,26 +83,41 @@ export function validateInquiry(input: unknown): InquiryPayload {
 }
 
 export async function storeInquiry(payload: InquiryPayload): Promise<StoredInquiry> {
+  const {submissionKey, ...fields} = payload;
   const inquiry: StoredInquiry = {
-    ...payload,
-    id: crypto.randomUUID(),
+    ...fields,
+    id: submissionKey ? createHash("sha256").update(submissionKey).update(JSON.stringify(fields)).digest("hex").slice(0,32) : randomUUID(),
     createdAt: new Date().toISOString(),
     source: "website"
   };
 
   if (inquiriesTableName) {
-    await storeInquiryInDynamoDb(inquiry);
+    if (!await storeInquiryInDynamoDb(inquiry)) return inquiry;
   } else {
-    await storeInquiryLocally(inquiry);
+    if (process.env.NODE_ENV === "production") throw new Error("Inquiry persistence is not configured.");
+    if (!await storeInquiryLocally(inquiry)) return inquiry;
   }
 
+  if (!notifyByEmail) return inquiry;
+  let delivered=false;
   try {
     await sendInquiryEmail(inquiry);
+    delivered=Boolean(sesFromEmail);
   } catch (error) {
     console.error("[inquiries] notification email failed", {
-      inquiryId: inquiry.id,
-      error: error instanceof Error ? error.message : error
+      inquiryId: inquiry.id, error: error instanceof Error ? error.message : error
     });
+  }
+  if (inquiriesTableName) {
+    try {
+      await db().send(new UpdateCommand({
+        TableName: inquiriesTableName, Key: {id: inquiry.id},
+        UpdateExpression: "SET notificationStatus = :status",
+        ExpressionAttributeValues: {":status": delivered ? "sent" : "failed"}
+      }));
+    } catch {
+      console.error("[inquiries] notification status needs reconciliation", {inquiryId:inquiry.id,delivered});
+    }
   }
 
   return inquiry;
@@ -103,6 +132,7 @@ async function storeInquiryLocally(inquiry: StoredInquiry) {
   await previous;
   try {
     const existing = await readLocalLedger<StoredInquiry>(dataFile);
+    if (existing.some(row=>row.id===inquiry.id)) return false;
     await mkdir(dataDirectory, { recursive: true });
     const temporaryFile = `${dataFile}.${randomUUID()}.tmp`;
     try {
@@ -112,25 +142,32 @@ async function storeInquiryLocally(inquiry: StoredInquiry) {
       await rm(temporaryFile, { force: true }).catch(() => {});
       throw error;
     }
+    return true;
   } finally {
     release();
   }
 }
 
-async function storeInquiryInDynamoDb(inquiry: StoredInquiry) {
-  const client = DynamoDBDocumentClient.from(new DynamoDBClient({ region: awsRegion }));
+function db() {
+  return DynamoDBDocumentClient.from(new DynamoDBClient({region: awsRegion}), {marshallOptions:{removeUndefinedValues:true}});
+}
 
-  await client.send(
-    new PutCommand({
-      TableName: inquiriesTableName,
-      Item: inquiry
-    })
-  );
+async function storeInquiryInDynamoDb(inquiry: StoredInquiry) {
+  try {
+    await db().send(new PutCommand({
+      TableName: inquiriesTableName, Item: {...inquiry, notificationStatus:notifyByEmail ? "pending" : "stored"},
+      ConditionExpression: "attribute_not_exists(id)"
+    }));
+    return true;
+  } catch (error) {
+    if (error instanceof Error && error.name==="ConditionalCheckFailedException") return false;
+    throw error;
+  }
 }
 
 async function sendInquiryEmail(inquiry: StoredInquiry) {
   if (!sesFromEmail) {
-    console.warn("[inquiries] SES_FROM_EMAIL not set; skipping notification email");
+    if (inquiriesTableName) throw new Error("Inquiry notification sender is not configured.");
     return;
   }
 
@@ -158,32 +195,6 @@ async function sendInquiryEmail(inquiry: StoredInquiry) {
       }
     })
   );
-}
-
-function sanitizeEmailSubjectPart(value: string): string {
-  return value.replace(/[\r\n]+/g, " ").trim().slice(0, 120);
-}
-
-function formatInquiryEmail(inquiry: StoredInquiry): string {
-  return [
-    "New inquiry from the Voltron website",
-    "",
-    `Inquiry ID: ${inquiry.id}`,
-    `Created: ${inquiry.createdAt}`,
-    `Type: ${inquiry.inquiryType}`,
-    `Program / process: ${inquiry.componentType || "-"}`,
-    `Name: ${inquiry.name}`,
-    `Company: ${inquiry.company}`,
-    `Email: ${inquiry.email}`,
-    `Phone: ${inquiry.phone || "-"}`,
-    `Part / material: ${inquiry.material || "-"}`,
-    `Volume / scale: ${inquiry.monthlyVolume || "-"}`,
-    `Spec / timeline: ${inquiry.coatingThickness || "-"}`,
-    `Quality / model: ${inquiry.saltSprayRequirement || "-"}`,
-    "",
-    "Requirement:",
-    inquiry.requirement
-  ].join("\n");
 }
 
 function normalizeRequired(value: unknown, label: string): string {

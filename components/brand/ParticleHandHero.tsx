@@ -25,6 +25,6 @@ export function ParticleHandHero({kind}:{kind:HandSceneKind}){
  return <div className={`particle-hand-artwork particle-hand-${kind}`}><div className="particle-hand-stage" ref={host} role="img" aria-label={kind==="culture"?"Particles form a prominent head and a transparent Voltron cube together. A medium cube leaves the head and settles at the cube centre. A smaller cube then forms from an overhead particle wave, pauses above the enclosure, and descends into the same centre.":"Particles construct two hands holding each other's wrists above the shared Philosophy cube animation."}>
   <ScenePoster kind={kind==="culture"?"handCulture":"handPartner"}/>
   <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
- </div><ArtworkControls mode={mode} className="particle-hand-controls" onToggle={()=>controller.current?.pause()} onReplay={()=>controller.current?.replay()}/>
+ </div><ArtworkControls mode={mode} className="particle-hand-controls" onReplay={()=>controller.current?.replay()}/>
  {review&&<div className="hand-review"><label>Artwork time <input type="range" aria-label="Artwork time" min="0" max={handSceneDuration[kind]} step=".05" defaultValue={handSceneDuration[kind]} onChange={e=>controller.current?.scrub(Number(e.target.value))}/></label><a href={`?hand-review=1&hand-view=solid&hand-time=${handSceneDuration[kind]}`}>Solid geometry</a><a href={`?hand-review=1&hand-time=${handSceneDuration[kind]}`}>Particles</a></div>}<ArtworkInspector scene={kind} duration={handSceneDuration[kind]} onSeek={time=>controller.current?.scrub(time)}/></div>;
 }

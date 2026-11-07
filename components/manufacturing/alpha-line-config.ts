@@ -80,18 +80,18 @@ export const alphaLineDemo = {
   dwell: "Required dwell · demonstration window",
   measurements: "Relevant measurements · demonstration values",
   note: "Demonstration data",
-  boundary: "PLC and SCADA control the physical process. AI investigates and prepares governed actions.",
+  boundary: "PLC and V SCADA control the physical process. V AI investigates and prepares governed actions.",
   arrangement: "Square-U layout, station functions and corner transfers are illustrative until the plant drawing is confirmed.",
 };
 
 export const alphaLineConnections = [
-  { id: "scada", title: "SCADA / Edge", text: "Equipment state and measurements for the selected station." },
+  { id: "scada", title: "V SCADA / Edge", text: "Equipment state and measurements for the selected station." },
   { id: "historian", title: "Historian", text: "Recorded conditions over this operation’s time window." },
   { id: "erp", title: "ERP", text: "The lot, its route and the production execution record." },
   { id: "qms", title: "QMS", text: "Requirements, inspections and quality disposition for this lot." },
-  { id: "vmo", title: "V-MO", text: "Shared identities, relationships and the actions that are permitted." },
-  { id: "twin", title: "Twin", text: "A derived view of progress and compliance for this operation." },
-  { id: "ai", title: "AI", text: "An investigation that uses the evidence already connected to this lot." },
+  { id: "vmo", title: "V MO", text: "Shared identities, relationships and the actions that are permitted." },
+  { id: "twin", title: "V Twin", text: "A derived view of progress and compliance for this operation." },
+  { id: "ai", title: "V AI", text: "An investigation that uses the evidence already connected to this lot." },
 ] as const;
 
 export const alphaLineChapters = [

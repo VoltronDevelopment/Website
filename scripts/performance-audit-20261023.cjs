@@ -7,7 +7,8 @@ const crypto = require('node:crypto');
 const { spawn } = require('node:child_process');
 const { chromium } = require(require.resolve('playwright', { paths: [process.cwd(), path.join(os.homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules')] }));
 const root = path.resolve(__dirname, '..');
-const out = path.resolve(root, process.env.AUDIT_OUTPUT_DIR || '.audit-logs/performance-20261023');
+const scrollAudit=process.argv.includes('--scroll');
+const out = path.resolve(root, process.env.AUDIT_OUTPUT_DIR || (scrollAudit?'.audit-logs/scroll-acceptance':'.audit-logs/performance-20261023'));
 fs.mkdirSync(out, { recursive: true });
 const port = process.env.AUDIT_DETAIL ? '3098' : '3097';
 const base = 'http://127.0.0.1:' + port;
@@ -18,7 +19,7 @@ const record = name => `${name}:${salt.toString('hex')}:${digest}`;
 const serverLog = fs.openSync(path.join(out, process.env.AUDIT_DETAIL ? 'detail-server.log' : 'server.log'), 'w');
 const server = spawn(process.execPath, [path.join(root, 'node_modules/next/dist/bin/next'), 'start', '-H', '127.0.0.1', '-p', port], {
   cwd: root, windowsHide: true, stdio: ['ignore', serverLog, serverLog],
-  env: { ...process.env, NEXT_DIST_DIR: process.env.AUDIT_DIST_DIR || '.next-performance-audit', FOUNDER_CREDENTIALS: [record('auditone'), record('audittwo')].join(','), FOUNDER_SESSION_SECRET: crypto.randomBytes(48).toString('hex') }
+  env: {  ...process.env, VOLTRON_LAUNCH_AT: '2099-11-07T18:30:00Z', NEXT_DIST_DIR: process.env.AUDIT_DIST_DIR || (scrollAudit?'.next':'.next-performance-audit'), FOUNDER_CREDENTIALS: [record('auditone'), record('audittwo')].join(','), FOUNDER_SESSION_SECRET: crypto.randomBytes(48).toString('hex') }
 });
 const report = { date: '2026-10-23', mode: 'Next.js production; local fixture login; no real credentials', limitations: ['Local network does not measure production CDN or regional TTFB.', 'Headless Chromium GPU capability must be consulted before interpreting frame timings.', 'Event Timing observations are lab interactions, not field INP.', 'Instrumentation adds overhead; no Lighthouse score is claimed.'], routes: [], profiles: [], lifecycle: {}, errors: [] };
 const save = () => fs.writeFileSync(path.join(out, process.env.AUDIT_DETAIL ? 'browser-details.json' : 'browser-results.json'), JSON.stringify(report, null, 2));
@@ -68,7 +69,7 @@ function snapshot() {
     report.environment = { browser: browser.version(), gpu: system.gpu.devices, auxiliary: system.gpu.auxAttributes, featureStatus: system.gpu.featureStatus };
     const auth = await browser.newContext();
     // The temporary login closes at launch. Public routes then need no fixture session.
-    if(Date.now()<Date.parse('2026-11-07T18:30:00.000Z')) {
+    {
       const login = await auth.request.post(base + '/api/founder/login', { headers: { Origin: base }, data: { username: 'auditone', password } });
       if (login.status() !== 200) throw new Error('Local fixture login failed: ' + login.status());
     }
@@ -82,6 +83,11 @@ function snapshot() {
       const cdp = await context.newCDPSession(page); await cdp.send('Performance.enable');
       if (throttle) { await cdp.send('Network.enable'); await cdp.send('Network.emulateNetworkConditions', { offline: false, latency: 150, downloadThroughput: 1_600_000 / 8, uploadThroughput: 750_000 / 8, connectionType: 'cellular4g' }); await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 }); }
       return { context, page, cdp };
+    }
+    if(scrollAudit){
+      report.date=new Date().toISOString();
+      await require('./audit-scroll.cjs')({makePage,base,report,save});
+      log('Scroll acceptance complete');return;
     }
     if(process.env.AUDIT_CACHE_ONLY) {
       const asset=require(path.join(root,'lib/optimized-assets.json'))['/Brand Assets/voltron brand page/voltron-hero-assets/voltron-mark-original.png'].url;

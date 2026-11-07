@@ -15,8 +15,8 @@ describe("validateInquiry", () => {
   it("accepts an optional company without inventing an organization", () => {
     expect(validateInquiry({ ...validInquiry, company: undefined }).company).toBe("");
   });
-  it("accepts a people culture inquiry", () => {
-    expect(validateInquiry({ ...validInquiry, inquiryType: "Building with Voltron" }).inquiryType).toBe("Building with Voltron");
+  it.each(["Building with Voltron", "CTO opportunity"])("accepts the %s referral", (inquiryType) => {
+    expect(validateInquiry({ ...validInquiry, inquiryType }).inquiryType).toBe(inquiryType);
   });
   it("trims user fields and normalizes email casing", () => {
     expect(validateInquiry(validInquiry)).toEqual({

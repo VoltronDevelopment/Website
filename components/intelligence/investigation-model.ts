@@ -17,7 +17,7 @@ export const investigationChapters = [
  {title:'Human review',agents:[],description:'The responsible person reviews the proposed check and its supporting records.',result:'Awaiting human review'},
 ];
 export const evidenceSources = [
- ['SCADA evidence','Process readings retain their equipment identity and operation time window.'],
+ ['V SCADA evidence','Process readings retain their equipment identity and operation time window.'],
  ['Inspection','Inspection results stay connected to their method and applicable requirement.'],
  ['Calibration','The instrument record stays beside the measurement it supports.'],
  ['NCR & CAPA','Affected lots retain their nonconformance and corrective-action relationships.'],

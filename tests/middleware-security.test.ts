@@ -15,7 +15,7 @@ function makeRequest(path: string, method: string, ip: string, cookie?: string) 
 }
 
 describe("Website middleware security controls", () => {
-  it.each(["/", "/enter", "/technology", "/ontology", "/intelligence", "/manufacturing", "/network", "/about", "/about/people-culture", "/about/voltron-commons", "/partner", "/technology/ontology", "/about/commons", "/admin/login"])("preserves access to %s", async path => {
+  it.each(["/enter", "/technology", "/ontology", "/intelligence", "/manufacturing", "/network", "/about", "/about/people-culture", "/about/voltron-commons", "/partner", "/technology/ontology", "/about/commons", "/admin/login"])("preserves access to %s", async path => {
     const now = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-11-09T00:00:00Z"));
     try {
       const response = await middleware(makeRequest(path, "GET", "203.0.113.90"));
@@ -23,11 +23,21 @@ describe("Website middleware security controls", () => {
       expect(response.headers.get("location")).toBeNull();
     } finally { now.mockRestore(); }
   });
+  it("shows the brand to new arrivals and serves Home after intentional entry",async()=>{
+    const clock=vi.spyOn(Date,"now").mockReturnValue(Date.parse("2026-11-09T00:00:00Z"));
+    try{
+      expect((await middleware(makeRequest("/","GET","test"))).headers.get("location")).toBe("http://localhost/enter");
+      const entered=await middleware(makeRequest("/?enter=1","GET","test"));
+      expect(entered.cookies.get("voltron_entered")?.value).toBe("1");
+      const returning=new NextRequest("http://localhost/",{headers:{cookie:"voltron_entered=1"}});
+      expect((await middleware(returning)).status).toBe(200);
+    }finally{clock.mockRestore();}
+  });
   it("serves the hold page anonymously and protects pages and inquiry APIs before launch", async () => {
     const now = vi.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-20T12:00:00Z"));
     try {
       const home = await middleware(makeRequest("/", "GET", "203.0.113.91"));
-      expect(home.headers.get("x-middleware-rewrite")).toContain("/coming-soon");
+      expect(home.headers.get("location")).toContain("/coming-soon");
       expect(home.headers.get("cache-control")).toContain("no-store");
       expect((await middleware(makeRequest("/technology", "GET", "203.0.113.92"))).headers.get("location")).toBe("http://localhost/");
       expect((await middleware(makeRequest("/enter", "GET", "203.0.113.97"))).headers.get("location")).toBe("http://localhost/");

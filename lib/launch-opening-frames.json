@@ -1,0 +1,354 @@
+{
+  "aboutStory": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-aboutStory-desktop-dark-1x-4e76a6fcbcbcb3fb.webp",
+        "/optimized/entry-aboutStory-desktop-dark-2x-c18fc78862ca2669.webp"
+      ],
+      "light": [
+        "/optimized/entry-aboutStory-desktop-light-1x-09260078e473b27d.webp",
+        "/optimized/entry-aboutStory-desktop-light-2x-a69eb39936a208b1.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-aboutStory-phone-dark-1x-c7a9f5084ae44942.webp",
+        "/optimized/entry-aboutStory-phone-dark-2x-0dcc26a29d35ef2e.webp"
+      ],
+      "light": [
+        "/optimized/entry-aboutStory-phone-light-1x-00551c5a432ea080.webp",
+        "/optimized/entry-aboutStory-phone-light-2x-8a3af61e25782c16.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-aboutStory-tablet-dark-1x-bb977355c6741c01.webp",
+        "/optimized/entry-aboutStory-tablet-dark-2x-8cae977e350b716b.webp"
+      ],
+      "light": [
+        "/optimized/entry-aboutStory-tablet-light-1x-899c7a18b07cdd04.webp",
+        "/optimized/entry-aboutStory-tablet-light-2x-1ec24a1e8594cd05.webp"
+      ]
+    }
+  },
+  "commons": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-commons-desktop-dark-1x-eedcde8c1ee00853.webp",
+        "/optimized/entry-commons-desktop-dark-2x-473b7c0b2a6dd436.webp"
+      ],
+      "light": [
+        "/optimized/entry-commons-desktop-light-1x-310f8345897af214.webp",
+        "/optimized/entry-commons-desktop-light-2x-4541f73e642ffa72.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-commons-phone-dark-1x-8525f2f486157e77.webp",
+        "/optimized/entry-commons-phone-dark-2x-3e3beaf0227e17fe.webp"
+      ],
+      "light": [
+        "/optimized/entry-commons-phone-light-1x-c44eb7e9287f4aa5.webp",
+        "/optimized/entry-commons-phone-light-2x-669748ad23d32cc6.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-commons-tablet-dark-1x-d583d8f5649a3198.webp",
+        "/optimized/entry-commons-tablet-dark-2x-1d45879b4b436c66.webp"
+      ],
+      "light": [
+        "/optimized/entry-commons-tablet-light-1x-6746049a83af752b.webp",
+        "/optimized/entry-commons-tablet-light-2x-3b5fa8d6f3216502.webp"
+      ]
+    }
+  },
+  "home": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-home-desktop-dark-1x-48a170073af13ade.webp",
+        "/optimized/entry-home-desktop-dark-2x-2746331cfeb54562.webp"
+      ],
+      "light": [
+        "/optimized/entry-home-desktop-light-1x-23ea67f55b05ca47.webp",
+        "/optimized/entry-home-desktop-light-2x-aeb5b8f36aaca88b.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-home-phone-dark-1x-83fd25263982eb4c.webp",
+        "/optimized/entry-home-phone-dark-2x-047979aa7a7bd732.webp"
+      ],
+      "light": [
+        "/optimized/entry-home-phone-light-1x-9de6d4b65e3f4cc6.webp",
+        "/optimized/entry-home-phone-light-2x-3643d8388465a1fc.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-home-tablet-dark-1x-a66f44899c1c292c.webp",
+        "/optimized/entry-home-tablet-dark-2x-11ad637cd61a859a.webp"
+      ],
+      "light": [
+        "/optimized/entry-home-tablet-light-1x-4160ae43b38976f3.webp",
+        "/optimized/entry-home-tablet-light-2x-572070abd04511b1.webp"
+      ]
+    }
+  },
+  "intelligence": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-intelligence-desktop-dark-1x-bff9834f847a6344.webp",
+        "/optimized/entry-intelligence-desktop-dark-2x-32bf6bb54c65b8fe.webp"
+      ],
+      "light": [
+        "/optimized/entry-intelligence-desktop-light-1x-20bf3cf7373e2429.webp",
+        "/optimized/entry-intelligence-desktop-light-2x-b56d9beb6a7450c6.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-intelligence-phone-dark-1x-39294095360cb17d.webp",
+        "/optimized/entry-intelligence-phone-dark-2x-7813c564e4583f52.webp"
+      ],
+      "light": [
+        "/optimized/entry-intelligence-phone-light-1x-f68be82ab97bddaa.webp",
+        "/optimized/entry-intelligence-phone-light-2x-d92a5b1511c8f549.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-intelligence-tablet-dark-1x-16b41c9959a7bfce.webp",
+        "/optimized/entry-intelligence-tablet-dark-2x-b26d4b6018e1c1cb.webp"
+      ],
+      "light": [
+        "/optimized/entry-intelligence-tablet-light-1x-16b41c9959a7bfce.webp",
+        "/optimized/entry-intelligence-tablet-light-2x-783b22527ac15ada.webp"
+      ]
+    }
+  },
+  "manufacturingHero": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-manufacturingHero-desktop-dark-1x-0fb9550e07843900.webp",
+        "/optimized/entry-manufacturingHero-desktop-dark-2x-ec2c328abd3b2ac5.webp"
+      ],
+      "light": [
+        "/optimized/entry-manufacturingHero-desktop-light-1x-7d1957a15282af65.webp",
+        "/optimized/entry-manufacturingHero-desktop-light-2x-123e9b42a2c3b107.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-manufacturingHero-phone-dark-1x-920575591092a85a.webp",
+        "/optimized/entry-manufacturingHero-phone-dark-2x-81d6abb59af5945c.webp"
+      ],
+      "light": [
+        "/optimized/entry-manufacturingHero-phone-light-1x-11ec6e9d7d76733b.webp",
+        "/optimized/entry-manufacturingHero-phone-light-2x-216bf1d40e9a8ef3.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-manufacturingHero-tablet-dark-1x-8c69dbf8c407393d.webp",
+        "/optimized/entry-manufacturingHero-tablet-dark-2x-adc70754c1c34656.webp"
+      ],
+      "light": [
+        "/optimized/entry-manufacturingHero-tablet-light-1x-07300b9277942467.webp",
+        "/optimized/entry-manufacturingHero-tablet-light-2x-a062cf559f1ccf8c.webp"
+      ]
+    }
+  },
+  "networkHero": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-networkHero-desktop-dark-1x-b432df770529fcc1.webp",
+        "/optimized/entry-networkHero-desktop-dark-2x-c6449201e81e1773.webp"
+      ],
+      "light": [
+        "/optimized/entry-networkHero-desktop-light-1x-8363bba4dd13957e.webp",
+        "/optimized/entry-networkHero-desktop-light-2x-9605469d33b67dd5.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-networkHero-phone-dark-1x-bf5be77abd90e44a.webp",
+        "/optimized/entry-networkHero-phone-dark-2x-63fc2ed5116dc9a4.webp"
+      ],
+      "light": [
+        "/optimized/entry-networkHero-phone-light-1x-18f96fa14d27ea18.webp",
+        "/optimized/entry-networkHero-phone-light-2x-31d14399a06da605.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-networkHero-tablet-dark-1x-a5bd6a2cc346decd.webp",
+        "/optimized/entry-networkHero-tablet-dark-2x-2e7cfa3509c9fb4c.webp"
+      ],
+      "light": [
+        "/optimized/entry-networkHero-tablet-light-1x-4d3a4b854e4d95ea.webp",
+        "/optimized/entry-networkHero-tablet-light-2x-5202378a61bb0900.webp"
+      ]
+    }
+  },
+  "partnerStory": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-partnerStory-desktop-dark-1x-80385f43a5fb7fea.webp",
+        "/optimized/entry-partnerStory-desktop-dark-2x-d9c672c5005f5a49.webp"
+      ],
+      "light": [
+        "/optimized/entry-partnerStory-desktop-light-1x-b379d89b0f331426.webp",
+        "/optimized/entry-partnerStory-desktop-light-2x-e2fa3d5aa55ea51f.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-partnerStory-phone-dark-1x-94fa29066a26be1d.webp",
+        "/optimized/entry-partnerStory-phone-dark-2x-b9c840bfcf4c8de6.webp"
+      ],
+      "light": [
+        "/optimized/entry-partnerStory-phone-light-1x-1d5b8b68fbe1a1d5.webp",
+        "/optimized/entry-partnerStory-phone-light-2x-f6beb6039983c64d.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-partnerStory-tablet-dark-1x-6d9d9e03e13c33d7.webp",
+        "/optimized/entry-partnerStory-tablet-dark-2x-3917d2156b7fd2f8.webp"
+      ],
+      "light": [
+        "/optimized/entry-partnerStory-tablet-light-1x-06fd7960c29029cc.webp",
+        "/optimized/entry-partnerStory-tablet-light-2x-b5039bfa18872212.webp"
+      ]
+    }
+  },
+  "philosophy": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-philosophy-desktop-dark-1x-c49ae81d7f837a35.webp",
+        "/optimized/entry-philosophy-desktop-dark-2x-5f6efbbc8951b71d.webp"
+      ],
+      "light": [
+        "/optimized/entry-philosophy-desktop-light-1x-b0821a2d72e64c80.webp",
+        "/optimized/entry-philosophy-desktop-light-2x-c852de743db4be16.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-philosophy-phone-dark-1x-2459e35061a1230d.webp",
+        "/optimized/entry-philosophy-phone-dark-2x-b98d1e69a9f166db.webp"
+      ],
+      "light": [
+        "/optimized/entry-philosophy-phone-light-1x-cebf0f10eb4c899c.webp",
+        "/optimized/entry-philosophy-phone-light-2x-63ea8f4aee2d75f6.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-philosophy-tablet-dark-1x-c49ae81d7f837a35.webp",
+        "/optimized/entry-philosophy-tablet-dark-2x-5f6efbbc8951b71d.webp"
+      ],
+      "light": [
+        "/optimized/entry-philosophy-tablet-light-1x-b0821a2d72e64c80.webp",
+        "/optimized/entry-philosophy-tablet-light-2x-c852de743db4be16.webp"
+      ]
+    }
+  },
+  "plant": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-plant-desktop-dark-1x-93b0cc40e38000c3.webp",
+        "/optimized/entry-plant-desktop-dark-2x-585d3f0addd5cf65.webp"
+      ],
+      "light": [
+        "/optimized/entry-plant-desktop-light-1x-0ec12cd9c5183ca9.webp",
+        "/optimized/entry-plant-desktop-light-2x-4cc9fcf152ecd3ad.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-plant-phone-dark-1x-dcae63280aa74984.webp",
+        "/optimized/entry-plant-phone-dark-2x-9baf23b3d43e7c98.webp"
+      ],
+      "light": [
+        "/optimized/entry-plant-phone-light-1x-45592be4f7d19354.webp",
+        "/optimized/entry-plant-phone-light-2x-6ba845bd835b891a.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-plant-tablet-dark-1x-0ffbde6cf8d6c6af.webp",
+        "/optimized/entry-plant-tablet-dark-2x-5bbca8e094ab30af.webp"
+      ],
+      "light": [
+        "/optimized/entry-plant-tablet-light-1x-8eee2e75997a36ea.webp",
+        "/optimized/entry-plant-tablet-light-2x-f3223fd016e1b692.webp"
+      ]
+    }
+  },
+  "process": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-process-desktop-dark-1x-751e13ca21a58bf6.webp",
+        "/optimized/entry-process-desktop-dark-2x-71f5219a2e6085e9.webp"
+      ],
+      "light": [
+        "/optimized/entry-process-desktop-light-1x-ee137fafb3bed0f0.webp",
+        "/optimized/entry-process-desktop-light-2x-ea765f5c98218050.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-process-phone-dark-1x-6214eb91cf993bc5.webp",
+        "/optimized/entry-process-phone-dark-2x-21d4c550fba8459d.webp"
+      ],
+      "light": [
+        "/optimized/entry-process-phone-light-1x-f39c178ae37e0584.webp",
+        "/optimized/entry-process-phone-light-2x-c3136b49a793f8a7.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-process-tablet-dark-1x-c8002860646feebf.webp",
+        "/optimized/entry-process-tablet-dark-2x-9239a4f9000bec22.webp"
+      ],
+      "light": [
+        "/optimized/entry-process-tablet-light-1x-0aaed7f77b59586c.webp",
+        "/optimized/entry-process-tablet-light-2x-03857083f519723a.webp"
+      ]
+    }
+  },
+  "technology": {
+    "desktop": {
+      "dark": [
+        "/optimized/entry-technology-desktop-dark-1x-1e45d73cb397770b.webp",
+        "/optimized/entry-technology-desktop-dark-2x-a8c27a45c95bfd05.webp"
+      ],
+      "light": [
+        "/optimized/entry-technology-desktop-light-1x-f62c62c7cc9e756e.webp",
+        "/optimized/entry-technology-desktop-light-2x-bbfaebfdd9317931.webp"
+      ]
+    },
+    "phone": {
+      "dark": [
+        "/optimized/entry-technology-phone-dark-1x-e0cd4082067d260c.webp",
+        "/optimized/entry-technology-phone-dark-2x-c8bccfe1536858a3.webp"
+      ],
+      "light": [
+        "/optimized/entry-technology-phone-light-1x-8c61323d7ed240c0.webp",
+        "/optimized/entry-technology-phone-light-2x-2e522b1c5c71f8a4.webp"
+      ]
+    },
+    "tablet": {
+      "dark": [
+        "/optimized/entry-technology-tablet-dark-1x-b233e43f9d8bec23.webp",
+        "/optimized/entry-technology-tablet-dark-2x-df07597ce0b91f8b.webp"
+      ],
+      "light": [
+        "/optimized/entry-technology-tablet-light-1x-4e59bec35273954c.webp",
+        "/optimized/entry-technology-tablet-light-2x-dc84d177ff7e2684.webp"
+      ]
+    }
+  }
+}

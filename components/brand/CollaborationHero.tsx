@@ -1,6 +1,7 @@
 'use client';
+import {ArtworkControls} from './ArtworkControls';
 import {DeferredPicture} from '../performance/DeferredArtwork';
-import {hdPoster,hdOpening} from '../performance/hd-poster';
+import {NativeOpening} from "../performance/NativeOpening";
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
 import {useEffect,useRef,useState,type CSSProperties} from 'react';
@@ -8,7 +9,6 @@ import {ArtworkInspector} from './ArtworkInspector';
 import {prefersStaticScene} from '../performance/scene-policy';
 import type {CollaborationKind} from './collaboration-timeline';
 import type {CollaborationController} from './collaboration-renderer';
-import captures from '@/lib/collaboration-posters.json';
 import {partnerStage} from './partner-stage';
 import './collaboration-hero.css';
 
@@ -19,15 +19,20 @@ export function CollaborationHero({kind}:{kind:CollaborationKind}){
  useEffect(()=>{resetScenePoster(host.current,canvas.current);let disposed=false,loading=false;const abort=new AbortController(),motion=matchMedia('(prefers-reduced-motion: reduce)'),query=new URLSearchParams(location.search),forced=query.get('renderer')==='static'||query.get('animate')==='0'||query.get('motion')==='reduced';
   const still=()=>forced||prefersStaticScene(),fallback=()=>{if(host.current){host.current.dataset.sceneState='fallback';host.current.dataset.scenePose='complete';}setMode('static');};
   if(still())fallback();
-  const view=new ScenePreparationObserver(async([e])=>{if(!e.isIntersecting||loading||controller.current||still())return;loading=true;try{const {mountCollaboration}=await import('./collaboration-renderer');if(disposed||!host.current||!canvas.current)return;const scene=await mountCollaboration(canvas.current,host.current,kind,value=>{if(!disposed)setMode(value);},abort.signal);if(disposed)scene.dispose();else controller.current=scene;}catch{if(!disposed){fallback();markSceneFailure(host.current);}}finally{loading=false;}},{rootMargin:'450px 0px'});
+  const view=new ScenePreparationObserver(async([e])=>{if(!e.isIntersecting||loading||controller.current||still())return;loading=true;try{const {mountCollaboration}=await import('./collaboration-renderer');if(disposed||still()||!host.current||!canvas.current)return;const scene=await mountCollaboration(canvas.current,host.current,kind,value=>{if(!disposed)setMode(value);},abort.signal);if(disposed||still())scene.dispose();else controller.current=scene;}catch{if(!disposed){fallback();markSceneFailure(host.current);}}finally{loading=false;}},{rootMargin:'450px 0px'});
   if(host.current)view.observe(host.current);const preference=()=>{if(still()){controller.current?.seek(12);fallback();}else if(host.current){delete host.current.dataset.scenePose;if(controller.current){controller.current.seek(12);host.current.dataset.sceneState='live';}else{view.unobserve(host.current);view.observe(host.current);}}};motion.addEventListener('change',preference);
   return()=>{disposed=true;abort.abort();view.disconnect();motion.removeEventListener('change',preference);controller.current?.dispose();controller.current=null;};
  },[kind,motionRevision]);
  const minW=kind==='about'?7.4:partnerStage.width,minH=kind==='about'?5.6:partnerStage.height,extent=Math.max(minW,minH),style={'--story-w':minW,'--story-h':minH,'--story-frame':extent} as CSSProperties;
- const native=captures[kind],nativeStyle=Object.fromEntries(Object.entries(native).flatMap(([device,frame])=>{const aspect=frame.width/frame.height,h=Math.max(minH,minW/aspect);return [[`--story-${device}-w`,h*aspect],[`--story-${device}-h`,h]];})) as CSSProperties;
- if(kind==='partner')return <div className="engineered-art collaboration-art collaboration-partner"><div ref={host} className="engineered-stage collaboration-stage" data-story={kind} role="img" aria-label={descriptions[kind]} style={style}><span className="story-posters" data-scene-poster aria-hidden="true">{(['opening','complete'] as const).map(pose=><span className={`story-${pose}`} key={pose}>{(['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={`art-theme-${theme}`}><source media="(max-width:767px)" srcSet={`/stories/partner-scene-mobile-${theme}-${pose}.webp`}/><img src={`/stories/partner-scene-desktop-${theme}-${pose}.webp`} width="1400" height="1080" alt="" loading="eager"/></DeferredPicture>)}</span>)}</span><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkInspector scene="collaboration-partner" duration={12} onSeek={t=>controller.current?.seek(t)}/></div>;
+ if(kind==='partner')return <div className="engineered-art collaboration-art collaboration-partner"><div ref={host} className="engineered-stage collaboration-stage" data-story={kind} role="img" aria-label={descriptions[kind]} style={style}><span className="story-posters" data-scene-poster aria-hidden="true">{(['opening','complete'] as const).map(pose=><span className={`story-${pose}`} key={pose}>{pose==='opening'?<NativeOpening scene="partnerStory"/>: (['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={`art-theme-${theme}`}><source media="(max-width:767px)" srcSet={`/stories/partner-scene-mobile-${theme}-${pose}.webp`}/><img src={`/stories/partner-scene-desktop-${theme}-${pose}.webp`} width="1400" height="1080" alt="" loading="eager"/></DeferredPicture>)}</span>)}</span><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkControls mode={mode} onReplay={()=>controller.current?.replay()}/><ArtworkInspector scene="collaboration-partner" duration={12} onSeek={t=>controller.current?.seek(t)}/></div>;
  return <div className={`engineered-art collaboration-art collaboration-${kind}`}><div ref={host} className="engineered-stage collaboration-stage" data-story={kind} role="img" aria-label={descriptions[kind]} style={style}>
-  <span className="story-posters" data-scene-poster aria-hidden="true">{(['opening','complete'] as const).map(pose=><span className={`story-${pose}`} key={pose}>{(['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={`art-theme-${theme}${pose==='opening'?' story-native-opening':''}`} style={pose==='opening'?nativeStyle:undefined}>{kind==='about'?<source media="(max-width:767px)" srcSet={'/about-scenes/stairs-mobile-'+theme+'-'+pose+'.png'}/>:pose==='opening'&&<><source media="(max-width:767px)" srcSet={hdOpening(kind,'mobile',theme,native.mobile[theme])}/><source media="(min-width:768px) and (max-width:1023px)" srcSet={hdOpening(kind,'tablet',theme,native.tablet[theme])}/><source media="(min-width:1024px) and (max-height:780px)" srcSet={hdOpening(kind,'short',theme,native.short[theme])}/></>}<img {...(kind==='about'?{}:pose==='complete'?hdPoster(kind,pose,theme,`/stories/${kind}-${pose}-${theme}.webp`):{srcSet:hdOpening(kind,'desktop',theme,native.desktop[theme])})} src={kind==='about'?'/about-scenes/stairs-desktop-'+theme+'-'+pose+'.png':pose==='opening'?native.desktop[theme]:`/stories/${kind}-${pose}-${theme}.webp`} width="640" height="640" alt="" decoding="async" loading="eager"/></DeferredPicture>)}</span>)}</span>
+  <span className="story-posters" data-scene-poster aria-hidden="true">
+    <span className="story-opening"><NativeOpening scene="aboutStory"/></span>
+    <span className="story-complete">{(['light','dark'] as const).map(theme=><DeferredPicture key={theme} className={'art-theme-'+theme}>
+      <source media="(max-width:767px)" srcSet={'/about-scenes/stairs-mobile-'+theme+'-complete.png'}/>
+      <img src={'/about-scenes/stairs-desktop-'+theme+'-complete.png'} width="640" height="640" alt="" decoding="async"/>
+    </DeferredPicture>)}</span>
+  </span>
   <canvas key={motionRevision} ref={canvas} aria-hidden="true"/>
- </div><ArtworkInspector scene={`collaboration-${kind}`} duration={12} onSeek={t=>controller.current?.seek(t)}/></div>;
+ </div><ArtworkControls mode={mode} onReplay={()=>controller.current?.replay()}/><ArtworkInspector scene={`collaboration-${kind}`} duration={12} onSeek={t=>controller.current?.seek(t)}/></div>;
 }

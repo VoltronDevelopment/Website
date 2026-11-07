@@ -43,14 +43,15 @@ export function AlphaProcessScene() {
       observer.disconnect();
       try {
         const { mountAlphaProcess } = await import("./alpha-process-renderer");
-        if (disposed || !canvas.current || !host.current) return;
-        controller.current = await mountAlphaProcess(canvas.current, host.current, {
+        if (disposed || prefersStaticScene() || !canvas.current || !host.current) return;
+        const mounted = await mountAlphaProcess(canvas.current, host.current, {
           paused: pausedRef.current,
           onStage: value=>{if(!disposed)setStage(value);},
           onEnded:()=>{if(!disposed){pausedRef.current=true;}},
           onReady: () => { if (!disposed) { if(host.current) delete host.current.dataset.fallback; setReady(true); } },
         });
-        if(disposed){controller.current.dispose();controller.current=null;return;}
+        if(disposed||prefersStaticScene()){mounted.dispose();return;}
+        controller.current=mounted;
         controller.current.setPaused(pausedRef.current);
       } catch {
         if (!disposed && host.current) host.current.dataset.fallback = "true";

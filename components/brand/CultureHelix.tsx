@@ -1,4 +1,5 @@
 'use client';
+import {useEntryChoice} from '@/lib/use-entry-choice';
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
 import {useEffect,useRef,useState} from 'react';
@@ -10,13 +11,13 @@ import type {mountCultureHelix} from './culture-helix-renderer';
 const choices=[{title:'Individual craft',detail:"Individual depth, craft and judgment strengthen the wider system without erasing a person's distinct perspective."},{title:'Shared purpose',detail:'Shared practice and support create room for individual growth, while keeping people connected to a common purpose.'}];
 export function CultureHelix(){
  const host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),controller=useRef<Awaited<ReturnType<typeof mountCultureHelix>>|null>(null);
- const [mode,setMode]=useState<SceneMode>('static'),[selected,setSelected]=useState(0);
+ const [mode,setMode]=useState<SceneMode>('static'),[selected,setSelected]=useEntryChoice('culture',choices.length);
  const motionRevision=useSceneMotion(host);
  useEffect(()=>{const node=host.current,parent=node?.closest('.about-growth');if(!node||!parent)return;const sync=()=>{const phase=node.dataset.phase;parent.setAttribute('data-growth-stage',phase==='arriving'?'1':phase==='intertwining'?'2':phase==='connecting'?'3':'4');};const observer=new MutationObserver(sync);observer.observe(node,{attributes:true,attributeFilter:['data-phase']});sync();return()=>observer.disconnect();},[]);
  useEffect(()=>{resetScenePoster(host.current,canvas.current);let disposed=false,loading=false;const abort=new AbortController(),query=new URLSearchParams(location.search),motion=matchMedia('(prefers-reduced-motion: reduce)');
   const still=()=>prefersStaticScene()||query.get('renderer')==='static'||query.get('motion')==='reduced'||query.get('animate')==='0';
   const fallback=()=>{if(host.current){host.current.dataset.scenePose='complete';host.current.dataset.sceneState='fallback';}setMode('static');};
-  const view=new ScenePreparationObserver(async([entry])=>{if(!entry.isIntersecting||loading||controller.current||still())return;loading=true;try{const {mountCultureHelix}=await import('./culture-helix-renderer');if(disposed||!host.current||!canvas.current)return;const scene=await mountCultureHelix(canvas.current,host.current,m=>{if(!disposed)setMode(m);},abort.signal);if(disposed)scene.dispose();else{controller.current=scene;if(still()){scene.seek(cultureHelixDuration);setMode('static');}}}catch{if(!disposed){fallback();markSceneFailure(host.current);}}finally{loading=false;}},{rootMargin:'450px 0px'});
+  const view=new ScenePreparationObserver(async([entry])=>{if(!entry.isIntersecting||loading||controller.current||still())return;loading=true;try{const {mountCultureHelix}=await import('./culture-helix-renderer');if(disposed||still()||!host.current||!canvas.current)return;const scene=await mountCultureHelix(canvas.current,host.current,m=>{if(!disposed)setMode(m);},abort.signal);if(disposed||still())scene.dispose();else controller.current=scene;}catch{if(!disposed){fallback();markSceneFailure(host.current);}}finally{loading=false;}},{rootMargin:'450px 0px'});
   const preference=()=>{if(still()){controller.current?.seek(cultureHelixDuration);fallback();}else if(host.current){delete host.current.dataset.scenePose;if(controller.current){host.current.dataset.sceneState='live';controller.current.replay();}else{view.unobserve(host.current);view.observe(host.current);}}};
   if(still())fallback();if(host.current)view.observe(host.current);motion.addEventListener('change',preference);
   return()=>{disposed=true;abort.abort();view.disconnect();motion.removeEventListener('change',preference);controller.current?.dispose();controller.current=null;};

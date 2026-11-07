@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-/** The Network globe and roadmap use the identical envelope topology. */
+/** The Network globe and supporting network scenes use identical envelope topology. */
 export const globeEnvelopeRadius=1.8*1.16;
 export const globeEnvelopeView={tiltZ:-.12,cameraY:.3,cameraZ:9.1} as const;
 export function createGlobeEnvelope(radius=globeEnvelopeRadius){

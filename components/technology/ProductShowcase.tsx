@@ -1,8 +1,10 @@
 "use client";
+import {useEntryChoice} from '@/lib/use-entry-choice';
 import {useEffect,useId,useRef,useState,type CSSProperties} from 'react';
 import dynamic from 'next/dynamic';
 import {Network,Boxes,Activity,ScanLine,BrainCircuit,RotateCcw,ArrowRight} from 'lucide-react';
 import {alphaLineStations} from '../manufacturing/alpha-line-config';
+import {productSlugs} from '@/lib/product-names';
 import {productNames,productScenario} from './product-scenario';
 import {usePresentationClock} from './use-presentation-clock';
 import './product-showcase.css';
@@ -14,19 +16,22 @@ const outcomes=['Shared manufacturing context.','Every operation preserves its h
 const records=[['part','Part'],['operation','Operation'],['lot','Lot'],['equipment','Equipment'],['requirement','Requirement'],['evidence','Evidence']];
 const paths=['M180 100 H250 V220 H360','M420 130 V190','M480 220 H600 V100 H660','M420 250 V310','M480 220 H600 V340 H660'];
 export function ProductShowcase(){
- const [product,setProduct]=useState(0),[revision,setRevision]=useState(0),[automatic,setAutomatic]=useState(true),[record,setRecord]=useState('lot'),[station,setStation]=useState('T06'),[sheet,setSheet]=useState(false);
- const {host,progress,running,staticMode}=usePresentationClock(revision,12);
+ const [product,setProduct]=useState(0),[revision,setRevision]=useState(0),[automatic,setAutomatic]=useState(true),[record,setRecord]=useState('lot'),[stationIndex,saveStation]=useEntryChoice('product-station',alphaLineStations.length,alphaLineStations.findIndex(s=>s.id==='T06')),[sheet,setSheet]=useState(false);
+ const station=alphaLineStations[stationIndex].id,setStation=(key:string)=>saveStation(alphaLineStations.findIndex(s=>s.id===key));
+ const {host,progress,running,staticMode}=usePresentationClock(revision,12,sheet);
+ const [savedProduct,saveProduct]=useEntryChoice('product',productNames.length,-1);
+ useEffect(()=>{const slug=new URLSearchParams(location.search).get('product');const index=savedProduct>=0?savedProduct:productSlugs.findIndex(value=>value===slug);if(index>=0){setAutomatic(false);setProduct(index);}},[savedProduct]);
  const completed=useRef(false);
  const id=useId(),dialog=useRef<HTMLDialogElement>(null),trigger=useRef<HTMLElement|SVGElement|null>(null);
  const phase=Math.min(4,Math.floor(progress*6)),state=productScenario(phase);
  useEffect(()=>{if(progress<1)completed.current=false;if(progress===1&&!completed.current&&!staticMode&&automatic&&product<4){completed.current=true;setProduct(p=>p+1);setRevision(r=>r+1);}},[progress,staticMode,automatic,product]);
  useEffect(()=>{if(!sheet)return;const el=dialog.current;if(!el)return;const old=document.body.style.overflow;el.showModal();document.body.style.overflow='hidden';return()=>{if(el.open)el.close();document.body.style.overflow=old;trigger.current?.focus({preventScroll:true});};},[sheet]);
- const select=(next:number)=>{setAutomatic(false);setProduct(next);setRevision(r=>r+1);};
+ const select=(next:number)=>{saveProduct(next);setAutomatic(false);setProduct(next);setRevision(r=>r+1);};
  const inspect=(event:{currentTarget:HTMLElement|SVGElement},next:string)=>{trigger.current=event.currentTarget;setRecord(next);setSheet(true);};
  return <div className="product-showcase product-presentation" ref={host} data-product={productNames[product]} data-stage={phase} data-running={running} style={{'--demo-progress':progress} as CSSProperties}>
   <div className="product-selectors" role="tablist" aria-label="Voltron products">{productNames.map((name,i)=>{const Icon=icons[i];return <button key={name} role="tab" id={`${id}-${i}`} aria-selected={product===i} aria-controls={`${id}-screen`} tabIndex={product===i?0:-1} onClick={()=>select(i)} onKeyDown={e=>{let n=i;if(e.key==='ArrowRight')n=(i+1)%5;else if(e.key==='ArrowLeft')n=(i+4)%5;else if(e.key==='Home')n=0;else if(e.key==='End')n=4;else return;e.preventDefault();select(n);document.getElementById(`${id}-${n}`)?.focus();}}><Icon size={20}/><span>{name}<small>{roles[i]}</small></span></button>;})}</div>
   <div className="product-window" role="tabpanel" id={`${id}-screen`} aria-labelledby={`${id}-${product}`}>
-   <header className="product-header"><strong>{productNames[product]} <span>/ {roles[product]}</span></strong><span><i/> Product concept</span></header>
+   <header className="product-header"><strong>{productNames[product]} <span>/ {roles[product]}</span></strong><span><i/> {station} · {["Identify","Connect","Observe","Review","Record"][phase]}</span></header>
    <div className="product-context"><span>{state.lot}</span><span>Alpha / Coating line</span><button onClick={e=>inspect(e,'Operation context')}>View details <ArrowRight size={14}/></button></div>
    <div className="product-demo-body" key={`${product}-${revision}`}>
     {product===0&&<div className="meaning-demo"><svg className="meaning-desktop" viewBox="0 0 840 440" role="group" aria-label="Part, operation, equipment, requirement and evidence linked through one lot">
@@ -40,7 +45,7 @@ export function ProductShowcase(){
    </div>
    <div className="product-outcome" aria-live="off"><span className="outcome-dot"/>{outcomes[product]}<span>{Math.round(progress*100)}%</span></div>
   </div>
-  <div className="product-presentation-footer"><p>Illustrative product screens · Tap a product to explore.</p><button onClick={()=>{setRevision(r=>r+1);setAutomatic(false);}}><RotateCcw size={15}/> Replay {productNames[product]}</button></div>
+  <div className="product-presentation-footer"><p>Choose a product to follow the lot.</p><button onClick={()=>{setRevision(r=>r+1);setAutomatic(false);}}><RotateCcw size={15}/> Replay {productNames[product]}</button></div>
   <dialog onKeyDown={containDialogFocus} onClick={event=>{if(isDialogBackdropClick(event))setSheet(false);}} ref={dialog} className="product-detail-dialog" aria-label="Product details" onClose={()=>setSheet(false)}><button onClick={()=>setSheet(false)}>Close details</button><p className="product-overline">{productNames[product]}</p><h3>{record}</h3><p>{['Connect the lot, part, operation, equipment and evidence through shared identities.','Follow production through a recorded route, with each operation attached to the same lot.','Relate equipment observations to the station and current operation.','Explore the same Alpha line represented on the Manufacturing page.','Connect observations to evidence and prepare a response for authorised human review.'][product]}</p><dl><div><dt>Lot</dt><dd>{state.lot}</dd></div><div><dt>Carrier</dt><dd>{state.carrier}</dd></div><div><dt>Station</dt><dd>{station}</dd></div></dl><p>Simulated data. The condition index is illustrative, not an operating recipe.</p></dialog>
  </div>;
 }

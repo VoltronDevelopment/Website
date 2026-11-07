@@ -17,6 +17,7 @@ const PUBLIC_SITE_PATHS = new Set([
   "/about",
   "/about/people-culture",
   "/about/commons",
+  "/credits",
   "/about/voltron-commons",
   "/partner",
 ]);
@@ -59,7 +60,7 @@ export async function middleware(request: NextRequest) {
   const prelaunch = Date.now() < launchAt;
 
   if (pathname.startsWith("/api/")) {
-    if (pathname === "/api/founder/login" || pathname === "/api/founder/logout" || pathname === "/api/founder/session") {
+    if (pathname === "/api/launch" || pathname === "/api/founder/login" || pathname === "/api/founder/logout" || pathname === "/api/founder/session") {
       return prelaunch ? privateResponse(NextResponse.next()) : NextResponse.next();
     }
     if (prelaunch && (pathname === "/api/inquiries" || pathname.startsWith("/api/"))) {
@@ -85,9 +86,20 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!prelaunch) {
-    if (pathname === "/coming-soon") return NextResponse.redirect(new URL("/", request.url));
-    if (PUBLIC_SITE_PATHS.has(pathname) || pathname === "/admin" || pathname.startsWith("/admin/")) return NextResponse.next();
-    return NextResponse.redirect(new URL("/", request.url));
+    if (pathname === "/coming-soon") return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));
+    if (pathname === "/enter") return privateResponse(NextResponse.next());
+    const entering = request.nextUrl.searchParams.get("enter") === "1";
+    if (pathname === "/" && !entering && !request.cookies.has("voltron_entered")) {
+      return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));
+    }
+    if (PUBLIC_SITE_PATHS.has(pathname)) {
+      const response = privateResponse(NextResponse.next());
+      if (!request.cookies.has("voltron_entered") && !request.headers.has("next-router-prefetch") && request.headers.get("purpose") !== "prefetch") {
+        response.cookies.set("voltron_entered", "1", { httpOnly: true, sameSite: "lax", path: "/" });
+      }
+      return response;
+    }
+    return NextResponse.next();
   }
 
   if (pathname === "/coming-soon") {
@@ -95,7 +107,7 @@ export async function middleware(request: NextRequest) {
   }
   if (PUBLIC_SITE_PATHS.has(pathname)) {
     if (request.cookies.has(founderSessionCookie)) return privateResponse(NextResponse.next());
-    if (pathname === "/") return privateResponse(NextResponse.rewrite(new URL("/coming-soon", request.url)));
+    if (pathname === "/") return privateResponse(NextResponse.redirect(new URL("/coming-soon", request.url)));
   }
 
   return privateResponse(NextResponse.redirect(new URL("/", request.url)));

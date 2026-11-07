@@ -1,4 +1,6 @@
 "use client";
+import {waitForScrollPause} from '../home/scene-preparation';
+import {useEntryChoice} from '@/lib/use-entry-choice';
 import Link from 'next/link';
 import {useEffect,useId,useRef,useState} from 'react';
 import {ArrowRight,Box,Boxes,Settings2} from 'lucide-react';
@@ -28,22 +30,37 @@ export function TechnologyConfiguration(){
  const id=useId(),motion=useHomeMotion(),host=useRef<HTMLDivElement>(null),canvas=useRef<HTMLCanvasElement>(null),trigger=useRef<HTMLButtonElement|null>(null);
  const controller=useRef<ReturnType<typeof import('./modularity-renderer').mountModularity>|null>(null),pending=useRef<number|undefined>(undefined),pendingPopup=useRef(false),chooseRef=useRef<(index:number)=>void>(()=>{});
  const [selected,setSelected]=useState(0),[stage,setStage]=useState(0),[popup,setPopup]=useState(false),[phone,setPhone]=useState(false),[detailsReady,setDetailsReady]=useState(false);
+ const [packChoice,savePack]=useEntryChoice('pack',processPacks.length,-1);
+ useEffect(()=>{if(packChoice>=0&&pending.current!==packChoice){pending.current=packChoice;setSelected(packChoice);setDisplayedDetail(packChoice);controller.current?.select(packChoice);}},[packChoice]);
  const [displayedDetail,setDisplayedDetail]=useState<number|null>(null);
  useEffect(()=>{if(detailsReady)setDisplayedDetail(selected);},[detailsReady,selected]);
  useEffect(()=>{const media=matchMedia('(max-width:767px)'),update=()=>setPhone(media.matches);update();media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[]);
  const choose=(index:number,button?:HTMLButtonElement)=>{
-  pending.current=index;const animate=!!controller.current&&host.current?.dataset.sceneState==='live';pendingPopup.current=phone&&animate;setDetailsReady(!animate);setSelected(index);if(!animate)setStage(2);controller.current?.select(index);
+  savePack(index);pending.current=index;const animate=!!controller.current&&host.current?.dataset.sceneState==='live';pendingPopup.current=phone&&animate;setDetailsReady(!animate);setSelected(index);if(!animate)setStage(2);controller.current?.select(index);
   if(phone){trigger.current=button??host.current?.querySelector<HTMLButtonElement>(`[data-pack="${index}"]`)??null;if(!animate)setPopup(true);}
  };
  chooseRef.current=index=>choose(index);
  useEffect(()=>{
   const element=host.current,view=canvas.current;if(!element||!view)return;
-  let disposed=false,loading=false;const setFallback=()=>{element.dataset.sceneState='fallback';setStage(2);setDetailsReady(true);};
+  let disposed=false,loading=false,nearby=false;const setFallback=()=>{element.dataset.sceneState='fallback';setStage(2);setDetailsReady(true);};
   const select=(event:Event)=>chooseRef.current((event as CustomEvent<number>).detail);element.addEventListener('modularity:select',select);
   const state=new MutationObserver(()=>{setStage(Number(element.dataset.stage)||0);const ready=element.dataset.detailsReady==='true';setDetailsReady(ready);if(ready&&pendingPopup.current){pendingPopup.current=false;setPopup(true);}});state.observe(element,{attributes:true,attributeFilter:['data-stage','data-details-ready']});
-  const observer=new IntersectionObserver(entries=>{if(!entries[0].isIntersecting||loading||disposed)return;loading=true;
+  const observer=new IntersectionObserver(async ([entry])=>{
+   nearby=entry.isIntersecting;
+   if(!nearby||loading||disposed)return;
+   loading=true;
    if(prefersStaticScene()||new URLSearchParams(location.search).get('renderer')==='static'){setFallback();return;}
-   import('./modularity-renderer').then(({mountModularity})=>{if(disposed)return;try{controller.current=mountModularity(view,element,setSelected);if(pending.current!==undefined)controller.current.select(pending.current);}catch{setFallback();}}).catch(()=>{if(!disposed)setFallback();});
+   try{
+    await waitForScrollPause();
+    if(disposed||!nearby){loading=false;return;}
+    const {mountModularity,prepareArtworkEnvironment}=await import('./modularity-renderer');
+    await prepareArtworkEnvironment();
+    await waitForScrollPause();
+    if(disposed||!nearby){loading=false;return;}
+    if(prefersStaticScene()){setFallback();return;}
+    controller.current=mountModularity(view,element,setSelected);
+    if(pending.current!==undefined)controller.current.select(pending.current);
+   }catch{if(!disposed)setFallback();}
   },{rootMargin:'180px'});
   element.dataset.sceneState='poster';observer.observe(element);
   const lost=(event:Event)=>{event.preventDefault();const current=controller.current;controller.current=null;current?.dispose();setFallback();};view.addEventListener('webglcontextlost',lost);
@@ -52,11 +69,11 @@ export function TechnologyConfiguration(){
  return <div ref={host} className="technology-configuration modularity-section" data-detail-visible={detailsReady} data-selected-pack={detailsReady?processPacks[selected].id:'none'}>
   <div className="modularity-workspace">
    <div className="modularity-demonstration">
-    <div className="modularity-art" role="img" aria-label="A shared core and five process cells form from surface particles. An additional process cube descends into the open grid. Factory configuration completes the eight-cell volume.">
+    <div className="modularity-art" role="img" aria-label="A shared core and five process cells form from surface particles. An additional process cube descends into the open grid. Selecting another process lifts the installed pack clear and docks its replacement before showing the details.">
      <StaticLattice selected={selected}/><canvas ref={canvas} aria-hidden="true"/>
-     <div className="module-cube-key"><span>Shared core</span><span>Five process packs</span><span>Additional process pack</span><span>Factory configuration</span></div><p className="modularity-art-status"><span aria-hidden="true"/>{['Shared foundation','Process packs','Factory configuration'][stage]}</p>
+     <p className="modularity-art-status"><span aria-hidden="true"/>{['Shared foundation','Process packs','Factory configuration'][stage]}</p>
     </div>
-    <div className="module-choices" role="group" aria-label="Illustrative process packs">{processPacks.map((pack,index)=><button type="button" data-pack={index} key={pack.id} aria-pressed={detailsReady&&selected===index} aria-controls={phone?`${id}-dialog`:`${id}-detail`} aria-haspopup={phone?'dialog':undefined} onClick={event=>choose(index,event.currentTarget)}><Box size={17} aria-hidden="true"/><span>{pack.title}</span></button>)}</div>
+    <div className="module-choices" role="group" aria-label="Illustrative process packs">{processPacks.map((pack,index)=><button type="button" data-pack={index} key={pack.id} aria-pressed={(detailsReady||packChoice>=0)&&selected===index} aria-controls={phone?`${id}-dialog`:`${id}-detail`} aria-haspopup={phone?'dialog':undefined} onClick={event=>choose(index,event.currentTarget)}><Box size={17} aria-hidden="true"/><span>{pack.title}</span></button>)}</div>
     <p className="module-hint">{!detailsReady?'Watch the process cube connect.':phone?`${processPacks[selected].title} connected. Tap a process for details.`:'Select a cube or process to explore its configuration.'}</p>
    </div>
    <aside className="module-insight" id={`${id}-detail`} aria-label="Selected process pack" aria-live={pending.current===undefined?'off':'polite'} aria-atomic="true" aria-busy={!detailsReady}>{detailsReady||displayedDetail!==null?<ProcessDetail index={detailsReady?selected:displayedDetail!} titleId={`${id}-title`}/>:<div className="module-waiting"><Box size={32}/><p>One foundation.<br/>A new process plugs in.</p></div>}</aside>

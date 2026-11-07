@@ -1,5 +1,6 @@
+import {productLabel} from '@/lib/product-names';
 import {alphaLineDemo,alphaLineDeviationId} from '../manufacturing/alpha-line-config';
-export const productNames=['V-MO','V-MES','SCADA','V-Twin','V-AI'] as const;
+export const productNames=Object.values(productLabel);
 export const scenarioStages=['Identify lot','Record operation','Observe condition','Connect evidence','Prepare review'] as const;
 export function productScenario(step:number){
  const stage=Math.max(0,Math.min(4,Math.floor(Number.isFinite(step)?step:0)));

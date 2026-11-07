@@ -73,7 +73,7 @@ export async function mountIntelligenceHero(canvas: HTMLCanvasElement, host: HTM
   const shadow = contactShadow();
   scene.add(shadow);
   host.dataset.networkNodes = "0";
-  const lookY = 1.62;
+  const lookY = (hologramCubeSize + hologramHeadGap + hologramHeadHeight) / 2;
   const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 50);
   camera.position.set(6.2, lookY + 2.15, 7.4);
   camera.lookAt(0, lookY, 0);

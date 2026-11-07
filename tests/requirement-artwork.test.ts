@@ -1,5 +1,6 @@
 import {afterEach,expect,it,vi} from 'vitest';
 import * as T from 'three';
+import {bracketSheet} from '../components/network/bracket-sheet';
 import {factoryKit} from '../components/network/factory-kit';
 import {requirementArtwork} from '../components/network/requirement-artwork';
 afterEach(()=>vi.unstubAllGlobals());
@@ -22,4 +23,18 @@ it('keeps the reference seated during formation and its handoff on orthogonal se
   }
  }
  resources.forEach(r=>r.dispose());
+});
+
+it('keeps the graphite endpoint under the pencil during contact and retraces a seek exactly',()=>{
+ let x=0,y=0,lifts=0,touches=0;
+ const ctx={clearRect(){},beginPath(){},moveTo(){},stroke(){},fillText(){},
+  lineTo(u:number,v:number){x=u;y=v;}} as unknown as CanvasRenderingContext2D;
+ const sheet=bracketSheet(),sample=sheet.draw(ctx,5.75,false);
+ for(let t=.3;t<10.65;t+=.073){
+  const tip=sheet.draw(ctx,t,false);
+  if(tip.lift>0){lifts++;continue;}
+  expect(tip.x).toBeCloseTo(x,6);expect(tip.y).toBeCloseTo(y,6);touches++;
+ }
+ expect(lifts).toBeGreaterThan(5);expect(touches).toBeGreaterThan(30);
+ expect(sheet.draw(ctx,5.75,true)).toEqual(sample);
 });

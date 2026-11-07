@@ -1,4 +1,6 @@
 "use client";
+import {waitForScrollPause} from '../home/scene-preparation';
+import {ArtworkControls} from './ArtworkControls';
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
 import {useSceneMotion,resetScenePoster,markSceneFailure} from '../performance/use-scene-motion';
 import {ArtworkInspector} from './ArtworkInspector';
@@ -23,8 +25,8 @@ export function HumanHeroArtwork({kind}:{kind:HumanHeroKind}){
     if(still()&&host.current){host.current.dataset.scenePose="complete";host.current.dataset.sceneState="fallback";}
     const view=new ScenePreparationObserver(async ([entry])=>{
       if(!entry.isIntersecting || still() || !host.current || !canvas.current)return;
-      view.disconnect();try { const {mountHumanHero}=await import("./human-hero-renderer");
-      if(disposed || !host.current || !canvas.current)return;
+      view.disconnect();try { const {mountHumanHero}=await import("./human-hero-renderer");await waitForScrollPause();
+      if(disposed || still() || !host.current || !canvas.current)return;
       controller.current=mountHumanHero(canvas.current,host.current,kind,setMode);cleanup=controller.current;
       } catch { if(!disposed&&host.current){host.current.dataset.fallback="true";host.current.dataset.sceneState="fallback";host.current.dataset.scenePose="complete";markSceneFailure(host.current);} }
     },{rootMargin:"450px 0px"});
@@ -34,5 +36,5 @@ export function HumanHeroArtwork({kind}:{kind:HumanHeroKind}){
     sceneMotionPreference.addEventListener("change",retryScene);
     return ()=>{sceneMotionPreference.removeEventListener("change",retryScene);disposed=true;view.disconnect();cleanup?.();};
   },[kind,motionRevision]);
-  return <div className="human-hero-controlled"><div ref={host} className={`human-hero-art human-hero-${kind}`} role="img" aria-label={kind==="commons"?"Eight extended glass corners and transparent faces form one grounded enclosure. Energy reaches the roots, a tree grows inside, and the completed scene settles into a stable view.":"A transparent Voltron cube forms with a prominent head. A medium cube leaves the head first. A smaller cube forms from overhead particles and descends into the same centre."}><ScenePoster kind={kind}/><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkInspector scene={kind} duration={durations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;
+  return <div className="human-hero-controlled"><div ref={host} className={`human-hero-art human-hero-${kind}`} role="img" aria-label={kind==="commons"?"Eight extended glass corners and transparent faces form one grounded enclosure. A tree grows inside, its canopy catches light, and a slow turn reveals its depth before settling.":"A transparent Voltron cube forms with a prominent head. A medium cube leaves the head first. A smaller cube forms from overhead particles and descends into the same centre."}><ScenePoster kind={kind}/><canvas key={motionRevision} ref={canvas} aria-hidden="true"/></div><ArtworkControls mode={mode} onReplay={()=>controller.current?.replay()}/><ArtworkInspector scene={kind} duration={durations[kind]} onSeek={time=>controller.current?.seek(time)}/></div>;
 }

@@ -27,11 +27,11 @@ describe("Hologram choreography",()=>{
   const formed=intelligenceHeroState(6.2);expect(formed.head).toBeCloseTo(1);expect(formed.scans.horizontal.strength).toBe(0);expect(formed.yaw).toBe(0);
   expect(intelligenceHeroState(6.65).scans.horizontal.strength).toBeCloseTo(1);expect(intelligenceHeroState(6.65).yaw).toBe(0);
   const turning=intelligenceHeroState(8.1);expect(turning.scans.horizontal.strength).toBe(0);expect(turning.yaw).toBe(0);
-  const mid=intelligenceHeroState(9.9);expect(mid.yaw).toBe(0);
-  expect(intelligenceHeroState(12.2).yaw).toBeCloseTo(0);
+  const mid=intelligenceHeroState(9.9);expect(mid.yaw).toBeGreaterThan(0);
+  expect(intelligenceHeroState(12.2).yaw).toBeCloseTo(Math.PI/6);
   let previous=0;for(let t=0;t<=13;t+=.1){const s=intelligenceHeroState(t);expect(s.formation).toBeGreaterThanOrEqual(previous);previous=s.formation;}
  });
- it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.yaw).toBeCloseTo(0);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
+ it("settles and clamps invalid review input",()=>{const s=intelligenceHeroState(30);expect(s.time).toBe(intelligenceHeroDuration);expect(s.formation).toBe(1);expect(s.yaw).toBeCloseTo(Math.PI/6);expect(s.settled).toBe(true);expect(intelligenceHeroState(NaN).time).toBe(0);});
 });
 
 it("keeps mesh samples finite and inside the shared cube",()=>{

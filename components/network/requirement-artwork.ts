@@ -1,6 +1,7 @@
 import * as T from 'three';
 import {factoryKit} from './factory-kit';
 import {bracketStudyGeometry} from './bracket-study';
+import {bracketSheet,draftingPaper,sheetBore} from './bracket-sheet';
 import {smooth} from './network-story';
 type Own=<R extends {dispose:()=>void}>(r:R)=>R;
 
@@ -10,7 +11,7 @@ export function requirementArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
  const paper=own(new T.MeshStandardMaterial({color:0xecf4fa,roughness:.55,metalness:.05}));
  kit.box(drawing,[6.2,4.15,.12],[0,0,0],kit.glass);
  kit.box(drawing,[5.98,3.93,.035],[0,0,.075],paper);
- const canvas=document.createElement('canvas');canvas.width=1536;canvas.height=1024;
+ const canvas=document.createElement('canvas');canvas.width=960;canvas.height=640;
  const ctx=canvas.getContext('2d')!,texture=own(new T.CanvasTexture(canvas));texture.colorSpace=T.SRGBColorSpace;texture.anisotropy=4;
  const face=new T.Mesh(own(new T.PlaneGeometry(5.86,3.82)),own(new T.MeshBasicMaterial({map:texture,transparent:true,toneMapped:false,depthWrite:false})));face.position.z=.102;drawing.add(face);
  const reference=new T.Group();reference.name='requirement-reference';reference.userData.formationStart=8;root.add(reference);const {baseGeo,uprightGeo}=bracketStudyGeometry();
@@ -22,32 +23,29 @@ export function requirementArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
  const link=new T.Group();root.add(link);const packet=kit.box(link,[.09,.09,.09],[0,0,0],kit.active);
  const linkGeometry=own(new T.BufferGeometry()),linkMaterial=own(new T.LineBasicMaterial({color:0x278fc3,transparent:true,opacity:.6})),route=new T.Line(linkGeometry,linkMaterial);route.name='requirement-handoff';link.add(route);
  const paths=Array.from({length:6},()=>new T.Vector3());let key='';
+ const sheet=bracketSheet(),pencil=new T.Group();drawing.add(pencil);
+ const wood=own(new T.MeshStandardMaterial({color:0xc39464})),lead=own(new T.MeshStandardMaterial({color:0x333b41}));
+ const nib=(r:number,top:number,h:number,y:number,material:T.Material)=>{
+  const m=new T.Mesh(own(new T.CylinderGeometry(top,r,h,8)),material);m.position.y=y;pencil.add(m);
+ };
+ nib(0,.021,.065,.0325,lead);nib(.021,.067,.19,.16,wood);nib(.067,.067,1.08,.795,kit.navy);
+ pencil.rotation.set(.4,0,-.55);
  function draw(time:number,dark:boolean){
-  const comparison=smooth((time-12)/2.4),next=dark+':'+Math.round(comparison*48)+':'+(time>=4)+':'+(time>=8);if(key===next)return;key=next;
-  ctx.clearRect(0,0,1536,1024);const ink=dark?'#cce2f3':'#294d68',muted=dark?'#8fb5cf':'#52728b',signal=dark?'#67c9f5':'#156b9d';
-  ctx.fillStyle=muted;ctx.font='500 38px Montserrat, sans-serif';ctx.fillText('INTERFACE STUDY',90,92);
-  ctx.strokeStyle=ink;ctx.lineWidth=5;ctx.lineJoin='round';
-  const X=(x:number)=>725+x*180,Y=(y:number)=>735-y*180;
-  ctx.beginPath();ctx.moveTo(X(-1.25),Y(.2));ctx.bezierCurveTo(X(-.83),Y(.35),X(-.76),Y(1.15),X(-.69),Y(1.75));
-  ctx.ellipse(X(0),Y(1.75),.7*180,.7*180,0,Math.PI,Math.PI*2);ctx.bezierCurveTo(X(.76),Y(1.15),X(.83),Y(.35),X(1.25),Y(.2));ctx.closePath();ctx.stroke();
-  ctx.beginPath();ctx.arc(X(0),Y(1.75),.46*180,0,Math.PI*2);ctx.stroke();ctx.strokeRect(X(-2.03),Y(.2),4.06*180,.22*180);
-  ctx.lineWidth=3;ctx.setLineDash([12,12]);ctx.beginPath();ctx.moveTo(X(0),Y(2.75));ctx.lineTo(X(0),Y(-.4));ctx.moveTo(X(-1),Y(1.75));ctx.lineTo(X(1),Y(1.75));ctx.stroke();ctx.setLineDash([]);
-  if(time>=4){
-   ctx.strokeStyle=signal;ctx.beginPath();ctx.moveTo(X(-1.45),Y(-.25));ctx.lineTo(X(1.45),Y(-.25));for(const x of [-1.45,1.45]){ctx.moveTo(X(x),Y(-.12));ctx.lineTo(X(x),Y(-.4));}ctx.moveTo(X(.34),Y(1.43));ctx.lineTo(1090,590);ctx.lineTo(1370,590);ctx.stroke();
-   ctx.fillStyle=ink;ctx.font='500 35px Montserrat, sans-serif';ctx.fillText('Mounting span',X(-1.45),Y(-.65));ctx.fillText('Bore / fit',1120,567);
+  const frame=Math.min(320,Math.floor(time*30)),next=dark+':'+frame;
+  if(next!==key){key=next;const tip=sheet.draw(ctx,frame/30,dark);
+   pencil.position.set((tip.x/960-.5)*5.86,(.5-tip.y/640)*3.82,.103+tip.lift);
+   texture.needsUpdate=true;
   }
-  if(time>=8){ctx.fillStyle=signal;ctx.beginPath();ctx.arc(X(.46),Y(1.75),9,0,Math.PI*2);ctx.fill();}
-  if(comparison>0){ctx.globalAlpha=comparison;ctx.strokeStyle=signal;ctx.lineWidth=8;ctx.beginPath();ctx.arc(X(0),Y(1.75),.46*180,0,Math.PI*2);ctx.stroke();ctx.fillStyle=signal;ctx.font='500 34px Montserrat, sans-serif';ctx.fillText('REFERENCE CONNECTED',90,970);ctx.globalAlpha=1;}
-  texture.needsUpdate=true;
+  pencil.visible=time<10.7;
  }
  return {groups:[reference],span:14,target:new T.Vector3(0,1.6,0),update(time:number,dark:boolean){
-  const phone=Boolean(root.userData.phone),reveal=smooth(time/2.8);draw(time,dark);paper.color.set(dark?0x173047:0xeaf3fa);
+  const phone=Boolean(root.userData.phone),reveal=smooth(time/2.8);draw(time,dark);paper.color.set(dark?draftingPaper.dark:draftingPaper.light);
   drawing.position.set(phone?0:-2.1,phone?3.6:2.15,phone?-.65:-.7);drawing.rotation.y=phone?.35:.48;
   reference.position.set(phone?0:3.2,phone?-.05:-.08,phone?1.2:.6);reference.scale.setScalar((phone?.78:.82)*Math.max(.001,smooth((time-8)/1.4)));plinth.position.copy(reference.position);plinth.scale.copy(reference.scale);
-  datum.visible=time>=8;reference.visible=time>=8;plinth.visible=time>=8;drawing.scale.setScalar(.96+.04*reveal);
+  datum.visible=time>=8;reference.visible=time>=8;plinth.visible=time>=8;drawing.scale.setScalar((phone?1.2:1.13)*(.96+.04*reveal));reference.rotation.y=.48*(1-smooth((time-9)/3));
   // One measurement is handed to its corresponding drawing, not a decorative orbit.
   reference.updateMatrixWorld(true);drawing.updateMatrixWorld(true);
-  paths[0].copy(reference.localToWorld(new T.Vector3(.46,1.75,.3)));paths[5].copy(drawing.localToWorld(new T.Vector3(.152,.343,.12)));
+  paths[0].copy(reference.localToWorld(new T.Vector3(.46,1.75,.3)));paths[5].copy(drawing.localToWorld(new T.Vector3((sheetBore.x/960-.5)*5.86,(.5-sheetBore.y/640)*3.82,.12)));
   paths[1].set(paths[0].x,paths[0].y+.55,paths[0].z);
   paths[2].set(paths[5].x,paths[1].y,paths[0].z);
   paths[3].set(paths[5].x,paths[1].y,paths[5].z);

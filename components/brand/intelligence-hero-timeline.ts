@@ -15,7 +15,7 @@ export function intelligenceHeroState(seconds:number){
  const head=smooth((time-2.8)/3.4);
  const turn=smooth((time-8.1)/4.1);
  return {
-  time,cube,beam,head,formation:head,yaw:0,turn,
+  time,cube,beam,head,formation:head,yaw:Math.PI/6*turn,turn,
   scans:intelligenceScanState(time),
   settled:time>=intelligenceHeroDuration,
   phase:time>=intelligenceHeroDuration?'settled':time>=8.1?'settling':time>=6.2?'scan':time>=2.8?'forming':time>=1.6?'beam':'projecting',

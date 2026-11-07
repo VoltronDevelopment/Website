@@ -20,9 +20,9 @@ describe('Commons corner cube and tree',()=>{
   const grown=commonsTreeState(9.2);
   expect(grown.growth).toBe(1);expect(grown.glow).toBe(0);expect(grown.yaw).toBe(0);
   const mid=commonsTreeState(11.7);
-  expect(mid.yaw).toBe(0);
+  expect(mid.yaw).toBeGreaterThan(0);
   let previous=0;for(let t=0;t<=commonsTreeDuration;t+=.05){const s=commonsTreeState(t);expect(s.growth).toBeGreaterThanOrEqual(previous);previous=s.growth;}
-  const end=commonsTreeState(commonsTreeDuration);expect(end.growth).toBe(1);expect(end.canopy).toBe(1);expect(end.glow).toBe(0);expect(end.yaw).toBe(0);expect(end.done).toBe(true);
+  const end=commonsTreeState(commonsTreeDuration);expect(end.growth).toBe(1);expect(end.canopy).toBe(1);expect(end.glow).toBe(0);expect(end.yaw).toBeCloseTo(Math.PI/9);expect(end.done).toBe(true);
   expect(commonsTreeState(NaN).time).toBe(0);expect(commonsTreeState(99).time).toBe(commonsTreeDuration);
  });
  it('retains the source trunk, two cutout foliage materials and valid compact buffers',()=>{

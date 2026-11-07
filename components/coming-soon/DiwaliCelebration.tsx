@@ -1,24 +1,28 @@
 "use client";
-import {useEffect,useRef,useState} from "react";
-import {usePathname} from "next/navigation";
-import {launchAt} from "@/lib/launch";
-import "./diwali.css";
-export function DiwaliCelebration(){
- const path=usePathname(),canvas=useRef<HTMLCanvasElement>(null),[active,setActive]=useState(false);
- useEffect(()=>{
-  if(path!=="/"&&path!=="/coming-soon")return;
-  const check=()=>{const now=Date.now();if(now<launchAt||now>=launchAt+86400000)return;try{if(localStorage.getItem("voltron-diwali-2026"))return;localStorage.setItem("voltron-diwali-2026","seen");}catch{}setActive(true);};
-  check();const timer=setInterval(check,1000);return()=>clearInterval(timer);
- },[path]);
- useEffect(()=>{
-  if(!active)return;let disposed=false,stop:(()=>void)|undefined;
-  const timer=setTimeout(()=>setActive(false),8000);
-  const motion=matchMedia('(prefers-reduced-motion: reduce)');
-  const simplify=()=>{if(motion.matches)stop?.();};motion.addEventListener('change',simplify);
-  if(!motion.matches&&!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData)
-   void import('./fireworks').then(module=>{if(!disposed&&canvas.current&&!motion.matches)stop=module.playFireworks(canvas.current);}).catch(()=>{});
-  return()=>{disposed=true;clearTimeout(timer);motion.removeEventListener('change',simplify);stop?.();};
- },[active]);
- if(!active)return null;
- return <div className="diwali-celebration"><canvas ref={canvas} aria-hidden="true"/><p role="status">Happy Diwali. A new chapter begins.</p></div>;
+import {useEffect,useRef} from "react";
+
+export function DiwaliCelebration({elapsed}:{elapsed:number}){
+  const canvas=useRef<HTMLCanvasElement>(null);
+  useEffect(()=>{
+    const start=performance.now()-elapsed;
+    const motion=matchMedia('(prefers-reduced-motion: reduce)');
+    let disposed=false, frame=0;
+    let display:ReturnType<typeof import('./fireworks').createFireworks>|undefined;
+    function paint(){
+      cancelAnimationFrame(frame);
+      const age=performance.now()-start;
+      if(!display||disposed||motion.matches||document.hidden||age>=180000)return;
+      display.paint((age%10000)/1000);
+      frame=requestAnimationFrame(paint);
+    }
+    if(!(navigator as Navigator&{connection?:{saveData?:boolean}}).connection?.saveData){
+      void import('./fireworks').then(({createFireworks})=>{
+        if(disposed||!canvas.current)return;
+        display=createFireworks(canvas.current);paint();
+      }).catch(()=>{});
+    }
+    motion.addEventListener('change',paint);document.addEventListener('visibilitychange',paint);
+    return ()=>{disposed=true;cancelAnimationFrame(frame);display?.dispose();motion.removeEventListener('change',paint);document.removeEventListener('visibilitychange',paint);};
+  },[elapsed]);
+  return <canvas className="launch-fireworks" ref={canvas} aria-hidden="true"/>;
 }

@@ -1,4 +1,4 @@
-import {mesMilestones,operatingEvents,operatingProducts,operatingState,type OperatingProduct} from './operating-model';
+import {factoryLayout,mesMilestones,operatingEvents,operatingProducts,operatingState,type OperatingProduct} from './operating-model';
 export const graphEase=(v:number)=>{const p=Math.max(0,Math.min(1,v));return p*p*(3-2*p);};
 const schedules=Object.fromEntries(operatingProducts.map(product=>{let available=0;return [product,operatingEvents.filter(event=>event[2].includes(product)).map(event=>{const start=Math.max(event[0],available);available=start+2.05;return {event,start};})];})) as Record<OperatingProduct,{event:typeof operatingEvents[number];start:number}[]>;
 export function digitalGraphState(state:ReturnType<typeof operatingState>,product:OperatingProduct){
@@ -19,4 +19,4 @@ export function scadaTraceValue(time:number){
  return base-27*rise*(1-recover);
 }
 
-export function twinPoint(x:number,z:number){return {x:25+(x+4)/9*125,y:18+(z+3.898)/(13.8*.42)*78};}
+export function twinPoint(x:number,z:number){return {x:25+(x+4)/9*125,y:18+(z-factoryLayout.wetLineZ)/(factoryLayout.returnLineZ-factoryLayout.wetLineZ)*78};}

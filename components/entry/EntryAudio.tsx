@@ -1,22 +1,27 @@
 "use client";
+import {createContext,useContext,useRef,useState,type ReactNode} from "react";
+import {Volume2,VolumeX} from "lucide-react";
 
-import { Volume2, VolumeX } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-
-export function EntryAudio({leaving}: {leaving: boolean}){
+const AudioControl=createContext({playing:false,unavailable:false,toggle:()=>{}});
+export function SiteAudio({children}:{children:ReactNode}){
   const audio=useRef<HTMLAudioElement>(null);
-  const [playing,setPlaying]=useState(false),[muted,setMuted]=useState(false),[error,setError]=useState(false);
-  useEffect(()=>{
+  const [playing,setPlaying]=useState(false),[unavailable,setUnavailable]=useState(false);
+  function toggle(){
     const element=audio.current;
-    return ()=>{element?.pause();};
-  },[]);
-  useEffect(()=>{if(leaving)audio.current?.pause();},[leaving]);
-  async function toggle(){
-    const element=audio.current;if(!element)return;
-    if(playing && !element.muted){element.muted=true;setMuted(true);return;}
-    element.muted=false;setMuted(false);
-    if(element.paused){try{await element.play();}catch{setPlaying(false);}}
+    if(!element)return;
+    if(element.paused)void element.play().catch(()=>setPlaying(false));
+    else element.pause();
   }
-  const label=error?"Music unavailable":!playing?"Play music":muted?"Unmute music":"Mute music";
-  return <><audio ref={audio} src="/Audio/Intro.mp3" preload="none" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} onError={()=>setError(true)}/><button type="button" className="icon-button" aria-label={label} title={label} aria-pressed={playing&&!muted} disabled={error} onClick={()=>void toggle()}>{playing&&!muted?<Volume2 size={19} aria-hidden="true"/>:<VolumeX size={19} aria-hidden="true"/>}</button></>;
+  return <AudioControl.Provider value={{playing,unavailable,toggle}}>
+    <audio ref={audio} preload="none" onPlay={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>setPlaying(false)} onError={()=>setUnavailable(true)}>
+      <source src="/Audio/intro-optimized.ogg" type="audio/ogg"/><source src="/Audio/intro-compat.mp3" type="audio/mpeg"/>
+    </audio>{children}
+  </AudioControl.Provider>;
+}
+export function EntryAudio(){
+  const {playing,unavailable,toggle}=useContext(AudioControl);
+  const label=unavailable?'Music unavailable':playing?'Pause music':'Play music';
+  return <button className="icon-button" type="button" onClick={toggle} disabled={unavailable} aria-label={label} title={label} aria-pressed={playing}>
+    {playing?<Volume2 size={19} aria-hidden="true"/>:<VolumeX size={19} aria-hidden="true"/>}
+  </button>;
 }

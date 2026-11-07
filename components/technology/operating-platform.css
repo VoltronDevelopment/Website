@@ -36,3 +36,48 @@
 .operating-poster{position:absolute;inset:0;pointer-events:none;opacity:1;transition:opacity .4s}.operating-poster picture,.operating-poster img{width:100%;height:100%;object-fit:contain}.operating-art[data-ready=true][data-fallback=false] .operating-poster{opacity:0}.operating-art[data-fallback=true] .operating-labels{display:none}.operating-art[data-fallback=true] .operating-fallback{inset:auto 12px 12px;background:var(--op-bg);border-radius:8px;padding:10px}.operating-fallback>svg,.operating-fallback h3{display:none}.operating-fallback p{font-size:10px}.operating-art canvas{position:relative}
 
 .operating-caption .operating-still-guide{font-size:11px;line-height:1.6;min-height:0;color:var(--muted);margin-bottom:8px}
+.factory-number-field{position:absolute;inset:0;overflow:hidden;pointer-events:none}.factory-number-stream{position:absolute;writing-mode:vertical-rl;text-orientation:upright;font:10px/1 ui-monospace,monospace;color:var(--op-accent);transform:translate(-50%,-100%)}
+@media(prefers-reduced-motion:reduce){.factory-number-field{display:none}}
+@media all {
+ .operating-digital-layer{padding-bottom:var(--study-gap)}
+ .operating-digital-layer .digital-mobile-tabs{display:flex;gap:8px;justify-content:center;margin:0 0 12px}
+ .operating-digital-layer .digital-mobile-tabs button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:13px;padding:8px 12px;min-height:44px;cursor:pointer}
+ .digital-mobile-tabs button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 -2px var(--op-accent)}
+ .operating-digital-layer .operating-digital-screens{position:relative;display:flex;gap:var(--study-gap);overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:10px 0 16px;overscroll-behavior-x:contain}
+ .operating-digital-layer .operating-digital-screen{flex:0 0 min(78%,var(--screen-width));min-height:0;margin:0;padding:16px 24px;scroll-snap-align:center;transform:perspective(1100px) rotateY(-6deg) scale(.94);opacity:.78;border-radius:16px}
+ .operating-digital-layer .operating-digital-screen:has(~ [data-mobile-active=true]){transform:perspective(1100px) rotateY(6deg) scale(.94)}
+ .operating-digital-layer .operating-digital-screen[data-mobile-active=true]{transform:none;opacity:1;background:var(--op-panel)}
+ .operating-digital-screens .operating-digital-screen:first-child{margin-inline-start:max(11%,calc((100% - var(--screen-width))/2))}
+ .operating-digital-screens .operating-digital-screen:last-child{margin-inline-end:max(11%,calc((100% - var(--screen-width))/2))}
+ .operating-digital-screen .digital-refined-graph{height:clamp(92px,14vh,135px)}
+ .operating-digital-screen small,.operating-inspector p{font-size:13px}
+ .factory-stage-heading{display:flex;align-items:baseline;gap:12px;padding:12px 20px;color:var(--ink);background:var(--op-panel);font-size:14px}
+}
+@media(max-width:767px){.factory-stage-heading{display:none}}
+.factory-stage-heading{grid-column:1/-1}
+@media(max-width:767px){
+ .operating-digital-layer .operating-digital-screens{align-items:stretch;gap:8px}
+ .operating-digital-layer .operating-digital-screen{display:grid;flex:0 0 82%;grid-template-rows:auto 88px auto auto;grid-template-columns:minmax(0,1fr);padding:10px 14px;animation:none}
+ .operating-digital-layer .operating-digital-screen:first-child{margin-inline-start:9%!important}
+ .operating-digital-layer .operating-digital-screen:last-child{margin-inline-end:9%!important}
+ .operating-digital-layer .operating-digital-screen .digital-refined-graph{height:88px;grid-column:1;grid-row:2}
+ .operating-digital-layer .digital-mobile-tabs{flex-wrap:wrap;gap:2px}
+ .operating-digital-layer .digital-mobile-tabs button{padding:5px 7px;font-size:11px}
+ .operating-digital-layer .digital-screen-status,.operating-digital-layer .operating-digital-screen small{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.operating-digital-layer .operating-digital-screen{transform:none!important}}
+@media(pointer:fine){
+ .operating-digital-layer .operating-digital-screens{scroll-snap-type:none}
+}
+:root:not([data-theme=dark]) .operating-digital-screen[data-mobile-active=true] .digital-screen-status{
+ color:#185374;font-weight:500
+}
+
+@media (min-width:768px) and (max-width:1023px){
+ .operating-platform .operating-digital-layer{display:grid;grid-template-columns:max-content minmax(0,1fr);align-items:center;gap:16px;padding:12px 18px}
+ .operating-digital-layer .digital-mobile-tabs{display:grid;grid-template-columns:repeat(2,minmax(64px,1fr));align-content:center;gap:4px;margin:0}
+ .operating-digital-layer .operating-digital-screens{min-width:0;padding-block:4px}
+ .operating-digital-layer .operating-digital-screen{padding:10px 16px}
+ .operating-digital-layer .digital-refined-graph{height:100px}
+ .operating-platform .operating-art{height:clamp(350px,51vw,440px)}
+}

@@ -1,4 +1,37 @@
 import {describe,it,expect} from 'vitest';
-import {networkSites,envelopeNetwork} from '../components/network/network-growth';
-import {globeEnvelopeRadius} from '../components/brand/globe-envelope';
-describe('Structured factory composition',()=>{it('keeps projected factory envelopes separated in the isometric camera',()=>{const boxes=networkSites.map(([x,y,z])=>{const points=[];for(const dx of [-2,2])for(const dz of [-1.8,1.8])for(const dy of [0,2.1])points.push({x:(x+dx-z-dz)/Math.sqrt(2),y:(-(x+dx)+2*(y+dy)-(z+dz))/Math.sqrt(6)});return {x0:Math.min(...points.map(p=>p.x)),x1:Math.max(...points.map(p=>p.x)),y0:Math.min(...points.map(p=>p.y)),y1:Math.max(...points.map(p=>p.y))};});for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];expect(a.x1+.2<b.x0||b.x1+.2<a.x0||a.y1+.2<b.y0||b.y1+.2<a.y0).toBe(true);}});it('places five distinct hub ports on the equatorial band of the original mesh',()=>{const graph=envelopeNetwork();expect(new Set(graph.anchors).size).toBe(5);for(const id of graph.anchors)expect(Math.abs(graph.localVertices[id][1])).toBeLessThan(globeEnvelopeRadius*.22);});});
+import * as T from 'three';
+import {cubeSites,cubeEdges,cubeFrame,cubeTransfer} from '../components/network/cube-layout';
+
+describe('Factory cube',()=>{
+ it('has eight distinct corners and twelve single-axis edges',()=>{
+  expect(new Set(cubeSites.map(p=>p.join(','))).size).toBe(8);
+  expect(cubeEdges).toHaveLength(12);
+  for(let i=0;i<8;i++)expect(cubeEdges.filter(([a,b])=>a===i||b===i)).toHaveLength(3);
+ });
+ it('keeps all eight factory silhouettes inside the canvas and clear of one another',()=>{
+  for(const [aspect,phone] of [[.9,true],[1.12,true],[1.8,false],[2.2,false]] as const){
+   const f=cubeFrame(aspect,phone),target=new T.Vector3(...f.target);
+   const camera=new T.OrthographicCamera(-f.height*aspect/2,f.height*aspect/2,f.height/2,-f.height/2,.1,150);
+   camera.position.fromArray(f.offset).add(target);camera.lookAt(target);camera.updateMatrixWorld();
+   const boxes=cubeSites.map(([x,y,z])=>{
+    const box=new T.Box2();
+    for(const dx of [-1.56,1.56])for(const dy of [-.22,1.49])for(const dz of [-2.1,.43]){
+     const v=new T.Vector3(x+dx,y+dy,z+dz).project(camera);
+     expect(Math.abs(v.x)).toBeLessThan(1);expect(Math.abs(v.y)).toBeLessThan(1);
+     box.expandByPoint(new T.Vector2(v.x,v.y));
+    }
+    return box;
+   });
+   boxes.forEach((b,i)=>boxes.slice(i+1).forEach(other=>expect(b.intersectsBox(other)).toBe(false)));
+  }
+ });
+ it('relays along real edges and holds at each destination before the next departure',()=>{
+  for(const start of [0,12]){
+   const {route}=cubeTransfer(start);
+   for(let i=0;i<2;i++)expect(cubeEdges.some(e=>e.includes(route[i])&&e.includes(route[i+1]))).toBe(true);
+   expect(cubeTransfer(start+5.5).first).toBe(1);expect(cubeTransfer(start+5.5).last).toBe(0);
+   expect(cubeTransfer(start+10).arrived).toBe(true);
+  }
+  expect(cubeTransfer(11).route[2]).toBe(cubeTransfer(12).route[0]);
+ });
+});

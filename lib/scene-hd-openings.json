@@ -118,30 +118,30 @@
   "network": {
     "desktop": {
       "light": {
-        "url": "/optimized/scene-hd-opening-network-desktop-light-b9be4badaa5aaab1.webp",
+        "url": "/optimized/scene-hd-opening-network-desktop-light-32cf1be5fb05ca8b.webp",
         "width": 1249,
         "height": 1120,
-        "bytes": 209522
+        "bytes": 134400
       },
       "dark": {
-        "url": "/optimized/scene-hd-opening-network-desktop-dark-347c3719e50c95fd.webp",
+        "url": "/optimized/scene-hd-opening-network-desktop-dark-b6911dbfbad45ad1.webp",
         "width": 1249,
         "height": 1120,
-        "bytes": 189724
+        "bytes": 127820
       }
     },
     "mobile": {
       "light": {
-        "url": "/optimized/scene-hd-opening-network-mobile-light-82b53ac56d3573df.webp",
+        "url": "/optimized/scene-hd-opening-network-mobile-light-c4013e0abc8440a6.webp",
         "width": 640,
         "height": 760,
-        "bytes": 74538
+        "bytes": 51526
       },
       "dark": {
-        "url": "/optimized/scene-hd-opening-network-mobile-dark-4e65051362d26c03.webp",
+        "url": "/optimized/scene-hd-opening-network-mobile-dark-f540fb3778a2172e.webp",
         "width": 640,
         "height": 760,
-        "bytes": 66178
+        "bytes": 50058
       }
     }
   },

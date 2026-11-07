@@ -90,7 +90,7 @@ body:has(.home-page):has(canvas[data-render-quality="lightweight"]) .site-presen
 .home-identity-tile .identity-tile{--identity-play:inherit}
 .home-identity-fallback{z-index:3;--identity-opacity:1}
 .home-hero-controlled:has([data-renderer="fallback"]) .home-identity-fallback,:root[data-scene-motion="static"] .home-identity-fallback{visibility:visible}
-:root[data-scene-motion="motion"] .home-page :is(.scene-poster,.lot-story-posters){opacity:0}
+:root[data-scene-motion="motion"] .home-page :is(.scene-poster:not(.scene-poster-home),.lot-story-posters){opacity:0}
 :root[data-scene-motion="motion"] .home-page :is([data-loading-slow="true"],[data-scene-state="fallback"],[data-scene-pose="complete"]) :is(.scene-poster,.lot-story-posters){opacity:1}
 .home-motion-preference{display:flex;justify-content:center;padding:0 24px 28px}
 .home-motion-preference button{min-height:44px;padding:10px 16px;border:0;border-radius:8px;background:transparent;color:var(--muted);font:inherit;font-size:12px;cursor:pointer}
@@ -168,3 +168,13 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
 /* The five-cube sequence uses a shared horizontal foundation. */
 .home-roadmap.roadmap-ascent .roadmap-art{height:300px}
 @media(max-width:767px){.home-roadmap.roadmap-ascent .roadmap-art{height:210px}}
+
+/* Give the taller evidence and milestone stories more of the viewport. */
+.site-presentation #main-content .home-page :is(.home-lot-section,.home-roadmap-section){
+  padding-block:clamp(52px,6svh,72px);
+}
+@media(max-width:767px){
+  .site-presentation #main-content .home-page :is(.home-lot-section,.home-roadmap-section){
+    padding-block:28px;
+  }
+}

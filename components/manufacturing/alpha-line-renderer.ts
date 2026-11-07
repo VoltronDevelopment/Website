@@ -1,3 +1,4 @@
+import {isSceneScrollActive} from '../home/scene-preparation';
 import {createAlphaPanelGeometry,alphaPanelReturn} from './alpha-panel-geometry';
 import {createAlphaTrolleyBody} from '../home/alpha-equipment';
 import {createSceneHandoff} from "../performance/scene-handoff";
@@ -680,9 +681,14 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
     previous = 0;
   }
   function tick(now: number) {
-    if(quality.sample(now)){renderer.shadowMap.enabled=quality.shadows;resize();}
     frame = 0;
     if (disposed || lostContext) return;
+    if(visible && !document.hidden && !dragging && isSceneScrollActive(now)){
+      previous=0;
+      frame=requestAnimationFrame(tick);
+      return;
+    }
+    if(quality.sample(now)){renderer.shadowMap.enabled=quality.shadows;resize();}
     const playing = visible && !document.hidden && !paused && !motion.matches;
     if (playing) {
       elapsed += previous ? Math.min((now - previous) / 1000, 0.1) : 0;
@@ -788,13 +794,13 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
   resizing.observe(host);
   const themes = new MutationObserver(() => { palette(); render(); });
   themes.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-  const view = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; resume(); }, { threshold: 0.08 });
-  view.observe(host.closest(".alpha-line-stage") ?? host);
+  const view = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= .15; if(visible) resume(); else stop(); }, { threshold: .15 });
+  view.observe(host);
   canvas.addEventListener("pointerdown", onPointerDown);
   canvas.addEventListener("pointermove", onPointerMove);
   canvas.addEventListener("pointerup", onPointerUp);
   canvas.addEventListener("pointerleave", onPointerLeave);
-  canvas.addEventListener("wheel", onWheel, { passive: false });
+
   canvas.addEventListener("webglcontextlost", onContextLost);
   canvas.addEventListener("webglcontextrestored", onContextRestored);
   motion.addEventListener("change", resume);
@@ -821,7 +827,10 @@ export async function mountAlphaLine(canvas: HTMLCanvasElement, host: HTMLDivEle
       if (enabled) { manualShot=null; focusId=null; framedId=null; focusBlend=0; azimuth=0; polar=0; zoom=1; }
       resume();
     },
-    setExplore(enabled) { explore = enabled; canvas.style.cursor = enabled ? "grab" : "pointer"; canvas.style.touchAction = enabled ? "none" : "pan-y"; },
+    setExplore(enabled) {
+      if(enabled)canvas.addEventListener("wheel",onWheel,{passive:false});
+      else canvas.removeEventListener("wheel",onWheel);
+      explore = enabled; canvas.style.cursor = enabled ? "grab" : "pointer"; canvas.style.touchAction = enabled ? "none" : "pan-y"; },
     orbit(horizontal, vertical, magnification) { azimuth += horizontal; polar += vertical; zoom += magnification; boundsKey = ""; resume(); },
     resetView() {
       azimuth = 0;

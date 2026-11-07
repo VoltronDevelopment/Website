@@ -8,11 +8,11 @@ import {architectureRoute} from './architecture-route';
 import {DetailsDialog} from './DetailsDialog';
 
 const systems = [
- {id:'ontology', title:'V-MO', role:'Shared manufacturing meaning', Icon:Network, href:'/technology#operating-platform', detail:'Plant, part, lot, process, equipment and evidence belong to the same manufacturing situation.', records:['Common identity','Meaningful relationships','Traceable evidence'], relation:'The shared model connects each system without taking over its responsibility.'},
- {id:'mes', title:'V-MES', role:'Production execution', Icon:Boxes, href:'/manufacturing', detail:'The lot, operation and production record remain connected as work progresses.', records:['Part and lot identity','Operation record','Production status'], relation:'Production records use the shared identity of the part, lot and operation.'},
- {id:'scada', title:'SCADA', role:'Machine visibility', Icon:Activity, href:'/manufacturing', detail:'Machine signals become useful evidence when linked to the equipment and operation they describe.', records:['Equipment identity','Signal history','Operating context'], relation:'Equipment signals are associated with the active operation. Physical control remains with the plant systems.'},
- {id:'twin', title:'V-Twin', role:'Process representation', Icon:ScanLine, href:'/manufacturing', detail:'A connected process representation brings state and evidence together for investigation.', records:['Process representation','Connected state','Investigation context'], relation:'The process representation uses the same manufacturing identities and records.'},
- {id:'ai', title:'V-AI', role:'Evidence-led intelligence', Icon:BrainCircuit, href:'/intelligence', detail:'Connected evidence supports investigation and suggestions. People retain authority over consequential decisions.', records:['Relevant evidence','Suggested action','Human review'], relation:'Shared context grounds each suggestion in evidence, with consequential decisions retained by people.'},
+ {id:'ontology', title:'V MO', role:'Shared manufacturing meaning', Icon:Network, href:'/technology#operating-platform', detail:'Plant, part, lot, process, equipment and evidence belong to the same manufacturing situation.', records:['Common identity','Meaningful relationships','Traceable evidence'], relation:'The shared model connects each system without taking over its responsibility.'},
+ {id:'mes', title:'V MES', role:'Production execution', Icon:Boxes, href:'/manufacturing', detail:'The lot, operation and production record remain connected as work progresses.', records:['Part and lot identity','Operation record','Production status'], relation:'Production records use the shared identity of the part, lot and operation.'},
+ {id:'scada', title:'V SCADA', role:'Machine visibility', Icon:Activity, href:'/manufacturing', detail:'Machine signals become useful evidence when linked to the equipment and operation they describe.', records:['Equipment identity','Signal history','Operating context'], relation:'Equipment signals are associated with the active operation. Physical control remains with the plant systems.'},
+ {id:'twin', title:'V Twin', role:'Process representation', Icon:ScanLine, href:'/manufacturing', detail:'A connected process representation brings state and evidence together for investigation.', records:['Process representation','Connected state','Investigation context'], relation:'The process representation uses the same manufacturing identities and records.'},
+ {id:'ai', title:'V AI', role:'Evidence-led intelligence', Icon:BrainCircuit, href:'/intelligence', detail:'Connected evidence supports investigation and suggestions. People retain authority over consequential decisions.', records:['Relevant evidence','Suggested action','Human review'], relation:'Shared context grounds each suggestion in evidence, with consequential decisions retained by people.'},
 ] as const;
 
 const dwell = 3200;
@@ -25,7 +25,7 @@ function ArchitectureDetail({active,headingId}:{active:(typeof systems)[number];
   <h3 id={headingId}>{active.title}<span>{active.role}</span></h3>
   <p className="architecture-detail">{active.detail}</p>
   <ul className="architecture-records" aria-label="Connected context">{active.records.map(record=><li key={record}>{record}</li>)}</ul>
-  <p className="architecture-kicker">{active.id==='ontology'?'Foundation for every system':'Relationship to V-MO'}</p>
+  <p className="architecture-kicker">{active.id==='ontology'?'Foundation for every system':'Relationship to V MO'}</p>
   <p className="architecture-relation">{active.relation}</p>
   <Link className="architecture-explore" href={active.href}>{active.id==='scada'?'Explore manufacturing':`Explore ${active.title}`}<ArrowRight size={18} aria-hidden="true"/></Link>
  </div>;

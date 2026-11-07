@@ -15,6 +15,7 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   DynamoDBDocumentClient: {
     from: vi.fn(() => ({ send: awsMocks.dynamoSend }))
   },
+  UpdateCommand: class { constructor(readonly input: unknown) {} },
   PutCommand: class {
     constructor(readonly input: unknown) {}
   }
@@ -47,10 +48,20 @@ describe("inquiry AWS adapters", () => {
     vi.resetModules();
     vi.stubEnv("INQUIRIES_TABLE_NAME", "voltron-inquiries-test");
     vi.stubEnv("SES_FROM_EMAIL", "website@example.com");
+    vi.stubEnv("VOLTRON_INQUIRY_EMAIL", "1");
     vi.stubEnv("INQUIRY_TO_EMAIL", "sales@example.com");
     vi.stubEnv("VOLTRON_AWS_REGION", "ap-south-1");
     awsMocks.dynamoSend.mockReset().mockResolvedValue({});
     awsMocks.sesSend.mockReset().mockResolvedValue({});
+  });
+
+  it("saves a receipt without attempting email in the default launch mode", async () => {
+    vi.stubEnv("VOLTRON_INQUIRY_EMAIL", "");
+    const {storeInquiry}=await import("@/lib/inquiries");
+    const receipt=await storeInquiry(inquiryPayload);
+    expect(awsMocks.dynamoSend).toHaveBeenCalledTimes(1);
+    expect(awsMocks.dynamoSend.mock.calls[0][0].input.Item).toMatchObject({id:receipt.id,notificationStatus:"stored"});
+    expect(awsMocks.sesSend).not.toHaveBeenCalled();
   });
 
   it("persists a website-sourced inquiry and sends the configured notification", async () => {
@@ -100,7 +111,8 @@ describe("inquiry AWS adapters", () => {
       const stored = await storeInquiry(inquiryPayload);
 
       expect(stored.id).toBeTruthy();
-      expect(awsMocks.dynamoSend).toHaveBeenCalledOnce();
+      expect(awsMocks.dynamoSend).toHaveBeenCalledTimes(2);
+      expect(awsMocks.dynamoSend.mock.calls[1][0].input.ExpressionAttributeValues).toEqual({":status":"failed"});
       expect(awsMocks.sesSend).toHaveBeenCalledOnce();
       expect(consoleError).toHaveBeenCalledWith(
         "[inquiries] notification email failed",

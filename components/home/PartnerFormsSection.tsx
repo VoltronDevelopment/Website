@@ -2,7 +2,8 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
-import { partnerIntents, productionIntents } from "@/lib/inquiry-intents";
+import { partnerIntents, productionIntents, processSlugs } from "@/lib/inquiry-intents";
+import {useEntryChoice} from "@/lib/use-entry-choice";
 import "./partner-forms.css";
 
 type Values = Record<string, string>;
@@ -27,9 +28,12 @@ const partnershipFields: FieldSpec[] = [...common.map(field => field.key === "co
 
 function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partnership"; initialIntent?: string }) {
   const fields = kind === "production" ? productionFields : partnershipFields;
-  const [values, setValues] = useState<Values>({ intent: initialIntent });
+  const options: readonly string[] = kind === 'production' ? productionIntents : partnerIntents;
+  const [saved, saveIntent] = useEntryChoice(kind+'-intent', options.length+1, -1);
+  const [draft, setValues] = useState<Values>({});
+  const values: Values = {...draft, intent: saved < 0 ? initialIntent : options[saved-1] || ''};
   const [expanded, setExpanded] = useState(false);
-  useEffect(()=>{if(initialIntent)setValues(current=>({...current,intent:initialIntent}));},[initialIntent]);
+
   const [errors, setErrors] = useState<Values>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -37,6 +41,7 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
   const formRef = useRef<HTMLFormElement>(null);
   const receiptRef = useRef<HTMLDivElement>(null);
   const busy = useRef(false);
+  const submission = useRef("");
   useEffect(() => { if (status === "success") receiptRef.current?.focus(); }, [status]);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -62,12 +67,12 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 20000);
     try {
+      submission.current ||= crypto.randomUUID();
       const response = await fetch("/api/inquiries", { method: "POST", headers: { "Content-Type": "application/json" }, signal: controller.signal, body: JSON.stringify({
-        inquiryType: values.intent, name: values.name, company: values.company || "", email: values.email, phone: values.phone,
+        submissionKey: submission.current, inquiryType: values.intent, name: values.name, company: values.company || "", email: values.email, phone: values.phone,
         requirement: values.requirement?.trim() || `Production inquiry: ${values.intent}`,
-        componentType: kind === "production" ? values.intent : undefined,
-        material: values.part, monthlyVolume: values.volume, coatingThickness: values.timing,
-        saltSprayRequirement: kind === "production" ? values.requirement : undefined,
+        partOrApplication: values.part, expectedVolume: values.volume, timing: values.timing,
+        qualityRequirements: kind === "production" ? values.requirement : undefined,
       }) });
       const result = await response.json();
       if (!response.ok || result.ok !== true || typeof result.inquiryId !== "string" || !result.inquiryId) throw new Error(result.message || "Unable to submit. Please try again.");
@@ -81,13 +86,13 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
   }
   const errorCount = Object.values(errors).filter(Boolean).length;
   return <><p className="sr-only" role="status">{status === "sending" ? "Submitting your inquiry. Please wait." : ""}</p><form ref={formRef} className="inquiry-form" data-state={status} onSubmit={submit} noValidate aria-label={kind === "production" ? "Production inquiry" : "Partnership inquiry"} aria-busy={status === "sending"}>
-    <p className="inquiry-guidance">Fields marked optional can be left blank.</p>
+    <p className="inquiry-guidance">Voltron's team receives your inquiry. Fields marked optional can be left blank.</p>
     {errorCount > 0 && <div className="inquiry-corrections"><p>Check {errorCount === 1 ? "the highlighted field" : `the ${errorCount} highlighted fields`} before submitting.</p><ul>{fields.filter(field => errors[field.key]).map(field => <li key={field.key}><a href={`#${kind}-${field.key}`} onClick={event => { event.preventDefault(); formRef.current?.querySelector<HTMLElement>(`[name="${field.key}"]`)?.focus(); }}>{field.label}</a></li>)}</ul></div>}
 
     {fields.map(field => {
       const id = `${kind}-${field.key}`;
       const describedBy = [field.multiline ? `${id}-hint` : "", errors[field.key] ? `${id}-error` : ""].filter(Boolean).join(" ") || undefined;
-      const inputProps = { id, name: field.key, value: values[field.key] || "", required: field.required, "aria-invalid": !!errors[field.key], "aria-describedby": describedBy, disabled: status === "sending" || status === "success", onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { setValues(current => ({ ...current, [field.key]: event.target.value })); setErrors(current => ({ ...current, [field.key]: "" })); } };
+      const inputProps = { id, name: field.key, value: values[field.key] || "", required: field.required, "aria-invalid": !!errors[field.key], "aria-describedby": describedBy, disabled: status === "sending" || status === "success", onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => { const value=event.target.value; if(field.key==="intent")saveIntent(options.indexOf(value)+1); else setValues(current => ({ ...current, [field.key]: value })); setErrors(current => ({ ...current, [field.key]: "" })); } };
       return <div className="field" hidden={kind==="production"&&!expanded&&["part","volume","timing","requirement"].includes(field.key)} key={field.key}><label htmlFor={id}>{field.label} {!field.required && <span>(optional)</span>}</label>{field.options ? <select {...inputProps}><option value="">Select {kind === "production" ? "a process" : "an interest"}</option>{field.options.map(option => <option key={option} value={option}>{option.replace(/^Production — /, "")}</option>)}</select> : field.multiline ? <textarea {...inputProps} rows={5} maxLength={800} placeholder={field.placeholder}/> : <input {...inputProps} type={field.type || "text"} maxLength={800} autoComplete={field.autoComplete} placeholder={field.placeholder}/>} {field.multiline && <p className="inquiry-field-hint" id={`${id}-hint`}><span>Up to 800 characters.</span><span>{(values[field.key] || "").length} / 800</span></p>}{errors[field.key] && <p className="field-error" id={`${id}-error`}>{errors[field.key]}</p>}</div>;
     })}
     {kind==='production'&&<button type="button" className="inquiry-more" aria-expanded={expanded} onClick={()=>setExpanded(v=>!v)}>{expanded?'Hide optional production details':'Add optional production details'}</button>}
@@ -97,13 +102,17 @@ function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partn
 export function PartnerFormsSection() {
   const params = useSearchParams();
   const interest = params.get("interest");
-  const [active,setActive]=useState<'production'|'partnership'>(interest?'partnership':'production');
-  const [preset,setPreset]=useState(interest==='commons'?'Commons collaboration':interest==='people'?'Building with Voltron':'');
+  const process = productionIntents[processSlugs.findIndex(slug=>slug===params.get('process'))] || '';
+  const interests: Record<string,string> = {cto:'CTO opportunity',technology:'CTO opportunity',people:'Building with Voltron',commons:'Commons collaboration',factory:'Factory JV',platform:'Platform partnership'};
+  const preset = interest && Object.hasOwn(interests,interest) ? interests[interest] : '';
+  const [hash,setHash]=useState('');
   useEffect(()=>{
-    const sync=()=>{if(location.hash==='#partnership')setActive('partnership');else if(location.hash==='#production')setActive('production');};
-    const choose=(event:Event)=>{const detail=(event as CustomEvent<{kind:'production'|'partnership';intent:string}>).detail;setActive(detail.kind);if(detail.intent)setPreset(detail.intent);};
-    sync();window.addEventListener('hashchange',sync);window.addEventListener('voltron-inquiry-path',choose);
-    return()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('voltron-inquiry-path',choose);};
-  },[]);
-  return <><nav className="form-jumps" aria-label="Inquiry type"><button type="button" aria-pressed={active==='production'} onClick={()=>setActive('production')}>Production inquiry</button><button type="button" aria-pressed={active==='partnership'} onClick={()=>setActive('partnership')}>Partnership enquiry</button></nav><div className="partner-form-panels"><article id="production" className="inquiry-panel" hidden={active!=='production'}><h2>Production programs</h2><p>Discuss a phosphating, CED, powder coating or related requirement.</p><InquiryForm kind="production"/></article><article id="partnership" className="inquiry-panel" hidden={active!=='partnership'}><h2>Partnership &amp; collaboration</h2><p>Explore factory JVs, strategic investment, platform partnerships or Commons collaborations.</p><InquiryForm kind="partnership" initialIntent={preset}/></article></div></>;
+    const sync=()=>setHash(location.hash);
+    sync();window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);
+    return ()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);};
+  },[interest,process]);
+  const [tab,saveTab]=useEntryChoice('inquiry-tab',2,-1);
+  const active = tab===0?'production':tab===1?'partnership':hash==='#production'?'production':hash==='#partnership'||preset?'partnership':'production';
+  const setActive=(kind:'production'|'partnership')=>saveTab(kind==='production'?0:1);
+  return <><nav className="form-jumps" aria-label="Inquiry type"><button type="button" aria-pressed={active==='production'} onClick={()=>setActive('production')}>Production inquiry</button><button type="button" aria-pressed={active==='partnership'} onClick={()=>setActive('partnership')}>Partnership enquiry</button></nav><div className="partner-form-panels"><article id="production" className="inquiry-panel" hidden={active!=='production'}><h2>Production programs</h2><p>Discuss a phosphating, CED, powder coating or related requirement.</p><InquiryForm kind="production" initialIntent={process}/></article><article id="partnership" className="inquiry-panel" hidden={active!=='partnership'}><h2>Partnership &amp; collaboration</h2><p>Explore factory JVs, strategic investment, platform partnerships or Commons collaborations.</p><InquiryForm kind="partnership" initialIntent={preset}/></article></div></>;
 }

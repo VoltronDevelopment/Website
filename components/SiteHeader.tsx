@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "./brand/BrandLogo";
+import {EntryAudio} from "./entry/EntryAudio";
 import { ThemeToggle } from "./brand/ThemeToggle";
 import { FounderPreviewControl } from "./FounderPreviewControl";
 
@@ -40,6 +41,6 @@ export function SiteHeader() {
       </div>
       <Link className="nav-partner" href="/partner" aria-current={pathname === "/partner" ? "page" : undefined} onClick={() => setMobileOpen(false)}>Partner With Us</Link>
     </nav>
-    <div className="header-actions"><FounderPreviewControl/><ThemeToggle/><button ref={menuButton} className="menu-toggle icon-button" type="button" aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} aria-controls="site-navigation" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={22} /> : <Menu size={22} />}</button></div>
+    <div className="header-actions"><FounderPreviewControl/><EntryAudio/><ThemeToggle/><button ref={menuButton} className="menu-toggle icon-button" type="button" aria-label={mobileOpen ? "Close navigation" : "Open navigation"} aria-expanded={mobileOpen} aria-controls="site-navigation" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={22} /> : <Menu size={22} />}</button></div>
   </div></header>;
 }

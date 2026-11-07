@@ -15,6 +15,22 @@ export function createSceneHandoff(host:HTMLElement,canvas:HTMLCanvasElement,imm
     return nodes.filter(node=>!nodes.some(other=>other!==node&&other.contains(node)));
   };
   canvas.style.transition='none';canvas.style.opacity=immediate?'1':'0';host.dataset.sceneState=immediate?'live':'poster';
+  let composite=false;
+  const previousBlend=canvas.style.mixBlendMode;
+  const previousIsolation=host.style?.isolation;
+  function releaseComposite(){
+    if(!composite)return;
+    canvas.style.mixBlendMode=previousBlend;
+    host.style.isolation=previousIsolation||'';
+    composite=false;
+  }
+  function useComposite(){
+    if(typeof CSS==='undefined'||!CSS.supports('mix-blend-mode','plus-lighter'))return false;
+    const style=getComputedStyle(host);
+    if(style.backgroundImage!=='none'||style.backgroundColor!=='rgba(0, 0, 0, 0)')return false;
+    host.style.isolation='isolate';canvas.style.mixBlendMode='plus-lighter';
+    return true;
+  }
   function snapshot(){
     if(!canvas.parentElement||!canvas.width||!canvas.height)return;
     const bounds=canvas.getBoundingClientRect();if(!bounds.width||!bounds.height)return;
@@ -44,13 +60,13 @@ export function createSceneHandoff(host:HTMLElement,canvas:HTMLCanvasElement,imm
     for(const poster of posters()){poster.style.opacity=blend?'0':String(1-value);poster.style.visibility=blend||value===1?'hidden':'visible';}
     if(blend)blendSceneFrames(blend.context,blend.poster,blend.live,value);
   }
-  function cancel(){cancelAnimationFrame(frame);frame=0;blend?.overlay.remove();blend=undefined;finish?.();finish=undefined;}
+  function cancel(){releaseComposite();cancelAnimationFrame(frame);frame=0;blend?.overlay.remove();blend=undefined;finish?.();finish=undefined;}
   return {
     reveal(){
       if(disposed||host.isConnected===false)return Promise.resolve();
       cancel();
       if(immediate||host.closest?.('.home-page')){progress(1);host.dataset.sceneState='live';return Promise.resolve();}
-      try{blend=snapshot();}catch{/* A blocked canvas readback can still dissolve safely. */}
+      try{composite=useComposite();if(!composite)blend=snapshot();}catch{/* A blocked canvas readback can still dissolve safely. */}
       host.dataset.sceneState='handoff';progress(0);
       return new Promise<void>(resolve=>{
         finish=resolve;let elapsed=0,previous=0;
@@ -60,7 +76,7 @@ export function createSceneHandoff(host:HTMLElement,canvas:HTMLCanvasElement,imm
           const value=matchMedia('(prefers-reduced-motion: reduce)').matches||new URLSearchParams(location.search).has('scene-capture')?1:Math.min(1,elapsed/240);
           progress(value*value*(3-2*value));
           if(value<1)frame=requestAnimationFrame(tick);
-          else {frame=0;blend?.overlay.remove();blend=undefined;host.dataset.sceneState='live';finish=undefined;resolve();}
+          else {frame=0;releaseComposite();blend?.overlay.remove();blend=undefined;host.dataset.sceneState='live';finish=undefined;resolve();}
         };
         frame=requestAnimationFrame(tick);
       });

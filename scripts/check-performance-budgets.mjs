@@ -4,6 +4,14 @@ import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 const assets=JSON.parse(fs.readFileSync('lib/optimized-assets.json','utf8'));
 const failures=[];
+const nativeOpenings=JSON.parse(fs.readFileSync('lib/launch-opening-frames.json','utf8'));
+for(const devices of Object.values(nativeOpenings))for(const themes of Object.values(devices))for(const pair of Object.values(themes)){
+  for(const [index,url] of pair.entries()){
+    const bytes=fs.readFileSync('public'+url);
+    const digest=crypto.createHash('sha256').update(bytes).digest('hex').slice(0,16);
+    if(!url.endsWith('-'+digest+'.webp') || bytes.length>(index===0?200000:1200000))failures.push('Native opening invalid: '+url);
+  }
+}
 const posters=JSON.parse(fs.readFileSync('lib/scene-posters.json','utf8'));
 const opening=JSON.parse(fs.readFileSync('lib/scene-opening-posters.json','utf8'));
 for(const [kind,themes] of Object.entries(opening))posters[kind+'-opening']=themes;

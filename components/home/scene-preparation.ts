@@ -35,7 +35,27 @@ export function createScenePreparationQueue(){
   };
 }
 
-export const prepareScene=createScenePreparationQueue();
+// Starting a WebGL scene can occupy the main thread during touch scrolling.
+const enqueueScene=createScenePreparationQueue();
+let lastScroll=-Infinity;
+if(typeof window!=="undefined"){
+  const markScroll=()=>{lastScroll=performance.now();};
+  for(const type of ["scroll","wheel","touchmove"])window.addEventListener(type,markScroll,{passive:true,capture:true});
+}
+export function isSceneScrollActive(now = performance.now()){
+  return now - lastScroll < 180;
+}
+
+/** A dynamic import or asset fetch can finish in the middle of a new gesture. */
+export async function waitForScrollPause(){
+  do{
+    await new Promise<void>(resolve=>setTimeout(resolve,Math.max(32,200-(performance.now()-lastScroll))));
+  }while(isSceneScrollActive());
+}
+
+export function prepareScene(run:Job["run"],canPrepare:Job["canPrepare"]=()=>true,priority:Job["priority"]=()=>0){
+  return enqueueScene(run,()=>!isSceneScrollActive() && canPrepare(),priority);
+}
 
 export function canPrepareHomeScene(){
   if(document.hidden)return false;

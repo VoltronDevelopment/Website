@@ -87,3 +87,10 @@
 
 /* Geography qualifications occupy their own row, outside the globe projection. */
 .engineered-network .hero-art-caption{position:static;inset:auto;margin:8px 8px 0;min-height:24px;line-height:1.6}
+.replayable-study{min-width:0;position:relative}
+.study-replay{display:grid;place-items:center;margin-inline-start:auto;width:44px;height:44px;color:var(--ink);background:transparent;border:0;border-radius:50%;cursor:pointer}
+.study-replay:focus-visible{outline:2px solid var(--text-link)}
+.hero .hero-motion-controls button,.hero-motion-controls button{background:transparent;border-color:transparent}
+@media(prefers-reduced-motion:reduce){.study-replay{display:none}}
+:root[data-artwork-motion=off] :is(.study-replay,.hero-motion-controls){display:none}
+.study-replay:hover{color:var(--text-link)}

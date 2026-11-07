@@ -1,7 +1,8 @@
-import {DiwaliCelebration} from "@/components/coming-soon/DiwaliCelebration";
+import {SiteAudio} from "@/components/entry/EntryAudio";
 import {sceneMotionBootstrap} from "@/lib/scene-continuity";
 import "@/components/performance/scene-continuity.css";
 import type { Metadata } from "next";
+import {optimizedAsset} from "@/lib/optimized-assets";
 import { siteUrl } from "@/lib/assets";
 import { themeBootstrap } from "@/lib/theme";
 import { LatticeAtmosphere } from "@/components/brand/LatticeAtmosphere";
@@ -24,9 +25,9 @@ export const metadata: Metadata = {
   title: { default: "Voltron Lattice | Intelligent Manufacturing", template: "%s | Voltron Lattice" },
   description: "Building India's Intelligent Manufacturing Backbone. Physical production, manufacturing knowledge and intelligence connected through one architecture.",
   openGraph: { siteName: "Voltron Lattice", type: "website", locale: "en_IN" },
-  icons: { icon: { url: "/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png", type: "image/png" } },
+  icons: { icon: { url: optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png",true), type: "image/webp" } },
   robots: { index: true, follow: true },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/><script dangerouslySetInnerHTML={{ __html: sceneMotionBootstrap }}/></head><body><PerformanceMonitor/><DiwaliCelebration/><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience><SiteFrame footer={<SiteFooter/>}>{children}</SiteFrame></LatticeExperience></body></html>;
+  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/><script dangerouslySetInnerHTML={{ __html: sceneMotionBootstrap }}/></head><body><PerformanceMonitor/><SiteAudio><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience><SiteFrame footer={<SiteFooter/>}>{children}</SiteFrame></LatticeExperience></SiteAudio></body></html>;
 }

@@ -1,6 +1,8 @@
 export const globeDuration=10;
 // Three's sphere UV origin differs from our longitude convention by a quarter turn.
 export const globeTextureYaw=-Math.PI/2;
+/** Matches the 960:760 still projection while containing the envelope on phones. */
+export function globeCameraFov(aspect:number){const fit=Math.max(1,(960/760)/Math.max(.1,aspect));return 2*Math.atan(Math.tan(31*Math.PI/360)*fit)*180/Math.PI;}
 export const globeEase=(v:number)=>{const t=Math.min(1,Math.max(0,v));return Math.min(1,Math.max(0,t*t*t*(t*(t*6-15)+10)));};
 export const globeNodes=[
  [20.6,78.9],[1.3,103.8],[35.7,139.7],[50.1,8.7],[25.2,55.3],[-26.2,28],[-23.6,-46.6],[40.7,-74],[37.8,-122.4],[-33.9,151.2],

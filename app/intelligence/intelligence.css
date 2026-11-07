@@ -68,3 +68,17 @@
 :root[data-scene-motion="static"] .intelligence-page *{animation:none!important}
 @media(prefers-reduced-transparency:reduce){.point-workspace,.intelligence-page .evidence-sources button,.intelligence-page .agent-button{backdrop-filter:none;background:var(--surface)}}
 @media(forced-colors:active){.intelligence-page button,.point-workspace{border:1px solid CanvasText}.intelligence-page button[aria-pressed="true"]{outline:2px solid Highlight}}
+
+.site-presentation #main-content .intelligence-page :is(#quality,#specialists,#investigation,#point-of-work){
+  padding-block:clamp(52px,6svh,72px);
+}
+@media(max-width:767px){
+  .site-presentation #main-content .intelligence-page :is(#quality,#specialists,#investigation,#point-of-work){
+    padding-block:32px;
+  }
+}
+html:has(.intelligence-sheet:modal){overflow:hidden;overflow-anchor:none;scroll-behavior:auto;overscroll-behavior:none}
+.intelligence-sheet{overscroll-behavior:contain}
+
+.scenario-variation label:has(input[type="checkbox"]){display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
+.scenario-variation input[type="checkbox"]{width:24px;height:24px;flex:none}

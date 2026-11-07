@@ -1,0 +1,22 @@
+.agent-cube-aura {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  --strength: .12;
+  --spread: 49% 46%;
+  --intensity: 1;
+  background: radial-gradient(ellipse var(--spread) at 50% 54%, var(--aura-color) 24%, transparent 100%);
+  opacity: calc(var(--strength) * var(--intensity));
+  transition: opacity 180ms ease;
+}
+.agent-cube-aura[data-agent=RIXA] { --spread: 43% 44%; }
+.agent-cube-aura[data-agent=MEKO] { --intensity: .55; }
+.agent-cube-aura[data-agent=ZILO] { --spread: 50% 40%; }
+.agent-cube-aura[data-agent=TEYO] { --spread: 44% 45%; }
+button:hover .agent-cube-aura, button:focus-visible .agent-cube-aura { --strength: .18; }
+button[aria-pressed=true] .agent-cube-aura, .orb-feature .agent-cube-aura { --strength: .25; }
+[data-activity="1"] > .agent-cube-aura { --strength: .22; }
+[data-activity="-1"] > .agent-cube-aura { --strength: .08; }
+.fluid-study-stage:has(.agent-cube-aura) { background: none; }
+.fluid-study-stage .agent-cube-aura { max-width: 100%; width: min(100%, 65svh); margin-inline: auto; }
+@media (prefers-reduced-motion: reduce) { .agent-cube-aura { transition: none; } }

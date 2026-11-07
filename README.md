@@ -65,6 +65,7 @@ Set these as Amplify console env vars. Never commit secrets.
 ```text
 VOLTRON_AWS_REGION=ap-south-1
 INQUIRIES_TABLE_NAME=VoltronWebsiteInquiries
+VOLTRON_INQUIRY_EMAIL=0
 SES_FROM_EMAIL=info@voltroncoat.com
 INQUIRY_TO_EMAIL=info@voltroncoat.com
 NEXT_PUBLIC_SITE_URL=https://www.voltronlattice.com

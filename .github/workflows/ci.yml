@@ -48,6 +48,11 @@ jobs:
       - name: Install performance browser
         run: npx playwright install --with-deps chromium
 
+      - name: Public launch, entry and inquiry delivery
+        run: node scripts/verify-brand-launch.cjs
+        env:
+          AUDIT_BROWSER: chromium
+
       - name: Browser performance regression checks
         run: node scripts/performance-audit-20261023.cjs
         env:

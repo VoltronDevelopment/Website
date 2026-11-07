@@ -1,3 +1,4 @@
+import {withinRequestWindow} from "@/lib/request-window";
 import { NextResponse } from "next/server";
 import { isValidationError } from "@/lib/errors";
 import { storeInquiry, validateInquiry } from "@/lib/inquiries";
@@ -19,6 +20,7 @@ export async function POST(request: Request) {
 
   try {
     const payload = validateInquiry(body);
+    if (!await withinRequestWindow(request,"inquiry",10)) return NextResponse.json({ok:false,message:"Too many requests. Please try again in a minute."},{status:429,headers:{"Retry-After":"60"}});
     const inquiry = await storeInquiry(payload);
 
     return NextResponse.json({

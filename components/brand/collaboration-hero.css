@@ -18,5 +18,3 @@
 @media(prefers-reduced-motion:reduce){.collaboration-stage .story-opening{display:none}.collaboration-stage .story-complete{display:block}}
 /* Stair fallbacks are clean renderer captures with the stage aspect preserved. */
 .collaboration-about .story-posters picture>img{width:100%;height:100%;object-fit:contain}
-/* Keep the shared-brief group and its captured fallback in the same compact framing. */
-@media(max-width:1000px){.collaboration-partner .collaboration-stage{overflow:hidden}.collaboration-partner .collaboration-stage>canvas,.collaboration-partner .story-posters{transform:scale(1.12);transform-origin:50% 50%}}

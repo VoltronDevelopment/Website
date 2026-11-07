@@ -3,11 +3,11 @@ import {MeshSurfaceSampler} from 'three/addons/math/MeshSurfaceSampler.js';
 import {glassFace,type GlassFace} from '../home/lattice-materials';
 import {addHomePaneReflections} from '../home/home-glass';
 
-export const hologramCubeSize=.86;
-export const hologramHeadHeight=1.95;
+export const hologramCubeSize=.75;
+export const hologramHeadHeight=2.2425;
 export const hologramHeadGap=0.30;
 export const hologramRestYaw=0.42;
-export const hologramProjectionRadius=.62;
+export const hologramProjectionRadius=.70;
 
 const gatherVertex=`attribute float aSeed;uniform float uForm,uRatio,uSpan,uTime,uAmbient;varying float vAlpha;void main(){
  float grain=fract(sin(dot(floor(position*48.),vec3(12.9898,78.233,37.719)))*43758.5453);
@@ -120,7 +120,7 @@ export function createSquareBeam(track:<T extends {dispose():void}>(value:T)=>T,
  const glow=new THREE.Mesh(track(new THREE.PlaneGeometry(.46,.46)),glowMaterial);glow.position.y=bottomY+.008;glow.renderOrder=5;glow.onBeforeRender=(_r,_s,camera)=>glow.quaternion.copy(camera.quaternion);group.add(glow);
  const fanMaterial=track(new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.DoubleSide,toneMapped:false,blending:THREE.AdditiveBlending,uniforms:{...uniforms,uGain:{value:1.3},uRadius:{value:hologramProjectionRadius}},
  vertexShader:'varying vec2 vUv;varying float vLocalX;void main(){vUv=uv;vLocalX=position.x;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
- fragmentShader:`varying vec2 vUv;varying float vLocalX;uniform float uAmount,uTime,uDark,uGain,uRadius;void main(){float halfWidth=mix(.012,uRadius,vUv.y);float center=pow(max(0.,1.-abs(vLocalX)/halfWidth),1.15);float fade=pow(1.-vUv.y,.65)*smoothstep(0.,.04,vUv.y);float current=.88+.08*sin(vUv.y*8.-uTime*1.3)+.04*sin(vUv.y*19.+uTime*.7);gl_FragColor=vec4(mix(vec3(.025,.34,.68),vec3(.14,.64,1.),uDark),center*fade*current*uAmount*uGain*mix(.70,1.65,uDark));\n#include <colorspace_fragment>\n}`}));
+ fragmentShader:`varying vec2 vUv;varying float vLocalX;uniform float uAmount,uTime,uDark,uGain,uRadius;void main(){float halfWidth=mix(.012,uRadius,vUv.y);float center=pow(max(0.,1.-abs(vLocalX)/halfWidth),1.8);float fade=pow(1.-vUv.y,.65)*smoothstep(0.,.04,vUv.y);float current=.88+.08*sin(vUv.y*8.-uTime*1.3)+.04*sin(vUv.y*19.+uTime*.7);gl_FragColor=vec4(mix(vec3(.025,.34,.68),vec3(.14,.64,1.),uDark),center*fade*current*uAmount*uGain*mix(.70,1.65,uDark));\n#include <colorspace_fragment>\n}`}));
  const sideFanMaterial=track(fanMaterial.clone());sideFanMaterial.uniforms={...uniforms,uGain:{value:.20},uRadius:{value:hologramProjectionRadius}};
  const fans:THREE.Mesh[]=[];
  for(let i=0;i<3;i++){const g=track(new THREE.BufferGeometry());g.setAttribute('position',new THREE.Float32BufferAttribute([-.012,bottomY,0,.012,bottomY,0,hologramProjectionRadius,bottomY+.53,0,-.012,bottomY,0,hologramProjectionRadius,bottomY+.53,0,-hologramProjectionRadius,bottomY+.53,0],3));g.setAttribute('uv',new THREE.Float32BufferAttribute([0,0,1,0,1,1,0,0,1,1,0,1],2));const fan=new THREE.Mesh(g,i?sideFanMaterial:fanMaterial);fan.rotation.y=i*Math.PI/3;fan.renderOrder=4;group.add(fan);fans.push(fan);}

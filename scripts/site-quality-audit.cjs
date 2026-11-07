@@ -20,7 +20,7 @@ const credentials = ['auditone', 'audittwo'].map(user => `${user}:${salt}:${hash
 const log = fs.openSync(path.join(out, 'server.log'), 'w');
 const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-H', '127.0.0.1', '-p', port], {
   cwd: root, windowsHide: true, stdio: ['ignore', log, log],
-  env: { ...process.env, NEXT_DIST_DIR: process.env.SITE_AUDIT_DIST || '.next-ui-audit-20261024', FOUNDER_CREDENTIALS: credentials, FOUNDER_SESSION_SECRET: crypto.randomBytes(48).toString('hex') }
+  env: {  ...process.env, VOLTRON_LAUNCH_AT: '2099-11-07T18:30:00Z', NEXT_DIST_DIR: process.env.SITE_AUDIT_DIST || '.next-ui-audit-20261024', FOUNDER_CREDENTIALS: credentials, FOUNDER_SESSION_SECRET: crypto.randomBytes(48).toString('hex') }
 });
 const report = { phase, date: new Date().toISOString(), routes: [], motion: [], interactions: [], errors: [], missing: [] };
 const save = () => fs.writeFileSync(path.join(out, 'results.json'), JSON.stringify(report, null, 2));
@@ -83,7 +83,7 @@ function measure() {
     if(!ready)throw Error('Fixture server failed to start');
     browser=await chromium.launch({...(process.env.SITE_AUDIT_BROWSER==='chromium'?{}:{channel:process.env.SITE_AUDIT_BROWSER||'chrome'}),headless:true,args:['--enable-unsafe-swiftshader','--use-gl=angle']});
     const auth=await browser.newContext();
-    if(Date.now()<Date.parse('2026-11-07T18:30:00Z')) {
+    {
       const login=await auth.request.post(base+'/api/founder/login',{headers:{Origin:base},data:{username:'auditone',password}});
       if(login.status()!==200)throw Error('Fixture login failed '+login.status());
     }
@@ -142,10 +142,15 @@ function measure() {
     await p.page.getByRole('button',{name:'Open navigation',exact:true}).click();await p.page.getByRole('button',{name:'About',exact:true}).click();
     await p.page.keyboard.press('Escape');await p.page.keyboard.press('Escape');
     report.interactions.push({name:'mobile-menu-escape',...await p.page.evaluate(()=>({expanded:document.querySelector('.menu-toggle')?.getAttribute('aria-expanded'),focused:document.activeElement?.getAttribute('aria-label')}))});
-    await p.page.goto(base+'/intelligence',{waitUntil:'load'});const calibration=p.page.getByRole('button',{name:'Calibration',exact:true});await calibration.click();assert.equal(await calibration.getAttribute('aria-pressed'),'true','Evidence source selection');
+    await p.page.goto(base+'/intelligence',{waitUntil:'load'});const source=p.page.locator('.fluid-agent-gallery .specialist-gallery button').first();await source.scrollIntoViewIfNeeded();await source.click();
+    await p.page.keyboard.press('Escape');
     report.interactions.push({name:'intelligence-selection',...await p.page.evaluate(measure)});
-    await p.page.goto(base+'/ontology',{waitUntil:'load'});const equipment=p.page.getByRole('button',{name:'Equipment',exact:true});if(await equipment.count())await equipment.click();
-    report.interactions.push({name:'ontology-selection',text:await p.page.locator('.ontology-explanation').textContent().catch(()=>null)});
+    await p.page.goto(base+'/technology/ontology',{waitUntil:'load'});
+    assert.equal(new URL(p.page.url()).hash,'#operating-platform');
+    const platform=p.page.locator('#operating-platform');
+    await platform.locator('.digital-mobile-tabs button').last().click();
+    assert.equal(await platform.locator('.digital-mobile-tabs button').last().getAttribute('aria-pressed'),'true');
+    report.interactions.push({name:'operating-platform-selection',target:p.page.url()});
     await p.page.goto(base,{waitUntil:'load'});
     await p.page.locator('.alpha-process').scrollIntoViewIfNeeded();
     report.interactions.push({name:'reduced-process-fallback',visible:await p.page.locator('.alpha-process-fallback').isVisible(),contexts:await p.page.evaluate(()=>window.__quality.contexts)});
@@ -157,7 +162,7 @@ function measure() {
     await saver.context.close();
     if(extraOnly) {
       const p=await context(390,'dark');
-      if(Date.now()<Date.parse('2026-11-07T18:30:00Z')) {
+      {
         await p.page.goto(base+'/coming-soon',{waitUntil:'load'});
         await p.page.waitForFunction(()=>document.documentElement.dataset.theme==='dark');
         await p.page.evaluate(axeSource);
@@ -169,7 +174,7 @@ function measure() {
         assert.equal(focus,'Founder login','Founder dialog did not restore focus');
         report.interactions.push({name:'coming-soon-dark-preview',...dark,dialogFocus:focus});
       }
-      for(const [alias,target] of [['/about/commons','/about/voltron-commons'],['/technology/ontology','/ontology']]){
+      for(const [alias,target] of [['/about/commons','/about/voltron-commons'],['/technology/ontology','/technology'],['/ontology','/technology']]){
         await p.page.goto(base+alias,{waitUntil:'load'});assert.equal(new URL(p.page.url()).pathname,target,'Route alias '+alias);
         report.interactions.push({name:'route-alias',alias,target});
       }

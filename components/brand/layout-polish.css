@@ -67,6 +67,10 @@
  .site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .scenario-agent{width:80px}
  .site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .scenario-agent .orb-window{width:80px;height:104px}
 }
+@media(min-width:1001px){
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen .digital-refined-graph{height:clamp(96px,13svh,136px)}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-layer{padding-bottom:var(--study-gap)}
+}
 @media(max-width:767px){
  .site-presentation:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page){--hero-stage:clamp(240px,32svh,300px)}
  .site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .hero>.hero-grid,.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .hero[data-art-side=left]>.hero-grid{gap:12px;padding-block:8px 12px}
@@ -176,7 +180,7 @@
 .site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .preview-agent-loading{height:100%;display:grid;place-items:center;color:var(--ink);font-size:12px}
 /* Server rendering and reduced motion share the same compact manual selection. */
 .site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on]) .application-screen{display:none}
-.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on])[data-focus="0"] #preview-mes,.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on])[data-focus="1"] #preview-twin,.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on])[data-focus="2"] #preview-ai,.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on])[data-focus="3"] #preview-ontology{display:block}
+.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .application-previews:not([data-arc=on]) .application-screen[data-focused]{display:block}
 @media(max-width:767px){.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .vai-screen-body nav{gap:4px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .vai-screen-body nav button{font-size:11px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .vai-guidance h4{margin-block:10px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .human-decision p:not(.eyebrow){margin-block:10px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .scenario-lot{gap:8px 12px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .scenario-agent small{font-size:10px}.site-presentation #main-content:has(.home-page,.technology-page,.intelligence-page,.alpha-page,.network-page) .scenario-agent>span:not(.orb-window):not(.task-track){font-size:10px}}
 
 /* Keep the original contained-free digit columns in the air gap. */
@@ -196,4 +200,10 @@
  .site-presentation #main-content:has(.technology-page) .operating-digital-screen .digital-refined-graph{grid-column:2;grid-row:1/4;height:140px;max-width:360px;justify-self:center}
  .site-presentation #main-content:has(.technology-page) .digital-screen-heading{font-size:14px}
  .site-presentation #main-content:has(.technology-page) .operating-digital-screen small,.site-presentation #main-content:has(.technology-page) .digital-screen-status{font-size:12px;line-height:1.7;min-height:0}
+}
+
+@media(min-width:768px) and (max-width:1023px){
+ .site-presentation #main-content:has(.technology-page) .operating-digital-layer{grid-template-columns:132px minmax(0,1fr);padding:14px 18px;gap:16px}
+ .site-presentation #main-content:has(.technology-page) .digital-mobile-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;margin:0}
+ .site-presentation #main-content:has(.technology-page) .operating-digital-screen[data-mobile-active=true]{grid-template-columns:minmax(115px,.75fr) minmax(0,1.25fr);min-height:152px;gap:6px 12px;padding:12px}
 }

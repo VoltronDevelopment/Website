@@ -27,3 +27,11 @@
 .meaning-node{cursor:pointer;outline:none}.meaning-node:hover rect,.meaning-node:focus-visible rect{stroke:var(--product-accent);stroke-width:2}.meaning-node:focus-visible text{font-weight:600}
 .product-record{overflow-wrap:anywhere}.product-record strong,.product-record small{max-width:100%}
 @media(max-width:767px){.meaning-mobile{grid-template-columns:repeat(2,minmax(0,1fr))}.meaning-mobile button{min-width:0;overflow-wrap:anywhere;padding-inline:8px}}
+.product-demo-body,.product-demo-body>*{min-width:0}
+.product-demo-body{grid-template-columns:minmax(0,1fr)}
+.product-presentation .product-twin .alpha-line-stage{min-width:0}
+.product-presentation .product-twin .details-dialog .alpha-line-panel{display:block}
+@media(min-width:768px){
+ .product-window .alpha-line-stage .alpha-inspector-trigger{display:inline-flex}
+ .product-presentation .product-twin .alpha-line-art{height:clamp(300px,44svh,460px)}
+}

@@ -14,8 +14,9 @@ export function DeferredArtwork({src,className,width=1280,height=1280}:{src:stri
 }
 
 /** Gate responsive sources too: native lazy thresholds differ between browsers. */
-export function DeferredPicture({children,className,style}:{children:ReactNode;className?:string;style?:CSSProperties}){
+export function DeferredPicture({children,className,style,initial=false}:{children:ReactNode;className?:string;style?:CSSProperties;initial?:boolean}){
   const {ref,near}=useNearbyArtwork('240px');
+  if(initial)return <picture className={className} style={style}>{children}</picture>;
   function defer(nodes:ReactNode):ReactNode{return Children.map(nodes,child=>{
     if(!isValidElement(child))return child;
     const element=child as ReactElement<Record<string,unknown>>;

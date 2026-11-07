@@ -1,3 +1,5 @@
+export const processSlugs = ["phosphating", "ced", "powder-coating"] as const;
+
 export const productionIntents = [
   "Production — Phosphating",
   "Production — CED Coating",
@@ -12,6 +14,7 @@ export const partnerIntents = [
   "Platform partnership",
   "Commons collaboration",
   "Building with Voltron",
+  "CTO opportunity",
   "Partnership — Other"
 ] as const;
 

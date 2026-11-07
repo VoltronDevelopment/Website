@@ -1,3 +1,4 @@
+import {launchAt} from "@/lib/launch";
 import type { Metadata } from "next";
 import { ComingSoonPage } from "@/components/coming-soon/ComingSoonPage";
 
@@ -9,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function ComingSoonRoute() {
-  return <ComingSoonPage/>;
+  return <ComingSoonPage now={Date.now()} opens={launchAt}/>;
 }

@@ -17,6 +17,9 @@ async function inspect(url,{limit=200000,square=false,minWidth=0}={}){
  if(m.width<minWidth)failures.push(`${url}: native width ${m.width} is below ${minWidth}`);
  return m;
 }
+for(const slug of ['phosphating','ced','powder'])for(const theme of ['light','dark']){
+ await inspect(`/surface-finishes/${slug}-${theme}.webp`,{minWidth:1120});
+}
 for(let i=0;i<6;i++)for(const theme of ['light','dark']){
  await inspect(`/agent-clouds/${i}-${theme}-small.webp`);
  await inspect(`/agent-clouds/${i}-${theme}.webp`,{limit:1200000,square:true});
@@ -27,7 +30,14 @@ for(const kind of ['owned','partnership','learning','products'])for(const theme 
  await inspect(`/network-scenes/${kind}-${theme}.webp`,{limit:1200000,minWidth:2240});
 }
 for(const theme of ['light','dark']){
- for(const [kind,count] of [['programs',5],['learning',4],['participation',3],['partner-paths',4],['partner-process',3]])for(let i=0;i<count;i++){
+ await inspect(`/heroes/network-complete-${theme}.webp`,{minWidth:960});
+ const globeHD=JSON.parse(fs.readFileSync('lib/scene-hd-posters.json','utf8')).network.complete[theme];
+ const globeOpenHD=JSON.parse(fs.readFileSync('lib/scene-hd-openings.json','utf8')).network;
+ for(const capture of [globeHD,...Object.values(globeOpenHD).map(device=>device[theme])]){
+  const metadata=await inspect(capture.url,{limit:1200000,minWidth:capture.width});
+  if(metadata&&(metadata.width!==capture.width||metadata.height!==capture.height))failures.push('Network globe capture does not match its manifest: '+capture.url);
+ }
+ for(const [kind,count] of [['workshop',1],['resources',1],['programs',5],['learning',4],['participation',3],['partner-paths',4],['partner-process',3]])for(let i=0;i<count;i++){
   await inspect(`/commons-scenes/${kind}-${i}-${theme}.webp`,{limit:350000,minWidth:1040});
   await inspect(`/commons-scenes/${kind}-${i}-mobile-${theme}.webp`,{minWidth:640});
  }
@@ -42,6 +52,14 @@ for(const theme of ['light','dark']){
  await inspect(`/philosophy-scenes/mobile-${theme}.webp`);
  await inspect(`/intelligence/portrait-refined-desktop-${theme}.webp`);
  await inspect(`/intelligence/portrait-refined-mobile-${theme}.webp`);
+ for(const kind of ['portrait','automotive','search'])for(const device of ['desktop','mobile']){
+  await inspect(`/leadership/${kind}-${device}-${theme}.webp`,{limit:350000,minWidth:device==='desktop'?1040:640});
+ }
+ for(const pose of ['opening','complete'])for(const device of ['desktop','mobile']){
+  await inspect(`/commons-scenes/tree-${pose}-${device}-${theme}.webp`,{limit:350000,minWidth:device==='desktop'?1040:640});
+  await inspect(`/stories/partner-scene-${device}-${theme}-${pose}.webp`,{limit:350000,minWidth:device==='desktop'?2240:960});
+ }
+
 }
 const lot=JSON.parse(fs.readFileSync('lib/lot-posters.json','utf8')),lotHD=JSON.parse(fs.readFileSync('lib/lot-hd-posters.json','utf8'));
 for(const device of ['desktop','mobile'])for(const theme of ['light','dark']){
