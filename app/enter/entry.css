@@ -94,7 +94,11 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 /* Keep the exact lettered mark readable when text is enlarged independently of the scene. */
 .entry-wordmark{flex-wrap:wrap;row-gap:.15em;padding-inline:16px}
 /* Entry remains available while decorative faces progress; preserve focus at the final reveal. */
-.entry-direct-link{position:absolute;z-index:5;bottom:24px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:8px 16px;color:var(--text-link);font-size:13px;white-space:nowrap}.entry-direct-link:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}.brand-entry[data-entry-enhanced=true][data-settled=true] .entry-direct-link:not(:focus){display:none}
+.entry-direct-link{position:absolute;z-index:5;bottom:24px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:44px;padding:8px 16px;color:var(--text-link);font-size:13px;white-space:nowrap}.entry-direct-link:focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}.entry-direct-link{transition:opacity .45s ease}
+.brand-entry[data-final-face=true] .entry-direct-link:not(:focus){opacity:0}
+.brand-entry[data-settled=true] .entry-direct-link:not(:focus){visibility:hidden}
+.entry-face-enter .identity-tile-caption{opacity:0;transition:opacity .5s ease-out}
+.brand-entry[data-final-face=true] .entry-face-enter .identity-tile-caption{opacity:1}
 
 /* Short landscape needs a lateral composition rather than a clipped vertical stack. */
 @media (max-height:520px) and (min-width:600px){
@@ -113,4 +117,22 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 @media(max-width:767px){
  .brand-entry:not(.launch-entry) .entry-wordmark{font-size:var(--mobile-wordmark-size);letter-spacing:.09em;gap:.5em;line-height:1.18}
  .entry-home-frame{height:clamp(252px,94.5vw,46svh)}
+}
+.travel-path{position:absolute;left:50%;top:calc(var(--header-height) + 24px);width:min(1000px,calc(100% - 2 * var(--gutter)));transform:translateX(-50%)}
+.travel-path .entry-home-frame{position:relative;width:100%;height:clamp(360px,62svh,720px);scale:.9}
+.travel-path canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0}
+.travel-path canvas[data-ready=true]:not([hidden]){opacity:1}
+.travel-path .entry-home-frame:has(canvas[data-ready=true]:not([hidden])) img{visibility:hidden}
+:root:not([data-theme=dark]) .travel-path .art-theme-dark,:root[data-theme=dark] .travel-path .art-theme-light{display:none}
+.entry-leaving .entry-stage{animation:departure-tile .65s ease-in forwards}
+.entry-leaving .travel-path{animation:departure-cube 2.7s linear both}
+.entry-leaving .entry-home-frame{mask-image:linear-gradient(to right,black 42%,transparent 58%);mask-size:250% 100%;animation:departure-erase 1.18s 1.52s linear both}
+@keyframes departure-tile{to{translate:-7vw 0;opacity:0}}
+@keyframes departure-cube{0%,12%{opacity:0}32%,100%{opacity:1}}
+@keyframes departure-erase{from{mask-position:0% center}to{mask-position:100% center}}
+
+@media(min-width:768px) and (max-width:1099px){body:has(.brand-entry){padding:16px}}
+@media(max-width:767px){
+ .travel-path{top:calc(var(--header-height) + 44px);width:calc(100% - 40px)}
+ .travel-path .entry-home-frame{height:clamp(325px,98vw,480px)}
 }

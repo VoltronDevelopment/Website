@@ -14,7 +14,7 @@ export function HomeMotion(){
   const saved=document.documentElement.dataset.entryHandoff;
   delete document.documentElement.dataset.entryHandoff;
   if(!saved||prefersStaticScene())return;
-  const {word,cube,at}=JSON.parse(saved);
+  const {word,at}=JSON.parse(saved);
   if(Date.now()-at>10000)return;
   const title=document.querySelector<HTMLElement>('#home-title');
   const first=title?.querySelector('span');
@@ -32,7 +32,8 @@ export function HomeMotion(){
   const ratio=word.width/target.width;
   const cx=word.left+(rect.left+rect.width/2-target.left)*ratio;
   move(title,new DOMRect(cx-rect.width*ratio/2,word.top+(word.height-rect.height*ratio)/2,rect.width*ratio,rect.height*ratio),rect);
-  move(stage,cube,stage.getBoundingClientRect());
+  stage.animate([{opacity:0},{opacity:1}],{duration:700,easing:'ease-out'});
+  document.querySelector('.site-header')?.animate([{opacity:0},{opacity:1}],{duration:420});
   document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.65},{opacity:1}],{duration:700});
  },[]);
  useEffect(()=>{

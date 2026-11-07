@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
-import {NativeOpening} from "../performance/NativeOpening";
+import {TravelCube} from "./TravelCube";
 import {EntryDissolve,entryExitMs} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
@@ -51,7 +51,7 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     function paint(){
       time=advanceEntryClock(time,0,duration,reduced());
       const state=entryStateAt(time);
-      root.dataset.phase=String(state.phase);root.dataset.settled=String(state.done);root.dataset.elapsed=time.toFixed(2);
+      root.dataset.finalFace=String(state.face===4);root.dataset.phase=String(state.phase);root.dataset.settled=String(state.done);root.dataset.elapsed=time.toFixed(2);
       root.dataset.motion=reduced()?"reduced":"full";
       root.style.setProperty("--entry-logo",String(state.logo));root.style.setProperty("--entry-wordmark",String(state.wordmark));root.style.setProperty("--entry-entrance",String(state.entrance));
       if(tile&&state.turn!==previousTurn){
@@ -98,10 +98,9 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     setLeaving(true);
     navigation.current=setTimeout(()=>{
       const name=host.current?.querySelector(".entry-word");
-      const frame=host.current?.querySelector(".entry-home-frame");
-      if(name&&frame){
-        const word=name.getBoundingClientRect(),cube=frame.getBoundingClientRect();
-        document.documentElement.dataset.entryHandoff=JSON.stringify({word,cube,at:Date.now()});
+      if(name){
+        const word=name.getBoundingClientRect();
+        document.documentElement.dataset.entryHandoff=JSON.stringify({word,at:Date.now()});
       }
       router.push("/?enter=1"+window.location.hash);
     },entryExitMs);
@@ -133,6 +132,6 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     </div>
     </div>
   {!children&&wordmark}
-  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><div className="entry-home-frame"><NativeOpening scene="home"/></div></div>}
+  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><TravelCube moving={leaving}/></div>}
   {leaving&&<EntryDissolve/>}</main>;
 }

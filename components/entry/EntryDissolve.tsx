@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 
 /** The particle front follows the same left-to-right sweep as the page mask. */
-export const entryExitMs = 1250;
+export const entryExitMs = 2700;
 export function EntryDissolve(){
   const ref=useRef<HTMLCanvasElement>(null);
   useEffect(()=>{
@@ -26,11 +26,16 @@ export function EntryDissolve(){
     function draw(now:number){
       const t=Math.min(1,(now-start)/entryExitMs);
       ctx!.clearRect(0,0,width,height);
-      root.style.setProperty("--entry-wipe",String(t*130-15)+"%");
+      const tileTime=Math.min(1,t*4);
+      root.style.setProperty("--entry-wipe",String(tileTime*150-25)+"%");
+      const departing=t>.56;
+      const cube=departing?root.querySelector(".entry-home-frame")?.getBoundingClientRect():null;
       for(const p of particles){
-        const u=(t-p.delay)/.24;if(u<=0||u>=1)continue;
+        const u=cube?((t-.56)/.44-(1-p.x/width)*.7)/.3:(tileTime-p.delay)/.24;if(u<=0||u>=1)continue;
         ctx!.globalAlpha=.8*Math.sin(Math.PI*u);
-        ctx!.fillRect(p.x+p.dx*u,p.y+p.dy*u*u,p.size,p.size);
+        const x=cube?cube.left-bounds.left+cube.width*(.32+.36*p.x/width):p.x;
+        const y=cube?cube.top-bounds.top+cube.height*(.25+.5*p.y/height):p.y;
+        ctx!.fillRect(x+p.dx*u,y+p.dy*u*u,p.size,p.size);
       }
       if(t<1)frame=requestAnimationFrame(draw);
     }

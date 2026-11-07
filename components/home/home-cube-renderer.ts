@@ -10,7 +10,7 @@ import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTur
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
 import type {PaneRole} from "./home-glass";
 
-type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean; sharp?: boolean};
+type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean; sharp?: boolean; openingTime?: number};
 type Cubie = {mesh: THREE.Group; sx: number; sy: number; sz: number; x: number; y: number; z: number; q: THREE.Quaternion};
 
 const TILE = 900;
@@ -163,7 +163,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     }
     const join = joined(now);
     const spacing = SPACING + (CUBIE - SPACING) * join;
-    const reach = STICKER + (spacing * 1.004 - STICKER) * join;
+    const reach = STICKER + (spacing - STICKER) * join;
     for (const cubie of cubies) {cubie.mesh.position.set(cubie.x * spacing, cubie.y * spacing, cubie.z * spacing); cubie.mesh.quaternion.copy(cubie.q);}
     for (const mesh of stickerMeshes) mesh.scale.set(reach / STICKER, reach / STICKER, 1);
     canvas.dataset.joined = join.toFixed(2);
@@ -216,7 +216,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     }
     if (atlas) for (const map of Object.values(atlas)) map.needsUpdate = true;
     for (const material of stickers) if (material.map) material.map.needsUpdate = true;
-    glasses.forEach((material,i)=>{setGlass(material,faceKinds[i],dark);material.opacity*=faceKinds[i]==='front'?.75:.92;material.envMapIntensity*=.8;});
+    glasses.forEach((material,i)=>{setGlass(material,faceKinds[i],dark);material.opacity*=faceKinds[i]==='front'?.75:.92;// Temper the grazing reflection at the exposed edge of the left text face.
+      material.envMapIntensity*=i===1?(dark?.57:.69):.8;});
 
   }
 
@@ -314,7 +315,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       if (disposed) return;
       await renderer.compileAsync(scene, camera);
       if (disposed) return;
-      if (options.immediate || motion.matches) time = homeCubeDuration+.55;
+      if (options.openingTime!==undefined) time=options.openingTime;
+      else if (options.immediate || motion.matches) time = homeCubeDuration+.55;
       size();
       resize.observe(host);
       themes.observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});

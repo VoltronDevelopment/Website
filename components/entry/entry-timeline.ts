@@ -1,6 +1,7 @@
 export const entryFlipDuration=.8;
 export const entryHoldDuration=3;
-export const entryDuration=5+4*entryFlipDuration+3*entryHoldDuration;
+const finalFlipDuration=1.15;
+export const entryDuration=5+3*(entryFlipDuration+entryHoldDuration)+finalFlipDuration;
 /** A preference change resolves immediately, including an already queued animation frame. */
 export function advanceEntryClock(time:number,delta:number,duration=entryDuration,reduced=false){
  if(reduced)return duration;
@@ -13,7 +14,7 @@ export function entryStateAt(seconds:number){
   let turn=0;
   for(let index=0;index<4;index++){
     const start=5+index*(entryFlipDuration+entryHoldDuration);
-    const phase=Math.max(0,Math.min(1,(t-start)/entryFlipDuration));
+    const phase=Math.max(0,Math.min(1,(t-start)/(index===3?finalFlipDuration:entryFlipDuration)));
     // Quintic easing joins the holds with zero speed and acceleration.
     turn+=phase*phase*phase*(phase*(phase*6-15)+10);
   }
