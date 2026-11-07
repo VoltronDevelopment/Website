@@ -341,3 +341,5 @@ img,svg { max-width:100%; } :focus-visible { outline:2px solid var(--blue); outl
   .pillar-rule { transform:scaleX(1); }
   .hero-below { opacity:1; transform:none; }
 }
+
+:root{--mobile-wordmark-size:clamp(22px,6.6vw,35px)}

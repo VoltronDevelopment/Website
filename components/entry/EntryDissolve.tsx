@@ -11,13 +11,14 @@ export function EntryDissolve(){
     const width=root.clientWidth,height=root.clientHeight,ratio=Math.min(2,devicePixelRatio);
     canvas.width=width*ratio;canvas.height=height*ratio;ctx.scale(ratio,ratio);
     const bounds=root.getBoundingClientRect();
-    const nodes=Array.from(root.querySelectorAll<HTMLElement>(".entry-logo,.entry-wordmark,.launch-details,.entry-controls"));
+    const nodes=Array.from(root.querySelectorAll<HTMLElement>(".entry-flip-card,.entry-letter,.launch-details,.entry-controls"));
     const areas=nodes.map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height);
     const particles=Array.from({length:Math.min(1600,Math.round(width*1.8))},(_,i)=>{
       const r=i%4?areas[i%areas.length]:null;
-      const x=r?r.left-bounds.left+Math.random()*r.width:Math.random()*width;
+      const edge=i%4;
+      const x=r?r.left-bounds.left+(edge===1?0:edge===2?1:Math.random())*r.width:Math.random()*width;
       const y=r?r.top-bounds.top+Math.random()*r.height:Math.random()*height;
-      return {x,y,delay:x/width*.76,dy:(Math.random()-.53)*90,dx:16+Math.random()*82,size:.45+Math.random()*.9};
+      return {x,y,delay:x/width*.76,dy:(Math.random()-.53)*90,dx:16+Math.random()*82,size:.65+Math.random()*1.35};
     });
     const dark=document.documentElement.dataset.theme==="dark";
     ctx.fillStyle=dark?"#96dbff":"#24689a";

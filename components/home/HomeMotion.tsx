@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from 'react';
+import {useEffect,useLayoutEffect,useState} from 'react';
 import {prefersStaticScene} from '../performance/scene-policy';
 
 /** Re-create optional Home scenes when the visitor changes the shared motion choice. */
@@ -10,6 +10,31 @@ export function useHomeMotion(){
 }
 export function HomeMotion(){
  const [off,setOff]=useState(false);
+ useLayoutEffect(()=>{
+  const saved=document.documentElement.dataset.entryHandoff;
+  delete document.documentElement.dataset.entryHandoff;
+  if(!saved||prefersStaticScene())return;
+  const {word,cube,at}=JSON.parse(saved);
+  if(Date.now()-at>10000)return;
+  const title=document.querySelector<HTMLElement>('#home-title');
+  const first=title?.querySelector('span');
+  const stage=document.querySelector<HTMLElement>('.home-lattice-art');
+  if(!title||!first||!stage)return;
+  title.style.animation='none';
+  const move=(element:HTMLElement,from:DOMRect,to:DOMRect)=>{
+   if(!to.width||!from.width)return;
+   const x=from.left+from.width/2-to.left-to.width/2;
+   const y=from.top+from.height/2-to.top-to.height/2;
+   element.animate([{transform:`translate(${x}px,${y}px) scale(${from.width/to.width})`},{transform:'none'}],{duration:480,easing:'cubic-bezier(.2,.75,.2,1)'});
+  };
+  const target=first.getBoundingClientRect();
+  const rect=title.getBoundingClientRect();
+  const ratio=word.width/target.width;
+  const cx=word.left+(rect.left+rect.width/2-target.left)*ratio;
+  move(title,new DOMRect(cx-rect.width*ratio/2,word.top+(word.height-rect.height*ratio)/2,rect.width*ratio,rect.height*ratio),rect);
+  move(stage,cube,stage.getBoundingClientRect());
+  document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.65},{opacity:1}],{duration:700});
+ },[]);
  useEffect(()=>{
   setOff(document.documentElement.dataset.artworkMotion==='off');
   const root=document.querySelector('.home-page');if(!root)return;

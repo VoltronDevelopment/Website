@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
-import scenePosters from "@/lib/scene-posters.json";
+import {NativeOpening} from "../performance/NativeOpening";
 import {EntryDissolve,entryExitMs} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
@@ -96,9 +96,18 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     event.preventDefault();
     if(prefersStaticScene()){router.push("/?enter=1"+window.location.hash);return;}
     setLeaving(true);
-    navigation.current=setTimeout(()=>router.push("/?enter=1"+window.location.hash),entryExitMs);
+    navigation.current=setTimeout(()=>{
+      const name=host.current?.querySelector(".entry-word");
+      const frame=host.current?.querySelector(".entry-home-frame");
+      if(name&&frame){
+        const word=name.getBoundingClientRect(),cube=frame.getBoundingClientRect();
+        document.documentElement.dataset.entryHandoff=JSON.stringify({word,cube,at:Date.now()});
+      }
+      router.push("/?enter=1"+window.location.hash);
+    },entryExitMs);
   }
 
+  const wordmark=<h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>;
   return <main id="main-content" ref={host} className={`brand-entry${children?" launch-entry":""}${leaving?" entry-leaving":""}`} data-phase="8" data-settled="true" data-paused={paused}>
 
     <div className="entry-presentation">{celebration}
@@ -118,10 +127,12 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
           <span className="entry-pulse" aria-hidden="true"/>
         </div>
       </div>
-      <h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>
+      {children&&wordmark}
       {!locked&&<Link prefetch={false} onClick={event=>enter(event,true)} className="entry-direct-link" href="/?enter=1" aria-label="Enter Lattice without waiting for the introduction">Enter Lattice<ArrowRight size={16} aria-hidden="true"/></Link>}
     {children}
     </div>
     </div>
-  {leaving&&<><div className="entry-home-reveal" aria-hidden="true">{(["light","dark"] as const).map(theme=><img key={theme} className={"art-theme-"+theme} src={scenePosters.home[theme]} alt=""/>)}</div><EntryDissolve/></>}</main>;
+  {!children&&wordmark}
+  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><div className="entry-home-frame"><NativeOpening scene="home"/></div></div>}
+  {leaving&&<EntryDissolve/>}</main>;
 }

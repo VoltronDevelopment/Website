@@ -40,7 +40,7 @@ export function bracketSheet(){
   ctx.stroke();
   ctx.strokeStyle=dark?'#58d4ff':'#1859ae';ctx.lineWidth=6;
   ctx.beginPath();ctx.moveTo(32,48);ctx.lineTo(32,73);ctx.stroke();
-  ctx.font='500 23px sans-serif';ctx.fillStyle=dark?'#b6d0e5':'#42596c';ctx.fillText('MOUNTING INTERFACE',58,70);ctx.textAlign='right';ctx.font='600 18px sans-serif';ctx.fillText('VOLTRON LATTICE   /   ENGINEERING',922,70);ctx.textAlign='left';
+  ctx.font='500 23px Montserrat, Arial, sans-serif';ctx.fillStyle=dark?'#b6d0e5':'#42596c';ctx.fillText('MOUNTING INTERFACE',58,70);ctx.textAlign='right';ctx.font='600 18px Montserrat, Arial, sans-serif';ctx.fillText('VOLTRON LATTICE   /   ENGINEERING',922,70);ctx.textAlign='left';
   let lift=0;
   for(let i=0;i<marks.length;i++){
    const mark=marks[i];if(position<mark.start)break;

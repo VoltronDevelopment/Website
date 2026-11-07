@@ -212,6 +212,14 @@
 }
 @media(max-width:767px){
  .site-presentation #main-content .home-page .hero.keyword-hero .hero-copy #home-title {
-  font-size:clamp(22px,6.6vw,35px);letter-spacing:.09em;column-gap:.5em;
+  font-size:var(--mobile-wordmark-size);letter-spacing:.09em;column-gap:.5em;
  }
+}
+
+.site-presentation #main-content .section .section-intro h2{font-weight:400}
+.site-presentation #main-content .section .section-intro>p:not(.eyebrow),
+.site-presentation #main-content .section .split-copy>p:not(.eyebrow){font-size:16px;line-height:1.65}
+.site-presentation #main-content .section article>p:not(.eyebrow){font-size:15px;line-height:1.6}
+@media(max-width:767px){
+ .site-presentation #main-content .technology-page :is(label,figcaption,small,.digital-screen-status,.operating-timeline,.technology-node>small){font-size:12px;line-height:1.5}
 }

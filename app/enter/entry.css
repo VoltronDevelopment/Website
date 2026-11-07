@@ -10,7 +10,7 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 @media (max-width:767px) { body:has(.brand-entry) { padding:10px; } .brand-entry { --entry-scene-height:calc(100svh - 20px); } .entry-presentation { border-radius:16px; } }
 @media (prefers-reduced-transparency:reduce),(prefers-contrast:more) { .entry-presentation,:root[data-theme="dark"] .entry-presentation { background:var(--canvas); backdrop-filter:none; -webkit-backdrop-filter:none; } }
 .brand-entry.entry-leaving {pointer-events:none}
-.entry-leaving .entry-presentation{mask-image:linear-gradient(90deg,transparent calc(var(--entry-wipe,-15%) - 8%),black calc(var(--entry-wipe,-15%) + 8%))}
+.entry-leaving .entry-presentation{mask-image:linear-gradient(90deg,transparent calc(var(--entry-wipe,-15%) - 17%),black calc(var(--entry-wipe,-15%) + 17%))}
 .entry-dissolve{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
 .entry-controls { position:absolute; z-index:5; top:24px; right:32px; display:flex; gap:8px; }
 .entry-controls .icon-button { background:transparent; }
@@ -104,6 +104,13 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
  .brand-entry .entry-direct-link{left:74%;bottom:24px}
 }
 
-.entry-home-reveal{position:absolute;inset:0;z-index:-1;display:grid;place-items:center;background:var(--canvas);border-radius:inherit}
-.entry-home-reveal img{width:min(90%,800px);max-height:60svh;object-fit:contain}
-:root:not([data-theme=dark]) .entry-home-reveal .art-theme-dark,:root[data-theme=dark] .entry-home-reveal .art-theme-light{display:none}
+
+.entry-home-reveal{position:absolute;inset:0;z-index:-1;display:grid;place-items:center;background:var(--canvas);visibility:hidden}
+.entry-leaving .entry-home-reveal{visibility:visible}
+.entry-home-frame{width:min(90%,900px);height:clamp(324px,56svh,648px)}
+.entry-home-frame picture,.entry-home-frame img{display:block;width:100%;height:100%;object-fit:contain}
+.entry-leaving .entry-letter{opacity:1;transform:none}
+@media(max-width:767px){
+ .brand-entry:not(.launch-entry) .entry-wordmark{font-size:var(--mobile-wordmark-size);letter-spacing:.09em;gap:.5em;line-height:1.18}
+ .entry-home-frame{height:clamp(252px,94.5vw,46svh)}
+}
