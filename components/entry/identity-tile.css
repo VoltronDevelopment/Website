@@ -8,8 +8,6 @@
 .identity-tile-pulse{position:absolute;inset:-12px;border:1px solid var(--blue);border-radius:26px;opacity:.3;animation:identity-box-pulse 2.5s ease-in-out infinite;animation-play-state:var(--identity-play);pointer-events:none}
 @keyframes identity-box-pulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.06)}}
 .entry-face-enter:has(.identity-tile){padding:0}
-.entry-logo:has([data-entry-face="4"]:not([hidden])){filter:none!important}
-.entry-logo:has([data-entry-face="4"]:not([hidden]))>.entry-logo-glow,.entry-logo:has([data-entry-face="4"]:not([hidden]))>.entry-pulse{visibility:hidden}
 .brand-entry[data-paused="true"] .identity-tile{--identity-play:paused}
 @media(max-width:767px){.identity-tile-face{gap:6px;padding:10px}.identity-tile-caption{font-size:14px;font-weight:600}.identity-tile-pulse{inset:-9px;border-radius:22px}}
 @media(prefers-reduced-motion:reduce){.identity-tile-pulse{animation:none}}

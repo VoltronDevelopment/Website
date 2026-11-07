@@ -10,7 +10,7 @@ import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
 import {NativeOpening} from "../performance/NativeOpening";
-import {EntryDissolve,entryExitMs} from "./EntryDissolve";
+import {startEntryDissolve} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
 
@@ -28,12 +28,12 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
   const [leaving,setLeaving]=useState(false);
   const [ready,setReady]=useState(false);
   const faceRef=useRef(0),readyRef=useRef(false);
-  const navigation=useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigation=useRef<(()=>void) | null>(null);
   const router=useRouter();
   useEffect(()=>{if(!locked)router.prefetch("/?enter=1");},[locked,router]);
   const [paused,setPaused]=useState(false);
   const pausedRef=useRef(false),motionControl=useRef<(()=>void) | null>(null);
-  useEffect(()=>()=>{if(navigation.current)clearTimeout(navigation.current);},[]);
+  useEffect(()=>()=>{navigation.current?.();},[]);
   useEffect(()=>{
     if(!host.current)return;
     const root=host.current;
@@ -62,11 +62,14 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
       const reveal=(start:number)=>{const t=Math.max(0,Math.min(1,(time-start)/1.1));return t*t*(3-2*t);};
       root.style.setProperty("--coming-tagline",String(reduced()?1:reveal(5.8)));
       root.style.setProperty("--coming-date",String(reduced()?1:reveal(7.5)));
-      // Every face is already mounted and its images requested. Switch at the
-      // edge-on midpoint in this same frame, before the new side becomes visible.
-      if(faceRef.current!==state.face){
-        root.querySelectorAll<HTMLElement>("[data-entry-face]").forEach(element=>{element.hidden=Number(element.dataset.entryFace)!==state.face;});
-        faceRef.current=state.face;
+      // Swap the back-side artwork during a hold while that side is facing away.
+      const front=Math.floor(state.turn);
+      if(faceRef.current!==front){
+        root.querySelectorAll<HTMLElement>("[data-entry-face]").forEach(element=>{
+          const face=Number(element.dataset.entryFace);
+          element.hidden=face!==front&&face!==front+1;
+        });
+        faceRef.current=front;
       }
       if(state.face===4&&document.activeElement?.classList.contains('entry-direct-link')){
         root.querySelector<HTMLAnchorElement>('.entry-face-enter')?.focus({preventScroll:true});
@@ -99,7 +102,9 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     event.preventDefault();
     if(prefersStaticScene()){router.push("/?enter=1"+window.location.hash);return;}
     setLeaving(true);
-    navigation.current=setTimeout(()=>{
+    if(!host.current)return;
+    navigation.current=startEntryDissolve(host.current,()=>{
+      navigation.current=null;
       const name=host.current?.querySelector(".entry-word");
       if(name){
         const word=name.getBoundingClientRect();
@@ -116,7 +121,7 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
         window.setTimeout(()=>bridge.remove(),5000);
       }
       router.push("/?enter=1"+window.location.hash);
-    },entryExitMs);
+    });
   }
 
   const wordmark=<h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>;
@@ -133,7 +138,7 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
             {["top","bottom","left","right"].map(side=><span className={`entry-body-wall entry-body-${side}`} aria-hidden="true" key={side}/>)}
             {curvedEdges.map((style,index)=><span className="entry-body-curve" aria-hidden="true" key={index} style={style}/>)}
             {[0,1,2,3,4].map(face=><div key={face} className="entry-face" data-entry-face={face} hidden={face!==0} style={{"--face-turn":face%2} as CSSProperties}>
-              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:locked?<IdentityTile/>:<Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event,true)} aria-disabled={leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
+              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:locked?<IdentityTile effects={false}/>:<Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event,true)} aria-disabled={leaving} tabIndex={ready?0:-1}><IdentityTile effects={false} caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
             </div>)}
           </div></div>
           <span className="entry-pulse" aria-hidden="true"/>
@@ -146,5 +151,5 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     </div>
   {!children&&wordmark}
   {!locked&&<div className="entry-home-reveal" aria-hidden="true"><div className="travel-path"><div className="entry-home-frame"><NativeOpening scene="home"/></div></div></div>}
-  {leaving&&<EntryDissolve/>}</main>;
+  </main>;
 }

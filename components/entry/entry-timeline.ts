@@ -14,8 +14,8 @@ export function entryStateAt(seconds:number){
   for(let index=0;index<4;index++){
     const start=5+index*(entryFlipDuration+entryHoldDuration);
     const phase=Math.max(0,Math.min(1,(t-start)/entryFlipDuration));
-    // Quintic easing joins the holds with zero speed and acceleration.
-    turn+=phase*phase*phase*(phase*(phase*6-15)+10);
+    // Smoothstep reduces peak angular speed through the edge-on frame.
+    turn+=ease(phase);
   }
   return {
     time:t,
