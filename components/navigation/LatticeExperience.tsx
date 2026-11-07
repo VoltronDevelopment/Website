@@ -89,7 +89,11 @@ export function LatticeExperience({children}:{children:ReactNode}){
   const mount=useCallback(async(value:Slot,immediate:boolean,token:number)=>{
     if(!canvas.current)return;
     if(prefersStaticScene()){controller.current?.pause();value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}
-    await yieldToBrowser();if(token!==generation.current)return;
+    // Keep the matching opening plate on screen while particles are painting.
+    if(value.kind==="home"&&document.querySelector("[data-entry-sweep]")){
+      await new Promise<void>(resolve=>window.addEventListener("voltron:entry-sweep-finished",()=>resolve(),{once:true}));
+    }
+    await yieldToBrowser();if(token!==generation.current||!value.node.isConnected)return;
     resources.current??=import("./lattice-resources").then(module=>module.createLatticeResources(canvas.current!));
     const prepared=await Promise.all([resources.current,import("../home/hero-renderer")]).catch(()=>null);
     if(!prepared){unavailable.current=true;value.node.dataset.scenePose="complete";value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}

@@ -5,6 +5,7 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   const width=innerWidth,height=innerHeight,ratio=Math.min(2,devicePixelRatio);
   const overlay=document.createElement("div");
   overlay.inert=true;
+  overlay.dataset.entrySweep="";
   overlay.setAttribute("aria-hidden","true");
   Object.assign(overlay.style,{position:"fixed",inset:"0",zIndex:"1000",pointerEvents:"none"});
   const surface=document.createElement("div");
@@ -51,12 +52,12 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
     if(ctx)ctx.fillStyle=dark?"#96dbff":"#24689a";
   let frame=0,elapsed=0,last=performance.now(),submitted=false;
   const started=last;
-  const cleanup=()=>{cancelAnimationFrame(frame);overlay.remove();presentation.style.visibility="";};
+  const cleanup=()=>{cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
   function draw(now:number){
     const waiting=submitted&&!document.querySelector("#home-title")&&elapsed>2000&&now-started<8000;
-    if(!waiting)elapsed+=now-last;
+    if(!waiting)elapsed+=Math.min(now-last,32);
     last=now;
-    const t=Math.min(1,elapsed/3400);
+    const t=Math.min(1,elapsed/4400);
     const front=-14+128*t;
     surface.style.maskImage=`linear-gradient(90deg,transparent ${front-10}%,black ${front+10}%)`;
     ctx?.clearRect(0,0,width,height);
