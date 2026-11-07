@@ -10,7 +10,7 @@ import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTur
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
 import type {PaneRole} from "./home-glass";
 
-type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean; sharp?: boolean; openingTime?: number};
+type Options = {immediate?: boolean; deferStart?: boolean; shared?: SharedHeroResources; static?: boolean; sharp?: boolean};
 type Cubie = {mesh: THREE.Group; sx: number; sy: number; sz: number; x: number; y: number; z: number; q: THREE.Quaternion};
 
 const TILE = 900;
@@ -315,8 +315,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       if (disposed) return;
       await renderer.compileAsync(scene, camera);
       if (disposed) return;
-      if (options.openingTime!==undefined) time=options.openingTime;
-      else if (options.immediate || motion.matches) time = homeCubeDuration+.55;
+      if (options.immediate || motion.matches) time = homeCubeDuration+.55;
       size();
       resize.observe(host);
       themes.observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});

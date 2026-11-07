@@ -9,7 +9,7 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
-import {TravelCube} from "./TravelCube";
+import {NativeOpening} from "../performance/NativeOpening";
 import {EntryDissolve,entryExitMs} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
@@ -68,6 +68,9 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
         root.querySelectorAll<HTMLElement>("[data-entry-face]").forEach(element=>{element.hidden=Number(element.dataset.entryFace)!==state.face;});
         faceRef.current=state.face;
       }
+      if(state.face===4&&document.activeElement?.classList.contains('entry-direct-link')){
+        root.querySelector<HTMLAnchorElement>('.entry-face-enter')?.focus({preventScroll:true});
+      }
       if(readyRef.current!==state.done){readyRef.current=state.done;setReady(state.done);}
     }
     function stop(){cancelAnimationFrame(frame);frame=0;previous=0;root.dataset.playing="false";}
@@ -102,6 +105,16 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
         const word=name.getBoundingClientRect();
         document.documentElement.dataset.entryHandoff=JSON.stringify({word,at:Date.now()});
       }
+      const plate=host.current?.querySelector<HTMLElement>(".entry-home-frame");
+      const image=Array.from(plate?.querySelectorAll("img")??[]).find(img=>img.getBoundingClientRect().width>0);
+      if(plate&&image?.complete&&image.naturalWidth){
+        const bounds=plate.getBoundingClientRect();
+        const bridge=document.createElement("img");
+        bridge.src=image.currentSrc;bridge.alt="";bridge.dataset.entryCubeBridge="";
+        Object.assign(bridge.style,{position:"fixed",left:bounds.left+"px",top:bounds.top+"px",width:bounds.width+"px",height:bounds.height+"px",objectFit:"contain",pointerEvents:"none",zIndex:"20"});
+        document.body.append(bridge);
+        window.setTimeout(()=>bridge.remove(),5000);
+      }
       router.push("/?enter=1"+window.location.hash);
     },entryExitMs);
   }
@@ -120,7 +133,7 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
             {["top","bottom","left","right"].map(side=><span className={`entry-body-wall entry-body-${side}`} aria-hidden="true" key={side}/>)}
             {curvedEdges.map((style,index)=><span className="entry-body-curve" aria-hidden="true" key={index} style={style}/>)}
             {[0,1,2,3,4].map(face=><div key={face} className="entry-face" data-entry-face={face} hidden={face!==0} style={{"--face-turn":face%2} as CSSProperties}>
-              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:locked?<IdentityTile/>:<Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event)} aria-disabled={!ready || leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
+              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:locked?<IdentityTile/>:<Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event,true)} aria-disabled={leaving} tabIndex={ready?0:-1}><IdentityTile caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
             </div>)}
           </div></div>
           <span className="entry-pulse" aria-hidden="true"/>
@@ -132,6 +145,6 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     </div>
     </div>
   {!children&&wordmark}
-  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><TravelCube moving={leaving}/></div>}
+  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><div className="travel-path"><div className="entry-home-frame"><NativeOpening scene="home"/></div></div></div>}
   {leaving&&<EntryDissolve/>}</main>;
 }

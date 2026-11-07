@@ -32,7 +32,12 @@ export function HomeMotion(){
   const ratio=word.width/target.width;
   const cx=word.left+(rect.left+rect.width/2-target.left)*ratio;
   move(title,new DOMRect(cx-rect.width*ratio/2,word.top+(word.height-rect.height*ratio)/2,rect.width*ratio,rect.height*ratio),rect);
-  stage.animate([{opacity:0},{opacity:1}],{duration:700,easing:'ease-out'});
+  const bridge=document.querySelector<HTMLElement>('[data-entry-cube-bridge]');
+  if(bridge){
+    const opening=Array.from(stage.querySelectorAll<HTMLImageElement>('.native-opening-plate img')).find(img=>img.getBoundingClientRect().width>0);
+    const release=()=>{bridge.animate([{opacity:1},{opacity:0}],{duration:180,fill:'forwards'}).finished.then(()=>bridge.remove());};
+    if(opening)void opening.decode().then(release,release);else release();
+  }
   document.querySelector('.site-header')?.animate([{opacity:0},{opacity:1}],{duration:420});
   document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.65},{opacity:1}],{duration:700});
  },[]);

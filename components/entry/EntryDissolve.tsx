@@ -14,7 +14,7 @@ export function EntryDissolve(){
     const nodes=Array.from(root.querySelectorAll<HTMLElement>(".entry-flip-card,.entry-letter,.launch-details,.entry-controls"));
     const areas=nodes.map(n=>n.getBoundingClientRect()).filter(r=>r.width&&r.height);
     const particles=Array.from({length:Math.min(1600,Math.round(width*1.8))},(_,i)=>{
-      const r=i%4?areas[i%areas.length]:null;
+      const r=i%2?areas[i%areas.length]:null;
       const edge=i%4;
       const x=r?r.left-bounds.left+(edge===1?0:edge===2?1:Math.random())*r.width:Math.random()*width;
       const y=r?r.top-bounds.top+Math.random()*r.height:Math.random()*height;
@@ -26,16 +26,12 @@ export function EntryDissolve(){
     function draw(now:number){
       const t=Math.min(1,(now-start)/entryExitMs);
       ctx!.clearRect(0,0,width,height);
-      const tileTime=Math.min(1,t*4);
+      const tileTime=Math.min(1,t*1.18);
       root.style.setProperty("--entry-wipe",String(tileTime*150-25)+"%");
-      const departing=t>.56;
-      const cube=departing?root.querySelector(".entry-home-frame")?.getBoundingClientRect():null;
       for(const p of particles){
-        const u=cube?((t-.56)/.44-(1-p.x/width)*.7)/.3:(tileTime-p.delay)/.24;if(u<=0||u>=1)continue;
+        const u=(tileTime-p.delay)/.24;if(u<=0||u>=1)continue;
         ctx!.globalAlpha=.8*Math.sin(Math.PI*u);
-        const x=cube?cube.left-bounds.left+cube.width*(.32+.36*p.x/width):p.x;
-        const y=cube?cube.top-bounds.top+cube.height*(.25+.5*p.y/height):p.y;
-        ctx!.fillRect(x+p.dx*u,y+p.dy*u*u,p.size,p.size);
+        ctx!.fillRect(p.x+p.dx*u,p.y+p.dy*u*u,p.size,p.size);
       }
       if(t<1)frame=requestAnimationFrame(draw);
     }
