@@ -14,24 +14,14 @@ export function HomeMotion(){
   const saved=document.documentElement.dataset.entryHandoff;
   delete document.documentElement.dataset.entryHandoff;
   if(!saved||prefersStaticScene())return;
-  const {word,at}=JSON.parse(saved);
+  const {at}=JSON.parse(saved);
   if(Date.now()-at>10000)return;
   const title=document.querySelector<HTMLElement>('#home-title');
   const first=title?.querySelector('span');
   const stage=document.querySelector<HTMLElement>('.home-lattice-art');
   if(!title||!first||!stage)return;
   title.style.animation='none';
-  const move=(element:HTMLElement,from:DOMRect,to:DOMRect)=>{
-   if(!to.width||!from.width)return;
-   const x=from.left+from.width/2-to.left-to.width/2;
-   const y=from.top+from.height/2-to.top-to.height/2;
-   element.animate([{transform:`translate(${x}px,${y}px) scale(${from.width/to.width})`},{transform:'none'}],{duration:480,easing:'cubic-bezier(.2,.75,.2,1)'});
-  };
-  const target=first.getBoundingClientRect();
-  const rect=title.getBoundingClientRect();
-  const ratio=word.width/target.width;
-  const cx=word.left+(rect.left+rect.width/2-target.left)*ratio;
-  move(title,new DOMRect(cx-rect.width*ratio/2,word.top+(word.height-rect.height*ratio)/2,rect.width*ratio,rect.height*ratio),rect);
+  if(document.querySelector('[data-entry-travel-title]'))title.style.visibility='hidden';
   const bridge=document.querySelector<HTMLElement>('[data-entry-cube-bridge]');
   if(bridge){
     const opening=Array.from(stage.querySelectorAll<HTMLImageElement>('.native-opening-plate img')).find(img=>img.getBoundingClientRect().width>0);
@@ -39,7 +29,7 @@ export function HomeMotion(){
     if(opening)void opening.decode().then(release,release);else release();
   }
   document.querySelector('.site-header')?.animate([{opacity:0},{opacity:1}],{duration:420});
-  document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.65},{opacity:1}],{duration:700});
+  document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.78},{opacity:1}],{duration:1500});
  },[]);
  useEffect(()=>{
   setOff(document.documentElement.dataset.artworkMotion==='off');

@@ -65,15 +65,18 @@ export function createSceneHandoff(host:HTMLElement,canvas:HTMLCanvasElement,imm
     reveal(){
       if(disposed||host.isConnected===false)return Promise.resolve();
       cancel();
-      if(immediate||host.closest?.('.home-page')){progress(1);host.dataset.sceneState='live';return Promise.resolve();}
-      try{composite=useComposite();if(!composite)blend=snapshot();}catch{/* A blocked canvas readback can still dissolve safely. */}
+      if(immediate){progress(1);host.dataset.sceneState='live';return Promise.resolve();}
+      // Home keeps the real WebGL canvas docked over its matching, fixed poster.
+      // Blend the two in place; a WebGL readback after compilation can be empty.
+      const home=!!host.closest?.('.home-page');
+      try{composite=useComposite();if(!composite&&!home)blend=snapshot();}catch{/* A blocked canvas readback can still dissolve safely. */}
       host.dataset.sceneState='handoff';progress(0);
       return new Promise<void>(resolve=>{
         finish=resolve;let elapsed=0,previous=0;
         const tick=(now:number)=>{
           if(disposed||host.isConnected===false){cancel();return;}
           if(!document.hidden)elapsed+=previous?Math.min(40,now-previous):0;previous=now;
-          const value=matchMedia('(prefers-reduced-motion: reduce)').matches||new URLSearchParams(location.search).has('scene-capture')?1:Math.min(1,elapsed/240);
+          const value=matchMedia('(prefers-reduced-motion: reduce)').matches||new URLSearchParams(location.search).has('scene-capture')?1:Math.min(1,elapsed/(home?850:240));
           progress(value*value*(3-2*value));
           if(value<1)frame=requestAnimationFrame(tick);
           else {frame=0;releaseComposite();blend?.overlay.remove();blend=undefined;host.dataset.sceneState='live';finish=undefined;resolve();}

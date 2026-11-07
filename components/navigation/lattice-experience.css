@@ -17,3 +17,6 @@
 @keyframes lattice-loading { from {transform:scaleX(.15);} to {transform:scaleX(.8);} }
 @media (max-width:767px) { :root[data-route-state="incoming"] .site-presentation .hero-copy:not(.route-copy-snapshot) { animation-duration:.18s; animation-delay:.02s; } }
 @media (prefers-reduced-motion:reduce) { .persistent-lattice-stage[data-transition="fade"],:root[data-route-state="incoming"] .site-presentation .hero-copy,:root[data-route-state="incoming"] .site-presentation .hero-grid > div:last-child,.route-loading > span:first-child { animation:none; } }
+
+/* The continuous entry sweep owns the title and subtitle entrance. */
+:root:has([data-entry-sweep]) .site-presentation .home-hero .hero-grid>.hero-copy{animation:none}

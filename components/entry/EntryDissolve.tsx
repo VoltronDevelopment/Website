@@ -25,7 +25,7 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   Object.assign(canvas.style,{position:"absolute",inset:"0",width:"100%",height:"100%",pointerEvents:"none"});
   overlay.append(surface,canvas);document.body.append(overlay);
   presentation.style.visibility="hidden";
-  // The wordmark sits outside the outgoing surface. Reveal it through both layers.
+  // One foreground wordmark survives the route change and settles into the live title.
   const name=root.querySelector<HTMLElement>(".entry-wordmark");
   const wordCopy=name?.cloneNode(true) as HTMLElement|undefined;
   if(name&&wordCopy){
@@ -35,8 +35,15 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
       const style=getComputedStyle(node);for(const key of style)target.style.setProperty(key,style.getPropertyValue(key));
     }
     Object.assign(wordCopy.style,{position:"absolute",left:r.left+"px",top:r.top+"px",width:r.width+"px",margin:"0"});
-    surface.append(wordCopy);
+    wordCopy.dataset.entryTravelTitle="";
+    overlay.append(wordCopy);
+    name.style.visibility="hidden";
   }
+  const words=Array.from(wordCopy?.querySelectorAll<HTMLElement>(".entry-word")??[]);
+  const starts=words.map(word=>word.getBoundingClientRect());
+  let title:HTMLElement|null=null;
+  let textStart=0;
+  const restoreTitle=()=>{if(name)name.style.visibility="";if(title)title.style.visibility="";};
   const ctx=canvas.getContext("2d");
   ctx?.scale(ratio,ratio);
     const nodes=Array.from(root.querySelectorAll<HTMLElement>(".entry-flip-card,.entry-letter,.launch-details,.entry-controls"));
@@ -52,12 +59,29 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
     if(ctx)ctx.fillStyle=dark?"#96dbff":"#24689a";
   let frame=0,elapsed=0,last=performance.now(),submitted=false;
   const started=last;
-  const cleanup=()=>{cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
+  const prepareCube=()=>{if(overlay.dataset.entrySweep==="blend")return;overlay.dataset.entrySweep="blend";window.dispatchEvent(new Event("voltron:entry-cube-prepare"));};
+  const cleanup=()=>{restoreTitle();prepareCube();cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
   function draw(now:number){
     const waiting=submitted&&!document.querySelector("#home-title")&&elapsed>2000&&now-started<8000;
     if(!waiting)elapsed+=Math.min(now-last,32);
     last=now;
+    if(wordCopy&&!title){
+      title=document.querySelector<HTMLElement>("#home-title");
+      if(title){title.style.visibility="hidden";textStart=elapsed;}
+    }
+    if(title&&wordCopy){
+      const fraction=Math.min(1,(elapsed-textStart)/1150);
+      const ease=fraction*fraction*(3-2*fraction);
+      words.forEach((word,i)=>{
+        const dest=title!.children[i]?.getBoundingClientRect(),from=starts[i];
+        if(!dest||!from.width||!from.height)return;
+        word.style.transformOrigin="left top";
+        word.style.transform=`translate(${(dest.left-from.left)*ease}px,${(dest.top-from.top)*ease}px) scale(${1+(dest.width/from.width-1)*ease},${1+(dest.height/from.height-1)*ease})`;
+      });
+      if(fraction===1){title.style.visibility="visible";wordCopy.style.opacity="0";}
+    }
     const t=Math.min(1,elapsed/4400);
+    if(t>=.64)prepareCube();
     const front=-14+128*t;
     surface.style.maskImage=`linear-gradient(90deg,transparent ${front-10}%,black ${front+10}%)`;
     ctx?.clearRect(0,0,width,height);
