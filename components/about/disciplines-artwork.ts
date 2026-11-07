@@ -26,8 +26,8 @@ export function disciplinesArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
   const key=[dark,selected,complete].join('/');
   if(printed===key)return;
   printed=key;
-  ink.fillStyle=dark?'#0b2246':'#eaf5ff';ink.fillRect(0,0,960,640);
-  ink.fillStyle=dark?'#62c7ed':'#176fba';ink.fillRect(0,0,960,13);
+  ink.fillStyle=dark?'#091e35':'#eff6fb';ink.fillRect(0,0,960,640);
+  ink.fillStyle=dark?'#64cfee':'#185db2';ink.fillRect(0,0,960,13);
   ink.fillStyle=dark?'#a5e1ff':'#164a76';ink.font='500 62px sans-serif';ink.fillText('MOUNTING BORE',58,105);
   ink.strokeStyle=dark?'#294261':'#c4daef';ink.lineWidth=2;
   ink.beginPath();

@@ -125,11 +125,22 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
  const dispatchRoot=new T.Group();dispatchRoot.position.x=-16;root.add(dispatchRoot);
  const parcel=box(root,[.9,.8,.8],[7,1.02,5.2],glass);box(dispatchRoot,[1.8,.015,1.5],[7,-.02,5.2],navy);
 
- function handler(){const g=new T.Group();root.add(g);box(g,[1.2,.6,.9],[0,.4,0],navy);box(g,[.15,1.8,.15],[.65,1,0],metal);const forks=new T.Group();g.add(forks);for(const z of [-.3,.3]){box(forks,[.9,handlingGeometry.forkThickness,.09],[1.05,0,z],metal);box(g,[.07,1.6,.07],[.45,1.1,z],metal);}box(g,[.7,.1,.9],[0,1.8,0],pearl);
+ function handler(){const wheels:T.Group[]=[];const g=new T.Group();root.add(g);box(g,[1.2,.6,.9],[0,.4,0],navy);box(g,[.15,1.8,.15],[.65,1,0],metal);const forks=new T.Group();g.add(forks);for(const z of [-.3,.3]){box(forks,[.9,handlingGeometry.forkThickness,.09],[1.05,0,z],metal);box(g,[.07,1.6,.07],[.45,1.1,z],metal);}box(g,[.7,.1,.9],[0,1.8,0],pearl);
  for(const z of [-.4,.4]){box(g,[.045,1.1,.045],[-.32,1.2,z],metal,.01);box(g,[.045,1.1,.045],[.31,1.2,z],metal,.01);}
  box(g,[.32,.45,.48],[-.22,.75,0],steelDark,.035);box(g,[.4,.09,.5],[0,.55,0],steelDark,.02);box(g,[.16,.6,.5],[.31,.75,0],navy,.025);
- box(g,[.2,.4,.76],[-.52,.44,0],polished,.035);for(const x of [-.4,.4])for(const z of [-.47,.47]){const w=new T.Mesh(own(new T.CylinderGeometry(.2,.2,.12,12)),navy);w.rotation.x=Math.PI/2;w.position.set(x,.2,z);g.add(w);}return {g,forks};}
+ box(g,[.2,.4,.76],[-.52,.44,0],polished,.035);for(const x of [-.4,.4])for(const z of [-.47,.47]){const w=new T.Mesh(own(new T.CylinderGeometry(.2,.2,.12,12)),navy);w.rotation.x=Math.PI/2;const axle=new T.Group();axle.position.set(x,.2,z);g.add(axle);axle.add(w);
+ box(axle,[.20,.035,.016],[0,0,Math.sign(z)*.067],metal,.005);wheels.push(axle);}
+ const lastPosition=new T.Vector3();let lastTime=-1,angle=0;
+ function roll(time:number){
+  if(lastTime>=0&&Math.abs(time-lastTime)<.4){
+   const dx=g.position.x-lastPosition.x,dz=g.position.z-lastPosition.z;
+   angle-=(dx*Math.cos(g.rotation.y)-dz*Math.sin(g.rotation.y))/.2;
+  }
+  wheels.forEach(wheel=>{wheel.rotation.z=angle;});lastPosition.copy(g.position);lastTime=time;
+ }
+ return {g,forks,roll};}
  const receiver=handler(),loader=handler();
+ const seatedForkHeight=operatingState(24).palletY+handlingGeometry.receiveForkOffset;
  // Fixed-length nested sleeves make the dispatch reach visible without stretching the forks.
  const reachStages=[new T.Group(),new T.Group()];loader.forks.add(reachStages[0]);reachStages[0].add(reachStages[1]);
  reachStages.forEach((stage,i)=>{for(const z of [-.3,.3])box(stage,[.74,.018,.075-i*.016],[1.13,0,z],i===0?steelDark:polished,.003);});
@@ -163,7 +174,11 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   dockBridge.visible=state.bridge>0;dockBridge.scale.x=Math.max(.001,state.bridge);dockBridge.position.x=-9.475-1.1*state.bridge/2;
   pallet.visible=state.time>=6&&state.time<24;pallet.position.set(state.part.x,state.palletY,state.part.z);
   receiver.g.visible=state.time>=11&&state.time<26;receiver.g.rotation.y=state.handlerYaw;receiver.g.position.set(state.part.x-Math.cos(state.handlerYaw)*1.05,0,state.part.z+Math.sin(state.handlerYaw)*1.05);receiver.forks.position.y=state.palletY+handlingGeometry.receiveForkOffset;
-  if(state.time>=24){const p=Math.min(1,(state.time-24)/2);receiver.g.position.set(-5-p*3,0,factoryLayout.wetLineZ);receiver.forks.position.y=.2;}
+  if(state.time>=24){
+   const retreat=T.MathUtils.smoothstep(state.time,24.3,26);
+   receiver.g.position.set(-4+1.05+retreat*1.4,0,factoryLayout.wetLineZ);
+   receiver.forks.position.y=T.MathUtils.lerp(seatedForkHeight,.2,T.MathUtils.smoothstep(state.time,24,24.3));
+  }
   carrier.position.set(state.time>=58?-4:state.carrier.x,0,state.time>=58?factoryLayout.returnLineZ:state.carrier.z);carrier.rotation.y=state.carrierYaw;turntables[0].rotation.y=-Math.PI/2*T.MathUtils.smoothstep(state.time,39.4,39.9);turntables[1].rotation.y=-Math.PI/2-Math.PI/2*T.MathUtils.smoothstep(state.time,52.3,52.8);carrier.visible=true;
   trolley.position.z=0;
   const attach=T.MathUtils.smoothstep(state.time,23,24)*(1-T.MathUtils.smoothstep(state.time,58,59));
@@ -182,6 +197,7 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   outbound.g.position.set(state.outboundX,0,6);outbound.g.visible=state.time>=67;outbound.update(state.outboundX,state.outboundDoor);outbound.roof.material=state.outboundDoor>.1?glass:pearl;
   loader.g.visible=state.time>=72&&state.time<80;loader.g.rotation.y=0;loader.g.position.set(Math.min(state.part.x-1.05,-8.8),0,state.part.z);loader.forks.position.y=handlingGeometry.dispatchForkHeight;const reach=dispatchReach(state.time,state.part.x);reachStages.forEach((stage,i)=>stage.position.x=reach.stages[i]);
   if(state.time>=78){loader.g.position.x=-8.8-(state.time-78)*1.3;loader.forks.scale.x=1;loader.forks.position.x=0;}
+  receiver.roll(state.time);loader.roll(state.time);
   scan.position.y=1.4-state.receiving*.8;scan.visible=state.time>=14.7&&state.time<16.5;receivingScanMaterial.opacity=scan.visible?.2*Math.sin(state.receiving*Math.PI):0;
   const baths=tanks.map(tank=>factoryBathState(state.time,tank.index));
   const draining=baths.find(bath=>bath.draining);

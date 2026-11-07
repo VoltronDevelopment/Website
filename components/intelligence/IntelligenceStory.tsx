@@ -15,13 +15,23 @@ function RecordSheet({title,children,open,onClose}:{title:string;children:React.
  const ref=useInspectorSheet(open),id=useId();
  return <dialog onKeyDown={containDialogFocus} ref={ref} className="intelligence-sheet" aria-labelledby={id} onCancel={onClose} onClose={e=>{if(!e.currentTarget.open)onClose();}} onClick={e=>{if(isDialogBackdropClick(e))onClose();}}><header><h3 id={id}>{title}</h3><button type="button" aria-label="Close details" onClick={onClose}><X size={20}/></button></header>{children}</dialog>;
 }
-function LotBadge(){return <div className="investigation-identity"><span>{investigation.lot}</span><span>{investigation.station}</span><span>Connected to Technology</span></div>;}
-function RecordDetail({selected}:{selected:number}){return <><p className="eyebrow">Connected evidence</p><h3>{evidenceSources[selected][0]}</h3><p>{evidenceSources[selected][1]}</p><dl className="record-provenance"><div><dt>Identity</dt><dd>{investigation.lot}</dd></div><div><dt>Operation</dt><dd>{investigation.station}</dd></div><div><dt>Retained</dt><dd>Source · time · revision</dd></div></dl></>;}
+function LotBadge(){return <div className="investigation-identity"><span>{investigation.lot}</span><span>{investigation.station}</span><span>Illustrative investigation</span></div>;}
+const sourceChecks=[
+ 'Match the channel and reading time to this operation.',
+ 'Match the inspected feature and inspection method to the requirement.',
+ 'Check the instrument identity and calibration validity on the measurement date.',
+ 'Link the nonconformance to the affected lot and its corrective action.',
+ 'Confirm the document owner and the revision used for the operation.',
+ 'Match the sample identity and test method to the lot.',
+ 'Verify the issuer and the material or lot covered by the certificate.',
+ 'Check who made the observation, when, and at which station.',
+] as const;
+function RecordDetail({selected}:{selected:number}){return <><p className="eyebrow">Connected evidence</p><h3>{evidenceSources[selected][0]}</h3><p>{evidenceSources[selected][1]}</p><dl className="record-provenance"><div><dt>Identity</dt><dd>{investigation.lot}</dd></div><div><dt>Operation</dt><dd>{investigation.station}</dd></div></dl><div className="evidence-check"><strong>Check before review</strong><p>{sourceChecks[selected]}</p></div></>;}
 function EvidenceDiagram({stage,source}:{stage:number;source:number}){
  const rows=[
   {title:investigation.station,detail:'Condition observed'},
   {title:investigation.lot,detail:'Lot traced to this operation'},
-  {title:evidenceSources[source][0],detail:'Source retained for review'},
+  {title:evidenceSources[source][0],detail:'Linked record · awaiting human review'},
  ];
  return <ol className="evidence-trace" aria-label="How the evidence is assembled">
   {rows.map(({title,detail},index)=><li key={index} data-reached={index<=stage} aria-current={index===stage?'step':undefined}>

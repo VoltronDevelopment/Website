@@ -181,14 +181,11 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
 
 .home-hero .hero-copy {text-align:center}
 .home-hero .hero-actions {justify-content:center}
-.home-hero #home-title {font-size:clamp(2.5rem,5vw,5.25rem);line-height:1.06;margin-inline:auto}
-.home-hero #home-title span {display:inline-block}
 @media(prefers-reduced-motion:no-preference){
- .home-hero #home-title span {animation:home-word-enter .7s ease-out both;--word-travel:-.5em}
- .home-hero #home-title span+span {--word-travel:.5em;animation-delay:.15s}
+ .home-hero #home-title {animation:home-wordmark-reveal .55s ease-out both}
+ .home-hero .hero-keywords {animation:home-wordmark-reveal .45s ease-out .18s both}
 }
-@keyframes home-word-enter {from{opacity:0;transform:translateX(var(--word-travel))}to{opacity:1;transform:none}}
-@media(max-width:767px){.home-hero #home-title {font-size:clamp(2rem,8vw,2.8rem)}}
+@keyframes home-wordmark-reveal {from{opacity:0}to{opacity:1}}
 
 .study-figure{min-width:0}
 .roadmap-still picture,.roadmap-still img{width:100%;height:100%;object-fit:contain}

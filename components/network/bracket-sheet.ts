@@ -32,7 +32,7 @@ export function bracketSheet(){
  const pen=new Vector2();
  return {draw(ctx:CanvasRenderingContext2D,time:number,dark:boolean){
   const position=Math.min(1,Math.max(0,(time-.25)/10.4))*clock;
-  ctx.clearRect(0,0,960,640);ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.fillStyle=dark?'#091e35':'#eff6fb';ctx.fillRect(0,0,960,640);ctx.lineJoin='round';ctx.lineCap='round';
   ctx.strokeStyle=dark?'#294261':'#c4daef';ctx.lineWidth=1;
   ctx.beginPath();
   for(let x=32;x<940;x+=32){ctx.moveTo(x,96);ctx.lineTo(x,568);}
@@ -40,7 +40,7 @@ export function bracketSheet(){
   ctx.stroke();
   ctx.strokeStyle=dark?'#58d4ff':'#1859ae';ctx.lineWidth=6;
   ctx.beginPath();ctx.moveTo(32,48);ctx.lineTo(32,73);ctx.stroke();
-  ctx.font='500 23px sans-serif';ctx.fillStyle=dark?'#b6d0e5':'#42596c';ctx.fillText('MOUNTING INTERFACE',58,70);
+  ctx.font='500 23px sans-serif';ctx.fillStyle=dark?'#b6d0e5':'#42596c';ctx.fillText('MOUNTING INTERFACE',58,70);ctx.textAlign='right';ctx.font='600 18px sans-serif';ctx.fillText('VOLTRON LATTICE   /   ENGINEERING',922,70);ctx.textAlign='left';
   let lift=0;
   for(let i=0;i<marks.length;i++){
    const mark=marks[i];if(position<mark.start)break;

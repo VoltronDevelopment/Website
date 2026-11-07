@@ -62,6 +62,12 @@ export function rollingChassis(subject: T.Group, own: Own, clip: T.Plane) {
     member(engine,[0,-.04,side*.13],[0,-.07,side*.34],.08,.09,rail);
   }
   for(let i=0;i<5;i++)member(engine,[-.14+i*.07,-.10,-.18],[-.14+i*.07,-.10,.18],.022,.04,rotor);
+  for(const side of [-1,1]){
+    for(const x of [-.12,-.04,.04,.12]){
+      member(engine,[x,.08,side*.13],[x-.06,-.02,side*.225],.028,.028,alloy,true);
+    }
+    member(engine,[-.20,-.02,side*.225],[.15,-.02,side*.225],.041,.041,rail,true);
+  }
   const tyre=own(new T.LatheGeometry([
     [.215,-.094],[.25,-.117],[.326,-.107],[.36,-.065],[.36,.065],[.326,.107],[.25,.117],[.215,.094],[.215,-.094],
   ].map(([r,y])=>new T.Vector2(r,y)),48));
@@ -93,6 +99,13 @@ export function rollingChassis(subject: T.Group, own: Own, clip: T.Plane) {
     const disc=new T.Mesh(brake,rotor);
     const brakes=new T.Group();brakes.position.set(x,.36,z);model.add(brakes);brakes.add(disc);
     member(brakes,[.117,-.065,0],[.117,.075,0],.056,.085,enamel);
+    // Brake carrier and cooling apertures stay at the hub while the rim approaches.
+    const hat=new T.Mesh(brake,rail);hat.position.z=side*.035;hat.scale.set(.57,.57,.7);brakes.add(hat);
+    for(let i=0;i<12;i++){
+      const phase=i*Math.PI/6;
+      const vent=new T.Mesh(lug,rail);vent.scale.set(.48,.48,.28);
+      vent.position.set(.116*Math.cos(phase),.116*Math.sin(phase),side*.034);brakes.add(vent);
+    }
     hub.add(new T.Mesh(tyre,rubber));
     for(const offset of [-.045,0,.045]){
       const band=new T.Mesh(tread,rubber);band.position.z=offset;hub.add(band);

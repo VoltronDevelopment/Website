@@ -27,7 +27,7 @@ it('keeps the reference seated during formation and its handoff on orthogonal se
 
 it('keeps the graphite endpoint under the pencil during contact and retraces a seek exactly',()=>{
  let x=0,y=0,lifts=0,touches=0;
- const ctx={clearRect(){},beginPath(){},moveTo(){},stroke(){},fillText(){},
+ const ctx={clearRect(){},fillRect(){},beginPath(){},moveTo(){},stroke(){},fillText(){},
   lineTo(u:number,v:number){x=u;y=v;}} as unknown as CanvasRenderingContext2D;
  const sheet=bracketSheet(),sample=sheet.draw(ctx,5.75,false);
  for(let t=.3;t<10.65;t+=.073){

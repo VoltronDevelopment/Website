@@ -28,9 +28,9 @@ describe("Website middleware security controls", () => {
     try{
       expect((await middleware(makeRequest("/","GET","test"))).headers.get("location")).toBe("http://localhost/enter");
       const entered=await middleware(makeRequest("/?enter=1","GET","test"));
-      expect(entered.cookies.get("voltron_entered")?.value).toBe("1");
+      expect(entered.status).toBe(200);
       const returning=new NextRequest("http://localhost/",{headers:{cookie:"voltron_entered=1"}});
-      expect((await middleware(returning)).status).toBe(200);
+      expect((await middleware(returning)).headers.get("location")).toBe("http://localhost/enter");
     }finally{clock.mockRestore();}
   });
   it("serves the hold page anonymously and protects pages and inquiry APIs before launch", async () => {

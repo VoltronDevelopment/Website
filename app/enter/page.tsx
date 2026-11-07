@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { BrandEntry } from "@/components/entry/BrandEntry";
 import { founderSessionCookie } from "@/lib/founder-session-config";
 import { verifyFounderTokenEdge } from "@/lib/founder-session-edge";
-import {ComingSoonPage} from "@/components/coming-soon/ComingSoonPage";
-import { launchAt, isPrelaunch } from "@/lib/launch";
+
+import { isPrelaunch } from "@/lib/launch";
 import "./entry.css";
 
 export const dynamic="force-dynamic";
@@ -21,5 +21,5 @@ export default async function EntryPage(){
     if(!await verifyFounderTokenEdge(token))redirect("/coming-soon");
     return <BrandEntry/>;
   }
-  return <ComingSoonPage now={Date.now()} opens={launchAt}/>;
+  return <BrandEntry/>;
 }

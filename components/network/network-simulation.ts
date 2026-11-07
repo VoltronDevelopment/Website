@@ -17,14 +17,22 @@ export function routePoint(points:Point[],progress:number):Point{
  const lengths=points.slice(1).map((p,i)=>Math.hypot(...p.map((v,j)=>v-points[i][j]))),total=lengths.reduce((a,b)=>a+b,0);let distance=Math.max(0,Math.min(1,progress))*total;
  for(let i=0;i<lengths.length;i++){if(distance<=lengths[i]||i===lengths.length-1){const t=lengths[i]?distance/lengths[i]:0;return points[i].map((v,j)=>v+(points[i+1][j]-v)*t) as Point;}distance-=lengths[i];}return points[0];
 }
+/** Distance along the receiving aisle, eased only at pickup and delivery.
+ * The reverse quarter-circle starts after the pallet clears the truck doors. */
+export function receivingForkPath(time:number){
+ const radius=.96,straight=5-radius,arc=radius*Math.PI/2;
+ const distance=(straight+arc+2.1-radius)*smooth((time-5.9)/2.1);
+ const angle=Math.max(0,Math.min(Math.PI/2,(distance-straight)/radius));
+ return {x:-4.5+radius*(1-Math.cos(angle))+Math.max(0,distance-straight-arc),
+  z:3.2-Math.min(distance,straight)-radius*Math.sin(angle),yaw:Math.PI-angle,distance};
+}
 /** One component position and support owner, evaluated identically for playback and seeks. */
 export function productionState(time:number){
  let part:Point=[-4.5,.805,7.2],support='truck',phase='Receiving';const truckZ=8.5-4*smooth((time-4)/1.4)+4*smooth((time-7.2)/1);
  part[2]=truckZ-1.3;
  if(time>=5.5){support='forks';phase='Transfer';part=[-4.5,lerp(.805,1.12,(time-5.5)/.4),3.2];}
  // Pull straight back through the open rear doors before crossing the aisle.
- if(time>=5.9)part[2]=lerp(3.2,-1.8,(time-5.9)/1.2);
- if(time>=7.25)part[0]=lerp(-4.5,-2.4,(time-7.25)/.75);
+ if(time>=5.9&&time<8){const path=receivingForkPath(time);part[0]=path.x;part[2]=path.z;}
  if(time>=8){support='fixture';phase='Travel';part=[lerp(-2.4,.9,(time-8.35)/.65),lerp(1.12,1.7,(time-8)/.35),-1.8];}
  if(time>=9){phase='Lower';part=[.9,lerp(1.7,.55,(time-9)/.4),-1.8];}
  if(time>=9.4){phase='Dwell';part=[.9,.55,-1.8];}

@@ -90,3 +90,7 @@ html:has(.intelligence-sheet:modal){overflow:hidden;overflow-anchor:none;scroll-
 }
 
 .scenario-current-question button{font:inherit;text-align:left;background:transparent;border:0;color:var(--text-link);text-decoration:underline;text-underline-offset:.2em;min-height:44px;padding:4px 0;cursor:pointer}
+
+.evidence-check{border-inline-start:2px solid var(--text-link);padding-inline-start:12px;margin-top:16px}
+.evidence-check strong{font-size:13px;color:var(--text-link)}
+.evidence-check p{font-size:14px;line-height:1.55;margin-top:5px}

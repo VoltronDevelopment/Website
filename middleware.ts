@@ -89,15 +89,11 @@ export async function middleware(request: NextRequest) {
     if (pathname === "/coming-soon") return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));
     if (pathname === "/enter") return privateResponse(NextResponse.next());
     const entering = request.nextUrl.searchParams.get("enter") === "1";
-    if (pathname === "/" && !entering && !request.cookies.has("voltron_entered")) {
+    if (pathname === "/" && !entering) {
       return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));
     }
     if (PUBLIC_SITE_PATHS.has(pathname)) {
-      const response = privateResponse(NextResponse.next());
-      if (!request.cookies.has("voltron_entered") && !request.headers.has("next-router-prefetch") && request.headers.get("purpose") !== "prefetch") {
-        response.cookies.set("voltron_entered", "1", { httpOnly: true, sameSite: "lax", path: "/" });
-      }
-      return response;
+      return privateResponse(NextResponse.next());
     }
     return NextResponse.next();
   }

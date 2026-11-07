@@ -180,3 +180,38 @@
  .site-presentation #main-content .keyword-hero:not(.home-hero){--hero-stage:clamp(320px,40svh,395px)}
  .site-presentation #main-content .keyword-hero:not(.home-hero)>.hero-grid{gap:16px;padding-block:16px}
 }
+
+
+/* Preserve the stage and control targets while reducing the three artworks. */
+.home-hero .home-lattice-art,
+.intelligence-sculpture-hero .fluid-study-stage,
+.commons-workshop-hero .human-hero-commons {scale:.9;transform-origin:center}
+.site-presentation #main-content .hero.keyword-hero .hero-copy :is(h1,#home-title) {
+ letter-spacing:-.035em; max-inline-size:24ch; margin-inline:auto; overflow-wrap:break-word;
+}
+.site-presentation #main-content .hero.keyword-hero .hero-copy>p.hero-keywords {
+ letter-spacing:.025em;text-wrap:balance;
+}
+
+.site-presentation #main-content :is(.intelligence-sculpture-hero,.commons-workshop-hero).keyword-hero>.hero-grid {
+ display:flex;flex-direction:column;align-items:center;gap:16px;padding-block:12px 32px;
+}
+.site-presentation #main-content :is(.intelligence-sculpture-hero,.commons-workshop-hero) .hero-visual {
+ order:-1;width:min(100%,1000px);--hero-stage:clamp(320px,52svh,600px);
+}
+.site-presentation #main-content :is(.intelligence-sculpture-hero,.commons-workshop-hero) .hero-copy {
+ display:block;text-align:center;padding:0;width:100%;
+}
+.site-presentation #main-content :is(.intelligence-sculpture-hero,.commons-workshop-hero) .hero-actions {justify-content:center}
+
+.site-presentation #main-content .home-page .hero.keyword-hero .hero-copy #home-title {
+ display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;
+ column-gap:.64em;row-gap:.1em;max-inline-size:100%;margin-inline:auto;
+ font-family:Montserrat,Arial,sans-serif;font-size:clamp(24px,4.6vw,46px);
+ font-weight:300;letter-spacing:.2em;line-height:1.18;
+}
+@media(max-width:767px){
+ .site-presentation #main-content .home-page .hero.keyword-hero .hero-copy #home-title {
+  font-size:clamp(22px,6.6vw,35px);letter-spacing:.09em;column-gap:.5em;
+ }
+}

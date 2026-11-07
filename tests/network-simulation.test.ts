@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {productionState,routePoint,inspectionSweep,ownedBathContact,receivingDoorOpen,engineeringAssembly,type Point} from '../components/network/network-simulation';
+import {productionState,receivingForkPath,routePoint,inspectionSweep,ownedBathContact,receivingDoorOpen,engineeringAssembly,type Point} from '../components/network/network-simulation';
 describe('Network physical continuity and connectors',()=>{
  it('opens receiving doors before cargo pickup and closes them before departure',()=>{expect(receivingDoorOpen(5.5)).toBe(1);expect(receivingDoorOpen(6.8)).toBe(1);expect(receivingDoorOpen(7.2)).toBe(0);});
  it('sweeps the booth continuously without a sawtooth reset',()=>{expect(inspectionSweep(13).height).toBe(1);expect(inspectionSweep(14).height).toBeCloseTo(1.85);expect(inspectionSweep(15).height).toBe(1);for(let t=13;t<15;t+=.01)expect(Math.abs(inspectionSweep(t+.01).height-inspectionSweep(t).height)).toBeLessThan(.014);});
@@ -19,12 +19,15 @@ describe('Network physical continuity and connectors',()=>{
 
 it('withdraws straight through the rear opening before traversing to the fixture',()=>{
  const start=productionState(5.9).part;
- for(let t=5.9;t<7.1;t+=.05){
+ for(let t=5.9;t<8;t+=.025){
   const load=productionState(t);
   expect(load.support).toBe('forks');
-  expect(load.part[0]).toBeCloseTo(start[0]);
+  if(load.part[2]>-.84)expect(load.part[0]).toBeCloseTo(start[0]);
+  const path=receivingForkPath(t),next=receivingForkPath(t+.001);
+  expect(Math.abs((next.x-path.x)*Math.cos(path.yaw)-(next.z-path.z)*Math.sin(path.yaw))).toBeLessThan(.0001);
   expect(load.part[2]).toBeLessThanOrEqual(start[2]);
  }
- for(let t=7.25;t<8;t+=.05)expect(productionState(t).part[2]).toBeCloseTo(-1.8);
+ expect(receivingForkPath(8)).toMatchObject({yaw:Math.PI/2});
+ expect(receivingForkPath(8).x).toBeCloseTo(-2.4);expect(receivingForkPath(8).z).toBeCloseTo(-1.8);
  expect(productionState(8).support).toBe('fixture');
 });

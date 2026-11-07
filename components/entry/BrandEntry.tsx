@@ -9,6 +9,8 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
+import scenePosters from "@/lib/scene-posters.json";
+import {EntryDissolve,entryExitMs} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
 
@@ -28,6 +30,7 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
   const faceRef=useRef(0),readyRef=useRef(false);
   const navigation=useRef<ReturnType<typeof setTimeout> | null>(null);
   const router=useRouter();
+  useEffect(()=>{if(!locked)router.prefetch("/?enter=1");},[locked,router]);
   const [paused,setPaused]=useState(false);
   const pausedRef=useRef(false),motionControl=useRef<(()=>void) | null>(null);
   useEffect(()=>()=>{if(navigation.current)clearTimeout(navigation.current);},[]);
@@ -90,8 +93,10 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
   function enter(event: MouseEvent<HTMLAnchorElement>, skip=false){
     if(locked || (!ready && !skip) || leaving){event.preventDefault();return;}
     if(event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button!==0)return;
-    event.preventDefault();setLeaving(true);
-    navigation.current=setTimeout(()=>router.push("/?enter=1"+window.location.hash),matchMedia("(prefers-reduced-motion: reduce)").matches?0:420);
+    event.preventDefault();
+    if(prefersStaticScene()){router.push("/?enter=1"+window.location.hash);return;}
+    setLeaving(true);
+    navigation.current=setTimeout(()=>router.push("/?enter=1"+window.location.hash),entryExitMs);
   }
 
   return <main id="main-content" ref={host} className={`brand-entry${children?" launch-entry":""}${leaving?" entry-leaving":""}`} data-phase="8" data-settled="true" data-paused={paused}>
@@ -118,5 +123,5 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     {children}
     </div>
     </div>
-  </main>;
+  {leaving&&<><div className="entry-home-reveal" aria-hidden="true">{(["light","dark"] as const).map(theme=><img key={theme} className={"art-theme-"+theme} src={scenePosters.home[theme]} alt=""/>)}</div><EntryDissolve/></>}</main>;
 }

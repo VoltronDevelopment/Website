@@ -98,14 +98,20 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    ctx.fillStyle=dark?'#102840':'#edf6ff';ctx.fillRect(0,0,600,800);
    ctx.fillStyle=accent;ctx.fillRect(45,59,56,8);
    ctx.fillStyle=ink;ctx.font='600 34px sans-serif';ctx.fillText('Technology leadership',45,130);
-   ctx.font='700 132px sans-serif';ctx.fillText('CTO',37,301);
+   ctx.font='600 94px sans-serif';ctx.fillText('CTO',40,280);
+   // Three connected layers share one drawing datum on the leadership brief.
+   ctx.strokeStyle=accent;ctx.lineWidth=3;
+   for(let level=0;level<fields;level++){
+    const y=202+level*26;
+    ctx.beginPath();ctx.moveTo(370,y);ctx.lineTo(443,y-32);ctx.lineTo(521,y);ctx.lineTo(445,y+32);ctx.closePath();ctx.stroke();
+   }
    ctx.fillStyle=accent;ctx.font='500 32px sans-serif';ctx.fillText('Chief Technology Officer',45,358);
-   const rows=['Manufacturing','Connected systems','Intelligence'];
+   const rows=['Factory floor','Process records','Human review'];
    for(let i=0;i<fields;i++){
     const y=440+i*65;
     ctx.fillStyle=accent;ctx.fillRect(46,y-9,12,12);
     if(i>0)ctx.fillRect(51,y-62,2,51);
-    ctx.fillStyle=ink;ctx.font='500 35px sans-serif';ctx.fillText(rows[i],83,y+8);
+    ctx.fillStyle=ink;ctx.font='500 38px sans-serif';ctx.fillText(rows[i],83,y+8);
    }
    if(sealed){
     ctx.fillStyle=accent;ctx.fillRect(45,647,510,2);
@@ -115,7 +121,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    map.needsUpdate=true;
   };
   const map=track(new T.CanvasTexture(sheet));map.colorSpace=T.SRGBColorSpace;map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
-  const printed=track(new T.MeshPhysicalMaterial({map,roughness:.38,clearcoat:.55,clearcoatRoughness:.22,clippingPlanes:[mask]}));
+  const printed=track(new T.MeshPhysicalMaterial({map,roughness:.56,clearcoat:.16,clearcoatRoughness:.38,clippingPlanes:[mask]}));
   const face=new T.Mesh(track(new T.PlaneGeometry(width,height)),printed);face.position.set(-.12,0,.168);subject.add(face);
   subject.position.set(0,height/2,-.13);
   updateBrief=drawBrief;
@@ -139,7 +145,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    fragmentShader:`varying vec2 uvImage;uniform sampler2D map;uniform float reveal;
     void main(){vec4 texel=texture2D(map,uvImage);float grey=dot(texel.rgb,vec3(.2126,.7152,.0722));
     float delta=reveal-uvImage.y;float light=.065*exp(-abs(delta)*80.);
-    gl_FragColor=vec4(mix(vec3(.012,.031,.063),vec3(.96,.98,1.),pow(grey,.82))+vec3(.014,.09,.16)*sin(grey*3.14159)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.10,uvImage.y)*smoothstep(-.02,.02,delta));
+    gl_FragColor=vec4(mix(vec3(.012,.031,.063),vec3(.96,.98,1.),pow(grey,.94))+vec3(.014,.09,.16)*sin(grey*3.14159)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.10,uvImage.y)*smoothstep(-.02,.02,delta));
     #include <colorspace_fragment>
     }`}));
   const photo=new T.Mesh(face,image);photo.renderOrder=3;subject.add(photo);
@@ -180,7 +186,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
     mantle.scale.set(portraitWidth*scale*.86,height,1);
     mantle.position.set(.04,origin+height/2,0);
     spill.uniforms.join.value=(portraitBottom-origin)/height;
-    spill.uniforms.amount.value=formed*(dark?.42:.30);
+    spill.uniforms.amount.value=formed*(dark?.34:.24);
     spill.uniforms.dark.value=Number(dark);
    }
   }
@@ -190,7 +196,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    const automotive=kind==='automotive';
    content.position.y=automotive?-.26:-.63;
    content.rotation.set(automotive?.14:0,automotive?.77:.13*(1-formed),0);
-   content.scale.setScalar(scale*(automotive?1.82:1.06));
+   content.scale.setScalar(scale*(automotive?1.82:1.14));
    mask.constant=kind==='search'?2.6:-.65+3*T.MathUtils.smoothstep(time,0,1.2);
    beam.set(.68*formed,dark,time,camera);
    updateBrief?.(time,dark);

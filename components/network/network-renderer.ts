@@ -1,5 +1,6 @@
 export {prepareArtworkEnvironment} from '../brand/artwork-studio';
 import * as T from 'three';
+import {receivingForkPath} from "./network-simulation";
 import {plantFrame} from './plant-framing';
 import {operatingFacility} from './authored-scenes';
 import {mountAuthoredNetwork} from './authored-renderer';
@@ -47,7 +48,8 @@ function mountOwnedNetwork(canvas:HTMLCanvasElement,host:HTMLElement,kind:Networ
  const ram=kit.box(lift,[.25,1,.24],[0,0,0],kit.steel);
  const liftTop=kit.box(lift,[.88,.08,.65],[0,0,0],kit.steel);
  let transfer:T.Group|undefined;const routes:T.Line[]=[],paths:Point[][]=[],signals:T.Mesh[]=[];
- const forkLift=new T.Group();handler.add(forkLift);for(const x of [-.18,.18])kit.box(forkLift,[.1,.08,1.1],[x,.27,0],kit.steel);for(const x of [-.4,.4])for(const z of [.55,1.05]){const wheel=new T.Mesh(own(new T.CylinderGeometry(.16,.16,.1,12)),kit.navy);wheel.rotation.z=Math.PI/2;wheel.position.set(x,.17,z);handler.add(wheel);}
+ const handlerWheels:T.Group[]=[];const forkLift=new T.Group();handler.add(forkLift);for(const x of [-.18,.18])kit.box(forkLift,[.1,.08,1.1],[x,.27,0],kit.steel);for(const x of [-.4,.4])for(const z of [.55,1.05]){const wheel=new T.Mesh(own(new T.CylinderGeometry(.16,.16,.1,12)),kit.navy);wheel.rotation.z=Math.PI/2;const axle=new T.Group();axle.position.set(x,.16,z);handler.add(axle);axle.add(wheel);
+ kit.box(axle,[.012,.16,.035],[Math.sign(x)*.057,0,0],kit.steel);handlerWheels.push(axle);}
  if(kind==='learning'){
   primary.g.position.set(-7,0,3);primary.g.scale.setScalar(.7);
   const second=kit.factory(root,1);second.g.position.set(7,0,3);second.g.scale.setScalar(.7);factories.push(second);
@@ -84,7 +86,9 @@ function mountOwnedNetwork(canvas:HTMLCanvasElement,host:HTMLElement,kind:Networ
   const insertion=T.MathUtils.smoothstep(time,5.1,5.5);
   const withdrawal=T.MathUtils.smoothstep(time,8.15,9.1);
   handler.position.set(time<5.5?-4.5:time<8?p.part[0]:-2.4+withdrawal*1.8,0,time<5.5?1.6+1.6*insertion:time<8?p.part[2]:-1.8);
-  handler.rotation.y=Math.PI-Math.PI*.5*T.MathUtils.smoothstep(time,7.1,7.25);
+  const path=receivingForkPath(time);handler.rotation.y=path.yaw;
+  const travel=path.distance+withdrawal*1.8-insertion*1.6;
+  handlerWheels.forEach(wheel=>{wheel.rotation.x=travel/.16;});
   forkLift.position.y=(time<5.5?.805:time<8?p.part[1]:1.12)-.325-.31;
   factories.forEach((f,i)=>{const localTime=kind==='owned'?time:kind==='learning'?(i===0?8+Math.min(3,time):i===1?Math.max(0,time-8):0):kind==='partnership'?Math.max(0,time-4):0;const operation=productionState(localTime);f.carrier.position.set(localTime<8?-2.4:operation.part[0],0,-1.8);f.hook.position.y=localTime<8?0:operation.part[1]-1.12;f.part.visible=kind==='owned'?true:kind==='learning'&&((i===0&&time<8)||(i===1&&time>=16&&time<20));if(kind==='owned')f.part.position.fromArray(p.part);f.scan.visible=kind==='owned'?p.scan:kind==='learning'&&i===1&&time>=18&&time<20;const sweep=inspectionSweep(time);f.scan.userData.scanner.update(f.scan.visible?sweep.strength:0,dark);f.scan.position.y=sweep.height;f.record.visible=kind==='owned'?p.record:kind==='learning'?time>=[3,12,21][i]:false;f.capability.visible=kind==='owned'?time>=20:false;f.cargo.visible=false;f.tanks.forEach((tank,j)=>{tank.material=operation.phase==='Dwell'&&j===2?kit.active:kit.navy;});});
   if(kind==='owned'){primary.carrier.position.x=time>=12?4.2:Math.max(-2.4,Math.min(4.2,p.part[0]));primary.hook.position.y=0;

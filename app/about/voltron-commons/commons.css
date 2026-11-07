@@ -71,3 +71,13 @@
 .commons-study-resources .commons-study-art{height:clamp(280px,28vw,420px)}
 .commons-study-learning .commons-study-art{height:clamp(280px,30vw,440px)}
 @media(max-width:767px){.commons-art-only .commons-study-art,.commons-study-resources .commons-study-art,.commons-study-learning .commons-study-art{height:260px}}
+.commons-icon-cards article svg{color:var(--accent,currentColor);margin-bottom:1rem}
+@media(prefers-reduced-motion:no-preference){.commons-icon-cards article svg{transition:transform .28s ease}.commons-icon-cards article:hover svg{transform:translateY(-3px)}}
+
+.commons-icon-cards article{padding:20px 0;border-top:1px solid var(--line)}
+@supports(animation-timeline:view()){
+ @media(prefers-reduced-motion:no-preference){
+  .commons-icon-cards article{animation:commons-card-arrive linear both;animation-timeline:view();animation-range:entry 0% entry 90%}
+ }
+}
+@keyframes commons-card-arrive{from{opacity:.5;transform:translateY(8px)}to{opacity:1;transform:none}}

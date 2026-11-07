@@ -109,10 +109,16 @@ export function operatingState(input:number){
  const depart=smooth((time-82)/5),outboundX=-19+smooth((time-67)/3)*13-depart*13;
  const receiving=travel(time,[[10,-10.6,1.055,factoryLayout.wetLineZ+1.7],[11,-10.6,1.055,factoryLayout.wetLineZ+1.7],[14,-9,1.055,factoryLayout.wetLineZ],[14.7,-9,.475,factoryLayout.wetLineZ],[16.5,-9,.475,factoryLayout.wetLineZ],[17.3,-9,1.055,factoryLayout.wetLineZ],[18,-9,1.055,factoryLayout.wetLineZ],[20,-6,1.055,factoryLayout.wetLineZ],[22,-6,1.055,factoryLayout.wetLineZ],[24,-4,1.055,factoryLayout.wetLineZ]]);
  const postProcess=travel(time,[[58,-4,1.055,factoryLayout.returnLineZ],[67,-4,1.055,factoryLayout.returnLineZ],[68,-4,1.055,4.8],[69,-9,1.055,4.8],[69.6,-9,1.055,5.2],[70.3,-9,.955,5.2],[73,-9,.955,5.2],[75,-9,.955,6],[78,-6.4,.955,6],[82,-6.4,.955,6],[87,-19.4,.955,6]]);
+ if(time>=11&&time<=14){
+  const progress=smooth((time-11)/3);
+  receiving.x=-10.6+1.6*progress;
+  receiving.z=factoryLayout.wetLineZ+1.7*(1-progress*progress*(3-2*progress));
+ }
  const part=time<10?{x:incomingX+1.4,y:1.055,z:factoryLayout.wetLineZ+1.7}:time<24?receiving:time<58?process:postProcess;
  const event=operatingEvents.filter(e=>e[0]<=time).at(-1),eventProgress=event?clamp((time-event[0])/2):1;
  const signals=event&&time<event[0]+2?event[2].map(product=>({product,entity:event[1],progress:eventProgress})):[];
- const handlerYaw=Math.PI*(1-smooth((time-17.3)/.7))+Math.PI/2*smooth((time-19.7)/.6)-Math.PI/2*smooth((time-21.7)/.6);
+ const laneChange=smooth((time-11)/3);
+ const handlerYaw=Math.PI+Math.atan2(1.7*6*laneChange*(1-laneChange),1.6);
  const qualityPhase=time<58?'Waiting for lot':time<61.5?'Positioning':time<62?'Fixture clamping':time<65?'Inspection in progress':time<66?'Evidence recorded':time<67?'Released':'Ready for next lot';
  const scanning=time>=62&&time<65;
  return {time,chapter,hold,reviewed,released,dispatched:time>=87,routeIndex,carrier:{x:carrierX,z:carrierZ},railProgress:routeIndex,carrierYaw:-Math.PI/2*smooth((time-39.4)/.5)-Math.PI/2*smooth((time-52.3)/.5),ovenDoor,ovenEntryOpen,ovenExitOpen,ovenActive,processStage:time<24?'Receiving':time<30?'Tank 01':time<36?'Tank 02':time<38.65?'Tank 03':time<40.6?'Transfer to CED':time<51.2?'CED · T04':time<53.5?'Oven infeed':time<56.5?'Curing oven':time<58?'Transfer to quality':time<67?'Inspection':'Dispatch',part,incomingX,handlerYaw,outboundX,
