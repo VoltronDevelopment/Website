@@ -26,9 +26,15 @@ export function disciplinesArtwork(root:T.Group,kit:ReturnType<typeof factoryKit
   const key=[dark,selected,complete].join('/');
   if(printed===key)return;
   printed=key;
-  ink.fillStyle=dark?'#122737':'#edf4f7';ink.fillRect(0,0,960,640);
-  ink.fillStyle=dark?'#8cdef2':'#225676';ink.font='500 62px sans-serif';ink.fillText('MOUNTING BORE',58,105);
-  ink.strokeStyle=dark?'#5a92af':'#7497aa';ink.lineWidth=8;
+  ink.fillStyle=dark?'#0b2246':'#eaf5ff';ink.fillRect(0,0,960,640);
+  ink.fillStyle=dark?'#62c7ed':'#176fba';ink.fillRect(0,0,960,13);
+  ink.fillStyle=dark?'#a5e1ff':'#164a76';ink.font='500 62px sans-serif';ink.fillText('MOUNTING BORE',58,105);
+  ink.strokeStyle=dark?'#294261':'#c4daef';ink.lineWidth=2;
+  ink.beginPath();
+  for(let x=62;x<330;x+=32){ink.moveTo(x,197);ink.lineTo(x,521);}
+  for(let y=200;y<520;y+=32){ink.moveTo(49,y);ink.lineTo(337,y);}
+  ink.stroke();
+  ink.strokeStyle=dark?'#70dcff':'#1859ae';ink.lineWidth=7;
   ink.beginPath();ink.arc(194,360,99,0,Math.PI*2);ink.moveTo(68,360);ink.lineTo(320,360);ink.moveTo(194,234);ink.lineTo(194,486);ink.stroke();
   ink.fillStyle=dark?'#f2f7fb':'#153345';ink.font='600 81px sans-serif';
   ink.fillText(['Finish','Measure','Review'][selected],364,341);

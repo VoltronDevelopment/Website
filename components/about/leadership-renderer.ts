@@ -1,5 +1,5 @@
-import {identityMark} from '@/lib/identity-assets';
 import * as T from 'three';
+import {identityMark} from '@/lib/identity-assets';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {addArtworkSoftboxes,releaseStudioLookups,sceneEnvironment,prepareArtworkEnvironment} from '../brand/artwork-studio';
 import {glassFace,setGlass,type GlassFace} from '../home/lattice-materials';
@@ -31,8 +31,8 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
  const recess=new T.Mesh(track(new RoundedBoxGeometry(side-.12,side-.12,.12,2,.05)),backing);
  recess.position.z=-half+.09;cube.add(recess);
  const portrait=kind==='portrait';
- const emitterSide=.48,ground=-1.76;
- const portraitWidth=2.84,portraitBottom=-.65;
+ const emitterSide=.60,ground=-1.76;
+ const portraitWidth=2.89,portraitBottom=-.77;
  const beam=createProjectionBeam(track,1.8,1.05);
  const spill=portrait?track(new T.ShaderMaterial({
   transparent:true,depthWrite:false,toneMapped:false,
@@ -71,7 +71,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
  const box=(parent:T.Object3D,w:number,h:number,d:number,x:number,y:number,z:number,mat:T.Material)=>{
   const mesh=new T.Mesh(track(new T.BoxGeometry(w,h,d)),mat);mesh.position.set(x,y,z);parent.add(mesh);return mesh;
  };
- let updateBrief:((time:number)=>void)|undefined;
+ let updateBrief:((time:number,dark:boolean)=>void)|undefined;
  
  let updatePrint:((progress:number,dark:boolean)=>void)|undefined;
  let updateChassis:((time:number)=>void)|undefined;
@@ -79,7 +79,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
   updateChassis=rollingChassis(subject,track,mask);
  }else if(kind==='search'){
   const paper=material(0xe4ebf0),ink=material(0x28445e);
-  const width=1.82,height=2.42;
+  const width=2.04,height=2.52;
   const folio=box(subject,width+.08,height+.07,.075,-.09,.01,.065,ink);
   folio.rotation.z=-.036;
   box(subject,width,height,.048,-.12,0,.14,paper);
@@ -87,23 +87,31 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
   const ctx=sheet.getContext('2d')!;
   ctx.scale(2,2);
   const emblem=await new T.ImageLoader().loadAsync(identityMark);
-  let printedStage=-1;
-  const drawBrief=(time:number)=>{
-   const stage=Number(time>=1.3)+Number(time>=2.25)+Number(time>=3.45);
-   if(stage===printedStage)return;
-   printedStage=stage;
-   const wash=ctx.createLinearGradient(0,0,600,800);wash.addColorStop(0,'#f2fafe');wash.addColorStop(.58,'#dcebf1');wash.addColorStop(1,'#b9d3de');ctx.fillStyle=wash;ctx.fillRect(0,0,600,800);
-   ctx.fillStyle='#172f45';ctx.fillRect(0,0,600,210);
-   ctx.fillStyle='#b2dae9';ctx.font='500 28px sans-serif';ctx.fillText('VOLTRON LATTICE',44,66);
-   ctx.fillStyle='#fff';ctx.font='600 54px sans-serif';ctx.fillText('Technology leadership',44,158,512);
-   for(const [i,label] of ['Role','Status'].entries()){
-    if(stage<=i)continue;
-    const y=296+i*168;
-    ctx.fillStyle='#48627a';ctx.font='28px sans-serif';ctx.fillText(label,44,y);
-    ctx.fillStyle='#102c42';ctx.font='500 48px sans-serif';ctx.fillText(i?'Search underway':'Chief Technology Officer',44,y+70,510);
-    ctx.fillStyle='#b4cbd9';ctx.fillRect(44,y+100,512,2);
+  let previousInk='';
+  const drawBrief=(time:number,dark:boolean)=>{
+   const fields=[1.2,2.15,3.1].filter(start=>time>=start).length;
+   const sealed=time>=4.25;
+   const inkKey=[fields,sealed,dark].join('/');
+   if(previousInk===inkKey)return;
+   previousInk=inkKey;
+   const ink=dark?'#eff7ff':'#102d4d',accent=dark?'#78dcff':'#145eb0';
+   ctx.fillStyle=dark?'#102840':'#edf6ff';ctx.fillRect(0,0,600,800);
+   ctx.fillStyle=accent;ctx.fillRect(45,59,56,8);
+   ctx.fillStyle=ink;ctx.font='600 34px sans-serif';ctx.fillText('Technology leadership',45,130);
+   ctx.font='700 132px sans-serif';ctx.fillText('CTO',37,301);
+   ctx.fillStyle=accent;ctx.font='500 32px sans-serif';ctx.fillText('Chief Technology Officer',45,358);
+   const rows=['Manufacturing','Connected systems','Intelligence'];
+   for(let i=0;i<fields;i++){
+    const y=440+i*65;
+    ctx.fillStyle=accent;ctx.fillRect(46,y-9,12,12);
+    if(i>0)ctx.fillRect(51,y-62,2,51);
+    ctx.fillStyle=ink;ctx.font='500 35px sans-serif';ctx.fillText(rows[i],83,y+8);
    }
-   if(stage===3)ctx.drawImage(emblem,430,630,125,125);
+   if(sealed){
+    ctx.fillStyle=accent;ctx.fillRect(45,647,510,2);
+    ctx.font='600 32px sans-serif';ctx.fillText('Search underway',45,725);
+    ctx.drawImage(emblem,468,661,90,90);
+   }
    map.needsUpdate=true;
   };
   const map=track(new T.CanvasTexture(sheet));map.colorSpace=T.SRGBColorSpace;map.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
@@ -131,7 +139,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    fragmentShader:`varying vec2 uvImage;uniform sampler2D map;uniform float reveal;
     void main(){vec4 texel=texture2D(map,uvImage);float grey=dot(texel.rgb,vec3(.2126,.7152,.0722));
     float delta=reveal-uvImage.y;float light=.065*exp(-abs(delta)*80.);
-    gl_FragColor=vec4(mix(vec3(.012,.031,.063),vec3(.91,.97,1.),grey)+vec3(.01,.06,.085)*sin(grey*3.14159)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.19,uvImage.y)*smoothstep(-.02,.02,delta));
+    gl_FragColor=vec4(mix(vec3(.012,.031,.063),vec3(.96,.98,1.),pow(grey,.82))+vec3(.014,.09,.16)*sin(grey*3.14159)+light*vec3(.4,.7,1.),texel.a*smoothstep(0.,.10,uvImage.y)*smoothstep(-.02,.02,delta));
     #include <colorspace_fragment>
     }`}));
   const photo=new T.Mesh(face,image);photo.renderOrder=3;subject.add(photo);
@@ -146,8 +154,8 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
  const footprint=new T.Mesh(track(new T.PlaneGeometry(kind==='search'?1.58:2.2,.43)),contact.material);
  footprint.rotation.x=-Math.PI/2;footprint.position.y=leadershipStage.floorY+.002;cube.add(footprint);
  const captureTime=location.search.includes('scene-capture')?Number(new URLSearchParams(location.search).get('leadership-time')||0):0;
- let time=Math.max(0,Math.min(leadershipStage.duration,captureTime)),last=0,raf=0,visible=false,disposed=false;
- const duration=leadershipStage.duration;
+ const duration=kind==='search'?5.9:kind==='automotive'?4.4:leadershipStage.duration;
+ let time=Math.max(0,Math.min(duration,captureTime)),last=0,raf=0,visible=false,disposed=false;
  let lastDark:boolean|undefined;
  const context=renderer.getContext();
  const render=()=>{
@@ -164,7 +172,7 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
   if(portrait){
    content.position.set(0,portraitBottom,.08+.09*depth);
    content.rotation.set(-.07,-.15+.17*formed,0,'YXZ');
-   beam.set(.65*formed,dark,time,camera);
+   beam.set(.88*formed,dark,time,camera);
    if(mantle&&spill){
     const origin=ground+emitterSide,overlap=portraitWidth*scale*.22;
     const height=portraitBottom-origin+overlap;
@@ -182,10 +190,10 @@ export async function mountLeadership(canvas:HTMLCanvasElement,host:HTMLDivEleme
    const automotive=kind==='automotive';
    content.position.y=automotive?-.26:-.63;
    content.rotation.set(automotive?.14:0,automotive?.77:.13*(1-formed),0);
-   content.scale.setScalar(scale*(automotive?1.82:1));
+   content.scale.setScalar(scale*(automotive?1.82:1.06));
    mask.constant=kind==='search'?2.6:-.65+3*T.MathUtils.smoothstep(time,0,1.2);
    beam.set(.68*formed,dark,time,camera);
-   updateBrief?.(time);
+   updateBrief?.(time,dark);
   }
   if(lastDark!==dark){
    glass.forEach((mat,i)=>{

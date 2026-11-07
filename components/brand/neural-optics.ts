@@ -9,6 +9,7 @@ export function tuneNeuralGlass(material:MeshPhysicalMaterial,index:number,dark:
  const kind=neuralFaceKinds[index];tuneHomeGlass(material,kind,dark);
  material.opacity=Math.min(.8,material.opacity+(kind==='top'||kind==='side'?.25:kind==='front'?.35:.1));
  material.roughness=Math.min(1,(kind==='top'?.20:.24)*roughness);
- material.envMapIntensity*=.55*reflection;material.clearcoat*=.65;material.clearcoatRoughness=.2;
+ material.color.multiplyScalar(kind==='top'?1.08:kind==='side'?.84:kind==='bottom'?.68:1);
+ material.envMapIntensity*=.62*reflection;material.clearcoat*=.65;material.clearcoatRoughness=.2;
  material.userData.homeReflectionGain.value=dark?.13:.25;
 }

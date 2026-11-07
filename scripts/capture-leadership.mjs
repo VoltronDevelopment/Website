@@ -25,10 +25,11 @@ try {
   await page.route("**/capture?*", route => route.fulfill({contentType:"text/html",body:
     '<style>*{box-sizing:border-box}body{margin:0}main,canvas{width:100vw;height:100vh;display:block}</style><main><canvas></canvas></main>'}));
   const studyPass=process.argv.includes("--brand-studies");
-  if(studyPass){
+  const accessPass=process.argv.includes("--access");
+  if(studyPass||accessPass){
     await mkdir("public/surface-finishes",{recursive:true});
     for(const theme of ["light","dark"]){
-      for(const [index,slug] of ["phosphating","ced","powder"].entries()){
+      if(studyPass)for(const [index,slug] of ["phosphating","ced","powder"].entries()){
         await page.goto(base+"capture?surface");
         const image=await page.evaluate(async ({index,theme})=>{
           const {bracketFinish}=await import("/scripts/render-bracket-finishes.ts");
@@ -39,6 +40,7 @@ try {
       for(const [device,w,h] of [["",720,480],["-mobile",390,340]]){
         await page.setViewportSize({width:w,height:h});
         for(const [kind,index] of [["resources",0],["learning",0],["learning",1],["workshop",0]]){
+          if(!studyPass&&kind!=="resources")continue;
           await page.goto(base+"capture?commons-capture");
           const image=await page.evaluate(async ({kind,index,theme})=>{
             document.documentElement.dataset.theme=theme;

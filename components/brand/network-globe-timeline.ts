@@ -24,7 +24,7 @@ export const globeLinks=[
 const routeStart=(index:number)=>.9+index/(globeLinks.length-1)*6.2;
 export function globeState(seconds:number){
  const time=Math.min(globeDuration,Math.max(0,Number.isFinite(seconds)?seconds:0));
- return {time,body:globeEase(time/.7),envelope:globeEase((time-.5)/2),angle:Math.PI*2*globeEase((time-.7)/8),done:time===globeDuration,
+ return {time,body:globeEase(time/.7),envelope:.44+.56*globeEase(time/2),angle:Math.PI*2*globeEase((time-.7)/8),done:time===globeDuration,
   arc:(index:number)=>globeEase((time-routeStart(index))/1.15),
   response:(index:number)=>{const age=(time-routeStart(index)-1.15)/.65;return age>0&&age<1?Math.sin(Math.PI*age)**2:0;},
   energy:time<9.6?1-globeEase((time-8.5)/1.1):0};

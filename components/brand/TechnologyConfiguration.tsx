@@ -1,4 +1,5 @@
 "use client";
+import {StudyReplay} from '@/components/brand/ReplayableStudy';
 import {waitForScrollPause} from '../home/scene-preparation';
 import {useEntryChoice} from '@/lib/use-entry-choice';
 import Link from 'next/link';
@@ -73,6 +74,7 @@ export function TechnologyConfiguration(){
      <StaticLattice selected={selected}/><canvas ref={canvas} aria-hidden="true"/>
      <p className="modularity-art-status"><span aria-hidden="true"/>{['Shared foundation','Process packs','Factory configuration'][stage]}</p>
     </div>
+    <StudyReplay/>
     <div className="module-choices" role="group" aria-label="Illustrative process packs">{processPacks.map((pack,index)=><button type="button" data-pack={index} key={pack.id} aria-pressed={(detailsReady||packChoice>=0)&&selected===index} aria-controls={phone?`${id}-dialog`:`${id}-detail`} aria-haspopup={phone?'dialog':undefined} onClick={event=>choose(index,event.currentTarget)}><Box size={17} aria-hidden="true"/><span>{pack.title}</span></button>)}</div>
     <p className="module-hint">{!detailsReady?'Watch the process cube connect.':phone?`${processPacks[selected].title} connected. Tap a process for details.`:'Select a cube or process to explore its configuration.'}</p>
    </div>

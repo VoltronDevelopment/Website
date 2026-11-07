@@ -1,3 +1,4 @@
+import {identityMark} from '@/lib/identity-assets';
 import {waitForScrollPause} from '../home/scene-preparation';
 export {prepareArtworkEnvironment} from '../brand/artwork-studio';
 import {createCommonsWorkshop} from './commons-workshop';
@@ -17,6 +18,11 @@ export async function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElemen
  renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.localClippingEnabled=true;
  const quality=createRenderQuality(canvas,2,55);renderer.setPixelRatio(quality.ratio);
  const resources=new Set<{dispose:()=>void}>(),own=<R extends {dispose:()=>void}>(r:R)=>{resources.add(r);return r;};
+ let logo:T.Texture|undefined;
+ if(kind==='resources'){
+  try{logo=own(await new T.TextureLoader().loadAsync(identityMark));logo.colorSpace=T.SRGBColorSpace;}
+  catch(error){renderer.dispose();throw error;}
+ }
  const scene=new T.Scene(),root=new T.Group();scene.add(root);
  const shadowCanvas=document.createElement('canvas');shadowCanvas.width=shadowCanvas.height=128;
  const ctx=shadowCanvas.getContext('2d')!,gradient=ctx.createRadialGradient(64,64,8,64,64,64);gradient.addColorStop(0,'rgba(12,40,64,.26)');gradient.addColorStop(1,'rgba(12,40,64,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,128,128);
@@ -44,7 +50,7 @@ export async function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElemen
  for(let index=0;index<count;index++){
   await waitForScrollPause();
   const g=new T.Group();root.add(g);studies.push(g);
-  const narrative=createCommonsWorkshop(kind,index,g,{kit,box,own,bindFinish})??createCommonsNarrative(kind,index,g,{kit,box,faces,part});
+  const narrative=createCommonsWorkshop(kind,index,g,{kit,box,own,bindFinish,logo})??createCommonsNarrative(kind,index,g,{kit,box,faces,part});
   if(narrative){updates.push(narrative);}
   else if(kind==='partner-paths'&&index===1){
    box(g,[5.8,.16,3.4],[0,-.15,0],faces);const structure=new T.Group();g.add(structure);
@@ -164,7 +170,7 @@ export async function mountCommonsStudy(canvas:HTMLCanvasElement,host:HTMLElemen
  }
  const plane=new T.Plane(new T.Vector3(0,-1,0),100);[...faces,...smoked,kit.pearl,kit.navy,kit.steel,kit.glass,kit.reading,kit.active].forEach(m=>m.clippingPlanes=[plane]);
  const capture=new URLSearchParams(location.search).has('commons-capture');let selected=0,initialized=false,time=capture?9:0,visible=false,raf=0,last=0,disposed=false,contextLost=false,dirty=true;
- function fit(){const w=host.clientWidth,h=host.clientHeight,aspect=w/Math.max(h,1),height=kind==='learning'?Math.max(4.35,6.1/aspect):workshop?Math.max(4.8,6.8/aspect):Math.max(5.3,7.5/aspect);renderer.setSize(w,h,false);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(...(kind==='learning'?[.5,10,6]:workshop?[5,7.5,9]:[7,5.2,10]) as [number,number,number]);camera.lookAt(0,workshop?.35:1,0);camera.updateProjectionMatrix();dirty=true;wake();}
+ function fit(){const w=host.clientWidth,h=host.clientHeight,aspect=w/Math.max(h,1),height=kind==='learning'?Math.max(4.35,6.1/aspect):workshop?Math.max(4.8,6.8/aspect):Math.max(5.3,7.5/aspect);renderer.setSize(w,h,false);camera.left=-height*aspect/2;camera.right=height*aspect/2;camera.top=height/2;camera.bottom=-height/2;camera.position.set(...(kind==='learning'?[.5,10,6]:kind==='resources'?[4.3,3.8,10]:workshop?[5,7.5,9]:[7,5.2,10]) as [number,number,number]);camera.lookAt(0,workshop?.35:1,0);camera.updateProjectionMatrix();dirty=true;wake();}
  let previousTheme:boolean|undefined;
  function draw(){if(disposed||contextLost)return;const dark=document.documentElement.dataset.theme==='dark';if(previousTheme!==dark){previousTheme=dark;kit.theme(dark);
    for(const finish of finishes)finish.color.setHex(dark?finish.dark:finish.light);

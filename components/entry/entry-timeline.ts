@@ -13,7 +13,9 @@ export function entryStateAt(seconds:number){
   let turn=0;
   for(let index=0;index<4;index++){
     const start=5+index*(entryFlipDuration+entryHoldDuration);
-    turn+=ease((t-start)/entryFlipDuration);
+    const phase=Math.max(0,Math.min(1,(t-start)/entryFlipDuration));
+    // A half cosine reaches each face with zero angular velocity.
+    turn+=(1-Math.cos(Math.PI*phase))/2;
   }
   return {
     time:t,

@@ -6,8 +6,8 @@ export const homePhilosophyDuration=6.8;
 /** A solid individual aligns in space, descends, then joins the existing core. */
 export function homePhilosophyCubeState(seconds:number){
  const time=Number.isFinite(seconds)?Math.max(0,Math.min(homePhilosophyDuration,seconds)):0;
- const align=philosophyEase((time-2.6)/1.25),descent=philosophyEase((time-4)/2.05),merge=philosophyEase((time-6.05)/.75);
- return {outer:philosophyEase(time/1.05),core:philosophyEase((time-1.2)/1.3),individual:1,
+ const align=philosophyEase((time-2.6)/1.25),descent=Math.max(0,Math.min(1,(time-4)/2.05)),merge=philosophyEase((time-6.05)/.75);
+ return {outer:philosophyEase(time/1.05),core:philosophyEase((time-1.2)/1.3),individual:philosophyEase((time-2.65)/.85),
  height:philosophyDimensions.travel*(1-descent),merge,alignment:align,response:Math.sin(Math.PI*merge),time,
  phase:time<1.2?'structure':time<2.6?'core':time<4?'aligning':time<6.05?'descending':time<homePhilosophyDuration?'joining':'settled'};
 }

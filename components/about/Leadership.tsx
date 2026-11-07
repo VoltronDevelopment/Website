@@ -46,7 +46,7 @@ export function Leadership(){
    </div></ReplayableStudy><div className="leadership-copy"><p className="eyebrow">Chief Operating Officer</p><h3>Automotive experience</h3><p className="leadership-state">Revealing soon</p></div>
   </article>
   <article className="leadership-role">
-   <ReplayableStudy label="CTO résumé study"><div className="leadership-projection leadership-search" aria-hidden="true"><Projection kind="search"/></div></ReplayableStudy>
+   <ReplayableStudy label="CTO search"><div className="leadership-projection leadership-search" aria-hidden="true"><Projection kind="search"/></div></ReplayableStudy>
    <div className="leadership-copy"><p className="eyebrow">Chief Technology Officer</p><h3>Help build what comes next.</h3><p className="leadership-state">Search underway</p><a href="/partner?interest=cto#partnership">Start a conversation <span aria-hidden="true">→</span></a></div>
   </article>
  </div>;

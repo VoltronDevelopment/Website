@@ -44,7 +44,7 @@ export function NetworkFactoryStory({kind}:{kind:NetworkSceneKind}){
 
   <div className="section-intro"><p className="eyebrow">{story.eyebrow}</p><h2 id={`${id}-title`}>{story.title}</h2><p>{story.intro}</p></div>
 
-  <div className="network-factory-art" ref={host} data-ready={ready} data-kind={kind} role="img" aria-label={`${story.title} ${chapterArt ? step[0]+'. '+step[1] : 'Illustrative factory scene.'}`}>{(["light","dark"] as const).map(theme=>{
+  <div className="network-factory-art" ref={host} data-ready={ready} data-kind={kind} data-chapter={posterChapter} role="img" aria-label={`${story.title} ${chapterArt ? step[0]+'. '+step[1] : 'Illustrative factory scene.'}`}>{(["light","dark"] as const).map(theme=>{
    const base=chapterArt?`/network-scenes/chapters/${kind}-${posterChapter}`:`/network-scenes/${kind}`;
    const wide=chapterArt?`${base}-wide-${theme}.webp`:`${base}-${theme}-small.webp`;
    return <picture key={theme} className={`network-factory-poster art-theme-${theme}`}>

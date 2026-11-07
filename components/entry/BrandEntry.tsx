@@ -41,6 +41,8 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
 
 
     const duration=entryDuration;
+    const tile=root.querySelector<HTMLElement>('.entry-flip-card');
+    let previousTurn=-1;
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
     const reduced=()=>motion.matches || prefersStaticScene() || new URLSearchParams(location.search).get("motion")==="reduced";
     function paint(){
@@ -49,7 +51,10 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
       root.dataset.phase=String(state.phase);root.dataset.settled=String(state.done);root.dataset.elapsed=time.toFixed(2);
       root.dataset.motion=reduced()?"reduced":"full";
       root.style.setProperty("--entry-logo",String(state.logo));root.style.setProperty("--entry-wordmark",String(state.wordmark));root.style.setProperty("--entry-entrance",String(state.entrance));
-      root.style.setProperty("--entry-turn",String(state.turn));
+      if(tile&&state.turn!==previousTurn){
+        tile.style.transform='rotateY('+(-180*state.turn)+'deg)';
+        previousTurn=state.turn;
+      }
       // Copy follows the same clock as the object, including Pause and Replay.
       const reveal=(start:number)=>{const t=Math.max(0,Math.min(1,(time-start)/1.1));return t*t*(3-2*t);};
       root.style.setProperty("--coming-tagline",String(reduced()?1:reveal(5.8)));

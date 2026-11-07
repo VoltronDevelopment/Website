@@ -204,7 +204,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   function resize(){
     const {width,height}=host.getBoundingClientRect();if(!width || !height)return;
     const aspect=width/height;
-    const extent=options.kind==="philosophy" ? Math.max(4.8,3.6/aspect) : options.kind==="enclosure"?Math.max(2.55,2.55/aspect):Math.max(2.8,2.8/aspect);
+    const extent=options.kind==="philosophy" ? Math.max(4.35,3.4/aspect) : options.kind==="enclosure"?Math.max(2.55,2.55/aspect):Math.max(2.8,2.8/aspect);
     camera.left=-extent*aspect/2;camera.right=extent*aspect/2;camera.top=extent/2;camera.bottom=-extent/2;camera.updateProjectionMatrix();
     nodeAccents.forEach(({node,halo})=>{node.scale.setScalar(extent/height*2.25/.026);halo.scale.setScalar(extent/height*17);});
     camera.updateMatrixWorld();

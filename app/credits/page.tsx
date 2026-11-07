@@ -1,9 +1,9 @@
 import {Section, SiteShell} from "@/components/brand/SiteShell";
 
-export const metadata={title:"Acknowledgements"};
+export const metadata={title:"Asset licences"};
 export default function CreditsPage(){
   return <SiteShell><Section><article className="credit-list">
-    <h1>Acknowledgements</h1>
+    <h1>Asset licences</h1>
     <p>Walking figures based on <a href="https://sketchfab.com/3d-models/populate-models-stairs-80125d55eeb5400ea64b3d0839f3a21b">populate models (stairs)</a> by <a href="https://sketchfab.com/deathcow">vicente betoret ferrero</a>, reduced to two structures, re-materialed and re-arranged under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
       <p>3D arm based on <a href="https://sketchfab.com/3d-models/arm-hand-sculpting-e97f3be309ce4907afbcfa672832808d">Arm &amp; Hand sculpting</a> by <a href="https://sketchfab.com/alfance">alfance</a>, adapted under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
       <p>Tree based on <a href="https://sketchfab.com/3d-models/old-tree-5793911821d04f73926ac4ab1d46727a">Old Tree</a> by <a href="https://sketchfab.com/rodrigogelmi">gelmi.com.br</a>, adapted under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>

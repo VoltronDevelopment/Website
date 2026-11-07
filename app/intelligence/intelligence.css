@@ -82,3 +82,11 @@ html:has(.intelligence-sheet:modal){overflow:hidden;overflow-anchor:none;scroll-
 
 .scenario-variation label:has(input[type="checkbox"]){display:inline-flex;align-items:center;gap:8px;min-height:44px;cursor:pointer}
 .scenario-variation input[type="checkbox"]{width:24px;height:24px;flex:none}
+.scenario-current-question{display:none}
+@media(max-width:767px){
+ .scenario-current-question{display:flex;align-items:baseline;gap:10px;margin-block:12px 8px;font-size:15px;line-height:1.45}
+ .scenario-current-question strong{font-size:13px;color:var(--text-link)}
+ .specialist-gallery button:not([aria-pressed=true]) [data-agent-state-label]{display:none}
+}
+
+.scenario-current-question button{font:inherit;text-align:left;background:transparent;border:0;color:var(--text-link);text-decoration:underline;text-underline-offset:.2em;min-height:44px;padding:4px 0;cursor:pointer}

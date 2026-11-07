@@ -22,7 +22,7 @@ export default async function IntelligencePage({searchParams}:{searchParams:Prom
 
   if((await searchParams).study==='fluid-cube')return <SiteShell><div className="intelligence-page"><Section><h1 className="eyebrow">Intelligence / Fluid cube preview</h1><FluidCubeStudy/></Section></div></SiteShell>;
 
-  return <SiteShell><InvestigationProvider><div className="intelligence-page"><div className="intelligence-intro"><Hero className="intelligence-sculpture-hero" principles={["Manufacturing context","Evidence-led reasoning","Human authority"]} eyebrow="Voltron Lattice / Intelligence" title="Intelligence for the manufacturing situation." illustration={<IntelligenceHeroArtwork/>} primary="Follow an investigation" href="#quality" secondary="Meet the specialists" secondaryHref="#specialists">Connect process history, equipment condition and quality evidence—so people can investigate with context.</Hero></div>
+  return <SiteShell><InvestigationProvider><div className="intelligence-page"><div className="intelligence-intro"><Hero className="intelligence-sculpture-hero" eyebrow="Voltron Lattice / Intelligence" keywords="Gather · Compare · Review" title="Investigate with evidence" illustration={<IntelligenceHeroArtwork/>} primary="Follow an investigation" href="#quality" secondary="Meet the specialists" secondaryHref="#specialists"/></div>
 
     <Section id="quality"><Intro eyebrow="01 / Connected evidence" title="Every observation belongs to a manufacturing story.">Follow a Tank 06 observation from lot history to a proposed check.</Intro><EvidenceStory/></Section>
 

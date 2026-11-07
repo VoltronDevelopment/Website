@@ -13,7 +13,7 @@ describe('Finite geographic network',()=>{
  });
  it('forms a complete polygon envelope without keeping a moving signal at rest',()=>{
   let previous=0;for(let t=0;t<=globeDuration;t+=.025){const s=globeState(t);expect(s.envelope).toBeGreaterThanOrEqual(previous);previous=s.envelope;expect(s.envelope).toBeGreaterThanOrEqual(0);expect(s.envelope).toBeLessThanOrEqual(1);}
-  expect(globeState(0).envelope).toBe(0);expect(globeState(2.5).envelope).toBe(1);expect(globeState(globeDuration)).toMatchObject({envelope:1,angle:Math.PI*2,energy:0,done:true});
+  expect(globeState(0).envelope).toBeGreaterThan(0);expect(globeState(2.5).envelope).toBe(1);expect(globeState(globeDuration)).toMatchObject({envelope:1,angle:Math.PI*2,energy:0,done:true});
  });
  it('keeps a dense connected regional network with no duplicate or isolated routes',()=>{
   expect(globeNodes.length).toBeGreaterThanOrEqual(32);expect(globeLinks.length).toBeGreaterThanOrEqual(70);

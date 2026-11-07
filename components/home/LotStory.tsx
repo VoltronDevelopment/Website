@@ -1,4 +1,5 @@
 "use client";
+import {StudyReplay} from '@/components/brand/ReplayableStudy';
 import {useEntryChoice} from '@/lib/use-entry-choice';
 import {useHomeMotion,resetHomeScene} from './HomeMotion';
 
@@ -94,6 +95,7 @@ export function HomeLotFlow() {
         </div>)}
       </div>
     </div>
+    <StudyReplay/>
     <section className="lot-story-evidence" aria-label="VOS evidence history">
       <p className="lot-evidence-intro">VOS <span aria-hidden="true">·</span> Demo lot VL-001</p>
       <div className="lot-milestone-tiles" role="group" aria-label="Select a lot record">{recordCards.map((record,i)=>{const Icon=icons[i];return <button type="button" className="lot-milestone-tile" key={record.title} aria-pressed={state.activeEvidence===i} data-complete={state.evidence[i]} onClick={()=>{saveRecord(i);if(i===recordChoice)selectTime(record.time);}}><span className="lot-tile-title"><Icon size={16} aria-hidden="true"/>{record.title}{state.evidence[i]&&<Check size={12} aria-hidden="true"/>}</span><span className="lot-tile-message">{state.evidence[i]?record.complete:record.pending}</span></button>;})}</div>

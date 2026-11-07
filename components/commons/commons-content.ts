@@ -4,7 +4,7 @@ export const commonsStudies = {
   ['Regeneration','Caring for a shared place.','Two people plant, stake and water a sapling in a courtyard.','One gardener steadies the sapling while another waters the planting bed. A field notebook rests beside them.'],
  ],
  resources: [
-  ['Explore','Learn from an example you can inspect.','Follow an illustrative manufacturing example from receiving through treatment, inspection and dispatch. See how each physical action connects to its record.','A marked hole in the field book matches a hole on the seated panel. An inspection sweep locates the same feature.'],
+  ['Explore','Learn from an example you can inspect.','Follow an illustrative manufacturing example from receiving through treatment, inspection and dispatch. See how each physical action connects to its record.','A glass cube opens on a hinge, revealing the Voltron mark inside.'],
  ],
  'partner-paths': [
   ['Production programs','Build a dependable production program.','Bring a part, process requirement, expected volume or quality objective. We can begin by understanding the application.','A component seats in a fixture and passes through an inspection study.'],

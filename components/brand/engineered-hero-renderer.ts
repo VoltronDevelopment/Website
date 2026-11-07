@@ -187,7 +187,9 @@ uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vA
   if(isSceneScrollActive(now)){
    last=0;quality.reset();frame=requestAnimationFrame(tick);return;
   }
-  time=Math.min(duration,time+(last?Math.min(.08,(now-last)/1000):0));
+  time+=last?Math.min(.08,(now-last)/1000):0;
+  if(kind==="manufacturing" && time>duration+1) time=3.1;
+  if(kind!=="manufacturing") time=Math.min(time,duration);
   last=now;
   if(quality.sample(now)){
    renderer.setPixelRatio(quality.ratio);waveMat.uniforms.uRatio.value=quality.ratio;
@@ -195,9 +197,9 @@ uniform float uBoundary,uRatio,uFormation;attribute float aSeed;varying float vA
    size();
   }
   draw();
-  if(time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}
+  if(kind==="manufacturing"||time<duration)frame=requestAnimationFrame(tick);else{stop();onMode("settled");}
  }
- function schedule(){if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!disposed&&!lost&&visible&&!document.hidden&&!paused&&!frozen&&!frame&&time<duration&&host.dataset.sceneState==="live"){last=0;host.dataset.running="true";frame=requestAnimationFrame(tick);}}
+ function schedule(){if(!matchMedia("(prefers-reduced-motion: reduce)").matches&&!disposed&&!lost&&visible&&!document.hidden&&!paused&&!frozen&&!frame&&(kind==="manufacturing"||time<duration)&&host.dataset.sceneState==="live"){last=0;host.dataset.running="true";frame=requestAnimationFrame(tick);}}
  const resize=new ResizeObserver(size),themes=new MutationObserver(theme),view=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.25;if(visible)schedule();else stop();},{threshold:[0,.25]});
  function visibility(){if(document.hidden)stop();else schedule();}
  function contextLost(event:Event){event.preventDefault();lost=true;stop();handoff.fallback();onMode("static");}

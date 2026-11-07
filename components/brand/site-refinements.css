@@ -49,3 +49,6 @@
  .site-presentation {--glass-fill:var(--canvas);--reading-glass:var(--surface)}
  .site-presentation .commons-detail {backdrop-filter:none}
 }
+.site-presentation{--chapter-title-size:clamp(28px,2.65vw,36px)}
+.site-presentation .section-intro>h2,.site-presentation .home-alpha-intro h2{font-size:var(--chapter-title-size);line-height:1.22}
+@media(max-width:767px){.site-presentation{--chapter-title-size:clamp(22px,6vw,26px)}}

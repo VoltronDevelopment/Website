@@ -11,6 +11,6 @@
 .entry-logo:has([data-entry-face="4"]:not([hidden])){filter:none!important}
 .entry-logo:has([data-entry-face="4"]:not([hidden]))>.entry-logo-glow,.entry-logo:has([data-entry-face="4"]:not([hidden]))>.entry-pulse{visibility:hidden}
 .brand-entry[data-paused="true"] .identity-tile{--identity-play:paused}
-@media(max-width:767px){.identity-tile-face{gap:6px;padding:10px}.identity-tile-caption{font-size:11px}.identity-tile-pulse{inset:-9px;border-radius:22px}}
+@media(max-width:767px){.identity-tile-face{gap:6px;padding:10px}.identity-tile-caption{font-size:14px;font-weight:600}.identity-tile-pulse{inset:-9px;border-radius:22px}}
 @media(prefers-reduced-motion:reduce){.identity-tile-pulse{animation:none}}
 :root[data-scene-motion="static"] .identity-tile-pulse{animation:none}

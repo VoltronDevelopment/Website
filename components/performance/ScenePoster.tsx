@@ -17,7 +17,7 @@ export function ScenePoster({kind}:{kind:keyof typeof posters}) {
     return <span className="scene-poster" aria-hidden="true">
       <span className="scene-pose-opening"><NativeOpening scene={kind}/></span>
       <span className="scene-pose-complete">{(['light','dark'] as const).map(theme=>
-        <DeferredPicture key={theme} className={'art-theme-'+theme}>
+        <DeferredPicture initial={kind==='commons'} key={theme} className={'art-theme-'+theme}>
           <source media="(max-width:767px)" srcSet={complete(true,theme)}/>
           <img src={complete(false,theme)} width="1440" height="1080" alt="" decoding="async" style={{width:'100%',height:'100%',objectFit:'contain'}}/>
         </DeferredPicture>)}</span>

@@ -5,6 +5,7 @@ import type {factoryKit} from '../network/factory-kit';
 import type {CommonsKind} from './commons-content';
 
 type WorkshopTools={
+ logo?:T.Texture;
  bindFinish:(color:T.Color,light:number,dark:number)=>void;
  kit:ReturnType<typeof factoryKit>;
  box:(parent:T.Object3D,size:number[],position:number[],material?:T.Material|T.Material[])=>T.Mesh;
@@ -13,9 +14,39 @@ type WorkshopTools={
 const ease=(value:number)=>T.MathUtils.smoothstep(value,0,1);
 
 /** Drawing, paper and observations give Commons its own physical vocabulary. */
-export function createCommonsWorkshop(kind:CommonsKind,index:number,root:T.Group,{kit,box,own,bindFinish}:WorkshopTools){
+export function createCommonsWorkshop(kind:CommonsKind,index:number,root:T.Group,{kit,box,own,bindFinish,logo}:WorkshopTools){
  if(!['workshop','resources','learning'].includes(kind))return null;
  if(kind==='workshop')return courtyardStudy(root,kit,own,bindFinish);
+ if(kind==='resources' && logo){
+  const side=2.38,half=side/2;
+  const cabinet=new T.Group();
+  cabinet.position.set(.16,.57,0);cabinet.rotation.y=.15;root.add(cabinet);
+  const glass=own(new T.MeshPhysicalMaterial({roughness:.16,metalness:.06,clearcoat:1,transparent:true,opacity:.37,depthWrite:false}));
+  bindFinish(glass.color,0x85b8d4,0x407a9b);
+  for(const x of [-half,half])box(cabinet,[.055,side,side],[x,0,0],glass);
+  for(const y of [-half,half])box(cabinet,[side,.055,side],[0,y,0],glass);
+  const backing=own(new T.MeshStandardMaterial({roughness:.28,metalness:.09}));
+  bindFinish(backing.color,0xd6e9f3,0x17324a);
+  box(cabinet,[side,side,.08],[0,0,-half],backing);
+  const tile=box(cabinet,[2.02,2.02,.065],[0,0,-.74],backing);
+  const mark=new T.Mesh(own(new T.PlaneGeometry(1.72,1.72)),own(new T.MeshBasicMaterial({map:logo,transparent:true,depthWrite:false,toneMapped:false})));
+  mark.position.z=.56;tile.add(mark);mark.scale.set(1/2.02,1/2.02,1);
+  const hinge=new T.Group();hinge.position.set(-half,0,half);cabinet.add(hinge);
+  const doorFinish=own(new T.MeshPhysicalMaterial({roughness:.26,metalness:.25,clearcoat:1}));
+  bindFinish(doorFinish.color,0x234969,0x18344f);
+  const door=box(hinge,[side,side,.07],[half,0,0],doorFinish);
+  const edges=new T.LineSegments(own(new T.EdgesGeometry(door.geometry)),own(new T.LineBasicMaterial({color:0x447fa6})));
+  door.add(edges);
+  for(const y of [-.82,.82])box(hinge,[.085,.23,.12],[0,y,0],kit.steel);
+  const latch=box(hinge,[.08,.32,.09],[side-.18,0,.085],kit.steel);
+  return (time:number)=>{
+   const release=ease((time-.35)/.7);
+   latch.rotation.z=-release*Math.PI/2;
+   const opening=ease((time-1.05)/3.25);
+   hinge.rotation.y=-opening*Math.PI*.54;
+   tile.position.z=-.74+1.54*ease((time-3.25)/2.55);
+  };
+ }
  const paper=own(new T.MeshStandardMaterial({color:0xdce3e7,roughness:.92,metalness:0,side:T.DoubleSide}));
  bindFinish(paper.color,0xedf2f6,0x314558);
  const graphite=0x354c61;
@@ -50,41 +81,6 @@ export function createCommonsWorkshop(kind:CommonsKind,index:number,root:T.Group
  bindFinish(bench.color,0xbac9d5,0x1d3042);
  box(root,[5.7,.14,3.2],[0,.015,0],bench);
  for(const x of [-2.45,2.45])for(const z of [-1.25,1.25])box(root,[.12,.77,.12],[x,-.43,z],kit.navy);
- if(kind==='resources'){
-  const book=new T.Group();book.position.set(-1.25,.12,0);root.add(book);
-  const leaves=[-1,1].map(side=>{
-   const leaf=new T.Group();book.add(leaf);
-   box(leaf,[1.15,.06,1.85],[side*.575,-.045,0],kit.navy);
-   box(leaf,[1.07,.055,1.76],[side*.58,.015,0],paper);
-   for(let line=0;line<4;line++)stroke(leaf,[[side*.18,.047,-.55+line*.15],[side*.88,.047,-.55+line*.15]]);
-   return leaf;
-  });
-  const page=leaves[1];const outline=kit.line(page,[[.31,.064,.19],[.85,.064,.19],[.85,.064,.91],[.31,.064,.91],[.31,.064,.19]],0x315d69);
-  bindFinish(outline.material.color,0x31556c,0xa5cde5);
-  for(const x of [.38,.77])for(const z of [.29,.55,.8]){
-   kit.line(page,Array.from({length:17},(_,i)=>[x+.027*Math.cos(i*Math.PI/8),.065,z+.027*Math.sin(i*Math.PI/8)]));
-  }
-  const plate=new T.Mesh(own(createAlphaPanelGeometry()),kit.steel);plate.position.set(1.37,.95,.12);root.add(plate);
-  box(root,[1.51,.19,1.12],[1.37,.19,.12],kit.navy);
-  for(const z of [.045,.19])box(root,[1,.12,.055],[1.37,.32,z],kit.steel);
-  for(const x of [.67,2.07])box(root,[.075,1.65,.10],[x,.94,-.05],kit.steel);
-  box(root,[1.47,.10,.13],[1.37,1.77,-.05],kit.navy);
-  const sweep=box(root,[1.06,.035,.045],[1.37,1.5,.19],kit.active);
-  const ringGeometry=own(new T.TorusGeometry(.105,.016,8,32));
-  const feature=new T.Mesh(ringGeometry,kit.active);
-  feature.position.set(1.37+.36,.95,.17);root.add(feature);
-  const pageFeature=new T.Mesh(ringGeometry,kit.active);
-  pageFeature.rotation.x=-Math.PI/2;pageFeature.position.set(.77,.08,.55);page.add(pageFeature);
-  return (time:number)=>{
-   const opening=ease((time-.1)/1.45),turn=ease((time-1.4)/1.4),check=ease((time-4.3)/2.1);
-   leaves.forEach((leaf,i)=>leaf.rotation.z=(i?-1:1)*(1-opening)*1.05);
-   book.rotation.y=-.48+.75*turn;
-   pageFeature.scale.setScalar(.01+.68*turn);
-   plate.position.y=.95+.66*(1-ease((time-2.6)/1.5));
-   sweep.visible=time>=4.3&&time<6.6;sweep.position.y=1.53-check*1.16;
-   feature.scale.setScalar(Math.max(.001,ease((time-5.36)/.75)));
-  };
- }
  if(index===0){
   const sketch=drawing(root,-1.35,0);
   const construction=stroke(root,[[-.1,.16,-.7],[2.3,.16,-.7],[2.3,.16,.7],[-.1,.16,.7],[-.1,.16,-.7]],0x246bd4);

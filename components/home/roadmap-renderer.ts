@@ -8,7 +8,7 @@ import {roadmapFrame,roadmapLocations,roadmapYaw} from './roadmap-framing';
 /** Each milestone adds a larger glass cube to the same foundation. */
 export async function mountRoadmap(canvas:HTMLCanvasElement,host:HTMLElement,onArrive:()=>void=()=>{}){
  await prepareArtworkEnvironment();await waitForScrollPause();
- const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0,0);renderer.toneMapping=T.ACESFilmicToneMapping;
+ const renderer=new T.WebGLRenderer({canvas,alpha:true,antialias:true,powerPreference:'low-power',preserveDrawingBuffer:new URLSearchParams(location.search).has('scene-capture')});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));renderer.setClearColor(0,0);renderer.toneMapping=T.ACESFilmicToneMapping;
  const scene=new T.Scene(),camera=new T.OrthographicCamera(-6,6,4,-3,.1,50),environment=sceneEnvironment(renderer);scene.environment=environment.texture;addArtworkSoftboxes(scene);scene.add(new T.HemisphereLight(0xe7f6ff,0x163049,2));camera.position.set(0,3,16);camera.lookAt(0,1,0);
  const geometry=new RoundedBoxGeometry(1,1,1,3,latticeBevel(1)),cubeMaterials=Array.from({length:5},(_,i)=>createLatticeCellMaterials(i%2===0?'dark':'light',1)),cubes=cubeMaterials.map(materials=>{const cube=new T.Mesh(geometry,materials);cube.rotation.y=roadmapYaw;scene.add(cube);return cube;});
  const locations=roadmapLocations;

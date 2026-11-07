@@ -5,7 +5,7 @@ type Mark={points:Vector2[];weight:number;accent:boolean;start:number;end:number
 const project=(x:number,y:number,z:number)=>new Vector2(385+145*(.8575*x-.5145*z),445-145*(.927*y-.375*(.5145*x+.8575*z)));
 export const sheetBore=project(.46,1.75,.225);
 
-export const draftingPaper = {light:'#edf2f6', dark:'#24374a'};
+export const draftingPaper = {light:'#eaf5ff', dark:'#0b2246'};
 
 export function bracketSheet(){
  const marks:Mark[]=[];let clock=0;
@@ -33,11 +33,18 @@ export function bracketSheet(){
  return {draw(ctx:CanvasRenderingContext2D,time:number,dark:boolean){
   const position=Math.min(1,Math.max(0,(time-.25)/10.4))*clock;
   ctx.clearRect(0,0,960,640);ctx.lineJoin='round';ctx.lineCap='round';
+  ctx.strokeStyle=dark?'#294261':'#c4daef';ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let x=32;x<940;x+=32){ctx.moveTo(x,96);ctx.lineTo(x,568);}
+  for(let y=96;y<=568;y+=32){ctx.moveTo(32,y);ctx.lineTo(928,y);}
+  ctx.stroke();
+  ctx.strokeStyle=dark?'#58d4ff':'#1859ae';ctx.lineWidth=6;
+  ctx.beginPath();ctx.moveTo(32,48);ctx.lineTo(32,73);ctx.stroke();
   ctx.font='500 23px sans-serif';ctx.fillStyle=dark?'#b6d0e5':'#42596c';ctx.fillText('MOUNTING INTERFACE',58,70);
   let lift=0;
   for(let i=0;i<marks.length;i++){
    const mark=marks[i];if(position<mark.start)break;
-   ctx.lineWidth=mark.weight;ctx.strokeStyle=mark.accent?(dark?'#ffcb78':'#996223'):mark.weight<2?(dark?'#88a4b9':'#8295a5'):(dark?'#e1edf6':'#24394a');
+   ctx.lineWidth=mark.weight;ctx.strokeStyle=mark.accent?(dark?'#70dcff':'#0862ad'):mark.weight<2?(dark?'#88a4b9':'#8295a5'):(dark?'#e1edf6':'#173f72');
    const length=position-mark.start;pen.copy(mark.points[0]);ctx.beginPath();ctx.moveTo(pen.x,pen.y);
    for(let j=1;j<mark.points.length;j++){
     const span=mark.distance[j]-mark.distance[j-1];

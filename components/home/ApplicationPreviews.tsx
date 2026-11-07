@@ -113,7 +113,7 @@ export function ApplicationPreviews(){
   let frame=0,previous=0,progress=0,target=0,current=0,visible=false,disposed=false;
   let settling=false,settleTimer=0;
   const paint=({card,time}:typeof states[number])=>{
-   const beat=diagramBeat(time),lotPose=mesLotPose(beat.step,beat.within);
+   const beat=diagramBeat(time, CARD_HOLD * .66),lotPose=mesLotPose(beat.step,beat.within);
    card.dataset.step=String(beat.step);card.dataset.complete=String(beat.travel>=1);card.dataset.recorded=String(lotPose.recorded);
    card.style.setProperty('--diagram-travel',String(beat.travel));card.style.setProperty('--diagram-form','1');
    const work=Math.max(0,Math.min(1,(beat.within-.32)/.4));
@@ -187,5 +187,22 @@ export function ApplicationPreviews(){
   return()=>{releaseWheel();disposed=true;clearTimeout(settleTimer);stop();observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);grid.removeEventListener('scroll',scroll);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
  },[motionRevision]);
  useEffect(()=>{if(savedApp>=0)choose.current(savedApp);},[savedApp,motionRevision]);
- return <div className="application-previews" ref={host} data-focus={focus} data-arc="on"><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>{if(savedApp===i)choose.current(i);else saveApp(i);}}>{app.name}</button>)}</div><div className="application-grid">{apps.map((app,i)=><article className="application-screen" data-focused={focus===i?true:undefined} data-kind={app.id} data-tone={i%2?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div></header><div className="application-diagram">{app.id==='ai'?<AgentPreview/>:<Diagram kind={app.id}/>}</div><div className="preview-state"><span className="preview-status-light"/><span className="preview-status-copy">{workingLabels[app.id][0]}</span><span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div></div>;
+ useEffect(()=>{
+  const restore=()=>{
+   const entry=history.state?.voltronPreviewLink;
+   if(!entry||entry.path!==location.pathname)return;
+   const link=host.current?.querySelector<HTMLAnchorElement>('#preview-'+CSS.escape(entry.id)+' a');
+   if(!link)return;
+   const {voltronPreviewLink,...remaining}=history.state;
+   history.replaceState(remaining,'');
+   link.focus({preventScroll:true});
+  };
+  const frame=requestAnimationFrame(restore);
+  window.addEventListener('pageshow',restore);
+  return ()=>{cancelAnimationFrame(frame);window.removeEventListener('pageshow',restore);};
+ },[]);
+ return <div className="application-previews" ref={host} data-focus={focus} data-arc="on"><div className="application-stage"><div className="application-pin"><div className="application-tabs" role="group" aria-label="Choose an application preview">{apps.map((app,i)=><button type="button" aria-pressed={focus===i} key={app.id} onClick={()=>{if(savedApp===i)choose.current(i);else saveApp(i);}}>{app.name}</button>)}</div><div className="application-grid">{apps.map((app,i)=><article className="application-screen" data-focused={focus===i?true:undefined} data-kind={app.id} data-tone={i%2?'smoked':'pearl'} key={app.id} id={`preview-${app.id}`}><header><div><h3>{app.name}</h3><span>{app.kind}</span></div></header><div className="application-diagram">{app.id==='ai'?<AgentPreview/>:<Diagram kind={app.id}/>}</div><div className="preview-state"><span className="preview-status-light"/><span className="preview-status-copy">{workingLabels[app.id][0]}</span><span className="preview-progress"><i/></span></div><div className="application-caption"><p>{app.copy}</p><Link href={app.href} onClick={event=>{
+ if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+ saveApp(i);history.replaceState({...history.state,voltronPreviewLink:{id:app.id,path:location.pathname}},'');
+ }} aria-label={`Explore ${app.name}`}><ArrowUpRight size={20}/></Link></div></article>)}</div><div className="application-dots" aria-hidden="true">{apps.map((app,i)=><span data-on={focus===i} key={app.id}/>)}</div></div></div></div>;
 }

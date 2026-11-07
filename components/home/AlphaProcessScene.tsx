@@ -1,4 +1,5 @@
 "use client";
+import {StudyReplay} from '@/components/brand/ReplayableStudy';
 import {useHomeMotion,resetHomeScene} from './HomeMotion';
 import {ScenePoster} from "../performance/ScenePoster";
 import {prefersStaticScene} from "@/components/performance/scene-policy";
@@ -79,7 +80,7 @@ export function AlphaProcessScene() {
       <div className="alpha-process-fallback"><ScenePoster kind="process"/></div>
       <canvas key={motionRevision} ref={canvas} aria-hidden="true" />
     </div>
-    <ol className="alpha-process-stages" aria-label="Process chapters">
+    <StudyReplay/><ol className="alpha-process-stages" aria-label="Process chapters">
       {stages.map((label, index) => <li key={label} data-active={stage === index} aria-current={stage === index ? "step" : undefined}>
         <span className="alpha-stage-dot" aria-hidden="true"/><span className="alpha-stage-name"><span className="alpha-stage-label-full">{label}</span>{(index === 0 || index === 4) && <span className="alpha-stage-label-short">{index === 0 ? "Load" : "Unload"}</span>}</span>
       </li>)}

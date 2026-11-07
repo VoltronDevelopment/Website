@@ -112,18 +112,18 @@
   .site-presentation #main-content .hero .hero-copy>p:not(.eyebrow) { grid-row:4;margin:0 }
   .site-presentation #main-content .hero .hero-actions { grid-row:5;margin:0 }
   .site-presentation #main-content .section-intro { margin-bottom:16px }
-  .site-presentation #main-content .section-intro>h2 { font-size:clamp(22px,6vw,26px);line-height:1.24 }
+  .site-presentation #main-content .section-intro>h2 { font-size:var(--chapter-title-size);line-height:1.24 }
   .site-presentation #main-content .section>.container:has(>.section-intro):has(>.replayable-study),
   .site-presentation #main-content .network-factory-section,
   .site-presentation #main-content .alpha-explore,
   .site-presentation #main-content .intelligence-page .section>.container:has(>.section-intro) {display:flex;flex-direction:column}
   .site-presentation #main-content :is(.network-factory-section,.alpha-explore,.intelligence-page .section>.container,.section>.container:has(>.replayable-study))>.section-intro {display:contents}
   .site-presentation #main-content :is(.network-factory-section,.alpha-explore,.intelligence-page .section>.container,.section>.container:has(>.replayable-study))>.section-intro>h2 {margin:0 0 14px}
-  .site-presentation #main-content :is(.network-factory-section,.alpha-explore,.intelligence-page .section>.container,.section>.container:has(>.replayable-study))>.section-intro>p:not(.eyebrow) {order:2;margin:14px 0 0}
+  .site-presentation #main-content :is(.network-factory-section,.alpha-explore,.intelligence-page .section>.container,.section>.container:has(>.replayable-study))>.section-intro>p:not(.eyebrow) {order:0;margin:0 0 16px}
   .site-presentation #main-content .alpha-line-art {height:clamp(230px,38svh,345px)}
   .site-presentation #main-content .alpha-line-stage-heading {display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px}
   .site-presentation #main-content .network-factory-chapters {display:flex;flex-wrap:wrap;gap:4px}
-  .site-presentation #main-content .network-factory-chapters button {flex:1 1 27%;min-height:44px}
+  .site-presentation #main-content .network-factory-chapters button {flex:1 1 42%;min-height:44px}
   .site-presentation #main-content .commons-future-grid .commons-regeneration {order:-1}
   .site-presentation #main-content .leadership-copy {order:-1}
   .mobile-story-details summary {cursor:pointer;min-height:44px;align-content:center;color:var(--ink)}
@@ -134,4 +134,49 @@
 @media(max-width:767px){
  .site-presentation #main-content .hero .hero-principle-strip li {display:grid;grid-template-rows:26px auto;justify-items:center;align-content:start;text-align:center;row-gap:6px}
  .site-presentation #main-content .hero .hero-principle-strip li span {display:block;min-height:2.8em;line-height:1.4}
+}
+
+/* Home opens with one centered composition inside the existing site frame. */
+.site-presentation #main-content .home-page .home-hero > .hero-grid {
+ display:flex;flex-direction:column;align-items:center;gap:0;padding-block:0 24px;
+}
+.site-presentation #main-content .home-page .home-hero .home-hero-controlled {
+ order:-1;align-self:center;width:min(100%,1000px);
+}
+.site-presentation #main-content .home-page .home-hero .home-lattice-art {
+ width:100%;max-width:none;margin:0;height:clamp(360px,62svh,720px);
+}
+.site-presentation #main-content .home-page .home-hero .hero-copy {
+ display:block;padding:0;text-align:center;align-self:center;
+}
+.site-presentation #main-content .home-page .home-hero #home-title {
+ font-size:clamp(2rem,3.8vw,3.8rem);line-height:1.1;
+}
+@media(max-width:767px){
+ .site-presentation #main-content .home-page .home-hero .home-lattice-art{height:clamp(280px,105vw,51svh)}
+}
+
+/* Shared title and keyword treatment */
+.site-presentation #main-content .hero.keyword-hero .hero-copy :is(h1,#home-title) {
+ font-size:clamp(40px,4vw,58px);line-height:1.08;text-wrap:balance;
+}
+.site-presentation #main-content .hero.keyword-hero .hero-copy>p.hero-keywords {
+ margin:12px 0 0;font-size:clamp(15px,1.3vw,19px);line-height:1.5;color:var(--ink);
+}
+.site-presentation #main-content .keyword-hero .fluid-study-stage {height:var(--hero-stage)}
+.site-presentation #main-content .keyword-hero .fluid-study-stage img {width:82%}
+.site-presentation #main-content .keyword-hero.hero-with-breadcrumb .hero-copy .eyebrow {display:none}
+@media(max-width:767px){
+ .site-presentation #main-content .hero.keyword-hero>.hero-grid,
+ .site-presentation #main-content .home-page .hero.keyword-hero>.hero-grid {
+  display:flex;flex-direction:column;align-items:center;gap:28px;padding-block:32px;
+ }
+ .site-presentation #main-content .hero.keyword-hero .hero-copy {display:block;padding:0;text-align:center;width:100%}
+ .site-presentation #main-content .hero.keyword-hero .hero-copy :is(h1,#home-title){font-size:clamp(34px,9vw,44px)}
+ .site-presentation #main-content .hero.keyword-hero .hero-actions{justify-content:center;margin-top:16px}
+ .site-presentation #main-content .hero.keyword-hero :is(.human-hero-art,.fluid-study-stage,.home-lattice-art,.engineered-stage){height:clamp(325px,98vw,480px)}
+}
+@media(min-width:768px) and (max-width:1023px){
+ .site-presentation #main-content .keyword-hero:not(.home-hero){--hero-stage:clamp(320px,40svh,395px)}
+ .site-presentation #main-content .keyword-hero:not(.home-hero)>.hero-grid{gap:16px;padding-block:16px}
 }

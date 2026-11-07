@@ -1,11 +1,23 @@
 "use client";
-import {Fragment, useState, type ReactNode} from "react";
+import {createContext,Fragment,useContext,useLayoutEffect,useRef,useState,type ReactNode} from "react";
 import {RotateCcw} from "lucide-react";
 
-export function ReplayableStudy({children,label}:{children:ReactNode;label:string}){
+const StudyContext=createContext<{label:string;restart:()=>void}|null>(null);
+
+export function StudyReplay(){
+  const study=useContext(StudyContext);
+  if(!study)return null;
+  const label="Replay "+study.label;
+  return <button className="study-replay" aria-label={label} title={label} type="button" onClick={study.restart}><RotateCcw size={15} aria-hidden="true"/></button>;
+}
+
+export function ReplayableStudy({children,label,inline=false}:{children:ReactNode;label:string;inline?:boolean}){
   const [revision,setRevision]=useState(0);
-  return <div className="replayable-study">
-    <Fragment key={revision}>{children}</Fragment>
-    <button className="study-replay" aria-label={`Replay ${label}`} title={`Replay ${label}`} type="button" onClick={()=>setRevision(value=>value+1)}><RotateCcw size={15} aria-hidden="true"/></button>
-  </div>;
+  const root=useRef<HTMLDivElement>(null);
+  useLayoutEffect(()=>{
+    if(revision)root.current?.querySelector<HTMLButtonElement>(".study-replay")?.focus({preventScroll:true});
+  },[revision]);
+  return <StudyContext.Provider value={{label,restart:()=>setRevision(value=>value+1)}}>
+    <div ref={root} className="replayable-study"><Fragment key={revision}>{children}</Fragment>{!inline&&<StudyReplay/>}</div>
+  </StudyContext.Provider>;
 }

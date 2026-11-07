@@ -245,7 +245,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     const {width, height} = host.getBoundingClientRect();
     if (!width || !height) return;
     camera.aspect = width / height;
-    camera.fov = width / height < 0.9 ? 39.7 : 33.2;
+    camera.fov = width / height < 0.9 ? 35.4 : 30.4;
     camera.updateProjectionMatrix();
     const ratio = options.sharp ? Math.max(2, quality.ratio) : quality.ratio;
     sizeHeroSurface(renderer, [], width, height, ratio);

@@ -208,7 +208,7 @@ export function AlphaLineExperience({scenarioStage,scenarioStation,onScenarioSta
   });
 
   const inspector=<> 
-        <p className="eyebrow">Lot inspector</p><h2 id={panelTitle}>One lot / Carrier 03</h2><p className="alpha-line-lot">{activeStation.name} · Inspection pending</p>
+        <p className="eyebrow">Lot inspector</p><h3 id={panelTitle}>One lot / Carrier 03</h3><p className="alpha-line-lot">{activeStation.name} · Inspection pending</p>
         <div className="alpha-line-tabs" role="tablist" aria-label="VOS views">{views.map((item, index) => <button key={item.id} id={`${tabsId}-${item.id}`} type="button" role="tab" tabIndex={view === item.id ? 0 : -1} aria-selected={view === item.id} aria-controls={`${tabsId}-panel`} onClick={() => setView(item.id)} onKeyDown={event => {
           let next = index; if (event.key === "ArrowRight") next = (index + 1) % 3; else if (event.key === "ArrowLeft") next = (index + 2) % 3; else if (event.key === "Home") next = 0; else if (event.key === "End") next = 2; else return;
           event.preventDefault(); setView(views[next].id); document.getElementById(`${tabsId}-${views[next].id}`)?.focus();
