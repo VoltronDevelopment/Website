@@ -26,7 +26,7 @@ export default async function IntelligencePage({searchParams}:{searchParams:Prom
 
     <Section id="quality"><Intro eyebrow="01 / Connected evidence" title="Every observation belongs to a manufacturing story.">Follow a Tank 06 observation from lot history to a proposed check.</Intro><EvidenceStory/></Section>
 
-    <Section id="specialists"><Intro eyebrow="02 / Specialist agents" title="Different expertise. One shared manufacturing context.">Six perspectives, each with a distinct role in understanding the work.</Intro><SpecialistStory/></Section>
+    <Section id="specialists"><Intro eyebrow="02 / Specialist agents" title="Six specialist perspectives">Each specialist examines a different part of the same manufacturing investigation.</Intro><SpecialistStory/></Section>
 
     <Section id="investigation"><Intro eyebrow="03 / Working together" title="One situation. Different perspectives. Connected evidence.">Process and equipment history can be examined in parallel, with the evidence retained through each handoff.</Intro><CollaborationStory/></Section>
 
