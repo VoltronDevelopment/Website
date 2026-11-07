@@ -15,7 +15,7 @@ import "@/components/brand/hero-art-direction.css";
 export default function HomePage() {
   return <SiteShell presentation><div className="home-page">
     <section className="hero home-hero keyword-hero" aria-labelledby="home-title">
-      <div className="container hero-grid"><div className="hero-copy"><h1 id="home-title" aria-label="Voltron Lattice"><span>Voltron</span>{" "}<span>Lattice</span></h1><p className="hero-keywords">People · Manufacturing · Intelligence</p></div><HomeHeroArtwork/></div>
+      <div className="container hero-grid"><div className="hero-copy"><h1 id="home-title" aria-label="Voltron Lattice"><span>VOLTRON</span>{" "}<span>LATTICE</span></h1><p className="hero-keywords">People · Manufacturing · Intelligence</p></div><HomeHeroArtwork/></div>
     </section>
     <Section className="home-systems-section" id="factory-systems"><Intro title="Five applications, one factory">Follow one lot through execution, equipment signals, its digital twin, and review.</Intro><ReplayableStudy label="application views"><ApplicationPreviews/></ReplayableStudy></Section>
     <Section className="home-lot-section" id="connected-lot"><Intro title="Follow one production lot">The physical journey and its evidence stay connected.</Intro><ReplayableStudy inline label="lot journey"><HomeLotFlow/></ReplayableStudy></Section>
