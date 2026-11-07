@@ -37,9 +37,18 @@ for(const [width,height] of (process.env.SCENE_VIEWPORTS?process.env.SCENE_VIEWP
 await canvas.evaluate(e=>e.style.opacity='0');await p.addStyleTag({content:hostSelector+' .scene-poster,'+hostSelector+' .scene-poster *{visibility:visible!important}'+hostSelector+' .scene-poster{opacity:1!important}'+hostSelector+' .scene-pose-opening{display:block!important}'+hostSelector+' .scene-pose-complete{display:none!important}'});if(hostSelector==='.engineered-stage')await p.addStyleTag({content:'.engineered-posters,.engineered-posters *{visibility:visible!important}.engineered-posters{opacity:1!important}.engineered-opening{display:block!important}.engineered-complete{display:none!important}'});if(hostSelector==='.collaboration-stage')await p.addStyleTag({content:'.story-posters,.story-posters *{visibility:visible!important}.story-posters{opacity:1!important}.story-opening{display:block!important}.story-complete{display:none!important}'});if(name==='plant')await p.addStyleTag({content:'.alpha-line-poster{visibility:visible!important;opacity:1!important}'});if(name==='component')await p.addStyleTag({content:'.factory-component-poster,.factory-component-poster *{visibility:visible!important}.factory-component-poster{opacity:1!important}'});await p.locator(hostSelector+' .scene-poster img,'+hostSelector+' .factory-component-poster img,'+hostSelector+' .engineered-posters img,'+hostSelector+' .story-posters img').evaluateAll(images=>Promise.all(images.filter(image=>image.getBoundingClientRect().width>0).map(image=>image.decode())));if(process.env.SCENE_FINAL_POSE){await p.addStyleTag({content:hostSelector+' .scene-pose-opening{display:none!important}'+hostSelector+' .scene-pose-complete{display:block!important}'});await p.locator(hostSelector+' .scene-poster img').evaluateAll(images=>Promise.all(images.filter(i=>i.getBoundingClientRect().width>0).map(i=>i.decode())));}const b=await canvas.screenshot({omitBackground:true});// Verify the actual selected asset before Chrome resamples it a second time at fractional CSS coordinates.
 const selected=await host.locator('.native-opening-plate img').evaluateAll(images=>images.find(i=>i.getBoundingClientRect().width>0)?.currentSrc);
 const source=selected && !process.env.SCENE_FINAL_POSE ? await (await p.request.get(selected)).body() : b;
-const difference=await compare(a,source);
+const target=await sharp(source).metadata();
+const livePlate=await sharp(a).resize({width:target.width,withoutEnlargement:true}).png().toBuffer();
+const difference=await compare(livePlate,source);
 const rendered=await compare(a,b);
-const bounds=async bytes=>{const {data,info}=await sharp(bytes).ensureAlpha().raw().toBuffer({resolveWithObject:true});let left=info.width,right=-1,top=info.height,bottom=-1;for(let y=0;y<info.height;y++)for(let x=0;x<info.width;x++)if(data[(y*info.width+x)*4+3]>100){left=Math.min(left,x);right=Math.max(right,x);top=Math.min(top,y);bottom=Math.max(bottom,y);}return [left,right,top,bottom];};
+// Measure the central 99% of projected ink so isolated antialiased sparks cannot set the silhouette.
+const bounds=async bytes=>{
+ const {data,info}=await sharp(bytes).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+ const xs=Array(info.width).fill(0),ys=Array(info.height).fill(0);let total=0;
+ for(let y=0;y<info.height;y++)for(let x=0;x<info.width;x++){const alpha=data[(y*info.width+x)*4+3];xs[x]+=alpha;ys[y]+=alpha;total+=alpha;}
+ const at=(weights,q)=>{let sum=0;return weights.findIndex(value=>(sum+=value)>=q*total);};
+ return [at(xs,.005),at(xs,.995),at(ys,.005),at(ys,.995)];
+};
 const [liveBounds,posterBounds]=await Promise.all([bounds(a),bounds(b)]);
 assert.ok(liveBounds.every((v,i)=>Math.abs(v-posterBounds[i])<=3),'Opening silhouette moved: '+name);
 assert.ok(rendered.colour<=10&&rendered.alpha<=12,'Rendered opening diverged: '+name);
