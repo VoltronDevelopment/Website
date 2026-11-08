@@ -24,7 +24,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Voltron Lattice | Intelligent Manufacturing", template: "%s | Voltron Lattice" },
   description: "Building India's Intelligent Manufacturing Backbone. Physical production, manufacturing knowledge and intelligence connected through one architecture.",
-  openGraph: { siteName: "Voltron Lattice", type: "website", locale: "en_IN" },
+  openGraph: {
+    siteName: "Voltron Lattice", type: "website", locale: "en_IN",
+    images: [{ url: "/social/voltron-lattice-sharing-v1.png", width: 1200, height: 630, alt: "Voltron Lattice — Building India's Intelligent Manufacturing Backbone. People, Manufacturing, Intelligence." }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/social/voltron-lattice-sharing-v1.png"],
+  },
   icons: { icon: { url: optimizedAsset("/Brand%20Assets/voltron%20brand%20page/voltron-hero-assets/voltron-mark-original.png",true), type: "image/webp" } },
   robots: { index: true, follow: true },
 };
