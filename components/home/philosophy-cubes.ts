@@ -14,12 +14,12 @@ export function addPhilosophyLighting(scene:THREE.Scene){
 /** The outer frame stays open toward the viewer as the individual joins the core. */
 export function createMattePhilosophyCubes(){
  const root=new THREE.Group();
- const levels=[philosophyDimensions.outer,philosophyDimensions.core,philosophyDimensions.individual].map((size,level)=>{
+ const levels=[philosophyDimensions.outer,philosophyDimensions.core].map((size,level)=>{
   const group=new THREE.Group(),geometry=new THREE.BoxGeometry(size,size,size);
   const faces=matteFaces();
   for(const [i,m] of faces.entries()){
    m.transparent=true;m.depthWrite=level!==0;
-   m.userData.coverage=level===0?([1,3,5].includes(i)?.16:0):1;
+   m.userData.coverage=level===0?([1,3,5].includes(i)?.27:i===2?.24:.065):1;
    m.visible=m.userData.coverage>0;
    if(level===0)m.side=THREE.DoubleSide;
   }
@@ -33,12 +33,19 @@ export function createMattePhilosophyCubes(){
    line.color.setHex(dark?0x89a6b9:0x526f83);
   });
  }
- function apply(s:{outer:number;core:number;individual:number;height:number;merge?:number}){
-  levels.forEach(({group,faces,line},i)=>{
-   const reveal=[s.outer,s.core,s.individual*(1-(s.merge??0))][i];
-   group.visible=reveal>.001;group.position.y=i===2?s.height:0;group.scale.setScalar(.94+.06*reveal);
-   faces.forEach(m=>m.opacity=m.userData.coverage*reveal);line.opacity=(i===0?.85:.35)*reveal;
-  });
+ const outline=levels[0].edges.getAttribute('position');
+ const endpoints=new Float32Array(outline.array);
+ function apply(s:ReturnType<typeof import('./philosophy-cube-timeline').homePhilosophyCubeState>){
+  for(let i=0;i<outline.count;i+=2){
+   const a=i*3,b=a+3;
+   outline.setXYZ(i+1,...[0,1,2].map(axis=>THREE.MathUtils.lerp(endpoints[a+axis],endpoints[b+axis],s.outer)) as [number,number,number]);
+  }
+  outline.needsUpdate=true;
+  const [shell,core]=levels;
+  shell.line.opacity=.85;shell.group.visible=s.outer>0;
+  shell.faces.forEach((m,i)=>m.opacity=m.userData.coverage*s.shell*(i===2?1-s.opening:1));
+  core.group.visible=s.core>0;core.group.scale.setScalar(s.core);
+  core.group.position.y=s.height;core.faces.forEach(m=>m.opacity=s.core);core.line.opacity=.35*s.core;
  }
  setTheme(false);return {root,groups:levels.map(l=>l.group),setTheme,apply,dispose(){levels.forEach(l=>{l.geometry.dispose();l.edges.dispose();l.line.dispose();l.faces.forEach(f=>f.dispose());});}};
 }

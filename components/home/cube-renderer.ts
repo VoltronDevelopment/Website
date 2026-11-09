@@ -155,7 +155,7 @@ export function mountCubes(canvas: HTMLCanvasElement, host: HTMLDivElement, opti
   }
   function stop(){cancelAnimationFrame(frame);frame=0;previous=0;canvas.dataset.continuousRendering="false";}
   function state(){
-    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);canvas.dataset.individualFormation=pose.individual.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.individualMerge=pose.merge.toFixed(3);canvas.dataset.waveVisible='false';canvas.dataset.philosophyPhase=pose.phase;return;}
+    if(philosophy){const pose=homePhilosophyCubeState(motion.matches?duration:elapsed);philosophy.apply(pose);canvas.dataset.individualFormation=pose.core.toFixed(3);canvas.dataset.individualHeight=pose.height.toFixed(3);canvas.dataset.waveVisible='false';canvas.dataset.philosophyPhase=pose.phase;return;}
     if(options.kind==="enclosure"){
       const time=motion.matches?6.5:elapsed-sequenceDelay;
       const asset=ease(time/.8),reveal=ease((time-.9)/1.1);

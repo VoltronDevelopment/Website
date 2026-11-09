@@ -195,3 +195,8 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
  .site-presentation .home-roadmap.roadmap-ascent .roadmap-art{height:clamp(154px,46vw,205px)}
  .site-presentation .home-roadmap.roadmap-ascent .roadmap-composition{gap:8px}
 }
+
+@media(prefers-reduced-motion:no-preference){
+ :root[data-scene-motion=motion] .roadmap-art[data-index="0"]:not([data-growing=true])>:is(canvas,.roadmap-still){transform:scale(.86)}
+ :root[data-scene-motion=motion] .roadmap-art[data-growing=true][data-index="0"]>canvas{transition:transform .95s cubic-bezier(.35,0,.25,1);transform:scale(1)}
+}
