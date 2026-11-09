@@ -32,7 +32,12 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
  // Separate equipment islands preserve the service aisle and both dock approaches.
  pad(2,factoryLayout.wetLineZ,9.8,2.7);pad(factoryLayout.ovenX,factoryLayout.returnLineZ,5.6,2.7);pad(-4,factoryLayout.returnLineZ,2.6,2.6);
  // Receiving and production share a level apron. The open centre is the lift aisle.
- box(root,[24,.18,16],[-15,-.09,0],foundation,.035);
+ box(root,[17,.18,15],[-11.5,-.09,0],foundation,.035);
+ // The approach road narrows outside the dock, leaving the working apron legible in overview.
+ box(root,[7,.18,3.2],[-23.5,-.09,0],foundation,.035);
+ for(const z of [-1.35,1.35])box(root,[7,.01,.055],[-23.5,.007,z],pearl,.003);
+ for(const x of [-8.09,-10.12])for(const z of [.9,2.5,4.1])
+  box(root,[.045,.008,.72],[x,.007,z],pearl,.002);
  for(const z of [-1.03,1.03])box(root,[4.6,.01,.045],[logisticsLayout.truckX-.85,.007,z],pearl,.002);
  for(const x of [logisticsLayout.rack.x-1.06,logisticsLayout.rack.x+1.06])box(root,[.045,.012,2.1],[x,.008,logisticsLayout.rack.z],pearl,.002);
  // A low services spine leaves the tank openings and suspended load visible.
@@ -257,7 +262,8 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   const aspect=canvas.clientWidth/Math.max(1,canvas.clientHeight),shot=factoryCameraShot(state,phone,aspect);
   const directed=!overview&&!selected;
   if(directed)target.fromArray(shot.target);
-  else target.set(overview||selected==='order'?0:focus[0],selected?1:0,overview||selected==='order'?0:focus[2]);
+  else if(overview||selected==='order')target.set(-5,1.1,0);
+  else target.set(focus[0],1,focus[2]);
   look.lerp(target,follow);
   const desiredSpan=overview?factoryOverviewSpan(aspect):directed?shot.span:selected==='quality'?6.2:15;
   viewSpan=T.MathUtils.lerp(viewSpan,desiredSpan,follow);

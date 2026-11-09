@@ -9,7 +9,7 @@ export function factoryCameraOffset(yaw=0):[number,number,number]{
  // View the open rear of the trailer while retaining the Alpha line elevation.
  return [-x,y,z];
 }
-export const factoryOverviewSpan=(aspect:number)=>Math.max(13.3,37/aspect);
+export const factoryOverviewSpan=(aspect:number)=>Math.max(16.8,39/aspect);
 
 /** Authored holds keep the tank lip and inspection fixture stationary during contact. */
 export function factoryCameraShot(state:ReturnType<typeof operatingState>,_phone:boolean,aspect:number){
@@ -34,7 +34,7 @@ export function factoryCameraShot(state:ReturnType<typeof operatingState>,_phone
   {time:75,yaw:.45,span:view(7.4,10),target:dispatch,phase:'return'},
   {time:78.5,yaw:.45,span:view(5.8,8.6),target:dock,phase:'dispatch'},
   {time:82,yaw:.45,span:view(5.8,8.6),target:dock,phase:'departure'},
-  {time:90,yaw:0,span:factoryOverviewSpan(aspect),target:[-4,0,0],phase:'complete'},
+  {time:90,yaw:0,span:factoryOverviewSpan(aspect),target:[-5,1.1,0],phase:'complete'},
  ];
  let a=shots[0];
  for(const b of shots.slice(1)){
