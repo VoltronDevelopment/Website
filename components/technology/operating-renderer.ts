@@ -26,16 +26,12 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   const mesh=new T.Mesh(geometry,mat);mesh.position.fromArray(pos);mesh.castShadow=!mat.transparent;mesh.receiveShadow=true;parent.add(mesh);return mesh;}
  function line(points:number[][],mat:T.Material,parent:T.Object3D=root){const g=own(new T.BufferGeometry().setFromPoints(points.map(p=>new T.Vector3(...p as [number,number,number]))));const l=new T.Line(g,mat);parent.add(l);return l;}
  const semanticMat=own(new T.LineBasicMaterial({color:0x2e9acb,transparent:true,opacity:.65}));
- const foundation=own(new T.MeshStandardMaterial({roughness:.38,metalness:.32}));box(root,[27,.16,17],[0,-.3,-.4],foundation,.06);
- const shadowMat=own(new T.ShadowMaterial({color:0x254962,opacity:.14}));const shadowFloor=new T.Mesh(own(new T.PlaneGeometry(34,23)),shadowMat);shadowFloor.rotation.x=-Math.PI/2;shadowFloor.position.y=-.4;shadowFloor.receiveShadow=true;root.add(shadowFloor);
- const pad=(x:number,z:number,w:number,d:number)=>{box(root,[w,.2,d],[x,-.18,z],pearl);box(root,[w,.08,d],[x,-.31,z],navy);};
+ const foundation=own(new T.MeshStandardMaterial({roughness:.38,metalness:.32}));box(root,[22.6,.1,13.9],[-1.3,-.05,-.25],foundation,.035);
+ const shadowMat=own(new T.ShadowMaterial({color:0x254962,opacity:.14}));const shadowFloor=new T.Mesh(own(new T.PlaneGeometry(58,23)),shadowMat);shadowFloor.rotation.x=-Math.PI/2;shadowFloor.position.y=-.012;shadowFloor.receiveShadow=true;root.add(shadowFloor);
+ const pad=(x:number,z:number,w:number,d:number)=>{box(root,[w,.06,d],[x,.028,z],pearl,.018);};
  // Separate equipment islands preserve the service aisle and both dock approaches.
  pad(2,factoryLayout.wetLineZ,9.8,2.7);pad(factoryLayout.ovenX,factoryLayout.returnLineZ,5.6,2.7);pad(-4,factoryLayout.returnLineZ,2.6,2.6);
- // Receiving and production share a level apron. The open centre is the lift aisle.
- box(root,[17,.18,15],[-11.5,-.09,0],foundation,.035);
- // The approach road narrows outside the dock, leaving the working apron legible in overview.
- box(root,[7,.18,3.2],[-23.5,-.09,0],foundation,.035);
- for(const z of [-1.35,1.35])box(root,[7,.01,.055],[-23.5,.007,z],pearl,.003);
+ // Exterior bay markings share the ground datum with the single interior slab.
  for(const x of [-8.09,-10.12])for(const z of [.9,2.5,4.1])
   box(root,[.045,.008,.72],[x,.007,z],pearl,.002);
  for(const z of [-1.03,1.03])box(root,[4.6,.01,.045],[logisticsLayout.truckX-.85,.007,z],pearl,.002);
@@ -182,7 +178,7 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
  const lift=handler();
  // Inspection enclosure, locating jaws and two perpendicular scan planes.
  for(const x of [9.05,10.95])for(const z of [.9,2.7])box(qualityRoot,[.07,2.2,.07],[x,1,z],metal,.02);
- for(const z of [1.25,2.35])box(qualityRoot,[2.05,.06,.8],[10,2.12,z],glass);for(const x of [9.02,10.98])box(qualityRoot,[.045,.06,1.9],[x,2.12,1.8],metal,.01);for(const z of [.87,2.73])box(qualityRoot,[2.05,.06,.045],[10,2.12,z],metal,.01);box(qualityRoot,[.035,1.6,1.8],[9.02,1.25,1.8],glass,.01);
+ for(const z of [1.25,2.35])box(qualityRoot,[2.05,.06,.8],[10,2.12,z],glass);for(const x of [9.02,10.98])for(const z of [1.25,2.35])box(qualityRoot,[.045,.06,.8],[x,2.12,z],metal,.01);for(const z of [.87,2.73])box(qualityRoot,[2.05,.06,.045],[10,2.12,z],metal,.01);box(qualityRoot,[.035,1.6,1.8],[9.02,1.25,1.8],glass,.01);
  const jaws=[box(qualityRoot,[.13,.22,.4],[9.4,.85,1.8],metal,.025),box(qualityRoot,[.13,.22,.4],[10.6,.85,1.8],metal,.025)];
  const qualityBadge=box(qualityRoot,[.4,.16,.12],[10,1.95,2.8],metal,.025);
  const inspectionVertical=box(qualityRoot,[.025,1.1,1.4],[10,1.15,1.8],scanMaterial,.01);

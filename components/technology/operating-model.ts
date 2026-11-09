@@ -74,7 +74,7 @@ export const FACTORY_PROCESS_PATH:readonly (readonly [number,number,number,numbe
  [31,2,2.3,factoryLayout.wetLineZ],[32,2,.9,factoryLayout.wetLineZ],[34,2,.9,factoryLayout.wetLineZ],[35.6,2,2.3,factoryLayout.wetLineZ],[36,2,2.3,factoryLayout.wetLineZ],
  [37,5,2.3,factoryLayout.wetLineZ],[37.45,5,.9,factoryLayout.wetLineZ],[38,5,.9,factoryLayout.wetLineZ],[38.55,5,2.3,factoryLayout.wetLineZ],[38.65,5,2.3,factoryLayout.wetLineZ],[39.4,8,2.3,factoryLayout.wetLineZ],[39.9,8,2.3,factoryLayout.wetLineZ],
  [40.6,8,2.3,-1.25],[41,8,.9,-1.25],[50,8,.9,-1.25],[50.9,8,2.3,-1.25],[51.2,8,2.3,-1.25],[52.3,8,2.3,factoryLayout.returnLineZ],[52.8,8,2.3,factoryLayout.returnLineZ],[53.05,5.8,1.94,factoryLayout.returnLineZ],[53.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],
- [56.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[57.05,-1.8,1.94,factoryLayout.returnLineZ],[57.4,-4,2.3,factoryLayout.returnLineZ],[58,-4,1.055,factoryLayout.returnLineZ],
+ [56.5,factoryLayout.ovenX,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[57.05,-1.8,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[57.36,-4,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[57.48,-4,factoryLayout.ovenLoadHeight,factoryLayout.returnLineZ],[58,-4,1.055,factoryLayout.returnLineZ],
 ];
 /** Horizontal running distance excludes hoisting and stationary indexing; reversible on seek. */
 export function factoryRunningDistance(time:number){
