@@ -104,3 +104,4 @@ html:has(.home-page){overflow-x:clip}
 
 .application-screen .scada-chart-grid{fill:none;stroke:var(--diagram-line);opacity:.44}
 .application-screen .scada-trace{fill:none;stroke:var(--diagram-ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--diagram-travel,0))}
+@media(pointer:fine){.application-grid[data-dragging=true],.application-grid[data-dragging=true] *{cursor:grabbing;user-select:none}}

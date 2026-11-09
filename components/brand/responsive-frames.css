@@ -300,3 +300,37 @@
     height:clamp(270px,89vw,430px);
   }
 }
+/* Keep the tagline's space reserved during the brand-to-home handoff. */
+.home-page .home-brand-tagline {display:block;text-wrap:balance}
+@media(prefers-reduced-motion:no-preference){
+ :root:not([data-artwork-motion=off]) .home-page .home-brand-tagline {animation:home-tagline-reveal .72s ease-out .2s both}
+ :root:has([data-entry-sweep]) .home-page .home-brand-tagline {animation:none;opacity:0}
+}
+@keyframes home-tagline-reveal {from{opacity:0}to{opacity:1}}
+.site-presentation :is(.hero-motion-controls button,.study-replay) {color:var(--muted);background:transparent;box-shadow:none;border:0}
+.site-presentation :is(.hero-motion-controls button,.study-replay)::before {content:none}
+.site-presentation :is(.hero-motion-controls button,.study-replay):is(:hover,:focus-visible) {color:var(--text-link)}
+@media(max-width:767px){
+ .site-presentation #main-content .hero.keyword-hero .hero-grid {row-gap:12px}
+ .site-presentation #main-content .hero.keyword-hero .hero-visual :is(.human-hero-art,.fluid-study-stage,.engineered-stage),
+ .site-presentation #main-content .network-page .hero.keyword-hero .engineered-stage {height:clamp(145px,min(98vw,calc(100svh - 474px)),385px)}
+ .site-presentation #main-content .hero.keyword-hero .hero-copy>.home-brand-tagline {max-width:30ch;margin:10px auto 0;font-size:14px;line-height:1.45}
+}
+@media(max-width:767px) and (max-height:730px){
+ .site-presentation #main-content .hero.keyword-hero .hero-actions {margin-top:8px}
+ .site-presentation #main-content .hero.keyword-hero>.hero-grid {padding-block:8px;gap:8px}
+ .site-presentation #main-content .hero.keyword-hero .hero-visual {min-height:0;--hero-stage:clamp(140px,calc(100svh - 450px),260px)}
+}
+@media(max-width:767px){
+ .site-presentation #main-content .keyword-hero .engineered-art:has(>.hero-motion-controls){position:relative}
+ .site-presentation #main-content .keyword-hero .engineered-art>.hero-motion-controls{position:absolute;bottom:0;right:0}
+ .site-presentation #main-content .network-page .hero.keyword-hero .engineered-network .engineered-stage {height:clamp(120px,min(96vw,calc(100svh - 500px)),360px)}
+}
+@media(max-width:767px) and (max-height:730px){
+ .site-presentation #main-content .home-page .hero.home-hero.keyword-hero .home-hero-controlled .home-lattice-art {height:clamp(155px,calc(100svh - 415px),295px)}
+}
+@media(max-width:360px) and (max-height:640px){
+ .site-presentation #main-content .network-page .hero.keyword-hero>.hero-grid {padding-block:0;gap:4px}
+}
+.theme-icon-plane {fill:var(--blue);fill-opacity:.25;stroke:color-mix(in srgb,var(--ink) 46%,transparent);stroke-width:.5}
+[data-theme=dark] .theme-icon-plane {fill-opacity:.32;stroke:color-mix(in srgb,var(--text-link) 65%,transparent)}

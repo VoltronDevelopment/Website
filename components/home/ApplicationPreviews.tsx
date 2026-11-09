@@ -1,6 +1,6 @@
 "use client";
 import {useEntryChoice} from '@/lib/use-entry-choice';
-import {allowPageWheelOverRow} from '../performance/card-row-input';
+import {allowPageWheelOverRow,enableCardDrag} from '../performance/card-row-input';
 import {productLabel} from '@/lib/product-names';
 import {AgentPreview} from './AgentPreview';
 import {useHomeMotion} from './HomeMotion';
@@ -182,9 +182,9 @@ export function ApplicationPreviews(){
   const observer=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.3;if(visible){alignChoice();scroll();start();}else stop();},{threshold:[0,.3]});observer.observe(grid);
   const resize=new ResizeObserver(()=>{place();stride=measureStride();alignChoice();scroll();});resize.observe(stage);resize.observe(cards[0]);
   const visibility=()=>document.hidden?stop():start();document.addEventListener('visibilitychange',visibility);
-  const releaseWheel=allowPageWheelOverRow(grid);
+  const releaseWheel=allowPageWheelOverRow(grid),releaseDrag=enableCardDrag(grid,calm);
   grid.addEventListener('scroll',scroll,{passive:true});
-  return()=>{releaseWheel();disposed=true;clearTimeout(settleTimer);stop();observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);grid.removeEventListener('scroll',scroll);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
+  return()=>{releaseWheel();releaseDrag();disposed=true;clearTimeout(settleTimer);stop();observer.disconnect();resize.disconnect();document.removeEventListener('visibilitychange',visibility);grid.removeEventListener('scroll',scroll);cards.forEach(card=>{card.inert=false;card.hidden=false;});};
  },[motionRevision]);
  useEffect(()=>{if(savedApp>=0)choose.current(savedApp);},[savedApp,motionRevision]);
  useEffect(()=>{
