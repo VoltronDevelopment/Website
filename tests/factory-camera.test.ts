@@ -6,12 +6,12 @@ import {operatingState} from '../components/technology/operating-model';
 describe('directed factory camera',()=>{
  it('keeps overview and every guided shot at the 13-tank elevation and on the same side of the rail',()=>{
   const base=alphaLineCameraOffset(0,0);
-  expect(factoryCameraOffset()).toEqual([base.x,base.y,base.z]);
+  expect(factoryCameraOffset()).toEqual([-base.x,base.y,base.z]);
   const reference=base.y/Math.hypot(base.x,base.z);
   for(let t=0;t<=90;t+=.25){
    const [x,y,z]=factoryCameraShot(operatingState(t),false,1.6).offset;
    expect(y/Math.hypot(x,z)).toBeCloseTo(reference,6);
-   expect(x).toBeLessThan(0);
+   expect(x).toBeGreaterThan(0);
    expect(z).toBeGreaterThan(0);
   }
  });

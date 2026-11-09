@@ -94,3 +94,41 @@
  .operating-platform .operating-digital-screens .operating-digital-screen:first-child{margin-inline-start:9%}
  .operating-platform .operating-digital-screens .operating-digital-screen:last-child{margin-inline-end:9%}
 }
+/* The app instrument stays in one place while the active process changes. */
+.factory-console {
+ min-width:0; padding:16px; color:var(--ink);
+ background:color-mix(in srgb,var(--op-panel) 50%,transparent);
+}
+.factory-app-switch {display:flex;flex-wrap:wrap;gap:2px}
+.factory-app-switch button {
+ white-space:nowrap;flex:1 0 auto;min-height:44px;padding:5px 8px;color:var(--muted);background:transparent;
+ border:0;border-radius:4px;font:inherit;font-size:12px;cursor:pointer;
+}
+.factory-app-switch button[aria-pressed=true] {color:var(--op-accent);box-shadow:inset 0 -2px var(--op-accent)}
+.factory-app-view .operating-digital-screen[data-mobile-active=true] {
+ display:grid;width:100%;min-width:0;grid-template-columns:1fr;grid-template-rows:auto 104px auto auto;
+ gap:3px;padding:14px;margin:0!important;transform:none;background:var(--op-bg);
+ border-radius:8px;box-shadow:none;animation:digital-screen-crossfade .2s ease-out;
+}
+.factory-app-view .operating-digital-screen .digital-refined-graph {grid-area:2/1;width:100%;height:100%;max-width:none;margin:0}
+.factory-app-view .digital-screen-status {min-height:1.6em}
+.factory-app-view small,.factory-app-view .digital-screen-status {font-size:12px}
+.factory-edge-bus {position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 2px 20px;font:11px/1.4 ui-monospace,monospace;color:var(--op-accent)}
+.factory-edge-bus b {border:1px solid currentColor;border-radius:4px;padding:2px 6px;font-weight:500}
+.factory-edge-bus::after {content:'';position:absolute;bottom:10px;left:4%;right:4%;height:1px;background:currentColor;opacity:.32}
+.factory-edge-bus i {position:absolute;bottom:3px;z-index:1;transform:translateX(-50%);padding:0 3px;font-style:normal;background:var(--op-panel)}
+@media(max-width:1099px) {
+ .operating-platform .operating-scene-composite {display:flex;flex-direction:column}
+ .operating-platform .operating-workspace {order:-1;width:100%}
+ .factory-console {width:100%;padding:8px 14px}
+ .factory-app-view .operating-digital-screen[data-mobile-active=true] {
+  grid-template-columns:minmax(0,1fr) minmax(80px,.9fr);grid-template-rows:auto auto auto;
+  align-content:center;align-items:center;min-height:96px;padding:6px 12px;
+ }
+ .factory-app-view .operating-digital-screen .digital-refined-graph {grid-area:1/2/4/3;height:84px}
+ .factory-app-switch button {padding:4px 2px;flex:1 0 auto}
+ .factory-edge-bus {padding-top:6px}
+}
+@media(prefers-reduced-motion:reduce){.factory-app-view .operating-digital-screen[data-mobile-active=true]{animation:none}.factory-edge-bus i{display:none}}
+
+.factory-app-view .operating-digital-screen .factory-barcode {fill:var(--op-accent);stroke:none}

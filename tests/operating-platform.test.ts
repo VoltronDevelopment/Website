@@ -1,14 +1,18 @@
 import {factoryBathGeometry} from '../components/technology/factory-bath-model';
 import {describe,it,expect} from 'vitest';
-import {operatingState,operatingEntities,operatingEdges,OPERATING_DURATION,operatingTimes as T,handlingGeometry as H,receivingBridgeBounds as bridge} from '../components/technology/operating-model';
+import {operatingState,operatingEntities,operatingEdges,OPERATING_DURATION,operatingTimes as T,handlingGeometry as H} from '../components/technology/operating-model';
 import {digitalGraphState,twinPoint} from '../components/technology/digital-graph-model';
 import {factoryLayout,factoryStations,FACTORY_PROCESS_PATH} from '../components/technology/operating-model';
 describe('connected operation and physical clearances',()=>{
  it('holds at CED until review and releases only after a stationary quality scan',()=>{expect(operatingState(41).carrier).toEqual(operatingState(49.9).carrier);for(let t=62;t<65;t+=.1){const s=operatingState(t);expect(s.part).toEqual({x:-4,y:1.055,z:factoryLayout.returnLineZ});expect(s.scanning).toBe(true);expect(s.released).toBe(false);expect(s.clamp).toBe(1);}expect(operatingState(66).released).toBe(true);});
- it('keeps the dock bridge clear of the truck floor',()=>{expect(bridge.minX-bridge.cargoRear).toBeGreaterThanOrEqual(.049);expect(bridge.top).toBe(.6);for(let t=6;t<10;t+=.1)expect(operatingState(t).bridge).toBe(0);expect(operatingState(17).bridge).toBe(0);});
- it('enters the outbound cargo only through the rear opening',()=>{for(let t=67;t<=82;t+=.025){const s=operatingState(t),p=s.part;if(t>=73&&p.x>=-7.42){expect(p.z).toBeCloseTo(6,7);if(t<78)expect(s.outboundDoor).toBeGreaterThan(.99);expect(p.y-.335).toBeGreaterThanOrEqual(.6);}if(t>=73&&p.z<5.31)expect(p.x).toBeLessThan(-7.42);}});
+ it('uses the same aligned cargo opening for both handoffs',()=>{
+  const pickup=operatingState(3),delivery=operatingState(79.55);
+  expect(delivery.part.x).toBeCloseTo(pickup.part.x);expect(delivery.part.z).toBeCloseTo(pickup.part.z);
+  expect(delivery.part.y).toBeCloseTo(pickup.part.y);
+  for(let t=75;t<79.5;t+=.025){const s=operatingState(t);if(s.part.x-.75>s.logistics.truckX+1.42)continue;expect(s.part.z).toBeCloseTo(0);expect(s.logistics.door).toBe(1);}
+ });
  it('keeps forks above the cargo floor and directly beneath their load',()=>{expect(H.dispatchForkHeight-H.forkThickness/2).toBeCloseTo(H.cargoFloor,8);expect(H.dispatchForkHeight+H.forkThickness/2).toBeCloseTo(.62,8);expect(H.receiveForkOffset+H.forkThickness/2).toBeCloseTo(H.palletDeckUnderside,8);});
- it('closes doors and removes the loader before departure',()=>{for(let t=82;t<=90;t+=.1){expect(operatingState(t).outboundDoor).toBe(0);}expect(operatingState(87).dispatched).toBe(true);});
+ it('closes doors and removes the loader before departure',()=>{for(let t=82;t<=90;t+=.1){expect(operatingState(t).logistics.door).toBe(0);}expect(operatingState(87).dispatched).toBe(true);});
  it('preserves a continuous supported part path through every handover',()=>{for(const t of [10,11,14,14.7,16.5,17.3,18,20,22,24,41,50,58,59,60.5,61.5,62,65,66,67,68,70,73,75,78,82,87]){const a=operatingState(t-.00001).part,b=operatingState(t+.00001).part;expect(Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)).toBeLessThan(.001);}});
  it('inspects directly at the oven exit without a remote transfer',()=>{for(let t=58;t<=67;t+=.1)expect(operatingState(t).part).toEqual({x:-4,y:1.055,z:factoryLayout.returnLineZ});});
  it('uses a separate four-tank factory and holds at CED during coating',()=>{expect(factoryStations.filter(s=>s.kind==='tank')).toHaveLength(4);const station=factoryStations.find(s=>s.id==='T04')!;expect(operatingState(42).carrier).toEqual({x:station.x,z:station.z});expect(twinPoint(station.x,station.z)).toEqual(twinPoint(operatingState(42).carrier.x,operatingState(42).carrier.z));});
@@ -33,4 +37,22 @@ it('keeps the CED station tag on the immersed part throughout evidence gathering
  }
  expect(operatingState(57.5).processStage).toBe('Transfer to quality');
  expect(operatingState(58).processStage).toBe('Inspection');
+});
+
+it('backs the load and fork tips completely past the trailer before turning',()=>{
+ for(let t=4;t<10.8;t+=.01){
+  const {logistics:{pose,truckX}}=operatingState(t);
+  if(Math.abs(pose.heading-Math.PI)<.001)continue;
+  for(const forward of [.7,2.31])for(const side of [-.75,.75]){
+   expect(pose.x+forward*Math.cos(pose.heading)-side*Math.sin(pose.heading)).toBeGreaterThan(truckX+1.42+.12);
+  }
+ }
+});
+it('approaches and withdraws straight while forks overlap the outfeed',()=>{
+ for(let t=66;t<74;t+=.01){
+  const {pose}=operatingState(t).logistics;
+  if(pose.x+2.28*Math.cos(pose.heading)>-4.75 && Math.abs(pose.z-4.95)<1){
+   expect(pose.heading).toBeCloseTo(0,6);expect(pose.z).toBeCloseTo(4.95);
+  }
+ }
 });

@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {factoryLayout,factoryRunningDistance,dispatchReach,operatingState} from '../components/technology/operating-model';
+import {factoryLayout,factoryRunningDistance,operatingState} from '../components/technology/operating-model';
 it('rolls only with horizontal travel and remains still during hoists and indexed turns',()=>{
  expect(factoryRunningDistance(24)).toBe(0);
  expect(factoryRunningDistance(26)).toBeCloseTo(3);
@@ -9,10 +9,12 @@ it('rolls only with horizontal travel and remains still during hoists and indexe
 it('keeps travel distance continuous and reproducible through every boundary',()=>{
  for(const t of [25,26,30,31,36,37,50.6,51.2,51.7,52.3,52.8,53.05,53.5,56.5,57.05,57.4,58])expect(Math.abs(factoryRunningDistance(t-.00001)-factoryRunningDistance(t+.00001))).toBeLessThan(.002);
 });
-it('keeps the two sliding stages within their fixed length and withdraws after cargo is supported',()=>{
- for(let t=72;t<82;t+=.01){const p=operatingState(t),r=dispatchReach(t,p.part.x);expect(r.stages[0]).toBeGreaterThanOrEqual(0);expect(r.stages[0]).toBeLessThanOrEqual(.6);expect(r.stages[1]).toBeGreaterThanOrEqual(0);expect(r.stages[1]).toBeLessThan(.6);expect(r.stages[0]+r.stages[1]).toBeCloseTo(r.extension);}
- expect(dispatchReach(78,-6.4).extension).toBeGreaterThan(1);
- expect(dispatchReach(79,-6.4).extension).toBe(0);
+it('keeps the chassis tangent to its path through forward and reversing turns',()=>{
+ for(let t=.02;t<87;t+=.037){
+  const a=operatingState(t-.001).logistics.pose,b=operatingState(t+.001).logistics.pose;
+  const lateral=-(b.x-a.x)*Math.sin(a.heading)+(b.z-a.z)*Math.cos(a.heading);
+  expect(Math.abs(lateral)).toBeLessThan(.0001);
+ }
 });
 
 it('passes through the oven approach without a false full stop and preserves station stops',()=>{

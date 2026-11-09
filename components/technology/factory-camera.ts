@@ -6,36 +6,35 @@ const ease=(value:number)=>{const p=Math.max(0,Math.min(1,value));return p*p*p*(
 
 export function factoryCameraOffset(yaw=0):[number,number,number]{
  const {x,y,z}=alphaLineCameraOffset(yaw,0);
- return [x,y,z];
+ // View the open rear of the trailer while retaining the Alpha line elevation.
+ return [-x,y,z];
 }
-export const factoryOverviewSpan=(aspect:number)=>Math.max(13.3,29.5/aspect);
+export const factoryOverviewSpan=(aspect:number)=>Math.max(13.3,37/aspect);
 
 /** Authored holds keep the tank lip and inspection fixture stationary during contact. */
-export function factoryCameraShot(state:ReturnType<typeof operatingState>,phone:boolean,aspect:number){
- const wide=factoryOverviewSpan(aspect),part=state.part;
- const receiving:[number,number,number]=[part.x,1.15,part.z];
- const process:[number,number,number]=[part.x,1.25,part.z];
- const stationSpan=Math.max(5.9,9.4/aspect);
+export function factoryCameraShot(state:ReturnType<typeof operatingState>,_phone:boolean,aspect:number){
+ const view=(height:number,width:number)=>Math.max(height,width/Math.max(.35,aspect));
+ const dock=[-15,1,.1] as const;
+ const loading=[-9.4,1,-3.3] as const;
+ const process=[state.part.x,1.25,state.part.z] as const;
+ const dispatch=[-9.3,1,3] as const;
  const shots:Shot[]=[
-  {time:0,yaw:0,span:wide,target:[0,0,0],phase:'overview'},
-  {time:6,yaw:0,span:wide,target:[0,0,0],phase:'arrival'},
-  {time:10,yaw:.08,span:phone?19:16,target:[-10,1.1,-4],phase:'receiving'},
-  {time:17,yaw:.08,span:phone?19:16,target:[-10,1.1,-4],phase:'receiving'},
-  {time:23,yaw:0,span:phone?13:12,target:receiving,phase:'transfer'},
-  {time:26,yaw:-.12,span:stationSpan,target:process,phase:'treatment'},
-  {time:38.65,yaw:-.12,span:stationSpan,target:process,phase:'treatment'},
-  {time:40.6,yaw:-.22,span:stationSpan,target:process,phase:'return-bend'},
-  {time:51.2,yaw:-.22,span:stationSpan,target:process,phase:'paint'},
-  {time:53.5,yaw:-.12,span:Math.max(12,8/aspect),target:[2,1.3,part.z],phase:'oven'},
-  {time:56.5,yaw:-.12,span:Math.max(12,8/aspect),target:[1,1.3,part.z],phase:'oven'},
-  {time:58,yaw:-.05,span:Math.max(8,10/aspect),target:[-4,1.25,part.z],phase:'unload'},
-  {time:59,yaw:-.05,span:Math.max(4.85,7.7/aspect),target:process,phase:'handoff'},
-  {time:61.5,yaw:.09,span:phone?5.8:6.2,target:[-4,1,part.z],phase:'inspection'},
-  {time:66.5,yaw:.09,span:phone?5.8:6.2,target:[-4,1,part.z],phase:'inspection'},
-  {time:70,yaw:.08,span:phone?15:13,target:[-7,1,5],phase:'packing'},
-  {time:78,yaw:.08,span:phone?15:13,target:[-7,1,5],phase:'loading'},
-  {time:83,yaw:0,span:wide,target:[0,0,0],phase:'departure'},
-  {time:90,yaw:0,span:wide,target:[0,0,0],phase:'complete'},
+  {time:0,yaw:.45,span:view(5.1,7.6),target:dock,phase:'dock'},
+  {time:4,yaw:.45,span:view(5.1,7.6),target:dock,phase:'unloading'},
+  {time:10.8,yaw:.45,span:view(6.6,10),target:[-10.7,1,3.8],phase:'rack'},
+  {time:17.6,yaw:.45,span:view(6.6,10),target:[-10.7,1,3.8],phase:'production-call'},
+  {time:22,yaw:0,span:view(7.2,11),target:loading,phase:'loading-bay'},
+  {time:26,yaw:0,span:view(6.1,9),target:process,phase:'treatment'},
+  {time:52.3,yaw:0,span:view(6.1,9),target:process,phase:'treatment'},
+  {time:54,yaw:0,span:view(7.8,11),target:[2,1.25,2.5],phase:'oven'},
+  {time:56.5,yaw:0,span:view(7.8,11),target:[2,1.25,2.5],phase:'oven'},
+  {time:60,yaw:0,span:view(5.7,7),target:[-4,1.25,2.5],phase:'inspection'},
+  {time:66.5,yaw:0,span:view(5.7,7),target:[-4,1.25,2.5],phase:'release'},
+  {time:71,yaw:.45,span:view(7.4,10),target:[-5.4,1,4.6],phase:'packing'},
+  {time:75,yaw:.45,span:view(7.4,10),target:dispatch,phase:'return'},
+  {time:78.5,yaw:.45,span:view(5.8,8.6),target:dock,phase:'dispatch'},
+  {time:82,yaw:.45,span:view(5.8,8.6),target:dock,phase:'departure'},
+  {time:90,yaw:0,span:factoryOverviewSpan(aspect),target:[-4,0,0],phase:'complete'},
  ];
  let a=shots[0];
  for(const b of shots.slice(1)){

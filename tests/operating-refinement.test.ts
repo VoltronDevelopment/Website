@@ -6,8 +6,14 @@ describe('operating artwork refinement',()=>{
  it('suppresses a label if no safe slot exists',()=>expect(placeOperatingLabel(50,50,150,44,{width:100,height:100},[])).toBeNull());
  it('keeps one panel continuous across processing and inspection transfers',()=>{for(const boundary of [10,11,14,17,20,24,41,50,58,65,66,67,82]){const a=operatingState(boundary-.0001).part,b=operatingState(boundary+.0001).part;expect(Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z)).toBeLessThan(.01);}});
  it('emits signals only inside a defined event window and ends them in stillness',()=>{for(let t=0;t<90;t+=.1){const state=operatingState(t);if(state.signals.length){expect(operatingEvents.some(([time])=>t>=time&&t<time+2)).toBe(true);state.signals.forEach(signal=>expect(operatingEvents.some(([time,entity,products])=>t>=time&&t<time+2&&entity===signal.entity&&products.includes(signal.product))).toBe(true));}}expect(operatingState(90).signals).toHaveLength(0);});
- it('reverses into a stationary dock before the doors open and stages material before loading',()=>{expect(operatingState(7).incomingX).toBeLessThan(operatingState(9).incomingX);expect(operatingState(10).incomingX).toBe(operatingState(15).incomingX);expect(operatingState(16).part).toEqual(operatingState(16.4).part);expect(operatingState(21).part.x).toBeGreaterThan(operatingState(17).part.x);});
- it('closes cargo doors before outbound movement',()=>{for(let t=62;t<68;t+=.1){expect(operatingState(t).outboundDoor).toBe(0);}expect(operatingState(12).doorOpen).toBe(1);expect(operatingState(19).doorOpen).toBe(0);});
+ it('holds the truck and the staged lot while MES enrols and calls production',()=>{
+  const dock=operatingState(0).logistics.truckX,rack=operatingState(12).part;
+  for(let t=0;t<=82;t+=.25)expect(operatingState(t).logistics.truckX).toBe(dock);
+  for(let t=12;t<17.6;t+=.1)expect(operatingState(t).part).toEqual(rack);
+  expect(operatingState(15).lotStatus).toBe('Enrolled in MES');
+  expect(operatingState(16).eventText).toContain('Production call');
+  expect(operatingState(84).logistics.truckX).toBeLessThan(dock);
+ });
 });
 
 it('keeps a safe label stable and terminates its leader on the nearest edge',()=>{const r={x:200,y:100,width:100,height:44};expect(placeOperatingLabel(180,170,100,44,{width:500,height:400},[],r)).toEqual(r);expect(operatingLabelPort(350,122,r)).toEqual({x:300,y:122});const next=placeOperatingLabel(180,170,100,44,{width:500,height:400},[r],r);expect(next).not.toEqual(r);});
