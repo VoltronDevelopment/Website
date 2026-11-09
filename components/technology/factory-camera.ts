@@ -17,23 +17,23 @@ export function factoryCameraShot(state:ReturnType<typeof operatingState>,_phone
  const dock=[-15,1,.1] as const;
  const loading=[-9.4,1,-3.3] as const;
  const process=[state.part.x,1.25,state.part.z] as const;
- const dispatch=[-9.3,1,3] as const;
+
  const shots:Shot[]=[
   {time:0,yaw:.45,span:view(5.1,7.6),target:dock,phase:'dock'},
   {time:4,yaw:.45,span:view(5.1,7.6),target:dock,phase:'unloading'},
   {time:10.8,yaw:.45,span:view(6.6,10),target:[-10.7,1,3.8],phase:'rack'},
   {time:17.6,yaw:.45,span:view(6.6,10),target:[-10.7,1,3.8],phase:'production-call'},
   {time:22,yaw:0,span:view(7.2,11),target:loading,phase:'loading-bay'},
-  {time:26,yaw:0,span:view(6.1,9),target:process,phase:'treatment'},
-  {time:52.3,yaw:0,span:view(6.1,9),target:process,phase:'treatment'},
+  {time:26,yaw:0,span:view(6.6,10.4),target:process,phase:'treatment'},
+  {time:52.3,yaw:0,span:view(6.6,10.4),target:process,phase:'treatment'},
   {time:54,yaw:0,span:view(7.8,11),target:[2,1.25,2.5],phase:'oven'},
   {time:56.5,yaw:0,span:view(7,10),target:[-1.8,1.25,2.5],phase:'oven exit'},
   {time:58.3,yaw:0,span:view(7,10),target:[-1.8,1.25,2.5],phase:'booth handoff'},
   {time:60,yaw:0,span:view(5.7,7),target:[-4,1.25,2.5],phase:'inspection'},
   {time:66.5,yaw:0,span:view(5.7,7),target:[-4,1.25,2.5],phase:'release'},
   {time:71,yaw:.45,span:view(7.4,10),target:[-5.4,1,4.6],phase:'packing'},
-  {time:75,yaw:.45,span:view(7.4,10),target:dispatch,phase:'return'},
-  {time:78.5,yaw:.45,span:view(5.8,8.6),target:dock,phase:'dispatch'},
+  {time:72.6,yaw:.45,span:view(7.4,10),target:[-5.4,1,4.6],phase:'outfeed'},
+  {time:77.8,yaw:.45,span:view(5.8,8.6),target:dock,phase:'dispatch'},
   {time:82,yaw:.45,span:view(5.8,8.6),target:dock,phase:'departure'},
   {time:90,yaw:0,span:factoryOverviewSpan(aspect),target:[-5,1.1,0],phase:'complete'},
  ];

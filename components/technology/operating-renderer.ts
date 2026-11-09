@@ -207,7 +207,7 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   const beforeLoad=state.time<24;
   pallet.position.set(beforeLoad?state.part.x:loadX,beforeLoad?state.palletY:.6,beforeLoad?state.part.z:loadZ);
   pallet.rotation.y=beforeLoad?logistics.inboundYaw:0;
-  edgeLamp.material=state.signals.length&&state.time>=12?cyan:steelDark;
+  edgeLamp.material=state.exchange&&state.time-state.exchange[0]<1.4?cyan:steelDark;
   const {pose}=logistics;
   lift.g.position.set(pose.x,0,pose.z);lift.g.rotation.y=-pose.heading;lift.forks.position.y=logistics.forkY;
   for(const wheel of lift.wheels){wheel.steering.rotation.y=wheel.rear?-logistics.steer:0;wheel.axle.rotation.z=-pose.distance/.2;}

@@ -132,3 +132,26 @@
 @media(prefers-reduced-motion:reduce){.factory-app-view .operating-digital-screen[data-mobile-active=true]{animation:none}.factory-edge-bus i{display:none}}
 
 .factory-app-view .operating-digital-screen .factory-barcode {fill:var(--op-accent);stroke:none}
+.factory-console .factory-edge-bus {display:grid;gap:6px;min-height:65px;align-content:center;justify-content:stretch;grid-template-columns:minmax(0,1fr);color:var(--ink)}
+.factory-route {font-size:12px;line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:3px;color:var(--op-accent)}
+.factory-exchange-caption {font-family:inherit;font-size:13px;line-height:1.4}
+.factory-event-title {color:var(--ink);font-size:18px;line-height:1.3;font-weight:600;text-align:start}
+.factory-record-action {display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;text-align:start;color:var(--op-accent);font-size:13px;line-height:1.5}
+.factory-app-switch button:not([aria-pressed=true]) {color:var(--ink)}
+.factory-app-view .operating-digital-screen[data-mobile-active=true] {text-align:start}
+.operating-workspace>.operating-playback-bar {grid-area:2/1;min-width:0}
+.operating-workspace>.operating-inspector {grid-area:1/2/3/3}
+.operating-transport button {display:inline-flex;align-items:center;justify-content:center;gap:4px}
+@media(min-width:768px) and (max-width:1099px){
+ .factory-console {display:grid;grid-template-columns:minmax(120px,.7fr) minmax(240px,1.6fr) minmax(170px,1fr);align-items:center;gap:12px}
+ .factory-app-switch {display:grid;grid-template-columns:1fr 1fr}
+}
+@media(max-width:767px){
+ .factory-event-title {font-size:16px}
+ .factory-app-view .operating-digital-screen[data-mobile-active=true]{grid-template-columns:minmax(0,1fr) 28%;gap:4px;padding:10px}
+ .factory-record-action {grid-column:1/-1}
+ .factory-app-view .operating-digital-screen .digital-refined-graph{grid-area:1/2/3/3;height:58px}
+ .operating-workspace>.operating-playback-bar {display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px}
+ .operating-workspace .operating-timeline {flex:1 1 120px;min-width:0}
+}
+@media(max-width:360px){.factory-app-view .operating-digital-screen .digital-refined-graph{display:none}.factory-app-view .operating-digital-screen[data-mobile-active=true]{grid-template-columns:1fr}}

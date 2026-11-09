@@ -1,6 +1,6 @@
 import {describe,it,expect} from 'vitest';
 import {placeOperatingLabel,operatingLabelPort} from '../components/technology/operating-label-layout';
-import {operatingState,operatingEvents} from '../components/technology/operating-model';
+import {operatingState,operatingEvents,lastFactoryEvent} from '../components/technology/operating-model';
 describe('operating artwork refinement',()=>{
  it('keeps labels within the artwork and away from occupied reading space',()=>{const bounds={width:390,height:440},first=placeOperatingLabel(160,200,110,44,bounds,[]);expect(first).not.toBeNull();const second=placeOperatingLabel(160,200,110,44,bounds,[first!]);expect(second).not.toBeNull();expect(second).not.toEqual(first);for(const r of [first!,second!]){expect(r.x).toBeGreaterThanOrEqual(12);expect(r.x+r.width).toBeLessThanOrEqual(378);expect(r.y+r.height).toBeLessThanOrEqual(374);}});
  it('suppresses a label if no safe slot exists',()=>expect(placeOperatingLabel(50,50,150,44,{width:100,height:100},[])).toBeNull());
@@ -17,3 +17,13 @@ describe('operating artwork refinement',()=>{
 });
 
 it('keeps a safe label stable and terminates its leader on the nearest edge',()=>{const r={x:200,y:100,width:100,height:44};expect(placeOperatingLabel(180,170,100,44,{width:500,height:400},[],r)).toEqual(r);expect(operatingLabelPort(350,122,r)).toEqual({x:300,y:122});const next=placeOperatingLabel(180,170,100,44,{width:500,height:400},[r],r);expect(next).not.toEqual(r);});
+
+it('retains the physical exchange while individual apps browse their own most recent record',()=>{
+ expect(operatingState(12.5).exchange?.[4]).toEqual({from:'Rack scanner',to:'V SCADA',record:'017'});
+ expect(operatingState(15.5).exchange?.[0]).toBe(12);
+ expect(lastFactoryEvent(15.5,'V-MES')?.[1]).toBe('lot');
+ expect(operatingState(16.5).exchange?.[4]?.to).toBe('Loading bay');
+ expect(lastFactoryEvent(66.5,'SCADA')?.[3]).toBe('Inspection started');
+ expect(lastFactoryEvent(66.5,'V-MES')?.[3]).toBe('Lot released');
+ expect(operatingState(66.5).exchange?.[4]).toEqual({from:'V MES',to:'Dispatch bay',record:'003'});
+});

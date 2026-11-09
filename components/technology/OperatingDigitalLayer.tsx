@@ -1,34 +1,30 @@
 "use client";
 import {productLabel} from '@/lib/product-names';
-import {useId,useState,type CSSProperties} from 'react';
+import {useId,type CSSProperties} from 'react';
 import {operatingProducts,type OperatingProduct,operatingState} from './operating-model';
-import {factoryStations} from './operating-model';
+import {factoryStations,operatingEntities,lastFactoryEvent,type OperatingEntity} from './operating-model';
 import {twinPoint,digitalGraphState,graphEase,scadaTraceValue} from './digital-graph-model';
-const labels:Record<OperatingProduct,string>={'V-MO':'Shared manufacturing context','V-MES':'Execution history','SCADA':'Equipment observations','V-Twin':'Derived process state','V-AI':'Evidence and review'};
 import {meaningBlocks as vmoNodes,meaningConnections as vmoEdges,evidenceRows,incomingEvidence,outgoingEvidence,investigationPorts as ports} from './screen-diagrams';
-type ConsoleProps={state:ReturnType<typeof operatingState>;onInspect:(product:OperatingProduct,trigger:HTMLElement)=>void};
+type ConsoleProps={state:ReturnType<typeof operatingState>;manual:OperatingProduct|null;onSelect:(product:OperatingProduct)=>void;onInspect:(entity:OperatingEntity,trigger:HTMLElement,event:string)=>void};
 const appSequence:readonly [number,OperatingProduct][]=[
  [0,'V-MO'],[12,'SCADA'],[15,'V-MES'],[29,'SCADA'],[36,'V-Twin'],[41,'V-AI'],
  [50,'V-MES'],[53,'V-Twin'],[62,'SCADA'],[65,'V-MES'],[87,'V-MO'],
 ];
 export function OperatingDigitalLayer(props:ConsoleProps){
- const [start,owner]=appSequence.reduce((active,entry)=>entry[0]<=props.state.time?entry:active,appSequence[0]);
- return <FactoryConsole key={start} {...props} owner={owner}/>;
-}
-function FactoryConsole({state,onInspect,owner}:ConsoleProps&{owner:OperatingProduct}){
- const graphId=useId(),t=state.time;
- const [product,setProduct]=useState<OperatingProduct>(owner);
- const outbound=t>=16&&t<18||t>=66&&t<68;
- const endpoint=t<11.45?'Dock 01':t<16?'Rack scanner':t<24?'Loading bay':t<58?'Line PLC':t<67?'Inspection':'Dock scanner';
- const packet=state.signals.some(signal=>signal.product===product)&&t>=12;
- const id=t<16?'017':t<67?'003':'042';
+ const {state,manual,onSelect,onInspect}=props,t=state.time,graphId=useId();
+ const [,owner]=appSequence.reduce((active,entry)=>entry[0]<=t?entry:active,appSequence[0]);
+ const product=manual??owner;
+ const record=lastFactoryEvent(t,product);
+ const entity=operatingEntities.find(item=>item.id===record?.[1]);
+ const route=state.exchange?.[4];
+ const progress=state.exchange?Math.min(1,(t-state.exchange[0])/1.4):1;
    const graph=digitalGraphState(state,product),signaling=graph.age>=.48&&graph.age<1.95;
    const edge=graph.eventTime===2||graph.eventTime===15?0:graph.eventTime===24?1:graph.eventTime===29?2:graph.eventTime===41||graph.eventTime===50?4:5;
    const twin=twinPoint(state.carrier.x,state.carrier.z),twinX=twin.x,twinY=twin.y;
    const routeStep=Math.min(4,Math.floor(graph.mesProgress*4+1e-7));
  return <div className="factory-console" aria-label="Connected factory apps">
-  <div className="factory-app-switch" role="group" aria-label="Digital product view">{operatingProducts.map(app=><button key={app} aria-pressed={product===app} onClick={()=>setProduct(app)}>{productLabel[app]}</button>)}</div>
-  <div className="factory-app-view"><button key={product} className="operating-digital-screen" data-operating-product={product} data-mobile-active="true" data-signaling={signaling} data-online={true} onClick={e=>onInspect(product,e.currentTarget)} aria-label={'Inspect '+productLabel[product]} style={{'--graph-response':graph.response} as CSSProperties}>
+  <div className="factory-app-switch" role="group" aria-label="Digital product view">{operatingProducts.map(app=><button key={app} aria-pressed={product===app} onClick={()=>onSelect(app)}>{productLabel[app]}</button>)}</div>
+  <div className="factory-app-view"><button key={product} className="operating-digital-screen" data-operating-product={product} data-mobile-active="true" data-signaling={signaling} data-online={true} onClick={e=>entity&&record&&onInspect(entity.id,e.currentTarget,record[3])} disabled={!entity} aria-label={entity?'Inspect '+entity.record:'Awaiting first record'} style={{'--graph-response':graph.response} as CSSProperties}>
     <span className="digital-screen-heading">{productLabel[product]}<i data-active={state.products[product]}/></span>
     <svg viewBox="0 0 180 116" aria-hidden="true" className="digital-refined-graph">
      {product==='V-MO'&&<>
@@ -73,11 +69,13 @@ function FactoryConsole({state,onInspect,owner}:ConsoleProps&{owner:OperatingPro
       <circle data-digital-inlet className="graph-inlet" cx="16" cy="58" r="2.5"/>
      </>}
     </svg>
-    <small>{labels[product]}</small><span className="digital-screen-status">{product==='V-AI'?(state.reviewed?'Review recorded':graph.proposal===1?'Ready for review':state.hold?'Evidence gathering':'Awaiting evidence'):product==='V-Twin'?(state.hold?'Carrier held at CED':state.time>=58?'Process complete':state.time>=24?'Tracking the operation':'Route prepared'):product==='V-MES'?state.lotStatus:product==='SCADA'?(t<12?'Awaiting rack scan':t<24?'Batch 017 identified':state.hold?'Condition observed':state.time>=58?'History preserved':state.time>=24?'Station data linked':'Equipment ready'):state.time>=2?'Context linked':'Preparing context'}</span>
+    <strong className="factory-event-title">{record?.[3]??'Awaiting first record'}</strong>
+    {entity&&<span className="factory-record-action"><span>{record?.[1]==='quality'?'Lot 003 · Inspection':entity.record}</span><u>Inspect record</u></span>}
    </button></div>
-  <div className="factory-edge-bus" aria-label={outbound?`${productLabel[product]} via V Edge to ${endpoint}`:`${endpoint} via V Edge to ${productLabel[product]}`}>
-   <span>{endpoint}</span><b>V Edge</b><span>{productLabel[product]}</span>
-   {packet&&<i aria-hidden="true" style={{left:`${4+92*(outbound?1-state.eventProgress:state.eventProgress)}%`}}>{id}</i>}
+  <div className="factory-edge-bus">
+   {route?<><div className="factory-route"><span>{route.from}</span><span aria-hidden="true">&rarr;</span><b>V Edge</b><span aria-hidden="true">&rarr;</span><span>{route.to}</span></div>
+    <span className="factory-exchange-caption">{state.exchange?.[3]} · {route.record}</span>
+    {progress<1&&<i aria-hidden="true" style={{left:`${4+92*progress}%`}}>{route.record}</i>}</>:<span>Awaiting first Edge exchange</span>}
   </div>
  </div>;
 }

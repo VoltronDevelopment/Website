@@ -34,9 +34,28 @@ export const operatingChains=[['order','lot'],['order','material','lot'],['lot',
 export const operatingProducts=['SCADA','V-MES','V-MO','V-Twin','V-AI'] as const;
 export type OperatingProduct=typeof operatingProducts[number];
 
-export const operatingEvents:[number,OperatingEntity,OperatingProduct[],string][]=[
- [2,'order',['V-MO'],'Order and route linked'],[12,'material',['SCADA','V-MO'],'Rack scan linked to batch 017'],[15,'material',['V-MO','V-MES'],'Lot enrolled in V MES'],[16,'lot',['V-MES'],'Production call sent to the loading bay'],[24,'lot',['V-MES','V-Twin','V-MO'],'Fixture loaded; operation started'],[29,'operation',['SCADA','V-Twin','V-MO'],'Station observation recorded'],[41,'observation',['SCADA','V-MO','V-AI'],'Condition requires investigation'],[44,'observation',['V-AI','V-MO'],'Supporting evidence connected'],[50,'observation',['V-MO','V-MES'],'Authorised review recorded'],[65,'quality',['V-MO','V-MES'],'Stationary inspection completed'],[66,'quality',['V-MO','V-MES'],'Quality release recorded'],[72,'shipment',['V-MES','V-MO'],'Package identified for shipment'],[87,'shipment',['V-MO','V-MES'],'Shipment linked to customer order'],
+type EdgeRoute={from:string;to:string;record:string};
+type FactoryEvent=[number,OperatingEntity,OperatingProduct[],string,EdgeRoute?];
+export const operatingEvents:FactoryEvent[]=[
+ [2,'order',['V-MO'],'Order and route linked'],
+ [12,'material',['SCADA','V-MO'],'Batch identified',{from:'Rack scanner',to:'V SCADA',record:'017'}],
+ [15,'lot',['V-MO','V-MES'],'Lot enrolled'],
+ [16,'lot',['V-MES'],'Production call sent to the loading bay',{from:'V MES',to:'Loading bay',record:'003'}],
+ [24,'lot',['V-MES','V-Twin','V-MO'],'Fixture loaded',{from:'Load station',to:'V MES',record:'003'}],
+ [29,'operation',['SCADA','V-Twin','V-MO'],'Station observation recorded',{from:'Line PLC',to:'V SCADA',record:'003'}],
+ [41,'observation',['SCADA','V-MO','V-AI'],'Condition requires investigation',{from:'CED station',to:'V SCADA',record:'003'}],
+ [44,'observation',['V-AI','V-MO'],'Supporting evidence connected'],
+ [50,'observation',['V-MO','V-MES'],'Authorised review recorded'],
+ [62,'quality',['SCADA'],'Inspection started',{from:'Inspection',to:'V SCADA',record:'003'}],
+ [65,'quality',['V-MO','V-MES'],'Inspection completed',{from:'Inspection',to:'V MES',record:'003'}],
+ [66,'quality',['V-MO','V-MES'],'Lot released',{from:'V MES',to:'Dispatch bay',record:'003'}],
+ [72,'shipment',['V-MES','V-MO'],'Package identified',{from:'Dock scanner',to:'V MES',record:'042'}],
+ [87,'shipment',['V-MO','V-MES'],'Shipment confirmed',{from:'Dock scanner',to:'V MES',record:'042'}],
 ];
+export function lastFactoryEvent(time:number,product?:OperatingProduct){
+ return operatingEvents.filter(([at,,apps])=>at<=time&&(!product||apps.includes(product))).at(-1);
+}
+
 export const operatingTimes={load:24,hold:41,review:50,inspection:58,scan:62,result:65,release:66,packing:67,depart:82,dispatched:87} as const;
 export const handlingGeometry={forkThickness:.02,receiveForkOffset:.03,dispatchForkHeight:.61,cargoFloor:.6,palletDeckUnderside:.04} as const;
 export const mesMilestones=[0,3,6,10,14] as const;
@@ -101,13 +120,14 @@ export function operatingState(input:number){
  const logistics=factoryLogistics(time);
  const depart=smooth((time-82)/5);
  const part=time<24?logistics.receiving:time<58?process:logistics.outgoing;
- const event=operatingEvents.filter(e=>e[0]<=time).at(-1),eventProgress=event?clamp((time-event[0])/2):1;
+ const exchange=operatingEvents.filter(e=>e[4]&&e[0]<=time).at(-1);
+ const event=lastFactoryEvent(time),eventProgress=event?clamp((time-event[0])/2):1;
  const signals=event&&time<event[0]+2?event[2].map(product=>({product,entity:event[1],progress:eventProgress})):[];
  const qualityPhase=time<58?'Waiting for lot':time<61.5?'Positioning':time<62?'Fixture clamping':time<65?'Inspection in progress':time<66?'Evidence recorded':time<67?'Released':'Ready for next lot';
  const scanning=time>=62&&time<65;
  return {time,chapter,hold,reviewed,released,dispatched:time>=87,routeIndex,carrier:{x:carrierX,z:carrierZ},railProgress:routeIndex,carrierYaw:-Math.PI/2*smooth((time-39.4)/.5)-Math.PI/2*smooth((time-52.3)/.5),ovenDoor,ovenEntryOpen,ovenExitOpen,ovenActive,processStage:time<3?'Dock 01':time<11.45?'Dock to rack':time<16?'Receiving rack':time<24?'Rack to loading bay':time<30?'Tank 01':time<36?'Tank 02':time<38.65?'Tank 03':time<40.6?'Transfer to CED':time<51.2?'CED · T04':time<53.5?'Oven infeed':time<56.5?'Curing oven':time<58?'Transfer to quality':time<67?'Inspection':'Dispatch',part,logistics,
   palletY:part.y-.455,depart,
-  chain:operatingChains[chapter],receiving:clamp((time-12)/2),dispatch:depart,signals,eventText:event?.[3]??'Preparing manufacturing context',eventProgress,qualityPhase,scanning,scanProgress:clamp((time-62)/3),clamp:smooth((time-61.5)/.5)-smooth((time-66.5)/.5),
+  exchange,chain:operatingChains[chapter],receiving:clamp((time-12)/2),dispatch:depart,signals,eventText:event?.[3]??'Preparing manufacturing context',eventProgress,qualityPhase,scanning,scanProgress:clamp((time-62)/3),clamp:smooth((time-61.5)/.5)-smooth((time-66.5)/.5),
   lotStatus:time<3?'Order linked':time<11.45?'Unloading':time<15?'Staged in rack':time<16?'Enrolled in MES':time<24?'Called to line':hold?'Awaiting review':time<58?'In production':!released?qualityPhase:time<67?'Released':time<87?'Packing & loading':'Dispatched',
   products:{'V-MO':true,'V-MES':time>=15&&time<87,'SCADA':time>=24&&time<58,'V-Twin':time>=24&&time<58,'V-AI':time>=41&&time<50},
  };
