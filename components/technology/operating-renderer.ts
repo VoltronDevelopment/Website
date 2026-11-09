@@ -222,14 +222,14 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   const fixtureBottom=T.MathUtils.lerp(3.05,(state.time>=58?1.055:state.part.y)+.47,attach);
   fixture.visible=true;fixture.position.z=trolley.position.z;
   ovenDoors.forEach((pair,i)=>pair.forEach((door,j)=>door.position.z=(j===0?-1:1)*(.565+1.2*(i===0?state.ovenExitOpen:state.ovenEntryOpen))));ovenLight.emissiveIntensity=state.ovenActive?1.25:.12;
-  inspected.visible=state.time<70.95;inspected.position.set(state.part.x,state.part.y,state.part.z);inspected.rotation.y=state.time<24?logistics.inboundYaw:state.time<67?state.carrierYaw:logistics.outboundYaw;fixture.position.y=fixtureBottom;
+  inspected.visible=state.time<70.95;inspected.position.set(state.part.x,state.part.y,state.part.z);inspected.rotation.y=state.time<24?logistics.inboundYaw:state.time<67?state.carrierYaw:logistics.outboundYaw-Math.PI;fixture.position.y=fixtureBottom;
   hangers.forEach(h=>{const bottom=fixtureBottom,length=railY-.3-bottom;h.scale.y=length/.8;h.position.y=(railY-.3+bottom)/2;});
   const horizontalScan=state.scanning&&state.scanProgress<.5,scanLocal=horizontalScan?state.scanProgress*2:(state.scanProgress-.5)*2;
   inspectionPlane.visible=horizontalScan;inspectionVertical.visible=state.scanning&&!horizontalScan;inspectionPlane.position.y=1.55-scanLocal*.8;inspectionVertical.position.x=9.55+scanLocal*.9;
   const scanEnvelope=state.scanning?Math.sin(Math.PI*scanLocal):0;scanMaterial.opacity=(dark?.26:.22)*scanEnvelope;scanCoreMaterial.color.setHex(dark?0x8be2ff:0x087cb5);scanCoreMaterial.opacity=scanEnvelope*(dark?.95:.85);horizontalCore.visible=horizontalScan;verticalCore.visible=state.scanning&&!horizontalScan;horizontalCore.position.y=1.36-scanLocal*.61;verticalCore.position.x=9.68+scanLocal*.64;
   jaws.forEach((jaw,i)=>jaw.position.x=10+(i===0?-1:1)*T.MathUtils.lerp(factoryMechanicalGeometry.jawOpenCenter,inspectionJawClosedCenter,state.clamp));qualityBadge.material=state.released?cyan:state.scanning?attention:metal;qualityGate.material=state.released?cyan:metal;
   parcel.visible=state.time>=70;parcel.scale.setScalar(.01+.99*T.MathUtils.smoothstep(state.time,70,70.95));
-  parcel.position.set(state.part.x,state.part.y+.04,state.part.z);parcel.rotation.y=logistics.outboundYaw;
+  parcel.position.set(state.part.x,state.part.y+.04,state.part.z);parcel.rotation.y=logistics.outboundYaw-Math.PI;
   scan.visible=state.time>=12&&state.time<14;scan.position.y=1.55-state.receiving*.78;receivingScanMaterial.opacity=scan.visible?.24*Math.sin(state.receiving*Math.PI):0;
   const baths=tanks.map(tank=>factoryBathState(state.time,tank.index));
   const draining=baths.find(bath=>bath.draining);
@@ -272,6 +272,12 @@ export async function mountOperatingScene(canvas:HTMLCanvasElement,host:HTMLElem
   const width=canvas.clientWidth,height=canvas.clientHeight,occupied:{x:number;y:number;width:number;height:number}[]=[];
   const artBox=canvas.getBoundingClientRect();host.querySelectorAll<HTMLElement>('.operating-overview').forEach(control=>{const b=control.getBoundingClientRect();occupied.push({x:b.left-artBox.left-8,y:b.top-artBox.top-8,width:b.width+16,height:b.height+16});});
   const partBox=new T.Box3().setFromObject(inspected),corners=[] as T.Vector3[];for(let i=0;i<8;i++)corners.push(new T.Vector3(i&1?partBox.max.x:partBox.min.x,i&2?partBox.max.y:partBox.min.y,i&4?partBox.max.z:partBox.min.z).project(camera));const xs=corners.map(v=>(v.x*.5+.5)*width),ys=corners.map(v=>(-v.y*.5+.5)*height);if(inspected.visible)occupied.push({x:Math.min(...xs)-16,y:Math.min(...ys)-16,width:Math.max(...xs)-Math.min(...xs)+32,height:Math.max(...ys)-Math.min(...ys)+32});
+  if(state.time>=51.2&&state.time<54){
+   const crown=new T.Vector3(state.carrier.x,factoryLayout.railHeight+.45,state.carrier.z).project(camera);
+   const cx=(crown.x*.5+.5)*width,cy=(.5-crown.y*.5)*height;
+   const bottom=Math.max(...ys);
+   occupied.push({x:Math.min(cx,...xs)-18,y:Math.min(cy,bottom)-12,width:Math.max(cx,...xs)-Math.min(cx,...xs)+36,height:Math.abs(bottom-cy)+24});
+  }
   const active=selected??(processing?(state.hold?'observation':'operation'):followingTransfer?'lot':null)??operatingEntities[[0,1,3,4,5,6][state.chapter]].id;
   const ordered=[...operatingEntities].sort((a,b)=>Number(b.id===active)-Number(a.id===active));
   ordered.forEach(e=>{const anchor=operatingAnchor(e.id,state);const point=new T.Vector3(anchor.x,anchor.y,anchor.z).project(camera);const label=host.querySelector<HTMLElement>(`[data-entity-label="${e.id}"]`);if(!label)return;

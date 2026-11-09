@@ -148,11 +148,12 @@ export function operatingPlaybackRate(time:number){
  if(time>=71&&time<79)return .72;
  if(time>=41&&time<50)return 2.25;
  if(time>=38&&time<41)return .6;
+ if(time>=52.8&&time<53.5)return .36;
  if(time>=50&&time<58)return time>=53.5&&time<56.5?1:.48;
  return time>=24&&time<38?2:1;
 }
 export function advanceOperatingClock(time:number,delta:number){
  let current=Math.max(0,Math.min(OPERATING_DURATION,time)),remaining=Math.max(0,Math.min(.1,delta));
- for(const boundary of [17.6,24,38,41,50,53.5,56.5,58,71,79,OPERATING_DURATION]){if(current>=boundary)continue;const rate=operatingPlaybackRate(current),needed=(boundary-current)/rate;if(remaining<needed)return current+remaining*rate;current=boundary;remaining-=needed;if(remaining<=0)break;}
+ for(const boundary of [17.6,24,38,41,50,52.8,53.5,56.5,58,71,79,OPERATING_DURATION]){if(current>=boundary)continue;const rate=operatingPlaybackRate(current),needed=(boundary-current)/rate;if(remaining<needed)return current+remaining*rate;current=boundary;remaining-=needed;if(remaining<=0)break;}
  return Math.min(OPERATING_DURATION,current);
 }
