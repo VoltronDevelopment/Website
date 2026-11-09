@@ -3,7 +3,7 @@ import {optimizedAsset} from "@/lib/optimized-assets";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Pause, Play, Undo2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from "react";
 import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
@@ -24,15 +24,12 @@ const curvedEdges=Array.from({length:48},(_,index)=>{
 export function BrandEntry({locked=false,children,extraControls,celebration}:{locked?:boolean;celebration?:ReactNode;children?:ReactNode;extraControls?:ReactNode}){
   const host=useRef<HTMLElement>(null);
 
-  const [replay,setReplay]=useState(0);
   const [leaving,setLeaving]=useState(false);
   const [ready,setReady]=useState(false);
   const faceRef=useRef(0),readyRef=useRef(false);
   const navigation=useRef<(()=>void) | null>(null);
   const router=useRouter();
   useEffect(()=>{if(!locked)router.prefetch("/?enter=1");},[locked,router]);
-  const [paused,setPaused]=useState(false);
-  const pausedRef=useRef(false),motionControl=useRef<(()=>void) | null>(null);
   useEffect(()=>()=>{navigation.current?.();},[]);
   useEffect(()=>{
     if(!host.current)return;
@@ -78,23 +75,21 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     }
     function stop(){cancelAnimationFrame(frame);frame=0;previous=0;root.dataset.playing="false";}
     function tick(now: number){
-      if(disposed || document.hidden || pausedRef.current){stop();return;}
+      if(disposed || document.hidden){stop();return;}
       time=advanceEntryClock(time,previous?(now-previous)/1000:0,duration,reduced());previous=now;paint();
       if(time<duration)frame=requestAnimationFrame(tick);else stop();
     }
-    function resume(){stop();if(reduced()){time=duration;paint();return;}if(!document.hidden && !pausedRef.current && time<duration){root.dataset.playing="true";frame=requestAnimationFrame(tick);}}
+    function resume(){stop();if(reduced()){time=duration;paint();return;}if(!document.hidden && time<duration){root.dataset.playing="true";frame=requestAnimationFrame(tick);}}
     function visibility(){if(document.hidden)stop();else resume();}
     function preference(){resume();}
-    motionControl.current=resume;
     root.dataset.celebrating="false";
-    // Replay remounts the face nodes; repaint their visibility even when reduced
-    // motion jumps straight back to the same final face.
+    // Establish face visibility before playback or the reduced-motion still.
     faceRef.current=-1;
     time=reduced()?duration:0;paint();
     motion.addEventListener("change",preference);window.addEventListener('voltron:motion',preference);document.addEventListener("visibilitychange",visibility);
     resume();
-    return ()=>{disposed=true;stop();motionControl.current=null;motion.removeEventListener("change",preference);window.removeEventListener('voltron:motion',preference);document.removeEventListener("visibilitychange",visibility);};
-  },[replay]);
+    return ()=>{disposed=true;stop();motion.removeEventListener("change",preference);window.removeEventListener('voltron:motion',preference);document.removeEventListener("visibilitychange",visibility);};
+  },[]);
 
   function enter(event: MouseEvent<HTMLAnchorElement>, skip=false){
     if(locked || (!ready && !skip) || leaving){event.preventDefault();return;}
@@ -110,11 +105,11 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
   }
 
   const wordmark=<h1 className="entry-wordmark" aria-label="Voltron Lattice">{["VOLTRON","LATTICE"].map((word,wordIndex)=><span className="entry-word" aria-hidden="true" key={word}>{[...word].map((letter,index)=><span className="entry-letter" key={index} style={{"--letter-index":wordIndex*7+index} as CSSProperties}>{letter}</span>)}</span>)}</h1>;
-  return <main id="main-content" ref={host} className={`brand-entry${children?" launch-entry":""}${leaving?" entry-leaving":""}`} data-phase="8" data-settled="true" data-paused={paused}>
+  return <main id="main-content" ref={host} className={`brand-entry${children?" launch-entry":""}${leaving?" entry-leaving":""}`} data-phase="8" data-settled="true">
 
     <div className="entry-presentation">{celebration}
-    <div className="entry-controls"><EntryAudio/><ThemeToggle/>{extraControls}<button type="button" className="icon-button entry-pause-control" aria-label={paused?"Resume animation":"Pause animation"} title={paused?"Resume animation":"Pause animation"} disabled={leaving} onClick={()=>{pausedRef.current=!pausedRef.current;setPaused(pausedRef.current);motionControl.current?.();}}>{paused?<Play size={18} aria-hidden="true"/>:<Pause size={18} aria-hidden="true"/>}</button><button type="button" className="icon-button" aria-label="Replay entry" title="Replay entry" disabled={leaving} onClick={()=>{pausedRef.current=false;setPaused(false);setReplay(value=>value+1);}}><Undo2 className="replay-arrow" size={18} aria-hidden="true"/></button></div>
-    <div className="entry-body" key={replay}>
+    <div className="entry-controls"><EntryAudio/><ThemeToggle/>{extraControls}</div>
+    <div className="entry-body">
       <div className="entry-stage">
         <div className="entry-radial-grid" aria-hidden="true"><span/><span/><span/></div>
         <div className="entry-logo"><span className="entry-logo-glow" aria-hidden="true"/>
