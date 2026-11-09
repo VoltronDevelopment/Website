@@ -139,7 +139,7 @@
 @media(prefers-reduced-motion:reduce){.leadership-replay{display:none}}
 [data-artwork-motion=off] .leadership-replay{display:none}
 .about-leadership .leadership-cards article>h3{margin:0;padding:24px 24px 0;font-size:clamp(20px,1.6vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.3}
-.about-leadership .leadership-artwork{aspect-ratio:2.45}
+.about-leadership .leadership-artwork{aspect-ratio:1.72}
 .leadership-pattern,.leadership-pattern svg{position:absolute;inset:0;width:100%;height:100%}
 .pattern-cell{stroke:var(--text-link);stroke-width:.8;fill:var(--blue);fill-opacity:.055;stroke-opacity:.28}
 .pattern-cell path:nth-child(2){fill-opacity:.11}
