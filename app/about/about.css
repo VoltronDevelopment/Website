@@ -138,20 +138,37 @@
 }
 @media(prefers-reduced-motion:reduce){.leadership-replay{display:none}}
 [data-artwork-motion=off] .leadership-replay{display:none}
-.about-leadership .leadership-cards article>h3{margin:0;padding:24px 24px 0;font-size:clamp(20px,1.6vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.3}
-.about-leadership .leadership-artwork{aspect-ratio:1.72}
+/* Each upper panel is a continuous field of matte colour. */
+.about-leadership .leadership-cards article{position:relative}
+.about-leadership .leadership-cards article>h3{
+ position:absolute;inset:0 0 auto;z-index:2;margin:0;padding:22px 24px;
+ font-size:clamp(20px,1.6vw,24px);font-weight:500;letter-spacing:-.025em;line-height:1.3
+}
+.about-leadership .leadership-artwork{
+ aspect-ratio:1.36;--face-top:#e5eef3;--face-left:#dce7ef;--face-right:#e0ebf1;background:var(--face-left)
+}
+[data-theme=dark] .about-leadership .leadership-artwork{
+ --face-top:#1e3344;--face-left:#192c3c;--face-right:#1c3041
+}
+.about-leadership .leadership-artwork::before{content:none}
 .leadership-pattern,.leadership-pattern svg{position:absolute;inset:0;width:100%;height:100%}
-.pattern-cell{stroke:var(--text-link);stroke-width:.8;fill:var(--blue);fill-opacity:.055;stroke-opacity:.28}
-.pattern-cell path:nth-child(2){fill-opacity:.11}
-.leadership-portrait .leadership-photo{width:60%;margin-left:4%}
-[data-theme=dark] .pattern-cell{stroke-opacity:.38}
+.pattern-cell path{fill:var(--face-top);stroke:var(--face-top);stroke-width:.35}
+.pattern-cell path:nth-child(2){fill:var(--face-left);stroke:var(--face-left)}
+.pattern-cell path:nth-child(3){fill:var(--face-right);stroke:var(--face-right)}
+.leadership-portrait .leadership-illustration{inset:52px 0 0}
+.leadership-portrait .leadership-photo{width:68%;margin-inline:auto;mask-image:none}
 @media(prefers-reduced-motion:no-preference){
- :root:not([data-artwork-motion=off]) .pattern-cell{animation:cell-align 4s ease both}
- :root:not([data-artwork-motion=off]) .leadership-operations .pattern-cell{animation-name:cell-order}
- :root:not([data-artwork-motion=off]) .leadership-technology .pattern-cell{animation-name:cell-signal}
- .pattern-cell.cell-1{animation-delay:.25s!important}.pattern-cell.cell-2{animation-delay:.5s!important}.pattern-cell.cell-3{animation-delay:.75s!important}
+ :root:not([data-artwork-motion=off]) .pattern-cell{animation:leadership-light 8s ease-in-out infinite alternate}
+ .pattern-cell.cell-1{animation-delay:-2s!important}.pattern-cell.cell-2{animation-delay:-4s!important}.pattern-cell.cell-3{animation-delay:-6s!important}
  .leadership-artwork[data-playing=false] .pattern-cell{animation-play-state:paused!important}
 }
-@keyframes cell-align{from{transform:translate(-9px,5px);opacity:.3}to{transform:none;opacity:1}}
-@keyframes cell-order{from{transform:translate(0,-14px);opacity:.15}to{transform:none;opacity:1}}
-@keyframes cell-signal{0%,100%{stroke-opacity:.28}48%{stroke-opacity:.85;fill-opacity:.18}}
+@keyframes leadership-light{from{filter:brightness(1)}to{filter:brightness(1.018)}}
+.about-leadership .leadership-illustration{inset:52px 0 0;pointer-events:none}
+.leadership-contour{display:block;width:68%;height:100%;margin-inline:auto;color:var(--muted);opacity:.68}
+.leadership-operations .leadership-contour{color:var(--blue);opacity:.88}
+@media(prefers-reduced-motion:no-preference){
+ :root:not([data-artwork-motion=off]) .leadership-operations .leadership-contour path{animation:leadership-contour-color 5s ease-in-out infinite alternate}
+ .leadership-artwork[data-playing=false] .leadership-contour path{animation-play-state:paused!important}
+}
+@keyframes leadership-contour-color{from{stroke:var(--blue)}to{stroke:var(--cyan)}}
+@media(max-width:359px){.about-leadership .leadership-role .leadership-illustration{top:76px}}

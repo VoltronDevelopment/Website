@@ -4,6 +4,15 @@ import {useEffect, useRef, useState, type ReactNode} from "react";
 import {ArrowRight, ArrowUpRight, BriefcaseBusiness, GraduationCap, Undo2} from "lucide-react";
 import {prefersStaticScene} from "../performance/scene-policy";
 
+// Traced from the outer alpha boundary of the founder portrait.
+const portraitContour = "M155,21 145,30 139,32 137,35 123,42 118,50 116,61 119,60 121,64 116,78 116,85 119,90 119,94 111,109 111,112 114,117 114,122 94,143 92,150 95,154 102,156 101,163 108,169 108,174 112,176 108,180 108,185 106,188 108,193 101,202 102,209 105,214 115,222 123,224 139,224 148,222 157,218 160,215 165,219 169,225 169,228 159,233 123,245 115,249 107,256 100,268 95,284 94,294 85,311 83,322 76,331 75,345 69,355 61,361 57,373 38,399 377,399 377,383 380,380 383,373 382,368 386,359 387,348 379,305 375,295 373,284 368,273 363,266 349,253 316,230 300,216 280,208 266,191 274,181 276,165 282,154 289,118 289,111 287,106 289,101 290,90 289,83 281,61 275,54 268,51 258,43 256,43 250,31 246,30 243,32 239,32 235,24 230,19 223,19 221,21 211,19 205,21 192,17 185,17 172,21Z";
+
+function PortraitOutline(){
+ return <svg className="leadership-contour" viewBox="0 0 400 400" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
+  <path d={portraitContour} fill="none" stroke="currentColor" strokeWidth="1.25" vectorEffect="non-scaling-stroke" strokeLinejoin="round"/>
+ </svg>;
+}
+
 function LeadershipArt({kind,children}:{kind:"portrait"|"operations"|"technology";children?:ReactNode}){
  const root=useRef<HTMLDivElement>(null);
  const [revision,setRevision]=useState(0);
@@ -22,12 +31,19 @@ function LeadershipArt({kind,children}:{kind:"portrait"|"operations"|"technology
  },[]);
  return <div ref={root} className={`leadership-artwork leadership-${kind}`} data-playing={playing}>
   <div key={revision} className="leadership-pattern" aria-hidden="true">
-   <svg viewBox="0 0 320 160">{[[124,40],[171,66],[217,40],[217,92]].map(([x,y],i)=>
-    <g key={x+'-'+y} transform={`translate(${x} ${y})`}><g className={`pattern-cell cell-${i}`}>
-     <path d="m0 0 25-14 25 14-25 14Z"/><path d="m0 0 25 14v29L0 29Z"/><path d="m25 14 25-14v29L25 43Z"/>
-    </g></g>)}</svg>
+   <svg viewBox="0 0 320 210" preserveAspectRatio="xMidYMid slice">
+    {[-1,0,1,2,3].flatMap(row=>[-1,0,1,2,3,4].map(column=>{
+     const x=column*92+(row%2)*46;
+     const y=row*78;
+     return <g key={row+','+column} transform={`translate(${x} ${y})`} className={`pattern-cell cell-${Math.abs(row+column)%4}`}>
+       <path d="m0 26 46-26 46 26-46 26Z"/>
+       <path d="m0 26 46 26v52L0 78Z"/>
+       <path d="m46 52 46-26v52l-46 26Z"/>
+     </g>;
+    }))}
+   </svg>
   </div>
-  {children&&<div className="leadership-illustration">{children}</div>}
+  <div className="leadership-illustration" key={kind+revision}>{children??<PortraitOutline/>}</div>
   <button className="leadership-replay" type="button" aria-label="Replay card animation" onClick={()=>setRevision(value=>value+1)}><Undo2 size={13} strokeWidth={1.25} aria-hidden="true"/></button>
  </div>;
 }
