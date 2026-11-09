@@ -172,3 +172,10 @@
 }
 @keyframes leadership-contour-color{from{stroke:var(--blue)}to{stroke:var(--cyan)}}
 @media(max-width:359px){.about-leadership .leadership-role .leadership-illustration{top:76px}}
+@media(prefers-reduced-motion:no-preference){
+ :root:not([data-artwork-motion=off]) .leadership-operations .coo-mid{animation:coo-mid-shade 6s ease-in-out infinite alternate}
+ :root:not([data-artwork-motion=off]) .leadership-operations .coo-high{animation:coo-high-shade 6s ease-in-out infinite alternate}
+ .leadership-artwork[data-playing=false] stop{animation-play-state:paused!important}
+}
+@keyframes coo-mid-shade{to{stop-color:#405cb0}}
+@keyframes coo-high-shade{to{stop-color:#739bf4}}

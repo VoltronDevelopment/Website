@@ -349,3 +349,20 @@ body button:has(svg.lucide-undo-2){min-width:44px;min-height:44px;background:tra
 body button:has(svg.lucide-undo-2) svg.lucide-undo-2{width:13px;height:13px;stroke-width:1.25;opacity:.68}
 body button:has(svg.lucide-undo-2):focus-visible{outline:2px solid var(--text-link);outline-offset:-4px}
 body button:has(svg.lucide-undo-2):is(:hover,:focus-visible) svg{opacity:1}
+@media(max-width:767px){
+ .home-brand-tagline span{display:block}
+}
+@media(max-width:767px) and (prefers-reduced-motion:no-preference){
+ :root:not([data-artwork-motion=off]) .home-page .home-brand-tagline{animation:none;overflow:hidden}
+ :root:not([data-artwork-motion=off]) .home-brand-tagline span{--tagline-offset:-16px;animation:home-tagline-line .76s cubic-bezier(.2,.7,.2,1) .15s both}
+ :root:not([data-artwork-motion=off]) .home-brand-tagline span:last-child{--tagline-offset:16px}
+ :root:has([data-entry-sweep]) .home-page .home-brand-tagline span{animation:none;opacity:0}
+}
+@keyframes home-tagline-line{from{opacity:0;transform:translateX(var(--tagline-offset))}to{opacity:1;transform:none}}
+body :is(.site-presentation,.brand-entry) button:has(.replay-arrow):is(:enabled,:hover,:active,:focus){
+ min-width:44px;min-height:44px;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;
+ outline:none!important;-webkit-tap-highlight-color:transparent;font-size:0
+}
+body button:has(.replay-arrow)::before,body button:has(.replay-arrow)::after{content:none!important}
+body button:has(.replay-arrow):focus-visible .replay-arrow{border-bottom:2px solid currentColor;padding-bottom:2px;box-sizing:content-box}
+body button .replay-arrow{width:13px;height:13px;stroke-width:1.25}

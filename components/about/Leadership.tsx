@@ -7,9 +7,13 @@ import {prefersStaticScene} from "../performance/scene-policy";
 // Traced from the outer alpha boundary of the founder portrait.
 const portraitContour = "M155,21 145,30 139,32 137,35 123,42 118,50 116,61 119,60 121,64 116,78 116,85 119,90 119,94 111,109 111,112 114,117 114,122 94,143 92,150 95,154 102,156 101,163 108,169 108,174 112,176 108,180 108,185 106,188 108,193 101,202 102,209 105,214 115,222 123,224 139,224 148,222 157,218 160,215 165,219 169,225 169,228 159,233 123,245 115,249 107,256 100,268 95,284 94,294 85,311 83,322 76,331 75,345 69,355 61,361 57,373 38,399 377,399 377,383 380,380 383,373 382,368 386,359 387,348 379,305 375,295 373,284 368,273 363,266 349,253 316,230 300,216 280,208 266,191 274,181 276,165 282,154 289,118 289,111 287,106 289,101 290,90 289,83 281,61 275,54 268,51 258,43 256,43 250,31 246,30 243,32 239,32 235,24 230,19 223,19 221,21 211,19 205,21 192,17 185,17 172,21Z";
 
-function PortraitOutline(){
+function PortraitOutline({colored}:{colored:boolean}){
  return <svg className="leadership-contour" viewBox="0 0 400 400" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-  <path d={portraitContour} fill="none" stroke="currentColor" strokeWidth="1.25" vectorEffect="non-scaling-stroke" strokeLinejoin="round"/>
+  {colored&&<defs><linearGradient id="leadership-voltron-fill" x1="0" y1="1" x2="1" y2="0">
+   <stop offset="0" stopColor="#101735"/><stop className="coo-mid" offset=".45" stopColor="#34468D"/>
+   <stop className="coo-high" offset=".78" stopColor="#409EE8"/><stop offset="1" stopColor="#739BF4"/>
+  </linearGradient></defs>}
+  <path d={portraitContour} fill={colored?"url(#leadership-voltron-fill)":"none"} stroke="currentColor" strokeWidth="1.25" vectorEffect="non-scaling-stroke" strokeLinejoin="round"/>
  </svg>;
 }
 
@@ -43,8 +47,8 @@ function LeadershipArt({kind,children}:{kind:"portrait"|"operations"|"technology
     }))}
    </svg>
   </div>
-  <div className="leadership-illustration" key={kind+revision}>{children??<PortraitOutline/>}</div>
-  <button className="leadership-replay" type="button" aria-label="Replay card animation" onClick={()=>setRevision(value=>value+1)}><Undo2 size={13} strokeWidth={1.25} aria-hidden="true"/></button>
+  <div className="leadership-illustration" key={kind+revision}>{children??<PortraitOutline colored={kind==="operations"}/>}</div>
+  <button className="leadership-replay" type="button" aria-label="Replay card animation" onClick={()=>setRevision(value=>value+1)}><Undo2 className="replay-arrow" size={13} strokeWidth={1.25} aria-hidden="true"/></button>
  </div>;
 }
 
