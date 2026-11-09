@@ -14,12 +14,12 @@ export function addPhilosophyLighting(scene:THREE.Scene){
 /** The outer frame stays open toward the viewer as the individual joins the core. */
 export function createMattePhilosophyCubes(){
  const root=new THREE.Group();
- const levels=[philosophyDimensions.outer,philosophyDimensions.core].map((size,level)=>{
+ const levels=[philosophyDimensions.outer,philosophyDimensions.core,philosophyDimensions.individual].map((size,level)=>{
   const group=new THREE.Group(),geometry=new THREE.BoxGeometry(size,size,size);
   const faces=matteFaces();
   for(const [i,m] of faces.entries()){
    m.transparent=true;m.depthWrite=level!==0;
-   m.userData.coverage=level===0?([1,3,5].includes(i)?.27:i===2?.24:.065):1;
+   m.userData.coverage=level===0?([1,3,5].includes(i)?.22:0):1;
    m.visible=m.userData.coverage>0;
    if(level===0)m.side=THREE.DoubleSide;
   }
@@ -41,11 +41,16 @@ export function createMattePhilosophyCubes(){
    outline.setXYZ(i+1,...[0,1,2].map(axis=>THREE.MathUtils.lerp(endpoints[a+axis],endpoints[b+axis],s.outer)) as [number,number,number]);
   }
   outline.needsUpdate=true;
-  const [shell,core]=levels;
+  const [shell,core,individual]=levels;
   shell.line.opacity=.85;shell.group.visible=s.outer>0;
-  shell.faces.forEach((m,i)=>m.opacity=m.userData.coverage*s.shell*(i===2?1-s.opening:1));
+  shell.faces.forEach((m,i)=>m.opacity=m.userData.coverage*s.shell);
   core.group.visible=s.core>0;core.group.scale.setScalar(s.core);
-  core.group.position.y=s.height;core.faces.forEach(m=>m.opacity=s.core);core.line.opacity=.35*s.core;
+  core.group.position.y=0;core.faces.forEach(m=>m.opacity=s.core);core.line.opacity=.35*s.core;
+  individual.group.visible=s.individual>0&&s.merge<1;
+  individual.group.scale.setScalar(Math.max(.001,s.individual));
+  individual.group.position.y=s.height;
+  individual.faces.forEach(m=>m.opacity=s.individual*(1-s.merge));
+  individual.line.opacity=.35*s.individual*(1-s.merge);
  }
  setTheme(false);return {root,groups:levels.map(l=>l.group),setTheme,apply,dispose(){levels.forEach(l=>{l.geometry.dispose();l.edges.dispose();l.line.dispose();l.faces.forEach(f=>f.dispose());});}};
 }

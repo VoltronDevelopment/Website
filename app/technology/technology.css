@@ -112,3 +112,11 @@
   }
 }
 @media(max-width:767px){.technology-hero .engineered-technology{width:106%;max-width:none;margin-inline:-3%;transform:translateY(-2svh)}}
+
+/* The poster and renderer occupy the same camera aperture at every width. */
+.technology-page .engineered-technology .engineered-stage{height:auto!important;aspect-ratio:638/596}
+.site-presentation #main-content .operating-platform .operating-workspace .operating-art{height:auto!important;aspect-ratio:829/432}
+@media(max-width:767px){
+ .technology-page .engineered-technology .engineered-stage{aspect-ratio:320/370}
+ .site-presentation #main-content .operating-platform .operating-workspace .operating-art{aspect-ratio:320/296}
+}

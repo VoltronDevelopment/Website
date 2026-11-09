@@ -111,7 +111,7 @@ export function LatticeExperience({children}:{children:ReactNode}){
       if(document.querySelector("[data-entry-sweep]"))await new Promise<void>(resolve=>window.addEventListener("voltron:entry-sweep-finished",()=>resolve(),{once:true}));
       const secondLine=value.hero.querySelector(".home-brand-tagline span:last-child");
       // Reading the animations flushes the post-sweep styles. A cancelled reveal may also release the cube.
-      await Promise.allSettled((secondLine?.getAnimations()??[]).map(animation=>animation.finished));
+      await Promise.allSettled((secondLine?.getAnimations()??[]).map(animation=>{const end=Number(animation.effect?.getComputedTiming().endTime)||0;const current=Number(animation.currentTime)||0;return new Promise<void>(resolve=>setTimeout(resolve,Math.max(0,end-current-1000)));}));
     }
     if(token===generation.current&&value.node.isConnected)next.start();}
   },[position]);
