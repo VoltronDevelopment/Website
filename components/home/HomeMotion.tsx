@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useLayoutEffect,useState} from 'react';
+import {useEffect,useState} from 'react';
 import {prefersStaticScene} from '../performance/scene-policy';
 
 /** Re-create optional Home scenes when the visitor changes the shared motion choice. */
@@ -10,27 +10,6 @@ export function useHomeMotion(){
 }
 export function HomeMotion(){
  const [off,setOff]=useState(false);
- useLayoutEffect(()=>{
-  const saved=document.documentElement.dataset.entryHandoff;
-  delete document.documentElement.dataset.entryHandoff;
-  if(!saved||prefersStaticScene())return;
-  const {at}=JSON.parse(saved);
-  if(Date.now()-at>10000)return;
-  const title=document.querySelector<HTMLElement>('#home-title');
-  const first=title?.querySelector('span');
-  const stage=document.querySelector<HTMLElement>('.home-lattice-art');
-  if(!title||!first||!stage)return;
-  title.style.animation='none';
-  if(document.querySelector('[data-entry-travel-title]'))title.style.visibility='hidden';
-  const bridge=document.querySelector<HTMLElement>('[data-entry-cube-bridge]');
-  if(bridge){
-    const opening=Array.from(stage.querySelectorAll<HTMLImageElement>('.native-opening-plate img')).find(img=>img.getBoundingClientRect().width>0);
-    const release=()=>{bridge.animate([{opacity:1},{opacity:0}],{duration:180,fill:'forwards'}).finished.then(()=>bridge.remove());};
-    if(opening)void opening.decode().then(release,release);else release();
-  }
-  document.querySelector('.site-header')?.animate([{opacity:0},{opacity:1}],{duration:420});
-  document.querySelector('.home-hero .hero-keywords')?.animate([{opacity:0,offset:0},{opacity:0,offset:.78},{opacity:1}],{duration:1500});
- },[]);
  useEffect(()=>{
   setOff(document.documentElement.dataset.artworkMotion==='off');
   const root=document.querySelector('.home-page');if(!root)return;

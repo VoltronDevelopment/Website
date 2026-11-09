@@ -5,7 +5,7 @@ import {useId,useState} from 'react';
 import {ArrowRight,Check,Clock3,FileText,RotateCcw,X} from 'lucide-react';
 import {usePresentationClock} from '../technology/use-presentation-clock';
 import {useInspectorSheet} from './use-inspector-sheet';
-import {Workpiece} from './Workpiece';
+import {AgentCloudPoster} from './AgentCloudPoster';
 import {FluidCubeStudy} from './FluidCubeStudy';
 import {AgentOrbs} from './AgentOrbs';
 import {InvestigationSimulation,useInvestigation} from './InvestigationSimulation';
@@ -27,23 +27,34 @@ const sourceChecks=[
  'Check who made the observation, when, and at which station.',
 ] as const;
 function RecordDetail({selected}:{selected:number}){return <><p className="eyebrow">Connected evidence</p><h3>{evidenceSources[selected][0]}</h3><p>{evidenceSources[selected][1]}</p><dl className="record-provenance"><div><dt>Identity</dt><dd>{investigation.lot}</dd></div><div><dt>Operation</dt><dd>{investigation.station}</dd></div></dl><div className="evidence-check"><strong>Check before review</strong><p>{sourceChecks[selected]}</p></div></>;}
-function EvidenceDiagram({stage,source}:{stage:number;source:number}){
- const rows=[
-  {title:investigation.station,detail:'Condition observed'},
-  {title:investigation.lot,detail:'Lot traced to this operation'},
-  {title:evidenceSources[source][0],detail:'Linked record · awaiting human review'},
- ];
- return <ol className="evidence-trace" aria-label="How the evidence is assembled">
-  {rows.map(({title,detail},index)=><li key={index} data-reached={index<=stage} aria-current={index===stage?'step':undefined}>
-   <i aria-hidden="true"/><div><strong>{title}</strong><span>{detail}</span></div>
-  </li>)}
- </ol>;
+const evidenceStages = [
+  { agent: 0, title: 'Record the observation', text: 'KAVO identifies the reported condition and the station check that applies to the coating operation.' },
+  { agent: 3, title: 'Compare the process history', text: 'ZILO follows the lot through the coating tank and compares recorded conditions with the operation window.' },
+  { agent: 4, title: 'Gather the source records', text: 'SARO links the selected source to this lot and operation for human review.' },
+] as const;
+
+function CoatingEvidence({stage, source}: {stage: number; source: number}) {
+  const step = evidenceStages[stage];
+  const specialist = specialists[step.agent];
+  return <div className="coating-evidence">
+    <figure className="coating-tank">
+      {(['light','dark'] as const).map(theme => <img key={theme} className={`art-theme-${theme}`}
+        src={`/intelligence/coating-tank-${theme}.webp`} width={800} height={634} alt="Alpha coating tank with its bath and stack light"/>)}
+      <figcaption>Coating tank · {investigation.lot}</figcaption>
+    </figure>
+    <article className="coating-agent">
+      <div key={step.agent} className="orb-window fluid-cube-fallback" aria-hidden="true"><AgentCloudPoster agent={step.agent}/></div>
+      <div><p className="eyebrow">{specialist.name} / {specialist.role}</p><h3>{step.title}</h3>
+        <p>{step.text}</p>{stage===2 && <p className="agent-basis">{evidenceSources[source][0]} · Awaiting human review</p>}
+      </div>
+    </article>
+  </div>;
 }
 export function EvidenceStory(){
  const [savedChapter,setChapter]=useEntryChoice('evidence-chapter',3,-1),[source,setSource]=useEntryChoice('source',evidenceSources.length),[sheet,setSheet]=useState(false);
  const chapter=savedChapter<0?null:savedChapter;
- const {host,progress,staticMode}=usePresentationClock(0,12,sheet||chapter!==null),stage=chapter??Math.min(2,Math.floor(progress*3)),p=staticMode?1:Math.min(1,progress*3);
- return <div ref={host} className="evidence-story"><LotBadge/><ol className="evidence-progression" aria-label="Evidence assembly">{['Observation','Context','Evidence'].map((label,i)=><li key={label} aria-current={stage===i?'step':undefined}><button type="button" aria-pressed={stage===i} onClick={()=>setChapter(i)}><span>0{i+1}</span>{label}</button></li>)}</ol><div className="evidence-stage"><div className="workpiece-scene"><Workpiece progress={chapter!==null?1:p} scan={stage===1?chapter===1?.5:Math.max(0,Math.min(1,progress*3-1)):-1}/><span className="workpiece-caption">{investigation.part} <small>Same part. Same lot.</small></span></div><div className="evidence-network"><EvidenceDiagram stage={stage} source={source}/><div className="condition-observation"><span className="status-dot"/><span>{stage===0?'Recorded condition needs review':stage===1?'Equipment + operation identified':'Evidence connected to its source'}</span></div></div><article className="evidence-record" aria-live="polite"><RecordDetail selected={source}/></article></div><div className="source-choice"><label><span>Evidence source</span><select value={source} onChange={e=>{setSource(Number(e.target.value));setChapter(2);}}>{evidenceSources.map(([name],i)=><option key={name} value={i}>{name}</option>)}</select></label><button type="button" onClick={()=>setSheet(true)}><FileText size={16}/>Inspect source</button></div><div className="source-selector" role="group" aria-label="Evidence sources">{evidenceSources.map(([name],i)=><button type="button" key={name} aria-pressed={source===i} onClick={()=>{setSource(i);setChapter(2);if(matchMedia('(max-width:767px)').matches)setSheet(true);}}><FileText size={15}/>{name}</button>)}</div><p className="story-caption">Select a stage to follow the lot, or inspect the source behind the observation. Records shown are illustrative.</p><RecordSheet title={evidenceSources[source][0]} open={sheet} onClose={()=>setSheet(false)}><RecordDetail selected={source}/></RecordSheet></div>;
+ const {host,progress}=usePresentationClock(0,12,sheet||chapter!==null),stage=chapter??Math.min(2,Math.floor(progress*3));
+ return <div ref={host} className="evidence-story"><ol className="evidence-progression" aria-label="Evidence assembly">{['Observation','Context','Evidence'].map((label,i)=><li key={label} aria-current={stage===i?'step':undefined}><button type="button" aria-pressed={stage===i} onClick={()=>setChapter(i)}><span>0{i+1}</span>{label}</button></li>)}</ol><CoatingEvidence stage={stage} source={source}/><div className="source-choice"><label><span>Evidence source</span><select value={source} onChange={e=>{setSource(Number(e.target.value));setChapter(2);}}>{evidenceSources.map(([name],i)=><option key={name} value={i}>{name}</option>)}</select></label><button type="button" onClick={()=>{setChapter(2);setSheet(true);}}><FileText size={16}/>Inspect source</button></div><div className="source-selector" role="group" aria-label="Evidence sources">{evidenceSources.map(([name],i)=><button type="button" key={name} aria-pressed={source===i} onClick={()=>{setSource(i);setChapter(2);if(matchMedia('(max-width:767px)').matches)setSheet(true);}}><FileText size={15}/>{name}</button>)}</div><p className="story-caption">Select a stage to follow the lot, or inspect the source behind the observation. Records shown are illustrative.</p><RecordSheet title={evidenceSources[source][0]} open={sheet} onClose={()=>setSheet(false)}><RecordDetail selected={source}/></RecordSheet></div>;
 }
 export function SpecialistStory(){
  const [selected,setSelected]=useEntryChoice('specialist',specialists.length),[sheet,setSheet]=useState(false);

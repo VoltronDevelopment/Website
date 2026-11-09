@@ -223,3 +223,80 @@
 @media(max-width:767px){
  .site-presentation #main-content .technology-page :is(label,figcaption,small,.digital-screen-status,.operating-timeline,.technology-node>small){font-size:12px;line-height:1.5}
 }
+
+.hero-tags.container {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:center;
+  list-style:none; margin-block:auto 0; padding:20px 0;
+  border-top:1px solid var(--line); color:var(--ink);
+}
+.hero-tags li { display:flex; align-items:center; justify-content:center; gap:10px; font-size:16px; }
+.hero-tags svg { flex:none; color:var(--blue); }
+@media(min-width:1024px){
+  .site-presentation #main-content .hero.keyword-hero {
+    display:flex; flex-direction:column; min-height:calc(100svh - var(--header-height) - 50px);
+  }
+  .site-presentation #main-content .hero.keyword-hero:is([data-art-side],.home-hero)>.hero-grid {
+    display:grid; grid-template-columns:minmax(0,45fr) minmax(0,55fr);
+    flex:1; align-items:center; gap:24px; padding-block:16px 24px;
+  }
+  .site-presentation #main-content .hero.keyword-hero:is([data-art-side],.home-hero) .hero-copy {
+    display:block; grid-area:1/1; text-align:left; width:100%; padding:0;
+  }
+  .site-presentation #main-content .hero.keyword-hero:is([data-art-side],.home-hero) :is(.hero-visual,.home-hero-controlled){
+    grid-area:1/2; order:0; width:100%; min-width:0;
+  }
+  .site-presentation #main-content .hero.keyword-hero .hero-copy h1 {margin-inline:0}
+  .site-presentation #main-content .hero.keyword-hero .hero-actions {justify-content:flex-start}
+  .site-presentation #main-content .home-page .hero.keyword-hero .hero-copy #home-title {
+    justify-content:flex-start; flex-wrap:nowrap; font-size:clamp(28px,2.9vw,42px);
+  }
+}
+@media(max-width:1023px){.home-brand-tagline{display:none}}
+@media(max-width:767px){
+  .hero-tags.container { padding-block:16px max(16px,env(safe-area-inset-bottom)); }
+  .hero-tags li {flex-direction:column;gap:6px;font-size:clamp(11px,3.3vw,15px);text-align:center}
+}
+
+/* The live globe camera fits a 960 by 760 frame around the subject. */
+.site-presentation #main-content .hero .engineered-network .engineered-opening img.network-entry-poster {
+  position:absolute; inset:auto; left:50%; top:50%; width:min(100cqw,126.3158cqh);
+  height:auto; aspect-ratio:960/760; max-width:none; transform:translate(-50%,-50%);
+}
+.hero .hero-motion-controls button {
+  color:var(--text-link); background:transparent; border:0; isolation:isolate; position:relative;
+}
+.hero .hero-motion-controls button::before {
+  content:""; position:absolute; inset:7px; z-index:-1; border-radius:50%;
+  border:1px solid var(--control-line); background:var(--glass-fill);
+}
+.hero .hero-motion-controls button:hover::before {border-color:var(--blue);background:var(--hover)}
+@media(max-width:1023px){
+  .site-presentation #main-content .hero.keyword-hero {
+    display:flex; flex-direction:column; min-height:calc(100svh - var(--header-height) - 32px);
+  }
+}
+@media(max-width:767px){
+  .site-presentation #main-content .hero.keyword-hero .hero-actions {gap:4px 14px;}
+  .site-presentation #main-content .hero.keyword-hero .hero-actions>a {
+    position:relative; min-height:34px; padding:6px 10px; font-size:14px; line-height:20px;
+  }
+  .site-presentation #main-content .hero.keyword-hero .hero-actions>a::after {
+    content:"";position:absolute;inset:-5px 0;
+  }
+}
+.study-replay {position:relative;isolation:isolate;color:var(--text-link)}
+.study-replay::before {content:"";position:absolute;inset:7px;z-index:-1;border:1px solid var(--control-line);border-radius:50%;background:var(--glass-fill)}
+.study-replay:hover::before {border-color:var(--blue);background:var(--hover)}
+@media(min-width:1024px){
+  .site-presentation #main-content .hero.keyword-hero :is(.engineered-stage,.collaboration-stage) {
+    max-height:clamp(320px,calc(100svh - var(--header-height) - 224px),640px);
+  }
+}
+@media(max-width:767px){
+  .site-presentation #main-content :is(.network-page,.partner-page) .hero.keyword-hero>.hero-grid {
+    gap:12px;padding-block:8px 12px;
+  }
+  .site-presentation #main-content .network-page .hero.keyword-hero .engineered-stage {
+    height:clamp(270px,89vw,430px);
+  }
+}

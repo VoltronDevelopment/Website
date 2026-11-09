@@ -77,3 +77,15 @@
 .evidence-progression button{display:flex;align-items:center;gap:7px;padding:10px 12px;min-height:44px;border:0;border-bottom:2px solid transparent;background:transparent;color:inherit;font:inherit;cursor:pointer}
 .evidence-progression button[aria-pressed=true]{border-color:var(--int-accent);font-weight:650}
 .evidence-progression button:focus-visible{outline:2px solid var(--int-accent);outline-offset:-3px}
+
+.coating-evidence {display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:clamp(20px,4vw,64px);padding-block:24px}
+.coating-tank {margin:0;text-align:center}
+.coating-tank img {width:100%;max-width:420px;height:auto}
+.coating-tank figcaption {color:var(--muted);font-size:14px}
+.coating-agent {display:grid;grid-template-columns:minmax(90px,32%) 1fr;gap:16px;align-items:center;background:var(--glass-fill);border:1px solid var(--line);border-radius:16px;padding:clamp(14px,2vw,28px)}
+.coating-agent .orb-window {position:relative;width:100%;height:auto;aspect-ratio:1}
+.coating-agent h3 {margin:8px 0;font-weight:500}
+.coating-agent p {line-height:1.55}
+.coating-tank .art-theme-dark,:root[data-theme=dark] .coating-tank .art-theme-light {display:none}
+:root[data-theme=dark] .coating-tank .art-theme-dark {display:inline-block}
+@media(max-width:767px){.coating-evidence{grid-template-columns:1fr}.coating-tank img{max-width:290px}.coating-agent{grid-template-columns:minmax(72px,27%) minmax(0,1fr);gap:10px}}

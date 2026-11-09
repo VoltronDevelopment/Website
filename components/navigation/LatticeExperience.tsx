@@ -140,7 +140,8 @@ export function LatticeExperience({children}:{children:ReactNode}){
       animation.current=requestAnimationFrame(tick);
     }else{
       const first=value.kind==="home"&&!firstHome.current&&(initialPath.current==="/"||initialPath.current==="/enter")&&!request;
-      const navigating=!!request||initialPath.current!==(value.kind==="home"?"/":"/technology")||firstHome.current;
+      const entrySweep=value.kind==="home" && !!document.querySelector("[data-entry-sweep]");
+      const navigating=!entrySweep && (!!request||initialPath.current!==(value.kind==="home"?"/":"/technology")||firstHome.current);
       if(navigating&&!reduced)document.documentElement.dataset.routeState="incoming";
       if(layer.current)layer.current.dataset.transition=navigating&&!reduced?"fade":"settled";
       position();await mount(value,false,token);if(token!==generation.current)return;

@@ -10,6 +10,8 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   Object.assign(overlay.style,{position:"fixed",inset:"0",zIndex:"1000",pointerEvents:"none"});
   const surface=document.createElement("div");
   Object.assign(surface.style,{position:"absolute",inset:"0",background:getComputedStyle(document.body).backgroundColor});
+  const rim=getComputedStyle(presentation).borderRadius;
+  surface.style.clipPath=`inset(${bounds.top}px ${width-bounds.right}px ${height-bounds.bottom}px ${bounds.left}px round ${rim})`;
   const copy=presentation.cloneNode(true) as HTMLElement;
   const originals=[presentation,...presentation.querySelectorAll<HTMLElement>("*")];
   const copies=[copy,...copy.querySelectorAll<HTMLElement>("*")];
@@ -25,7 +27,7 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   Object.assign(canvas.style,{position:"absolute",inset:"0",width:"100%",height:"100%",pointerEvents:"none"});
   overlay.append(surface,canvas);document.body.append(overlay);
   presentation.style.visibility="hidden";
-  // One foreground wordmark survives the route change and settles into the live title.
+  // Include the separately positioned intro wordmark in the outgoing particle mask.
   const name=root.querySelector<HTMLElement>(".entry-wordmark");
   const wordCopy=name?.cloneNode(true) as HTMLElement|undefined;
   if(name&&wordCopy){
@@ -35,15 +37,10 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
       const style=getComputedStyle(node);for(const key of style)target.style.setProperty(key,style.getPropertyValue(key));
     }
     Object.assign(wordCopy.style,{position:"absolute",left:r.left+"px",top:r.top+"px",width:r.width+"px",margin:"0"});
-    wordCopy.dataset.entryTravelTitle="";
-    overlay.append(wordCopy);
+    wordCopy.setAttribute("aria-hidden","true");
+    surface.append(wordCopy);
     name.style.visibility="hidden";
   }
-  const words=Array.from(wordCopy?.querySelectorAll<HTMLElement>(".entry-word")??[]);
-  const starts=words.map(word=>word.getBoundingClientRect());
-  let title:HTMLElement|null=null;
-  let textStart=0;
-  const restoreTitle=()=>{if(name)name.style.visibility="";if(title)title.style.visibility="";};
   const ctx=canvas.getContext("2d");
   ctx?.scale(ratio,ratio);
     const nodes=Array.from(root.querySelectorAll<HTMLElement>(".entry-flip-card,.entry-letter,.launch-details,.entry-controls"));
@@ -60,26 +57,11 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   let frame=0,elapsed=0,last=performance.now(),submitted=false;
   const started=last;
   const prepareCube=()=>{if(overlay.dataset.entrySweep==="blend")return;overlay.dataset.entrySweep="blend";window.dispatchEvent(new Event("voltron:entry-cube-prepare"));};
-  const cleanup=()=>{restoreTitle();prepareCube();cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
+  const cleanup=()=>{if(name)name.style.visibility="";prepareCube();cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
   function draw(now:number){
-    const waiting=submitted&&!document.querySelector("#home-title")&&elapsed>2000&&now-started<8000;
+    const waiting=submitted&&!document.querySelector("#home-title")&&elapsed>0&&now-started<8000;
     if(!waiting)elapsed+=Math.min(now-last,32);
     last=now;
-    if(wordCopy&&!title){
-      title=document.querySelector<HTMLElement>("#home-title");
-      if(title){title.style.visibility="hidden";textStart=elapsed;}
-    }
-    if(title&&wordCopy){
-      const fraction=Math.min(1,(elapsed-textStart)/1150);
-      const ease=fraction*fraction*(3-2*fraction);
-      words.forEach((word,i)=>{
-        const dest=title!.children[i]?.getBoundingClientRect(),from=starts[i];
-        if(!dest||!from.width||!from.height)return;
-        word.style.transformOrigin="left top";
-        word.style.transform=`translate(${(dest.left-from.left)*ease}px,${(dest.top-from.top)*ease}px) scale(${1+(dest.width/from.width-1)*ease},${1+(dest.height/from.height-1)*ease})`;
-      });
-      if(fraction===1){title.style.visibility="visible";wordCopy.style.opacity="0";}
-    }
     const t=Math.min(1,elapsed/4400);
     if(t>=.64)prepareCube();
     const front=-14+128*t;
@@ -91,7 +73,7 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
       ctx.globalAlpha=.85*Math.sin(Math.PI*u);
       ctx.fillRect(p.x+p.dx*u,p.y+p.dy*u*u,p.size,p.size);
     }
-    if(!submitted&&t>=.43){submitted=true;navigate();}
+    if(!submitted){submitted=true;navigate();}
     if(t<1)frame=requestAnimationFrame(draw);else cleanup();
   }
   frame=requestAnimationFrame(draw);

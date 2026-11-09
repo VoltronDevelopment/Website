@@ -15,5 +15,5 @@ export function createHomeFloorReflection(exclude:()=>T.Object3D[],mobile:boolea
   try{hidden.forEach(({object})=>object.visible=false);capture.apply(this,args);dirty=false;lastBucket=bucket;captures++;}
   finally{hidden.forEach(({object,visible})=>object.visible=visible);}
  };
- return {reflector,update(seconds:number,ground:number,dark:boolean){time=seconds;material.uniforms.uAlpha.value=ground*(dark?.23:.18);},invalidate(){dirty=true;},get captures(){return captures;},dispose(){reflector.dispose();geometry.dispose();}};
+ return {reflector,update(seconds:number,ground:number,dark:boolean){time=seconds;material.uniforms.uAlpha.value=ground*(dark?.23:.31);},invalidate(){dirty=true;},get captures(){return captures;},dispose(){reflector.dispose();geometry.dispose();}};
 }

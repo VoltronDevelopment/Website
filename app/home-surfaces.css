@@ -181,12 +181,6 @@ body:has(.home-page)::before{content:"";position:fixed;inset:0;z-index:-1;backgr
 
 .home-hero .hero-copy {text-align:center}
 .home-hero .hero-actions {justify-content:center}
-@media(prefers-reduced-motion:no-preference){
- .home-hero #home-title {animation:home-wordmark-reveal .55s ease-out both}
- .home-hero .hero-keywords {animation:home-wordmark-reveal .45s ease-out .18s both}
-}
-@keyframes home-wordmark-reveal {from{opacity:0}to{opacity:1}}
-
 .study-figure{min-width:0}
 .roadmap-still picture,.roadmap-still img{width:100%;height:100%;object-fit:contain}
 .roadmap-still .art-theme-dark{display:none}

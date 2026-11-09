@@ -105,21 +105,6 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     if(!host.current)return;
     navigation.current=startEntryDissolve(host.current,()=>{
       navigation.current=null;
-      const name=host.current?.querySelector(".entry-word");
-      if(name){
-        const word=name.getBoundingClientRect();
-        document.documentElement.dataset.entryHandoff=JSON.stringify({word,at:Date.now()});
-      }
-      const plate=host.current?.querySelector<HTMLElement>(".entry-home-frame");
-      const image=Array.from(plate?.querySelectorAll("img")??[]).find(img=>img.getBoundingClientRect().width>0);
-      if(plate&&image?.complete&&image.naturalWidth){
-        const bounds=plate.getBoundingClientRect();
-        const bridge=document.createElement("img");
-        bridge.src=image.currentSrc;bridge.alt="";bridge.dataset.entryCubeBridge="";
-        Object.assign(bridge.style,{position:"fixed",left:bounds.left+"px",top:bounds.top+"px",width:bounds.width+"px",height:bounds.height+"px",objectFit:"contain",pointerEvents:"none",zIndex:"20"});
-        document.body.append(bridge);
-        window.setTimeout(()=>bridge.remove(),5000);
-      }
       router.push("/?enter=1"+window.location.hash);
     });
   }
