@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useId,useRef,useState,type CSSProperties} from 'react';
-import {Pause,Play,RotateCcw} from 'lucide-react';
+import {Pause,Play,Undo2} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
 import {canPrepareHomeScene,prepareScene,scenePreparationPriority} from './scene-preparation';
 import type {FactorySystemsController} from './factory-systems-renderer';
@@ -57,7 +57,7 @@ export function FactorySystems(){
     </dl>
    </article>)}</div>
   </div>
-  <figcaption className="factory-systems-footer"><p className="factory-systems-caption" aria-hidden="true">{captions[phase]}</p><div className="factory-systems-controls" hidden={!ready||reduced}><button type="button" onClick={playback} aria-label={settled?'Replay component reveal':paused?'Resume component reveal':'Pause component reveal'}>{settled?<RotateCcw size={14}/>:paused?<Play size={14}/>:<Pause size={14}/>}<span>{settled?'Replay':paused?'Resume':'Pause'}</span></button></div></figcaption>
+  <figcaption className="factory-systems-footer"><p className="factory-systems-caption" aria-hidden="true">{captions[phase]}</p><div className="factory-systems-controls" hidden={!ready||reduced}><button type="button" onClick={playback} aria-label={settled?'Replay component reveal':paused?'Resume component reveal':'Pause component reveal'}>{settled?<Undo2 size={14}/>:paused?<Play size={14}/>:<Pause size={14}/>}<span>{settled?'Replay':paused?'Resume':'Pause'}</span></button></div></figcaption>
   <p className="factory-systems-description" id={description}>The original flange housing is shown in three synchronized perspectives: a finishing pass, required and measured dimensions with recorded tool/feed data, and inspection history supporting a recommendation awaiting human review. Dimensions and records are illustrative, not actual plant data.</p>
  </figure>;
 }

@@ -1,6 +1,6 @@
 "use client";
 import {createContext,Fragment,useContext,useLayoutEffect,useRef,useState,type ReactNode} from "react";
-import {RotateCcw} from "lucide-react";
+import {Undo2} from "lucide-react";
 
 const StudyContext=createContext<{label:string;restart:()=>void}|null>(null);
 
@@ -8,7 +8,7 @@ export function StudyReplay(){
   const study=useContext(StudyContext);
   if(!study)return null;
   const label="Replay "+study.label;
-  return <button className="study-replay" aria-label={label} title={label} type="button" onClick={study.restart}><RotateCcw size={15} aria-hidden="true"/></button>;
+  return <button className="study-replay" aria-label={label} title={label} type="button" onClick={study.restart}><Undo2 size={15} aria-hidden="true"/></button>;
 }
 
 export function ReplayableStudy({children,label,inline=false}:{children:ReactNode;label:string;inline?:boolean}){

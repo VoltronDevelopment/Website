@@ -2,7 +2,7 @@
 
 import {useEffect,useRef,useState,useId} from 'react';
 
-import {RotateCcw} from 'lucide-react';
+import {Undo2} from 'lucide-react';
 import {prefersStaticScene} from '../performance/scene-policy';
 
 import {ScenePreparationObserver} from '../performance/scene-preparation-observer';
@@ -69,7 +69,7 @@ export function NetworkFactoryStory({kind}:{kind:NetworkSceneKind}){
 
  </section><button className="study-replay" type="button" aria-label={`Replay ${story.title}`} onClick={()=>{
   remember(null);setTime(0);controller.current?.replay();
- }}><RotateCcw size={15} aria-hidden="true"/></button></div>;
+ }}><Undo2 size={15} aria-hidden="true"/></button></div>;
 
 }
 

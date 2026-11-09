@@ -306,7 +306,7 @@
  :root:not([data-artwork-motion=off]) .home-page .home-brand-tagline {animation:home-tagline-reveal .72s ease-out .2s both}
  :root:has([data-entry-sweep]) .home-page .home-brand-tagline {animation:none;opacity:0}
 }
-@keyframes home-tagline-reveal {from{opacity:0}to{opacity:1}}
+@keyframes home-tagline-reveal {from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
 .site-presentation :is(.hero-motion-controls button,.study-replay) {color:var(--muted);background:transparent;box-shadow:none;border:0}
 .site-presentation :is(.hero-motion-controls button,.study-replay)::before {content:none}
 .site-presentation :is(.hero-motion-controls button,.study-replay):is(:hover,:focus-visible) {color:var(--text-link)}
@@ -334,3 +334,18 @@
 }
 .theme-icon-plane {fill:var(--blue);fill-opacity:.25;stroke:color-mix(in srgb,var(--ink) 46%,transparent);stroke-width:.5}
 [data-theme=dark] .theme-icon-plane {fill-opacity:.32;stroke:color-mix(in srgb,var(--text-link) 65%,transparent)}
+.site-presentation :is(.study-replay,.hero-motion-controls button,.leadership-replay) svg:is(.lucide-rotate-ccw,.lucide-undo-2){width:13px;height:13px;stroke-width:1.25;opacity:.64}
+.site-presentation :is(.study-replay,.hero-motion-controls button,.leadership-replay):is(:hover,:focus-visible) svg{opacity:1}
+.hero-tags li .hero-cube{color:#587c98}
+.hero-tags li:nth-child(2) .hero-cube{color:#527f90}
+.hero-tags li:nth-child(3) .hero-cube{color:#5b75a1}
+[data-theme=dark] .hero-tags li .hero-cube{color:#9cb9d2}
+[data-theme=dark] .hero-tags li:nth-child(2) .hero-cube{color:#92bbc5}
+[data-theme=dark] .hero-tags li:nth-child(3) .hero-cube{color:#a0b1d4}
+:root{--brand-tracking:.2em}
+@media(max-width:767px){:root{--brand-tracking:.09em}}
+.site-header .brand-lockup .brand-wordmark,.site-footer .brand-wordmark,.brand-entry:not(.launch-entry) .entry-wordmark,.site-presentation #main-content .home-page .hero.keyword-hero .hero-copy #home-title{font-family:Montserrat,Arial,sans-serif;font-weight:300;letter-spacing:var(--brand-tracking)}
+body button:has(svg.lucide-undo-2){min-width:44px;min-height:44px;background:transparent;border-color:transparent;box-shadow:none;color:var(--muted);font-size:0}
+body button:has(svg.lucide-undo-2) svg.lucide-undo-2{width:13px;height:13px;stroke-width:1.25;opacity:.68}
+body button:has(svg.lucide-undo-2):focus-visible{outline:2px solid var(--text-link);outline-offset:-4px}
+body button:has(svg.lucide-undo-2):is(:hover,:focus-visible) svg{opacity:1}

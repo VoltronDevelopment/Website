@@ -2,7 +2,7 @@
 import {useEntryChoice} from '@/lib/use-entry-choice';
 import {useEffect,useId,useRef,useState,type CSSProperties} from 'react';
 import dynamic from 'next/dynamic';
-import {Network,Boxes,Activity,ScanLine,Box,RotateCcw,ArrowRight} from 'lucide-react';
+import {Network,Boxes,Activity,ScanLine,Box,Undo2,ArrowRight} from 'lucide-react';
 import {alphaLineStations} from '../manufacturing/alpha-line-config';
 import {productSlugs} from '@/lib/product-names';
 import {productNames,productScenario} from './product-scenario';
@@ -45,7 +45,7 @@ export function ProductShowcase(){
    </div>
    <div className="product-outcome" aria-live="off"><span className="outcome-dot"/>{outcomes[product]}<span>{Math.round(progress*100)}%</span></div>
   </div>
-  <div className="product-presentation-footer"><p>Choose a product to follow the lot.</p><button onClick={()=>{setRevision(r=>r+1);setAutomatic(false);}}><RotateCcw size={15}/> Replay {productNames[product]}</button></div>
+  <div className="product-presentation-footer"><p>Choose a product to follow the lot.</p><button onClick={()=>{setRevision(r=>r+1);setAutomatic(false);}}><Undo2 size={15}/> Replay {productNames[product]}</button></div>
   <dialog onKeyDown={containDialogFocus} onClick={event=>{if(isDialogBackdropClick(event))setSheet(false);}} ref={dialog} className="product-detail-dialog" aria-label="Product details" onClose={()=>setSheet(false)}><button onClick={()=>setSheet(false)}>Close details</button><p className="product-overline">{productNames[product]}</p><h3>{record}</h3><p>{['Connect the lot, part, operation, equipment and evidence through shared identities.','Follow production through a recorded route, with each operation attached to the same lot.','Relate equipment observations to the station and current operation.','Explore the same Alpha line represented on the Manufacturing page.','Connect observations to evidence and prepare a response for authorised human review.'][product]}</p><dl><div><dt>Lot</dt><dd>{state.lot}</dd></div><div><dt>Carrier</dt><dd>{state.carrier}</dd></div><div><dt>Station</dt><dd>{station}</dd></div></dl><p>Simulated data. The condition index is illustrative, not an operating recipe.</p></dialog>
  </div>;
 }

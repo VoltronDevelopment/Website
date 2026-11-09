@@ -9,7 +9,7 @@ import {DetailsDialog} from "../brand/DetailsDialog";
 import { AlphaPlantPoster } from "./AlphaPlantPoster";
 
 import { useEffect, useId, useRef, useState, type CSSProperties } from "react";
-import { ArrowDownToLine, ArrowRight, ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
+import { ArrowDownToLine, ArrowRight, ChevronLeft, ChevronRight, Maximize2, Minus, Pause, Play, Plus, Undo2 } from "lucide-react";
 import { alphaLineChapters, alphaLineConnections, alphaLineDemo, alphaLineStation, alphaLineStations, type AlphaLineJourneyChapter } from "./alpha-line-config";
 import { alphaTourStateAt, alphaTourTimeAt, alphaPlaybackDuration, alphaTourDuration } from "./alpha-line-tour";
 import type { AlphaLineController } from "./alpha-line-renderer";
@@ -245,7 +245,7 @@ export function AlphaLineExperience({scenarioStage,scenarioStation,onScenarioSta
         <ol className="alpha-line-chapters" aria-label="Guided chapters">{alphaLineChapters.filter(c=>["loading","processing","unloading"].includes(c.id)).map((chapter, index) => <li key={chapter.id}><button type="button" aria-current={playback.chapter === chapter.id ? "step" : undefined} aria-label={chapter.label} onClick={() => goTo(chapter.id)}><span className="alpha-chapter-full" aria-hidden="true">{chapter.label}</span><span className="alpha-chapter-compact" aria-hidden="true">{compactChapters[index]}</span></button></li>)}</ol>
         <div className="alpha-line-progress"><label className="sr-only" htmlFor={`${tabsId}-progress`}>Journey position in seconds</label><div className="alpha-timeline-track" data-playing={!paused && !inspectorOpen && ready} style={{"--alpha-progress": `${Math.min(100, playback.time / duration * 100)}%`} as CSSProperties}><input id={`${tabsId}-progress`} type="range" min="0" max={Math.ceil(duration*20)/20} step=".05" value={Math.min(duration, playback.time)} aria-valuetext={`${clock(playback.time)} of ${clock(duration)}`} onChange={event => { autoStopAtRef.current = null; remember(true); seek(playback.mode === "deviation" ? "deviation" : fullRoute ? "journey" : "tour", Number(event.target.value)); }}/><div className="alpha-timeline-milestones" aria-hidden="true">{milestones.map((position, index) => <i key={index} style={{left:`${position}%`}}/>)}</div></div><span>{clock(playback.time)} / {clock(duration)}</span></div>
         <div className="alpha-line-controls">
-          {ready&&!reduced&&<button type="button" title="Replay simulation" aria-label="Replay simulation" onClick={replay}><RotateCcw size={15}/></button>}
+          {ready&&!reduced&&<button type="button" title="Replay simulation" aria-label="Replay simulation" onClick={replay}><Undo2 size={15}/></button>}
           {ready && !reduced && <button type="button" className="alpha-play" onClick={togglePlay} aria-label={paused ? ended ? "Replay the lot" : "Play the lot" : "Pause the lot"}>{paused ? <Play size={15} aria-hidden="true"/> : <Pause size={15} aria-hidden="true"/>}<span className="sr-only">{paused ? ended ? "Replay" : "Play" : "Pause"}</span></button>}
           <button type="button" onClick={() => step(-1)} disabled={playback.chapter === "route"} aria-label="Previous stage"><ChevronLeft size={15} aria-hidden="true"/><span className="sr-only">Previous</span></button>
           <button type="button" onClick={() => step(1)} disabled={playback.chapter === "review"} aria-label="Next stage"><span className="sr-only">Next</span><ChevronRight size={15} aria-hidden="true"/></button>
