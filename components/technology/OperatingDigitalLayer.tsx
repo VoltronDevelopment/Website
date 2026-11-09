@@ -1,81 +1,42 @@
 "use client";
+import {ArrowUpRight,ChevronDown} from 'lucide-react';
 import {productLabel} from '@/lib/product-names';
-import {useId,type CSSProperties} from 'react';
-import {operatingProducts,type OperatingProduct,operatingState} from './operating-model';
-import {factoryStations,operatingEntities,lastFactoryEvent,type OperatingEntity} from './operating-model';
-import {twinPoint,digitalGraphState,graphEase,scadaTraceValue} from './digital-graph-model';
-import {meaningBlocks as vmoNodes,meaningConnections as vmoEdges,evidenceRows,incomingEvidence,outgoingEvidence,investigationPorts as ports} from './screen-diagrams';
-type ConsoleProps={state:ReturnType<typeof operatingState>;manual:OperatingProduct|null;onSelect:(product:OperatingProduct)=>void;onInspect:(entity:OperatingEntity,trigger:HTMLElement,event:string)=>void};
+import {lastFactoryEvent,operatingEntities,operatingProducts,type OperatingEntity,type OperatingProduct,type operatingState} from './operating-model';
+
+type CardProps={
+ state:ReturnType<typeof operatingState>;
+ manual:OperatingProduct|null;
+ onSelect:(product:OperatingProduct)=>void;
+ onInspect:(entity:OperatingEntity,trigger:HTMLElement,event:string)=>void;
+};
 const appSequence:readonly [number,OperatingProduct][]=[
  [0,'V-MO'],[12,'SCADA'],[15,'V-MES'],[29,'SCADA'],[36,'V-Twin'],[41,'V-AI'],
  [50,'V-MES'],[53,'V-Twin'],[62,'SCADA'],[65,'V-MES'],[87,'V-MO'],
 ];
-export function OperatingDigitalLayer(props:ConsoleProps){
- const {state,manual,onSelect,onInspect}=props,t=state.time,graphId=useId();
- const [,owner]=appSequence.reduce((active,entry)=>entry[0]<=t?entry:active,appSequence[0]);
+
+export function OperatingDigitalLayer({state,manual,onSelect,onInspect}:CardProps){
+ const [,owner]=appSequence.reduce((active,entry)=>entry[0]<=state.time?entry:active,appSequence[0]);
  const product=manual??owner;
- const record=lastFactoryEvent(t,product);
+ const record=lastFactoryEvent(state.time,product);
  const entity=operatingEntities.find(item=>item.id===record?.[1]);
- const route=state.exchange?.[4];
- const progress=state.exchange?Math.min(1,(t-state.exchange[0])/1.4):1;
-   const graph=digitalGraphState(state,product),signaling=graph.age>=.48&&graph.age<1.95;
-   const edge=graph.eventTime===2||graph.eventTime===15?0:graph.eventTime===24?1:graph.eventTime===29?2:graph.eventTime===41||graph.eventTime===50?4:5;
-   const twin=twinPoint(state.carrier.x,state.carrier.z),twinX=twin.x,twinY=twin.y;
-   const routeStep=Math.min(4,Math.floor(graph.mesProgress*4+1e-7));
- return <div className="factory-console" aria-label="Connected factory apps">
-  <div className="factory-app-switch" role="group" aria-label="Digital product view">{operatingProducts.map(app=><button key={app} aria-pressed={product===app} onClick={()=>onSelect(app)}>{productLabel[app]}</button>)}</div>
-  <div className="factory-app-view"><button key={product} className="operating-digital-screen" data-operating-product={product} data-mobile-active="true" data-signaling={signaling} data-online={true} onClick={e=>entity&&record&&onInspect(entity.id,e.currentTarget,record[3])} disabled={!entity} aria-label={entity?'Inspect '+entity.record:'Awaiting first record'} style={{'--graph-response':graph.response} as CSSProperties}>
-    <span className="digital-screen-heading">{productLabel[product]}<i data-active={state.products[product]}/></span>
-    <svg viewBox="0 0 180 116" aria-hidden="true" className="digital-refined-graph">
-     {product==='V-MO'&&<>
-      {vmoEdges.map((item,i)=>{const formed=graphEase((state.time-item.at-.65)/.55);return <g key={item.d}><path className="graph-structure" d={item.d}/><path className="graph-recorded" d={item.d} pathLength={100} strokeDasharray="100" strokeDashoffset={100-formed*100}/>{edge===i&&graph.packetVisible&&<path className="graph-packet" d={item.d} pathLength={100} strokeDasharray="3 97" strokeDashoffset={-graph.packet*97}/>}</g>;})}
-      {vmoNodes.map((n,i)=><g key={n.name} opacity={.3+.7*graphEase((state.time-n.at-.48)/.22)}><rect className={n.name==='Lot'?'graph-core':'graph-node'} x={n.x-14} y={n.y-9} width="28" height="18" rx="2"/>{n.name==='Lot'&&<text x={n.x} y={n.y+2.5} textAnchor="middle">Lot</text>}</g>)}
-      <circle data-digital-inlet r="2.5" cx="32" cy="22" className="graph-inlet" opacity={.3+.7*graph.arrival}/>
-     </>}
-     {product==='V-MES'&&<>
-      <path className="graph-structure" d="M16 63 H164"/><path className="graph-recorded" d="M16 63 H164" pathLength={100} strokeDasharray="100" strokeDashoffset={100-graph.mesProgress*100}/>
-      {[0,1,2,3,4].map(i=><g key={i}><rect className={(i<routeStep||graph.mesProgress===1)?'graph-node graph-complete':'graph-node'} x={10+i*36} y="56" width="14" height="14" rx="2"/>{(i<routeStep||graph.mesProgress===1)&&<path className="graph-check" d={`M${13+i*36} 63 l2 2 l4 -5`}/>}</g>)}
-      <g className="graph-traveller" transform={`translate(${17+graph.mesProgress*144} 39)`}><rect x="-7" y="-6" width="14" height="12" rx="2"/><path d="M0 7 V12"/></g><text x="16" y="90">Load</text><text x="164" y="90" textAnchor="end">Unload</text><circle data-digital-inlet cx="17" cy="63" r="2.5" className="graph-inlet"/>
-     </>}
-     {product==='SCADA'&&t<24&&<>
-      <path className="graph-structure" d="M20 27 V18 H35 M145 18 H160 V27 M20 68 V76 H35 M145 76 H160 V68"/>
-      {[3,1,2,4,1,3,2,1,4,2,1,3,1,2,4,1,3,2,1,3].map((width,i)=><rect key={i} x={32+i*6} y="30" width={width} height="34" className="factory-barcode"/>)}
-      {t>=12&&t<14&&<path className="graph-packet" d={`M${30+119*state.receiving} 23 v47`}/>}
-      <text x="90" y="99" textAnchor="middle">Batch 017</text>
-     </>}
-     {product==='SCADA'&&t>=24&&<>
-      <rect className="graph-comparison-band" x="13" y="36" width="152" height="42" rx="2"/><path className="graph-structure" d="M13 22 V78 H165 M13 36 H165"/>
-      <defs><clipPath id={`${graphId}-trace`}><rect x="13" y="0" width={Math.max(0,Math.min(1,(state.time-24)/34))*152} height="116" className="graph-trace-window"/></clipPath></defs><polyline className="graph-trace" clipPath={`url(#${graphId}-trace)`} points={Array.from({length:90},(_,i)=>`${13+i/89*152},${scadaTraceValue(24+i/89*34)}`).join(' ')}/>
-      {state.time>=41&&<circle cx={13+17/34*152} cy={scadaTraceValue(41)} r="2.5" className="graph-observation"/>}<text x="13" y="97">CED / Observation history</text><circle data-digital-inlet cx="13" cy="78" r="2.5" className="graph-inlet"/>
-     </>}
-     {product==='V-Twin'&&<>
-      <path className="graph-structure" d="M25 18 H150 V96 H25"/>{factoryStations.map(station=><rect key={station.id} data-twin-station={station.id} className="graph-node" x={twinPoint(station.x,station.z).x-5} y={twinPoint(station.x,station.z).y-5} width="10" height="10" rx="1.5"/>)}
-      <circle className="graph-station-focus" cx={twinX} cy={twinY} r="8"/><circle className="graph-twin-carrier" cx={twinX} cy={twinY} r="3"/><circle data-digital-inlet className="graph-inlet" cx="25" cy="18" r="2.5"/>
-     </>}
-     {product==='V-AI'&&<>
-      <path className="graph-structure" d="M44 58 H58 M122 58 H136"/>
-      <path className="graph-recorded" d="M44 58 H58" pathLength={100} strokeDasharray="100" strokeDashoffset={100-graphEase((state.time-41)/.55)*100}/>
-      {evidenceRows.map((y,i)=><g key={y}>
-       <path className="graph-structure" d={incomingEvidence(y)}/><path className="graph-structure" d={outgoingEvidence(y)}/>
-       <path className="graph-recorded" d={incomingEvidence(y)} pathLength={100} strokeDasharray="100" strokeDashoffset={100-graph.evidence[i]*100}/>
-       <path className="graph-recorded" d={outgoingEvidence(y)} pathLength={100} strokeDasharray="100" strokeDashoffset={100-graphEase((state.time-45-i*.15)/.5)*100}/>
-       <rect className="graph-node" x={ports.evidenceX} y={y-9} width={ports.evidenceWidth} height="18" rx="2" opacity={.25+.75*graph.evidence[i]}/>
-      </g>)}
-      <rect className="graph-node" {...ports.source} rx="2" opacity={.3+.7*graphEase((state.time-41)/.4)}/>
-      <path className="graph-recorded" d="M122 58 H136" pathLength={100} strokeDasharray="100" strokeDashoffset={100-graph.proposal*100}/>
-      <rect className="graph-core" {...ports.response} rx="2" opacity={.25+.75*graph.proposal}/>
-      <path className="graph-review-symbol" d={state.reviewed?'M143 58 l4 4 l9 -10':'M146 52 V64 M154 52 V64'} opacity={graph.proposal}/>
-      <text x="150" y="84" textAnchor="middle" opacity={graph.proposal}>{state.reviewed?'Recorded':'Review'}</text>
-      <circle data-digital-inlet className="graph-inlet" cx="16" cy="58" r="2.5"/>
-     </>}
-    </svg>
-    <strong className="factory-event-title">{record?.[3]??'Awaiting first record'}</strong>
-    {entity&&<span className="factory-record-action"><span>{record?.[1]==='quality'?'Lot 003 · Inspection':entity.record}</span><u>Inspect record</u></span>}
-   </button></div>
-  <div className="factory-edge-bus">
-   {route?<><div className="factory-route"><span>{route.from}</span><span aria-hidden="true">&rarr;</span><b>V Edge</b><span aria-hidden="true">&rarr;</span><span>{route.to}</span></div>
-    <span className="factory-exchange-caption">{state.exchange?.[3]} · {route.record}</span>
-    {progress<1&&<i aria-hidden="true" style={{left:`${4+92*progress}%`}}>{route.record}</i>}</>:<span>Awaiting first Edge exchange</span>}
-  </div>
- </div>;
+ const exchange=state.exchange;
+ const route=exchange?.[4];
+ const progress=exchange?Math.min(1,(state.time-exchange[0])/1.4):1;
+ return <aside className="factory-console" aria-label="Factory app record">
+  <article className="factory-moment" data-operating-product={product}>
+   <header><label className="factory-app-choice">
+    <select aria-label="Choose factory app" value={product} onChange={e=>onSelect(e.target.value as OperatingProduct)}>
+     {operatingProducts.map(app=><option key={app} value={app}>{productLabel[app]}</option>)}
+    </select><ChevronDown aria-hidden="true" size={14}/>
+   </label></header>
+   <h3>{record?.[3]??'Preparing order'}</h3>
+   {entity&&record&&<button className="factory-record-link" onClick={e=>onInspect(entity.id,e.currentTarget,record[3])} aria-label={'Inspect '+entity.record}>
+    {entity.record}<ArrowUpRight size={14} aria-hidden="true"/>
+   </button>}
+   <footer aria-label="Last confirmed Edge exchange">{route&&<>
+    <span className="factory-route">{route.from} <span aria-hidden="true">→</span> V Edge <span aria-hidden="true">→</span> {route.to}</span>
+    {progress<1&&<span className="factory-transit" aria-hidden="true" style={{left:`${4+92*progress}%`}}>{route.record}</span>}
+   </>}</footer>
+  </article>
+ </aside>;
 }

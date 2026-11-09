@@ -94,64 +94,38 @@
  .operating-platform .operating-digital-screens .operating-digital-screen:first-child{margin-inline-start:9%}
  .operating-platform .operating-digital-screens .operating-digital-screen:last-child{margin-inline-end:9%}
 }
-/* The app instrument stays in one place while the active process changes. */
-.factory-console {
- min-width:0; padding:16px; color:var(--ink);
- background:color-mix(in srgb,var(--op-panel) 50%,transparent);
-}
-.factory-app-switch {display:flex;flex-wrap:wrap;gap:2px}
-.factory-app-switch button {
- white-space:nowrap;flex:1 0 auto;min-height:44px;padding:5px 8px;color:var(--muted);background:transparent;
- border:0;border-radius:4px;font:inherit;font-size:12px;cursor:pointer;
-}
-.factory-app-switch button[aria-pressed=true] {color:var(--op-accent);box-shadow:inset 0 -2px var(--op-accent)}
-.factory-app-view .operating-digital-screen[data-mobile-active=true] {
- display:grid;width:100%;min-width:0;grid-template-columns:1fr;grid-template-rows:auto 104px auto auto;
- gap:3px;padding:14px;margin:0!important;transform:none;background:var(--op-bg);
- border-radius:8px;box-shadow:none;animation:digital-screen-crossfade .2s ease-out;
-}
-.factory-app-view .operating-digital-screen .digital-refined-graph {grid-area:2/1;width:100%;height:100%;max-width:none;margin:0}
-.factory-app-view .digital-screen-status {min-height:1.6em}
-.factory-app-view small,.factory-app-view .digital-screen-status {font-size:12px}
-.factory-edge-bus {position:relative;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:13px 2px 20px;font:11px/1.4 ui-monospace,monospace;color:var(--op-accent)}
-.factory-edge-bus b {border:1px solid currentColor;border-radius:4px;padding:2px 6px;font-weight:500}
-.factory-edge-bus::after {content:'';position:absolute;bottom:10px;left:4%;right:4%;height:1px;background:currentColor;opacity:.32}
-.factory-edge-bus i {position:absolute;bottom:3px;z-index:1;transform:translateX(-50%);padding:0 3px;font-style:normal;background:var(--op-panel)}
-@media(max-width:1099px) {
+/* The factory record uses the same surface and title treatment as Home milestones. */
+.factory-console {--card-fill:rgba(250,253,255,.84);--card-shade:rgba(216,232,244,.64);--card-shadow:rgba(24,52,78,.13);min-width:0;padding:16px}
+:root[data-theme=dark] .factory-console {--card-fill:rgba(27,43,59,.88);--card-shade:rgba(13,25,39,.85);--card-shadow:rgba(0,0,0,.28)}
+.factory-moment {display:flex;flex-direction:column;align-items:flex-start;width:100%;min-height:198px;padding:24px 28px;border-radius:16px;background:linear-gradient(145deg,var(--card-fill),var(--card-shade));box-shadow:0 16px 40px var(--card-shadow);color:var(--ink)}
+.factory-app-choice {position:relative;display:inline-flex;align-items:center;color:var(--muted)}
+.factory-app-choice select {appearance:none;min-height:44px;padding:0 22px 0 0;border:0;border-radius:3px;background:transparent;color:inherit;font:inherit;font-size:13px;cursor:pointer}
+.factory-app-choice option {background:var(--op-bg);color:var(--ink)}
+.factory-app-choice svg {position:absolute;right:1px;pointer-events:none}
+.factory-moment h3 {margin:4px 0 0;font-size:22px;line-height:1.3;font-weight:400;letter-spacing:-.02em;overflow-wrap:anywhere}
+.factory-record-link {display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0;background:none;border:0;color:var(--text-link);font:inherit;font-size:13px;text-align:start;cursor:pointer}
+.factory-record-link:hover {text-decoration:underline}
+.factory-moment footer {position:relative;width:100%;margin-top:auto;padding:10px 0 12px;min-height:36px;color:var(--muted);font-size:12px;line-height:1.4}
+.factory-transit {position:absolute;bottom:-2px;transform:translateX(-50%);font:10px/1 ui-monospace,monospace;color:var(--text-link)}
+.operating-workspace>.operating-playback-bar {grid-area:2/1;display:flex;align-items:center;gap:8px;padding:2px 12px;min-width:0}
+.operating-workspace>.operating-inspector {grid-area:1/2/3/3}
+.operating-playback-bar .operating-transport {gap:0}
+.operating-playback-bar .operating-transport button {width:44px;height:44px;min-width:44px;padding:0;border:0;background:transparent;color:var(--ink)}
+.operating-playback-bar .operating-transport button:hover {background:var(--op-panel)}
+.operating-playback-bar .operating-timeline>span {position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+@media(max-width:1099px){
  .operating-platform .operating-scene-composite {display:flex;flex-direction:column}
  .operating-platform .operating-workspace {order:-1;width:100%}
  .factory-console {width:100%;padding:8px 14px}
- .factory-app-view .operating-digital-screen[data-mobile-active=true] {
-  grid-template-columns:minmax(0,1fr) minmax(80px,.9fr);grid-template-rows:auto auto auto;
-  align-content:center;align-items:center;min-height:96px;padding:6px 12px;
- }
- .factory-app-view .operating-digital-screen .digital-refined-graph {grid-area:1/2/4/3;height:84px}
- .factory-app-switch button {padding:4px 2px;flex:1 0 auto}
- .factory-edge-bus {padding-top:6px}
-}
-@media(prefers-reduced-motion:reduce){.factory-app-view .operating-digital-screen[data-mobile-active=true]{animation:none}.factory-edge-bus i{display:none}}
-
-.factory-app-view .operating-digital-screen .factory-barcode {fill:var(--op-accent);stroke:none}
-.factory-console .factory-edge-bus {display:grid;gap:6px;min-height:65px;align-content:center;justify-content:stretch;grid-template-columns:minmax(0,1fr);color:var(--ink)}
-.factory-route {font-size:12px;line-height:1.5;display:flex;align-items:center;justify-content:space-between;gap:3px;color:var(--op-accent)}
-.factory-exchange-caption {font-family:inherit;font-size:13px;line-height:1.4}
-.factory-event-title {color:var(--ink);font-size:18px;line-height:1.3;font-weight:600;text-align:start}
-.factory-record-action {display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;text-align:start;color:var(--op-accent);font-size:13px;line-height:1.5}
-.factory-app-switch button:not([aria-pressed=true]) {color:var(--ink)}
-.factory-app-view .operating-digital-screen[data-mobile-active=true] {text-align:start}
-.operating-workspace>.operating-playback-bar {grid-area:2/1;min-width:0}
-.operating-workspace>.operating-inspector {grid-area:1/2/3/3}
-.operating-transport button {display:inline-flex;align-items:center;justify-content:center;gap:4px}
-@media(min-width:768px) and (max-width:1099px){
- .factory-console {display:grid;grid-template-columns:minmax(120px,.7fr) minmax(240px,1.6fr) minmax(170px,1fr);align-items:center;gap:12px}
- .factory-app-switch {display:grid;grid-template-columns:1fr 1fr}
+ .factory-moment {max-width:760px;margin-inline:auto}
 }
 @media(max-width:767px){
- .factory-event-title {font-size:16px}
- .factory-app-view .operating-digital-screen[data-mobile-active=true]{grid-template-columns:minmax(0,1fr) 28%;gap:4px;padding:10px}
- .factory-record-action {grid-column:1/-1}
- .factory-app-view .operating-digital-screen .digital-refined-graph{grid-area:1/2/3/3;height:58px}
- .operating-workspace>.operating-playback-bar {display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px}
- .operating-workspace .operating-timeline {flex:1 1 120px;min-width:0}
+ .factory-moment {min-height:237px;padding:18px 16px}
+ .operating-workspace>.operating-playback-bar {gap:4px;padding-inline:6px}
+ .operating-workspace .operating-timeline {flex:1;min-width:0}
 }
-@media(max-width:360px){.factory-app-view .operating-digital-screen .digital-refined-graph{display:none}.factory-app-view .operating-digital-screen[data-mobile-active=true]{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.factory-transit{display:none}}
+.site-presentation #main-content .operating-platform .operating-workspace .operating-art {height:clamp(360px,48svh,520px)}
+@media(max-width:767px){
+ .site-presentation #main-content .operating-platform .operating-workspace .operating-art {height:clamp(245px,76vw,330px)}
+}
