@@ -1,35 +1,28 @@
 'use client';
-import {isSceneScrollActive} from '../home/scene-preparation';
+import {usePresentationClock} from '../technology/use-presentation-clock';
 import {useInspectorSheet} from './use-inspector-sheet';
 import {useAgentArtwork} from './use-agent-artwork';
-import {useEntryChoice} from '@/lib/use-entry-choice';
 import {containDialogFocus,isDialogBackdropClick} from '../brand/dialog-focus';
 import {createContext,useContext,useEffect,useRef,useState} from 'react';
-import {Pause,Play,RotateCcw,SkipForward,FileText} from 'lucide-react';
+import {FileText} from 'lucide-react';
 import {specialists,investigation} from './investigation-model';
-import {advanceScenario,scenarioDuration,scenarioEvents,tasks,taskState} from './scenario';
-import {prefersStaticScene} from '../performance/scene-policy';
+import {scenarioDuration,scenarioEvents,tasks,taskState} from './scenario';
 import {AgentCloudPoster} from './AgentCloudPoster';
 
 
 function useScenarioState(){
- const [time,setTime]=useState(0),[playing,setPlaying]=useState(true),[speedIndex,saveSpeed]=useEntryChoice('scenario-speed',3),[delayed,setDelayed]=useState(false),[supplied,setSupplied]=useState(false),[reviewed,setReviewed]=useState(false),[selected,setSelected]=useState<number|null>(null);
- const speeds=[1,2,.5],speed=speeds[speedIndex],setSpeed=(value:number)=>saveSpeed(speeds.indexOf(value));
- const [staticMode,setStaticMode]=useState<boolean|null>(null);
- const [inspecting,setInspecting]=useState(false);
- const host=useRef<HTMLDivElement>(null);
- useEffect(()=>{let visible=false,frame=0,last=0,published=0;
-  const stop=()=>{cancelAnimationFrame(frame);last=0;};
-  const tick=(now:number)=>{if(!visible||document.hidden||!playing)return;if(isSceneScrollActive(now)){last=0;frame=requestAnimationFrame(tick);return;}if(now-published>=80){const delta=last?Math.min((now-last)/1000,.2)*speed:0;last=now;published=now;setTime(t=>advanceScenario(t,delta,delayed,supplied));}frame=requestAnimationFrame(tick);};
-  const resume=()=>{stop();const still=prefersStaticScene();setStaticMode(still);if(still){setPlaying(false);return;}if(visible&&!document.hidden&&playing&&!inspecting)frame=requestAnimationFrame(tick);};
-  const observer=new IntersectionObserver(([e])=>{visible=e.isIntersecting&&e.intersectionRatio>=.2;resume();},{threshold:.2});if(host.current)observer.observe(host.current);
-  const media=matchMedia('(prefers-reduced-motion: reduce)');media.addEventListener('change',resume);document.addEventListener('visibilitychange',resume);window.addEventListener('voltron:motion',resume);resume();
-  return()=>{stop();observer.disconnect();media.removeEventListener('change',resume);document.removeEventListener('visibilitychange',resume);window.removeEventListener('voltron:motion',resume);};
- },[playing,speed,delayed,supplied,inspecting]);
- const waiting=delayed&&!supplied&&time>=18,complete=time>=scenarioDuration;
- useEffect(()=>{if(waiting||complete)setPlaying(false);},[waiting,complete]);
- const reset=()=>{setTime(0);setSupplied(false);setReviewed(false);setSelected(null);setPlaying(!prefersStaticScene());};
- return {staticMode,inspecting,setInspecting,time,setTime,playing,setPlaying,speed,setSpeed,delayed,setDelayed,supplied,setSupplied,reviewed,setReviewed,selected,setSelected,host,waiting,complete,reset};
+ const [delayed,setDelayed]=useState(false),[reviewed,setReviewed]=useState(false);
+ const [selected,setSelected]=useState<number|null>(null),[inspecting,setInspecting]=useState(false);
+ const {host,progress,staticMode}=usePresentationClock(Number(delayed),10,inspecting);
+ // Reserve a second for the missing instrument record. Both variants finish at ten seconds.
+ const elapsed=progress*10;
+ const time=delayed ? elapsed<6 ? elapsed*3 : elapsed<7 ? 18 : 18+(elapsed-7)*10/3 : progress*scenarioDuration;
+ const supplied=delayed&&elapsed>=7,waiting=delayed&&elapsed>=6&&!supplied,complete=progress===1;
+ function chooseScenario(next:boolean){
+  if(next===delayed)return;
+  setSelected(null);setReviewed(false);setDelayed(next);
+ }
+ return {host,staticMode,inspecting,setInspecting,time,delayed,chooseScenario,supplied,waiting,complete,reviewed,setReviewed,selected,setSelected};
 }
 const ScenarioContext=createContext<ReturnType<typeof useScenarioState>|null>(null);
 export function InvestigationProvider({children}:{children:React.ReactNode}){const value=useScenarioState();return <ScenarioContext.Provider value={value}>{children}</ScenarioContext.Provider>;}
@@ -58,25 +51,13 @@ export function InvestigationSimulation(){
  useEffect(()=>{const observer=new ResizeObserver(([e])=>setStageWidth(e.contentRect.width||900));if(stage.current)observer.observe(stage.current);return()=>observer.disconnect();},[]);
  const active=tasks.findIndex((_,i)=>taskState(i,s.time,s.delayed,s.supplied).active),chosen=s.selected??(active<0?s.waiting?1:5:active),state=taskState(chosen,s.time,s.delayed,s.supplied),events=[...scenarioEvents.filter(e=>e.at<=s.time),...(s.time>=18&&s.delayed?[{at:18,text:s.supplied?'Calibration record supplied; quality check resumed':'Quality waits for the calibration record',from:-1,to:1}]:[])].sort((a,b)=>a.at-b.at);
  const canvas=useAgentArtwork(stage,chosen,'160px');
- const advanceToOutcome = () => {
-  s.setTime(s.delayed && !s.supplied ? 18 : scenarioDuration);
-  s.setPlaying(false);
- };
  const detail=<article className="scenario-detail" aria-live="polite"><p className="eyebrow">{specialists[chosen].name} / {specialists[chosen].role}</p><h3>{specialists[chosen].question}</h3><p>{specialists[chosen].action}</p><div className="scenario-records">{specialists[chosen].records.map((r,i)=><span key={r}><FileText size={14}/>{r}<small>{state.progress===1?'Associated':Math.floor(state.progress*2)>i?'Received':'Pending'}</small></span>)}</div><p className="scenario-status">{state.status} · {Math.floor(state.progress*2)} of 2 records associated</p>{state.progress===1&&<p>{tasks[chosen].result}.</p>}<button type="button" className="story-replay" onClick={()=>s.setSelected(null)}>Follow active specialist</button></article>;
- return <div ref={s.host} className="scenario" data-time={s.time.toFixed(2)}><div className="scenario-lot"><span className="eyebrow">Illustrative investigation</span><span>{investigation.lot} / {investigation.station}</span><span>Recorded condition needs review</span></div>
+ return <div ref={s.host} className="scenario" data-time={s.time.toFixed(2)}><div className="investigation-choice" role="group" aria-label="Investigation scenario">{[false,true].map(delay=><button key={String(delay)} type="button" aria-pressed={s.delayed===delay} onClick={()=>s.chooseScenario(delay)}>{delay?'Delayed calibration':'Standard investigation'}</button>)}</div><div className="scenario-lot"><span className="eyebrow">Illustrative investigation</span><span>{investigation.lot} / {investigation.station}</span><span>Recorded condition needs review</span></div>
  <div className="scenario-current-question"><strong>{specialists[chosen].name}</strong><button type="button" aria-haspopup="dialog" onClick={()=>setSheet(true)}>{specialists[chosen].question}</button></div>
- <div className="scenario-controls">
-  {s.staticMode===false&&<button type="button" disabled={s.waiting||s.complete} onClick={()=>s.setPlaying(!s.playing)}>{s.playing?<Pause size={15}/>:<Play size={15}/>} {s.playing?'Pause':'Play'}</button>}
-  <button type="button" disabled={s.waiting||s.complete} onClick={()=>{s.setPlaying(false);s.setTime(advanceScenario(s.time,1,s.delayed,s.supplied));}}><SkipForward size={15}/> Step</button>
-  {s.staticMode===false&&<label>Speed <select value={s.speed} onChange={e=>s.setSpeed(+e.target.value)}><option value={1}>1×</option><option value={2}>2×</option><option value={.5}>0.5×</option></select></label>}
-  {s.staticMode&&<button type="button" disabled={s.complete||s.waiting} onClick={advanceToOutcome}>Advance to outcome</button>}
-  <button type="button" onClick={s.reset}><RotateCcw size={15}/> Reset</button>
-  <span>{Math.floor(s.time)} / {scenarioDuration}s</span>
- </div>
- <MobileInvestigationMap time={s.time} chosen={chosen}/><div className="scenario-layout"><div ref={stage} className="scenario-stage agent-observatory" data-live="false" data-selected={chosen}><canvas ref={canvas} aria-hidden="true"/><svg viewBox="0 0 900 460" preserveAspectRatio="none" aria-hidden="true">{routes.map(r=>{const event=scenarioEvents.find(e=>e.from===r.from&&e.to===r.to),age=event?s.time-event.at:-1,p=age>=0&&age<1.5?pulsePoint(r.d,age/1.5):null;return <g key={r.d}><path d={r.d} fill="none" stroke="var(--int-structure)" opacity=".3" strokeWidth="1.5"/>{p&&<circle cx={p[0]} cy={p[1]} r="4" fill="var(--int-accent)"/>}</g>;})}</svg>
+  <MobileInvestigationMap time={s.time} chosen={chosen}/><div className="scenario-layout"><div ref={stage} className="scenario-stage agent-observatory" data-live="false" data-selected={chosen}><canvas ref={canvas} aria-hidden="true"/><svg viewBox="0 0 900 460" preserveAspectRatio="none" aria-hidden="true">{routes.map(r=>{const event=scenarioEvents.find(e=>e.from===r.from&&e.to===r.to),age=event?s.time-event.at:-1,p=age>=0&&age<1.5?pulsePoint(r.d,age/1.5):null;return <g key={r.d}><path d={r.d} fill="none" stroke="var(--int-structure)" opacity=".3" strokeWidth="1.5"/>{p&&<circle cx={p[0]} cy={p[1]} r="4" fill="var(--int-accent)"/>}</g>;})}</svg>
  {specialists.map((a,i)=>{const task=taskState(i,s.time,s.delayed,s.supplied);return <button type="button" className="scenario-agent" key={a.name} style={{left:`${locations[i].x}%`,top:`${locations[i].y}%`}} aria-pressed={chosen===i} onClick={()=>{s.setSelected(i);if(matchMedia('(max-width:767px)').matches){setSheet(true);}}}><span className={`orb-window fluid-cube-fallback fluid-${i}`} data-orb={i} data-progress={task.progress.toFixed(3)} data-activity={task.active?1:task.status.startsWith('Waiting')?-1:0} aria-hidden="true"><AgentCloudPoster agent={i}/></span><strong>{a.name}</strong><span>{a.role}</span><span className="task-track" data-waiting={task.status.startsWith('Waiting')} aria-hidden="true">{[0,1,2,3,4,5].map(n=><i key={n} data-filled={task.progress>n/6}/>)}</span><small>{task.status}</small></button>;})}<span className="scenario-parallel">Process + equipment / parallel checks</span></div>
  {detail}</div>
  <dialog onKeyDown={containDialogFocus} ref={dialog} className="intelligence-sheet scenario-sheet" aria-label="Specialist investigation details" onCancel={()=>setSheet(false)} onClose={e=>{if(!e.currentTarget.open)setSheet(false);}} onClick={e=>{if(isDialogBackdropClick(e))setSheet(false);}}><header><h3>Specialist evidence</h3><button type="button" aria-label="Close specialist details" onClick={()=>setSheet(false)}>×</button></header>{sheet&&detail}</dialog>
- <div className="scenario-bottom"><details className="scenario-variation"><summary>Scenario options</summary><label><input type="checkbox" checked={s.delayed} onChange={e=>{s.setDelayed(e.target.checked);s.reset();}}/> Delay calibration evidence</label><p>Quality waits for the instrument record. Independent process and equipment checks continue.</p>{s.waiting&&<button type="button" onClick={()=>{s.setSupplied(true);s.setPlaying(!prefersStaticScene());}}>Provide calibration record</button>}<small>Changing this option restarts the investigation.</small></details><details className="scenario-log"><summary>Investigation events · {events.length}</summary><ol>{events.slice(-3).map((e,i)=><li key={`${e.at}-${i}`}><time>{String(e.at).padStart(2,'0')}s</time>{e.text}</li>)}</ol></details></div>
- <div className="scenario-review" role="status"><span className="status-dot"/><span>{s.complete?'Suggested check ready. Human review pending.':s.waiting?'Calibration evidence missing. The investigation retains an open question.':'Evidence is being examined. Findings will appear at the point of work.'}</span>{s.staticMode===false&&!s.complete&&!s.waiting&&<button type="button" onClick={advanceToOutcome}>Advance to outcome</button>}</div></div>;
+ <div className="scenario-bottom"><details className="scenario-log"><summary>Investigation events · {events.length}</summary><ol>{events.slice(-3).map((e,i)=><li key={`${e.at}-${i}`}><time>{Math.round(s.delayed?(e.at<=18?e.at/3:7+(e.at-18)*.3):e.at/scenarioDuration*10)}s</time>{e.text}</li>)}</ol></details></div>
+ <div className="scenario-review" role="status"><span className="status-dot"/><span>{s.complete?'Suggested check ready. Human review pending.':s.waiting?'Calibration evidence missing. The investigation retains an open question.':'Evidence is being examined. Findings will appear at the point of work.'}</span></div></div>;
 }

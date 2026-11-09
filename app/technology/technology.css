@@ -111,3 +111,4 @@
     min-height:0;
   }
 }
+@media(max-width:767px){.technology-hero .engineered-technology{width:106%;max-width:none;margin-inline:-3%;transform:translateY(-2svh)}}

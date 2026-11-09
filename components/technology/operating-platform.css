@@ -129,3 +129,7 @@
 @media(max-width:767px){
  .site-presentation #main-content .operating-platform .operating-workspace .operating-art {height:clamp(245px,76vw,330px)}
 }
+.factory-digits {overflow:hidden;width:100%;margin-top:6px;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.factory-digits>div {display:flex;width:max-content;font:11px/1.4 ui-monospace,monospace;letter-spacing:.14em;color:var(--muted);opacity:.7}
+.factory-digits span {white-space:pre}
+.factory-record-pulse {position:absolute;bottom:9px;right:0;background:var(--op-bg);color:var(--text-link);padding-inline:4px}

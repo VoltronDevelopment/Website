@@ -107,7 +107,13 @@ export function LatticeExperience({children}:{children:ReactNode}){
     await next.ready;if(token!==generation.current)return;
     if(prefersStaticScene()){next.pause();value.node.dataset.live="false";value.node.dataset.renderer="poster";position();return;}
     value.node.dataset.live="true";value.node.dataset.renderer=canvas.current.hidden?"fallback":"live";mix.current=mixForView(value.kind);position();
-    if(canvas.current.hidden)reveal.fallback();else {await reveal.reveal();if(token===generation.current)next.start();}
+    if(canvas.current.hidden)reveal.fallback();else {await reveal.reveal();if(value.kind==="home"){
+      if(document.querySelector("[data-entry-sweep]"))await new Promise<void>(resolve=>window.addEventListener("voltron:entry-sweep-finished",()=>resolve(),{once:true}));
+      const secondLine=value.hero.querySelector(".home-brand-tagline span:last-child");
+      // Reading the animations flushes the post-sweep styles. A cancelled reveal may also release the cube.
+      await Promise.allSettled((secondLine?.getAnimations()??[]).map(animation=>animation.finished));
+    }
+    if(token===generation.current&&value.node.isConnected)next.start();}
   },[position]);
 
   const activate=useCallback(async(value:Slot,request?:Pending)=>{

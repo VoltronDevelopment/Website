@@ -33,10 +33,13 @@ export function OperatingDigitalLayer({state,manual,onSelect,onInspect}:CardProp
    {entity&&record&&<button className="factory-record-link" onClick={e=>onInspect(entity.id,e.currentTarget,record[3])} aria-label={'Inspect '+entity.record}>
     {entity.record}<ArrowUpRight size={14} aria-hidden="true"/>
    </button>}
-   <footer aria-label="Last confirmed Edge exchange">{route&&<>
-    <span className="factory-route">{route.from} <span aria-hidden="true">→</span> V Edge <span aria-hidden="true">→</span> {route.to}</span>
-    {progress<1&&<span className="factory-transit" aria-hidden="true" style={{left:`${4+92*progress}%`}}>{route.record}</span>}
-   </>}</footer>
+   <footer aria-label="Last confirmed Edge exchange">
+    {route&&<span className="factory-route">{route.from} → V Edge → {route.to}</span>}
+    <div className="factory-digits" aria-hidden="true"><div style={{transform:`translateX(-${(state.time%8)/8*50}%)`}}>
+     {[0,1].map(copy=><span key={copy}>{'042  003  0110  071  018  1010  024  001  '.repeat(4)}</span>)}
+    </div></div>
+    {route&&progress<1&&<small className="factory-record-pulse">{route.record}</small>}
+   </footer>
   </article>
  </aside>;
 }

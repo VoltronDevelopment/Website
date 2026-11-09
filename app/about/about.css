@@ -179,3 +179,14 @@
 }
 @keyframes coo-mid-shade{to{stop-color:#405cb0}}
 @keyframes coo-high-shade{to{stop-color:#739bf4}}
+@media(prefers-reduced-motion:no-preference){
+ :root:not([data-artwork-motion=off]) .leadership-photo {animation:portrait-rise 1.65s cubic-bezier(.33,.04,.25,1) both}
+ :root:not([data-artwork-motion=off]) .leadership-artwork .leadership-contour .leadership-edge {stroke-dasharray:1;animation:portrait-outline 1.75s ease-in-out both}
+ :root:not([data-artwork-motion=off]) .coo-fill {animation:portrait-fill .85s ease-out 1.65s both}
+ :root:not([data-artwork-motion=off]) .coo-aura {animation:portrait-aura 4s ease-in-out 1.65s infinite alternate}
+ .leadership-artwork[data-playing=false] :is(.leadership-photo,.leadership-edge,.coo-fill,.coo-aura){animation-play-state:paused!important}
+}
+@keyframes portrait-rise {from{clip-path:inset(100% 0 0)}to{clip-path:inset(0)}}
+@keyframes portrait-outline {from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes portrait-fill {from{opacity:0}to{opacity:1}}
+@keyframes portrait-aura {0%{transform:translate(-53px,67px)}50%{transform:translate(49px,2px)}100%{transform:translate(-7px,-95px)}}

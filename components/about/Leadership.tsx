@@ -12,8 +12,15 @@ function PortraitOutline({colored}:{colored:boolean}){
   {colored&&<defs><linearGradient id="leadership-voltron-fill" x1="0" y1="1" x2="1" y2="0">
    <stop offset="0" stopColor="#101735"/><stop className="coo-mid" offset=".45" stopColor="#34468D"/>
    <stop className="coo-high" offset=".78" stopColor="#409EE8"/><stop offset="1" stopColor="#739BF4"/>
-  </linearGradient></defs>}
-  <path d={portraitContour} fill={colored?"url(#leadership-voltron-fill)":"none"} stroke="currentColor" strokeWidth="1.25" vectorEffect="non-scaling-stroke" strokeLinejoin="round"/>
+  </linearGradient>
+   <radialGradient id="leadership-aura"><stop stopColor="#a0d7ff" stopOpacity=".9"/><stop offset=".48" stopColor="#518de6" stopOpacity=".62"/><stop offset="1" stopColor="#5965bb" stopOpacity="0"/></radialGradient>
+   <clipPath id="coo-silhouette"><path d={portraitContour}/></clipPath>
+  </defs>}
+  {colored&&<g clipPath="url(#coo-silhouette)" className="coo-fill">
+   <rect width="400" height="400" fill="url(#leadership-voltron-fill)"/>
+   <ellipse className="coo-aura" cx="160" cy="214" rx="136" ry="165" fill="url(#leadership-aura)"/>
+  </g>}
+  <path className="leadership-edge" pathLength="1" d={portraitContour} fill="none" stroke="currentColor" strokeWidth="1.25" vectorEffect="non-scaling-stroke" strokeLinejoin="round"/>
  </svg>;
 }
 
