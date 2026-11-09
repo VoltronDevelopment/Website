@@ -8,6 +8,6 @@ export const metadata: Metadata = { title: "Network", description: "One architec
 export default function NetworkPage() {
   return <SiteShell><div className="network-page"><Hero eyebrow="Network / Voltron Lattice" title="A growing manufacturing network" keywords="Plants · Partners · Reach" illustration={<NetworkGlobeHero/>} primary="Explore the network" href="#owned-plants" secondary="Discuss a partnership" secondaryHref="/partner#partnership"/>
     <div className="container network-story">{(["owned","partnership","learning","products"] as const).map(kind=><NetworkFactoryStory key={kind} kind={kind}/>)}</div>
-    <Section><div className="closing"><div><h2>Build the next capability with us.</h2><p>Proven capability grows through engineering discipline and the people who carry it. Bring a factory opportunity or explore how we work.</p></div><div className="actions"><Action href="/partner#partnership">Discuss a partnership</Action><Action href="/about#approach" secondary>Meet the company behind it</Action></div></div></Section>
+    <Section><div className="closing"><div><h2>Build the next capability with us.</h2><p>Proven capability grows through engineering discipline and the people who carry it. Bring a factory opportunity or explore how we work.</p></div><div className="actions"><Action href="/partner#partnership">Discuss a partnership</Action><Action href="/about#culture" secondary>Meet the company behind it</Action></div></div></Section>
   </div></SiteShell>;
 }

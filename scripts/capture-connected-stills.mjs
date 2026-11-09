@@ -10,7 +10,7 @@ try{
  browser=await chromium.launch({channel:'chrome',args:['--enable-unsafe-swiftshader']});
  const page=await browser.newPage({deviceScaleFactor:2});
  page.on('requestfailed',r=>console.warn(r.url(),r.failure()));page.on('response',r=>{if(r.status()>=400)console.warn(r.status(),r.url())});await page.route('**/capture?*',r=>r.fulfill({contentType:'text/html',body:'<style>*{margin:0}main,canvas{width:100vw;height:100vh;display:block}</style><main><canvas></canvas></main>'}));
- for(const kind of ['factory','neural'])for(const device of ['desktop','mobile'])for(const theme of ['light','dark']){
+ for(const kind of process.argv.includes('--neural-only')?['neural']:['factory','neural'])for(const device of ['desktop','mobile'])for(const theme of ['light','dark']){
  const name=(pose)=>kind==='factory'?`public/factory-scenes/${device}-${theme}.webp`:`public/heroes/neural-layered-${device}-${theme}-${pose}.webp`;
  const {width,height}=await sharp(name('opening')).metadata(),w=device==='desktop'?(kind==='factory'?1200:720):390;
  await page.setViewportSize({width:w,height:Math.round(w*height/width)});
@@ -26,7 +26,7 @@ try{
  }
  const {mountNeuralNetwork}=await import('/components/brand/neural-network-renderer.ts');
  const scene=window.network??=await mountNeuralNetwork(canvas,host,()=>{},new AbortController().signal);
- scene.seek(pose==='opening'?.65:6.2);return canvas.toDataURL();
+ const {sceneOpeningTime}=await import('/lib/scene-continuity.ts');scene.seek(pose==='opening'?sceneOpeningTime.technology:6.2);return canvas.toDataURL();
  },{kind,theme,pose});
  const frame=sharp(Buffer.from(png.split(',')[1],'base64'));
  if((await frame.stats()).channels.at(-1).max===0)throw Error('Blank '+name(pose));
