@@ -2,7 +2,7 @@
 export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   const presentation=root.querySelector<HTMLElement>(".entry-presentation")!;
   const bounds=presentation.getBoundingClientRect();
-  const width=innerWidth,height=innerHeight,ratio=Math.min(2,devicePixelRatio);
+  const width=document.documentElement.clientWidth,height=document.documentElement.clientHeight,ratio=Math.min(2,devicePixelRatio);
   const overlay=document.createElement("div");
   overlay.inert=true;
   overlay.dataset.entrySweep="";
@@ -11,7 +11,7 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
   const surface=document.createElement("div");
   Object.assign(surface.style,{position:"absolute",inset:"0",background:getComputedStyle(document.body).backgroundColor});
   const rim=getComputedStyle(presentation).borderRadius;
-  surface.style.clipPath=`inset(${bounds.top}px ${width-bounds.right}px ${height-bounds.bottom}px ${bounds.left}px round ${rim})`;
+  overlay.style.clipPath=`inset(${bounds.top}px calc(100% - ${bounds.right}px) calc(100% - ${bounds.bottom}px) ${bounds.left}px round ${rim})`;
   const copy=presentation.cloneNode(true) as HTMLElement;
   const originals=[presentation,...presentation.querySelectorAll<HTMLElement>("*")];
   const copies=[copy,...copy.querySelectorAll<HTMLElement>("*")];

@@ -55,17 +55,29 @@ export function NetworkFactoryStory({kind}:{kind:NetworkSceneKind}){
 
 
 
-  {kind==='learning'&&<p className="network-cell-legend">Isometric factory network · Shared architecture above<br/><span>Connected plants / Illustrative future network</span></p>}
-
-  <div className="network-operation-status"><span>{ready?networkStatus(kind,time):chapterArt?step[0]:"Completed concept overview · Choose a chapter to read its role"}</span>{kind==='owned'&&ready&&<span>{time>=15?'Inspection recorded · Release pending':'Inspection pending · Release pending'}</span>}</div>
-
-  <div className="network-factory-chapters" role="group" aria-label={`${story.eyebrow} chapters`}>{story.steps.map(([label],i)=><button type="button" key={label} aria-pressed={selected===i} aria-controls={`${id}-detail`} onClick={()=>choose(i)}><span>0{i+1}</span>{label}</button>)}</div>
-
-  <div className="network-factory-detail" id={`${id}-detail`}><div aria-live={manualTime.current===null?"off":"polite"}>{!ready&&!chapterArt&&<p className="eyebrow">Chapter guide · Overview shown above</p>}<h3>{step[0]}</h3><p>{step[1]}</p></div><div><span>{kind==='owned'?'Illustrative operating environment':kind==='products'?'Concept study · Future development':'Illustrative future network'}</span>{!ready&&!chapterArt&&<span>{failed?'Still view · Scene unavailable':'Still view available'}</span>}</div></div>
+  <div className="network-reading">
+    <label className="network-chapter-picker">
+      <span>Chapter</span>
+      <select aria-label={`${story.eyebrow} chapter`} value={selected} aria-controls={`${id}-detail`} onChange={event=>choose(Number(event.target.value))}>
+        {story.steps.map(([label],i)=><option key={label} value={i}>{i+1} / {story.steps.length} · {label}</option>)}
+      </select>
+    </label>
+    <div className="network-factory-chapters" role="group" aria-label={`${story.eyebrow} chapters`}>
+      {story.steps.map(([label],i)=><button type="button" key={label} aria-pressed={selected===i} aria-controls={`${id}-detail`} onClick={()=>choose(i)}>{label}</button>)}
+    </div>
+    <div className="network-factory-detail" id={`${id}-detail`} aria-live={manualTime.current===null?"off":"polite"}>
+      <h3>{step[0]}</h3>
+      <p>{step[1]}</p>
+    </div>
+    <div className="network-operation-status">
+      {ready ? <span>{networkStatus(kind,time)}</span> : failed ? <span>Scene unavailable · Still view</span> : !chapterArt && <span>Illustrative overview</span>}
+      {kind==='owned'&&ready&&<span>{time>=15?'Inspection recorded · Release pending':'Inspection pending · Release pending'}</span>}
+    </div>
+  </div>
 
   {kind==='partnership'&&<div className="network-contributions"><div><h3>Partner contribution</h3><p>Capital · Infrastructure · Market relationships</p></div><div><h3>Voltron contribution</h3><p>Engineering · Technology · Automation · Operating capability</p></div></div>}
 
-  {kind==='learning'&&<p className="network-governance">Shared capability passes through review and local configuration. Plant and customer information remains governed within its permitted context.</p>}
+  {kind==='learning'&&<p className="network-governance">Each plant reviews and configures shared capabilities locally. Plant and customer records stay within their permitted context.</p>}
 
  </section><button className="study-replay" type="button" aria-label={`Replay ${story.title}`} onClick={()=>{
   remember(null);setTime(0);controller.current?.replay();

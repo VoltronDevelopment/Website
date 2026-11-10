@@ -89,12 +89,22 @@
 .coating-tank .art-theme-dark,:root[data-theme=dark] .coating-tank .art-theme-light {display:none}
 :root[data-theme=dark] .coating-tank .art-theme-dark {display:inline-block}
 @media(max-width:767px){.coating-evidence{grid-template-columns:1fr}.coating-tank img{max-width:290px}.coating-agent{grid-template-columns:minmax(72px,27%) minmax(0,1fr);gap:10px}}
-.coating-evidence {grid-template-columns:minmax(0,1fr);max-width:760px;margin-inline:auto}
-.coating-cycle {position:relative;width:100%;height:clamp(245px,36vh,390px)}
+.coating-evidence {max-width:960px;margin-inline:auto;gap:clamp(12px,2vw,28px);padding-block:4px 12px}
+.coating-cycle {position:relative;width:100%;height:clamp(235px,32svh,360px)}
 .coating-cycle canvas,.coating-cycle img {position:absolute;inset:0;margin:auto;width:100%;height:100%;object-fit:contain}
 .coating-agent {min-height:164px;grid-template-columns:clamp(82px,15vw,144px) minmax(0,1fr)}
 .coating-agent .fluid-study-stage {height:auto;aspect-ratio:1}
 .investigation-choice {display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px}
 .investigation-choice button {padding:8px 14px;min-height:44px;color:var(--muted);background:transparent;border:1px solid transparent;border-radius:8px;font:inherit;cursor:pointer}
 .investigation-choice button[aria-pressed=true] {color:var(--ink);border-color:var(--line);background:var(--int-selected)}
-@media(max-width:767px){.coating-agent{min-height:204px}.investigation-choice button{font-size:14px;padding-inline:10px}}
+@media(max-width:767px){.coating-agent{min-height:0;grid-template-columns:clamp(60px,19vw,82px) minmax(0,1fr)}.investigation-choice button{font-size:14px;padding-inline:10px}}
+
+.evidence-story .evidence-progression {margin:0 auto 8px;max-width:960px}
+.evidence-story .source-choice {margin-block:8px}
+@media (max-width:767px){
+ .evidence-story .coating-cycle {height:clamp(180px,52vw,235px)}
+ .evidence-story .coating-agent h3 {margin-block:4px}
+ .evidence-story .evidence-progression {justify-content:space-between;gap:0}
+ .evidence-story .evidence-progression button {padding-inline:6px}
+ .evidence-story .evidence-progression button span {display:none}
+}

@@ -371,3 +371,18 @@
 }
 .scope-label-short{display:none}
 @media(max-width:767px){.scope-label-wide{display:none}.scope-label-short{display:inline}}
+
+.alpha-page .alpha-line-stage > .alpha-line-chapters {margin:0 0 8px}
+.alpha-page .alpha-twin-status {align-items:center;gap:6px 12px;padding-block:8px}
+.alpha-page .alpha-twin-status .alpha-operation {margin:0;color:var(--ink)}
+@media(max-width:767px){
+ .alpha-page .alpha-line-stage-heading {padding-bottom:4px}
+ .alpha-page .alpha-twin-status {display:grid;gap:4px}
+ .alpha-page .alpha-line-stage .alpha-twin-transport {margin-block:0;gap:4px}
+ .alpha-page .alpha-line .alpha-options {margin-block:4px}
+ .alpha-page .alpha-line-layout + .alpha-decision {margin-block:16px;padding:16px;gap:8px}
+ .alpha-page .alpha-decision .eyebrow {margin-bottom:4px}
+}
+@media(min-width:1101px){
+ .alpha-page .alpha-twin-transport {grid-template-columns:auto minmax(90px,1fr)}
+}

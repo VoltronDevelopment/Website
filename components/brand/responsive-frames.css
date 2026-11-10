@@ -278,10 +278,7 @@
 @media(max-width:767px){
   .site-presentation #main-content .hero.keyword-hero .hero-actions {gap:4px 14px;}
   .site-presentation #main-content .hero.keyword-hero .hero-actions>a {
-    position:relative; min-height:34px; padding:6px 10px; font-size:14px; line-height:20px;
-  }
-  .site-presentation #main-content .hero.keyword-hero .hero-actions>a::after {
-    content:"";position:absolute;inset:-5px 0;
+    min-height:44px; padding:4px 0; font-size:14px; line-height:20px;
   }
 }
 .study-replay {position:relative;isolation:isolate;color:var(--text-link)}
@@ -395,3 +392,22 @@ body :is(.entry-controls,.site-header .header-actions) .icon-button:focus-visibl
 body :is(.entry-controls,.site-header .header-actions) {gap:2px}
 
 @media(max-width:767px){:root:not([data-artwork-motion=off]) .home-brand-tagline span{display:block}}
+
+.site-presentation #main-content .hero.keyword-hero .hero-actions .text-action{
+ display:inline-flex;align-items:center;gap:7px;min-height:44px;padding-inline:0;
+ background:transparent;border:0;box-shadow:none;color:var(--text-link)
+}
+.site-presentation #main-content .hero.keyword-hero .hero-actions .text-action svg{width:14px;height:14px;stroke-width:1.5}
+.site-presentation #main-content .hero.keyword-hero .hero-actions .text-action:is(:hover,:focus-visible){text-decoration:underline;text-underline-offset:.25em}
+:root:has([data-entry-sweep]) .home-page .hero-actions{visibility:hidden}
+
+.site-presentation #main-content .hero.keyword-hero .hero-actions .text-action + .text-action{color:var(--ink)}
+@media(max-width:1023px) and (min-height:731px){
+ .site-presentation #main-content .hero.intelligence-sculpture-hero.keyword-hero>.hero-grid{padding-block-end:10px}
+ .site-presentation #main-content .home-page .home-hero.keyword-hero .home-lattice-art{height:min(98vw,calc(100svh - 460px))}
+ .site-presentation #main-content .technology-page .technology-hero .engineered-technology{max-width:min(100%,calc((100svh - 475px)*1.07));margin-inline:auto}
+}
+@media(max-width:767px) and (min-height:731px){
+ .site-presentation #main-content .network-page .hero.keyword-hero>.hero-grid{padding-block:4px}
+ .site-presentation #main-content .technology-page .technology-hero .engineered-technology{max-width:min(100%,calc((100svh - 475px)*.865))}
+}

@@ -65,3 +65,35 @@
 @media(max-width:767px){
  .network-factory-chapters button{white-space:normal;line-height:1.3}
 }
+
+.network-story .network-factory-section {padding-block:clamp(32px,4vw,56px)}
+.network-story .section-intro {margin-bottom:16px}
+.network-reading {align-self:center;min-width:0}
+.network-reading .network-factory-chapters {gap:4px;padding-block:4px 12px}
+.network-reading .network-factory-chapters button {padding:8px 12px}
+.network-reading .network-factory-detail {display:block;padding:12px 0 0;border-top:1px solid var(--line);border-radius:0;background:none;box-shadow:none}
+.network-reading .network-factory-detail p {margin-top:4px;min-height:0}
+.network-reading .network-operation-status {min-height:0;flex-wrap:wrap;gap:4px 12px}
+.network-reading .network-operation-status:empty {display:none}
+.network-chapter-picker {display:none}
+.network-story .network-contributions {margin-top:16px;gap:12px 24px}
+.network-story .network-contributions p {margin-top:2px}
+@media(min-width:768px){
+ .network-story .network-factory-section {display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);column-gap:clamp(20px,4vw,52px)}
+ .network-story .network-factory-section>.section-intro {grid-column:1/-1}
+ .network-story .network-factory-art {grid-column:1}
+ .network-story .network-reading {grid-column:2}
+ .network-story :is(.network-governance,.network-contributions) {grid-column:1/-1}
+}
+@media(max-width:767px){
+ .network-story .network-factory-section {padding-block:28px}
+ .network-story .network-factory-art {height:clamp(240px,69vw,310px)}
+ .network-story .network-factory-learning .network-factory-art {height:clamp(210px,58vw,270px)}
+ .network-reading {align-self:stretch}
+ .site-presentation #main-content .network-reading .network-factory-chapters {display:none}
+ .network-chapter-picker {display:flex;align-items:center;gap:12px;border-block:1px solid var(--line);color:var(--muted);font-size:14px}
+ .network-chapter-picker select {flex:1;min-width:0;min-height:44px;padding-inline:4px;color:var(--ink);background:var(--surface);border:0;font:inherit;font-size:16px}
+ .network-reading .network-factory-detail {border:0;padding-top:8px}
+ .network-reading .network-factory-detail h3 {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .network-reading .network-operation-status {padding-top:4px}
+}
