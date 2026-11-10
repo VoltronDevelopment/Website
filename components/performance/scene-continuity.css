@@ -30,3 +30,18 @@
 [data-scene-state] .native-opening-plate {position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 [data-scene-state] .native-opening-plate img {position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:contain!important;transform:none!important}
 :root[data-theme="dark"] .native-opening-plate.art-theme-light,:root:not([data-theme="dark"]) .native-opening-plate.art-theme-dark {display:none!important}
+
+/* A perspective camera frames by height. Crop surplus side pixels at the slot edges. */
+.scene-poster-home .native-opening-plate {position:absolute;inset:0;display:block}
+.scene-poster.scene-poster-home .native-opening-plate img {
+  position:absolute!important;inset:50% auto auto 50%!important;
+  height:calc(100% * var(--cube-capture-factor,1) * var(--cube-camera-factor,1))!important;
+  width:auto!important;max-width:none!important;max-height:none!important;
+  transform:translate(-50%,-50%)!important;
+}
+@media (max-width:767px) {
+  .scene-poster-home {--cube-capture-factor:1.17463295}
+}
+@container (aspect-ratio < 9/10) {
+  .scene-poster-home .native-opening-plate {--cube-camera-factor:0.85132977}
+}

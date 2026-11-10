@@ -56,10 +56,20 @@ export function startEntryDissolve(root:HTMLElement,navigate:()=>void){
     if(ctx)ctx.fillStyle=dark?"#96dbff":"#24689a";
   let frame=0,elapsed=0,last=performance.now(),submitted=false;
   const started=last;
+  let openingImage:HTMLImageElement|null=null,openingReady=false;
   const prepareCube=()=>{if(overlay.dataset.entrySweep==="blend")return;overlay.dataset.entrySweep="blend";window.dispatchEvent(new Event("voltron:entry-cube-prepare"));};
   const cleanup=()=>{if(name)name.style.visibility="";prepareCube();cancelAnimationFrame(frame);overlay.remove();window.dispatchEvent(new Event("voltron:entry-sweep-finished"));presentation.style.visibility="";};
   function draw(now:number){
-    const waiting=submitted&&!document.querySelector("#home-title")&&elapsed>0&&now-started<8000;
+    if(submitted&&!openingReady){
+      const theme=document.documentElement.dataset.theme==="dark"?"dark":"light";
+      const image=document.querySelector<HTMLImageElement>(`.home-lattice-art .scene-pose-opening .art-theme-${theme} img`);
+      if(image&&image!==openingImage){
+        openingImage=image;
+        const ready=()=>{if(openingImage===image)openingReady=true;};
+        image.decode().then(ready,ready);
+      }
+    }
+    const waiting=submitted&&!openingReady&&now-started<8000;
     if(!waiting)elapsed+=Math.min(now-last,32);
     last=now;
     const t=Math.min(1,elapsed/4400);

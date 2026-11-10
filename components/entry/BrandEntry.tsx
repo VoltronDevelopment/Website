@@ -9,7 +9,6 @@ import { ThemeToggle } from "@/components/brand/ThemeToggle";
 import { EntryAudio } from "./EntryAudio";
 import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline";
 import {prefersStaticScene} from '../performance/scene-policy';
-import {NativeOpening} from "../performance/NativeOpening";
 import {startEntryDissolve} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
 
@@ -130,6 +129,5 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     </div>
     </div>
   {!children&&wordmark}
-  {!locked&&<div className="entry-home-reveal" aria-hidden="true"><div className="travel-path"><div className="entry-home-frame"><NativeOpening scene="home"/></div></div></div>}
   </main>;
 }
