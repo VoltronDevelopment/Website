@@ -87,7 +87,8 @@ export async function middleware(request: NextRequest) {
 
   if (!prelaunch) {
     if (pathname === "/coming-soon") return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));
-    if (pathname === "/enter") return privateResponse(NextResponse.next());
+    // After launch these public pages can use Next's normal static response caching.
+    if (pathname === "/enter" || pathname === "/manufacturing" || pathname === "/network") return NextResponse.next();
     const entering = request.nextUrl.searchParams.get("enter") === "1";
     if (pathname === "/" && !entering) {
       return privateResponse(NextResponse.redirect(new URL("/enter", request.url)));

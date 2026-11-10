@@ -8,7 +8,6 @@ import { verifyFounderTokenEdge } from "@/lib/founder-session-edge";
 import { isPrelaunch } from "@/lib/launch";
 import "./entry.css";
 
-export const dynamic="force-dynamic";
 export const metadata: Metadata={
   title:"Enter the Lattice",
   description:"Human ingenuity. Connected intelligence. Manufacturing possibilities.",
