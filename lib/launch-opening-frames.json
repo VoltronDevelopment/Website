@@ -66,32 +66,32 @@
   "home": {
     "desktop": {
       "dark": [
-        "/optimized/entry-home-desktop-dark-1x-afac4cc8ed5b1390.webp",
-        "/optimized/entry-home-desktop-dark-2x-ceafc497e7004ed0.webp"
+        "/optimized/home-light-type-desktop-dark-1x-8f7d323f087eb65c.webp",
+        "/optimized/home-light-type-desktop-dark-2x-8c819ff28852f08f.webp"
       ],
       "light": [
-        "/optimized/entry-home-desktop-light-1x-d81b96e706033692.webp",
-        "/optimized/entry-home-desktop-light-2x-1788902614f5d756.webp"
+        "/optimized/home-light-type-desktop-light-1x-69753a40b74e4d92.webp",
+        "/optimized/home-light-type-desktop-light-2x-4d2fd26b899239f2.webp"
       ]
     },
     "phone": {
       "dark": [
-        "/optimized/entry-home-phone-dark-1x-312889be8c4d7282.webp",
-        "/optimized/entry-home-phone-dark-2x-746b356acd7326b1.webp"
+        "/optimized/home-light-type-phone-dark-1x-e1328dca0d1df097.webp",
+        "/optimized/home-light-type-phone-dark-2x-b09c47ceae4c1f71.webp"
       ],
       "light": [
-        "/optimized/entry-home-phone-light-1x-dec7f53643d240f1.webp",
-        "/optimized/entry-home-phone-light-2x-f8c73104b47a645e.webp"
+        "/optimized/home-light-type-phone-light-1x-cd17a9a9d0990d45.webp",
+        "/optimized/home-light-type-phone-light-2x-09dacc259fbdf6a0.webp"
       ]
     },
     "tablet": {
       "dark": [
-        "/optimized/entry-home-tablet-dark-1x-73df5fbfb1149b28.webp",
-        "/optimized/entry-home-tablet-dark-2x-d004ab7b75877e38.webp"
+        "/optimized/home-light-type-tablet-dark-1x-f9a63d43750411bc.webp",
+        "/optimized/home-light-type-tablet-dark-2x-a379aa85d77c838c.webp"
       ],
       "light": [
-        "/optimized/entry-home-tablet-light-1x-e6c4f8ccd8ce2302.webp",
-        "/optimized/entry-home-tablet-light-2x-6279c63e7f06600a.webp"
+        "/optimized/home-light-type-tablet-light-1x-0d9fe28dc0214cd0.webp",
+        "/optimized/home-light-type-tablet-light-2x-252b413cf19780a8.webp"
       ]
     }
   },

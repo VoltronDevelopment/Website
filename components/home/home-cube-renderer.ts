@@ -67,6 +67,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   const bodyGeometry = track(new RoundedBoxGeometry(CUBIE, CUBIE, CUBIE, 3, 0.03));
   const stickerGeometry = track(new THREE.PlaneGeometry(STICKER, STICKER));
   const stickerMeshes: THREE.Mesh[] = [];
+  const joinedFaces: THREE.Mesh[] = [];
   const canvases = {
     logo: document.createElement("canvas"),
     ingenuity: document.createElement("canvas"),
@@ -131,6 +132,22 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     cubies.push({mesh: group, sx: x, sy: y, sz: z, x, y, z, q: new THREE.Quaternion()});
   }
 
+  // A solved face is one uninterrupted surface. Independent tile edges can
+  // otherwise introduce sampling seams through the fine circuit strokes.
+  const joinedGeometry = track(new THREE.PlaneGeometry(CUBIE * 3, CUBIE * 3));
+  for (const face of faces) {
+    const map = track(new THREE.CanvasTexture(canvases[face.id]));
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.anisotropy = 8;
+    const material = track(new THREE.MeshBasicMaterial({map, transparent:true, depthWrite:true, toneMapped:false}));
+    stickers.push(material);
+    const mesh = new THREE.Mesh(joinedGeometry, material);
+    mesh.rotation.y = face.rotY;
+    mesh.position.set(face.axis === "x" ? face.side : 0, 0, face.axis === "z" ? face.side : 0).multiplyScalar(CUBIE * 1.5 + .012);
+    mesh.renderOrder = 2;
+    cube.add(mesh);
+    joinedFaces.push(mesh);
+  }
   const echo=track(createFloorEcho([cube],-1.62));
   scene.add(echo.group);
   scene.add(new THREE.HemisphereLight(0xe7f4fc, 0x24384c, 0.9));
@@ -165,7 +182,10 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     const spacing = SPACING + (CUBIE - SPACING) * join;
     const reach = STICKER + (spacing - STICKER) * join;
     for (const cubie of cubies) {cubie.mesh.position.set(cubie.x * spacing, cubie.y * spacing, cubie.z * spacing); cubie.mesh.quaternion.copy(cubie.q);}
-    for (const mesh of stickerMeshes) mesh.scale.set(reach / STICKER, reach / STICKER, 1);
+    const seamless = join >= 1;
+    for (const mesh of stickerMeshes) { mesh.scale.set(reach / STICKER, reach / STICKER, 1); mesh.visible = !seamless; }
+    for (const mesh of joinedFaces) mesh.visible = seamless;
+    canvas.dataset.seamlessFace = String(seamless);
     canvas.dataset.joined = join.toFixed(2);
     const spin = now > homeCubeDuration ? (now - homeCubeDuration) * 0.28 : 0;
     cube.rotation.set(0, spin, 0);
@@ -201,8 +221,9 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
         ctx.textBaseline = "middle";
         const lines = phrase.split(" ");
         let size = px(92);
-        ctx.font = `500 ${size}px Montserrat, Arial, sans-serif`;
-        while (size > px(46) && lines.some(lineText => ctx.measureText(lineText).width > tileSize * 0.7)) {size -= px(4); ctx.font = `500 ${size}px Montserrat, Arial, sans-serif`;}
+        ctx.font = `300 ${size}px Montserrat, Arial, sans-serif`;
+        ctx.letterSpacing = `${size * .045}px`;
+        while (size > px(46) && lines.some(lineText => ctx.measureText(lineText).width > tileSize * 0.7)) {size -= px(4); ctx.font = `300 ${size}px Montserrat, Arial, sans-serif`;ctx.letterSpacing = `${size * .045}px`;}
         lines.forEach((lineText, line) => ctx.fillText(lineText, tileSize / 2, tileSize / 2 + (line - (lines.length - 1) / 2) * size * 1.18));
       });
     });
@@ -307,7 +328,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.05;
       scene.environment = options.shared?.environment ?? null;
-      await document.fonts?.load(`500 ${px(92)}px Montserrat`).catch(() => undefined);
+      await document.fonts?.load(`300 ${px(92)}px Montserrat`).catch(() => undefined);
       if (disposed) return;
       if(!logoImage){const texture=track(await new THREE.TextureLoader().loadAsync(options.sharp ? identityMark2x : identityMark));logoImage=texture.image as CanvasImageSource;if(disposed)return;}
       paint();

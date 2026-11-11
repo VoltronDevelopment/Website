@@ -162,16 +162,16 @@
   "home": {
     "complete": {
       "light": {
-        "url": "/optimized/home-hd-home-desktop-light-14-ac12491647670167.webp",
-        "width": 2880,
-        "height": 1920,
-        "bytes": 226648
+        "url": "/optimized/home-light-type-complete-light-2x-0449d6e543bc83be.webp",
+        "width": 2592,
+        "height": 1728,
+        "bytes": 178048
       },
       "dark": {
-        "url": "/optimized/home-hd-home-desktop-dark-14-644b99b04429b802.webp",
-        "width": 2880,
-        "height": 1920,
-        "bytes": 230780
+        "url": "/optimized/home-light-type-complete-dark-2x-da2cb5acb1ab41d3.webp",
+        "width": 2592,
+        "height": 1728,
+        "bytes": 179790
       }
     }
   },

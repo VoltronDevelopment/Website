@@ -24,6 +24,8 @@
 }
 
 .vectra-launch[hidden] { display: none; }
+@media(prefers-reduced-motion:no-preference){.vectra-launch:not([hidden]){animation:vera-launch-arrive .6s cubic-bezier(.25,.1,.25,1) both}}
+@keyframes vera-launch-arrive{from{opacity:0}to{opacity:1}}
 :root:has([data-entry-sweep]) .vectra-launch { visibility: hidden; }
 .vectra-launch .vectra-cube { --vera-cube-size: 72px; }
 .vectra-cube { position: relative; isolation: isolate; display: block; flex: none; width: var(--vera-cube-size, 30px); height: var(--vera-cube-size, 30px); pointer-events: none; }

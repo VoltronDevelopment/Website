@@ -28,9 +28,32 @@ export function Vectra() {
   const [expanded, setExpanded] = useState(false);
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
+  const [homeReady, setHomeReady] = useState(false);
   const launcher = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (pathname !== "/") return;
+    setHomeReady(false);
+    let cancelled = false, waiting = false, frame = 0;
+    const settle = () => {
+      if (waiting || document.querySelector("[data-entry-sweep]")) return;
+      const line = document.querySelector(".home-brand-tagline span:last-child");
+      if (!line) return;
+      waiting = true;
+      frame = requestAnimationFrame(() => {
+        Promise.allSettled(line.getAnimations().map(animation => animation.finished)).then(() => {
+          if (!cancelled) { observer.disconnect(); setHomeReady(true); }
+        });
+      });
+    };
+    const observer = new MutationObserver(settle);
+    observer.observe(document.body, {childList:true, subtree:true, attributes:true, attributeFilter:["data-entry-sweep"]});
+    window.addEventListener("voltron:entry-sweep-finished", settle);
+    settle();
+    return () => { cancelled = true; cancelAnimationFrame(frame); observer.disconnect(); window.removeEventListener("voltron:entry-sweep-finished", settle); };
+  }, [pathname]);
 
   useEffect(() => {
     setMounted(true);
@@ -108,7 +131,7 @@ export function Vectra() {
       window.removeEventListener("resize", positionLauncher);
       window.removeEventListener("scroll", positionLauncher);
     };
-  }, [mounted, open, pathname]);
+  }, [mounted, open, pathname, homeReady]);
 
 
   useEffect(() => {
@@ -177,7 +200,7 @@ export function Vectra() {
   // descendants. Mount Vera outside it so the panel stays at the viewport edge.
   return createPortal(<>
     <button ref={launcher} type="button" className="vectra-launch" aria-label="Ask Vera" aria-haspopup="dialog"
-      aria-controls="vera-panel" aria-expanded={open} hidden={open}
+      aria-controls="vera-panel" aria-expanded={open} hidden={open || (pathname === "/" && !homeReady)}
       onClick={() => { setVisited(true); setOpen(true); }}>
       <VeraCube /><span className="vectra-launch-label" aria-hidden="true">Ask Vera</span>
     </button>
