@@ -4,7 +4,7 @@ Date: 11 November 2026. Status: core refinements implemented; release verificati
 
 ## Outcome
 
-Final approved visual correction: background artwork is additive. Preserve the foreground 3D question cubes with moving aura and add a separate faint cube layer to each card. This supersedes the earlier proposal below to remove the foreground artwork column.
+Final approved visual correction: background artwork is additive and belongs to the overall Vera panel. Preserve the foreground 3D question cubes with moving aura, add three faint cubes behind the full intro/conversation surface, and place a live unframed settings cube at the top right. This supersedes earlier proposals below about artwork on individual question cards or removing the foreground artwork column.
 
 Unify Vera's visible identity, conversational judgment, evidence retrieval and response performance. Preserve English-only guest chat, the separate introduction, existing model choice, the unframed header cube and Voltron's own aesthetic. Lila is a reference for interaction and engineering principles, not a personality to copy.
 

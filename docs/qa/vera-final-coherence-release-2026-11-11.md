@@ -1,6 +1,6 @@
 # Vera final coherence release
 
-Visual clarification: each question retains a foreground live Three.js cube with original Vera-study aura, alongside a separate pale decorative cube embedded in the card background. Question studies use independent blue, teal and violet material variants, not specialist-agent presets. The transcript watermark remains decorative. One shared WebGL context renders all visible foreground cubes.
+Final visual clarification: each question retains a foreground live Three.js cube with original Vera-study aura. Three faint decorative cubes are embedded across the overall panel, visible in intro and conversation, rather than on individual question cards. The separate transcript watermark is removed. Question studies use independent blue, teal and violet material variants, not specialist-agent presets. A live unframed Vera settings cube sits at the top right; the title cube remains on the left. One shared WebGL context renders all visible foreground cubes.
 
 Implemented unframed settings discovery through a small disclosure arrow; embedded one pale decorative cube into each invitation card; preserved independent Vera aura identity. Added conservative unique one-edit public-alias retrieval, protection for visitor-defined terms and identifiers, and cited-topic recovery across acknowledgements with explicit-topic precedence. Generation retains original visitor text. Added ambiguity/correction guidance and separate embedding/search server-log timings without logging visitor text.
 

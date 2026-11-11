@@ -174,7 +174,6 @@ export default function VectraConversation({ open, dismiss, preference, onThread
 
   return <>
     <div className="vectra-chat" data-composing={!!message || undefined} hidden={view !== "conversation"}>
-    <span className="vera-watermark" aria-hidden="true"><VeraCube variant="platform" decorative /></span>
     <div className="vectra-transcript" ref={scroll} tabIndex={-1} onScroll={event => {
       const transcript = event.currentTarget;
       if (!transcript.clientHeight) return;

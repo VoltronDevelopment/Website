@@ -176,6 +176,8 @@ export function Vectra() {
       }}>
       <header className="vectra-header">
         <button className="vectra-icon vera-return" style={{ visibility: screen === "chat" ? "visible" : "hidden" }} tabIndex={screen === "chat" ? 0 : -1} aria-hidden={screen !== "chat"} type="button" aria-label="Back to Vera introduction" title="Meet Vera" onClick={() => navigate("intro")}><ArrowLeft size={17} /></button>
+        <VeraCube />
+        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span></div>
         <details ref={settings} className="vera-settings" onKeyDown={event => {
           if (event.key === "Escape" && settings.current?.open) {
             event.preventDefault(); event.stopPropagation(); settings.current.open = false;
@@ -190,7 +192,6 @@ export function Vectra() {
             <button type="button" className="vera-motion-choice" aria-pressed={motion === "still"} onClick={changeMotion}>Aura motion<span>{motion === "ambient" ? "Ambient" : "Still"}</span></button>
           </div>
         </details>
-        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span></div>
         <div className="vectra-window-controls">
           <button type="button" className="vectra-icon vectra-expand" aria-label={expanded ? "Restore compact window" : "Expand Vera"}
             title={expanded ? "Restore compact window" : "Expand Vera"}
@@ -202,6 +203,9 @@ export function Vectra() {
           </button>
         </div>
       </header>
+      <div className="vera-panel-art" aria-hidden="true">
+        <VeraCube variant="platform" decorative /><VeraCube variant="vision" decorative /><VeraCube variant="challenge" decorative />
+      </div>
       {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
       {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
         <Conversation onThreadChange={setResumed} preference={preference} open={open && screen === "chat"} dismiss={() => dismiss(false)} />
