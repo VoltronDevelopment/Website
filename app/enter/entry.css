@@ -98,6 +98,10 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 .brand-entry[data-final-face=true] .entry-direct-link{opacity:0;pointer-events:none}
 .brand-entry[data-settled=true] .entry-direct-link:not(:focus){visibility:hidden}
 .entry-face-enter .identity-tile-caption{opacity:1}
+.brand-entry .entry-face-copy{font-weight:300;letter-spacing:.035em;font-size:15px;line-height:1.5}
+.brand-entry .entry-direct-link{font-weight:300;font-size:12px;letter-spacing:.035em;gap:7px}
+.brand-entry .entry-direct-link svg{width:13px;height:13px;stroke-width:1.25}
+@media(max-width:767px){.brand-entry .entry-face-copy{font-size:12px}}
 .brand-entry[data-final-face=true] .entry-face-enter .identity-tile-caption{opacity:1}
 
 /* Short landscape needs a lateral composition rather than a clipped vertical stack. */
