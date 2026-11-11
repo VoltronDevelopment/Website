@@ -7,7 +7,7 @@ import type { ModelPreference } from "@/lib/vectra/models";
 import { chatCapsEnabled, conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
 import { VectraEnquiry } from "./VectraEnquiry";
 import { VeraCube } from "./VeraCube";
-import { VeraIntroduction } from "./VeraIntroduction";
+import { VeraStarters } from "./VeraIntroduction";
 
 type Pending = { id: string; message: string; preference?: ModelPreference };
 
@@ -25,7 +25,7 @@ async function chat(method: "GET" | "POST" | "DELETE", pending?: Pending) {
   return data.turns;
 }
 
-export default function VectraConversation({ open, dismiss, preference }: { open: boolean; dismiss: () => void; preference: ModelPreference }) {
+export default function VectraConversation({ open, dismiss, preference, onThreadChange }: { open: boolean; dismiss: () => void; preference: ModelPreference; onThreadChange: (exists: boolean) => void }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<Pending>();
@@ -58,6 +58,7 @@ export default function VectraConversation({ open, dismiss, preference }: { open
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+  useEffect(() => { onThreadChange(!!turns.length || !!pending || !!message); }, [turns.length, pending, message, onThreadChange]);
 
   useLayoutEffect(() => {
     const transcript = scroll.current;
@@ -181,7 +182,7 @@ export default function VectraConversation({ open, dismiss, preference }: { open
       if (follow.current) setLatest(false);
     }}>
       <div role="log" aria-label="Conversation">
-        {!turns.length && !pending && <VeraIntroduction disabled={!ready || busy} onChoose={value => {
+        {!turns.length && !pending && <VeraStarters disabled={!ready || busy} onChoose={value => {
           if (window.matchMedia("(pointer: fine)").matches) composer.current?.focus({ preventScroll: true });
           void send(value);
         }} />}

@@ -31,7 +31,7 @@ function VeraIdentity({ active }: { active: boolean }) {
   return <span ref={host} className="vectra-cube" data-variant={variant} data-active={active || undefined} aria-hidden="true">
     <span className="vectra-cube-aura" />
     <span className="vera-cube-poster">
-      <span className="vera-question-cube" data-study="identity"><span className="vera-face-top" /><span className="vera-face-left" /><span className="vera-face-right" /><span className="vera-study-light" /></span>
+      <img className="art-theme-light" src="/vera/identity-light.png" alt="" width={256} height={256} /><img className="art-theme-dark" src="/vera/identity-dark.png" alt="" width={256} height={256} />
     </span>
     <canvas ref={canvas} className="vera-cube-canvas" />
   </span>;

@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { VeraCube } from "./VeraCube";
 
 const directions = [
@@ -7,14 +7,8 @@ const directions = [
   { id: "challenge", title: "Bring a manufacturing challenge", detail: "Work through where to start.", message: "I have a manufacturing challenge. Help me think through where to start." },
 ] as const;
 
-export function VeraIntroduction({ disabled, onChoose }: { disabled: boolean; onChoose: (message: string) => void }) {
+export function VeraStarters({ disabled, onChoose }: { disabled: boolean; onChoose: (message: string) => void }) {
   return <section className="vera-introduction" aria-label="Meet Vera">
-    <div className="vera-introduction-heading">
-      <div>
-        <h3>I'm Vera.</h3>
-        <p>Let's explore how manufacturing can work better together.</p>
-      </div>
-    </div>
     <div className="vera-directions">
       {directions.map(direction => <button className="vera-direction" key={direction.id} type="button"
         disabled={disabled} onClick={() => onChoose(direction.message)}>
@@ -23,5 +17,17 @@ export function VeraIntroduction({ disabled, onChoose }: { disabled: boolean; on
         <ArrowUpRight size={16} aria-hidden="true" />
       </button>)}
     </div>
+  </section>;
+}
+
+export function VeraIntroduction({ resumed, animate, onBegin }: { resumed: boolean; animate: boolean; onBegin: () => void }) {
+  return <section className="vera-meet" aria-label="Meet Vera" data-entrance={animate || undefined}>
+    <div className="vera-meet-art"><VeraCube /></div>
+    <div className="vera-meet-copy">
+      <p className="vera-meet-name">VERA</p>
+      <h3>Let’s see what connects.</h3>
+      <p>I’m Voltron Lattice’s AI guide. Bring a question, explore an idea, or imagine what industry could become.</p>
+    </div>
+    <button type="button" className="vera-begin" onClick={onBegin}>{resumed ? "Continue conversation" : "Begin a conversation"}<ArrowRight size={18} aria-hidden="true" /></button>
   </section>;
 }

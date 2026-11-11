@@ -3,8 +3,9 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { Maximize2, Minimize2, Minus } from "lucide-react";
+import { ArrowLeft, Maximize2, Minimize2, Minus } from "lucide-react";
 import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
+import { VeraIntroduction } from "./VeraIntroduction";
 import { VeraCube } from "./VeraCube";
 import "./vectra.css";
 
@@ -12,6 +13,11 @@ const Conversation = lazy(() => import("./VectraConversation"));
 const mobilePanel = "(max-width: 600px), (max-height: 480px) and (pointer: coarse)";
 
 export function Vectra() {
+  const [screen, setScreen] = useState<"intro" | "chat">("intro");
+  const [resumed, setResumed] = useState(false);
+  const [entrance, setEntrance] = useState(true);
+  const settings = useRef<HTMLDetailsElement>(null);
+  const begin = useRef<HTMLDivElement>(null);
   const [preference, setPreference] = useState<ModelPreference>("auto");
   const [motion, setMotion] = useState("ambient");
   const [open, setOpen] = useState(false);
@@ -128,7 +134,24 @@ export function Vectra() {
     };
   }, [open]);
 
+  useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (settings.current?.open && !settings.current.contains(event.target as Node)) settings.current.open = false;
+    };
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
+  }, []);
+  function navigate(next: "intro" | "chat") {
+    setEntrance(false); setScreen(next);
+    if (settings.current) settings.current.open = false;
+    requestAnimationFrame(() => {
+      if (next === "intro") begin.current?.querySelector("button")?.focus({ preventScroll: true });
+      else title.current?.focus({ preventScroll: true });
+    });
+  }
   function dismiss(restoreFocus = true) {
+    setEntrance(false);
+    if (settings.current) settings.current.open = false;
     setOpen(false);
     if (restoreFocus) requestAnimationFrame(() => launcher.current?.focus({ preventScroll: true }));
   }
@@ -152,10 +175,23 @@ export function Vectra() {
         }
       }}>
       <header className="vectra-header">
-        <VeraCube />
-        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span><label className="vera-model-control"><span className="vera-sr-only">Response model</span><select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label></div>
+        <button className="vectra-icon vera-return" style={{ visibility: screen === "chat" ? "visible" : "hidden" }} tabIndex={screen === "chat" ? 0 : -1} aria-hidden={screen !== "chat"} type="button" aria-label="Back to Vera introduction" title="Meet Vera" onClick={() => navigate("intro")}><ArrowLeft size={17} /></button>
+        <details ref={settings} className="vera-settings" onKeyDown={event => {
+          if (event.key === "Escape" && settings.current?.open) {
+            event.preventDefault(); event.stopPropagation(); settings.current.open = false;
+            settings.current.querySelector("summary")?.focus();
+          }
+        }}>
+          <summary aria-label="Open Vera settings" title="Vera settings"><VeraCube /></summary>
+          <div className="vera-settings-panel" role="region" aria-label="Vera settings">
+            <strong>Vera settings</strong>
+            <label>Response model<select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label>
+            <p>Auto chooses a model for the current question. Both share this conversation.</p>
+            <button type="button" className="vera-motion-choice" aria-pressed={motion === "still"} onClick={changeMotion}>Aura motion<span>{motion === "ambient" ? "Ambient" : "Still"}</span></button>
+          </div>
+        </details>
+        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span></div>
         <div className="vectra-window-controls">
-          <button type="button" className="vectra-icon vera-motion-control" aria-label={motion === "ambient" ? "Pause Vera aura" : "Animate Vera aura"} aria-pressed={motion === "still"} onClick={changeMotion}><span aria-hidden="true">&#9671;</span></button>
           <button type="button" className="vectra-icon vectra-expand" aria-label={expanded ? "Restore compact window" : "Expand Vera"}
             title={expanded ? "Restore compact window" : "Expand Vera"}
             onClick={() => setExpanded(value => !value)}>
@@ -166,9 +202,10 @@ export function Vectra() {
           </button>
         </div>
       </header>
-      {visited && <Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
-        <Conversation preference={preference} open={open} dismiss={() => dismiss(false)} />
-      </Suspense>}
+      {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
+      {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
+        <Conversation onThreadChange={setResumed} preference={preference} open={open && screen === "chat"} dismiss={() => dismiss(false)} />
+      </Suspense></div>}
     </dialog>
   </>, document.body);
 }

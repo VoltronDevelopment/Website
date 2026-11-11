@@ -3,9 +3,14 @@ import published from "@/lib/vectra/published.json";
 import { selectEvidence, type KnowledgeRecord } from "@/lib/vectra/retrieval";
 import { compileCorpus } from "../scripts/vera-corpus.mjs";
 import { knowledgeVersion } from "@/lib/vectra/knowledge-version.mjs";
-import { createVectraGraph, hasNonLatinLetters, isConversationEdit, openAIAnswer } from "@/lib/vectra/graph";
+import { createVectraGraph, isSocialTurn, hasNonLatinLetters, isConversationEdit, openAIAnswer } from "@/lib/vectra/graph";
 
 describe("Vera evidence selection", () => {
+  it("keeps simple social turns separate from mixed factual requests", () => {
+    expect(isSocialTurn("Hi Vera. In one sentence, who are you?")).toBe(true);
+    expect(isSocialTurn("Thanks!")).toBe(true);
+    expect(isSocialTurn("Hi Vera, explain Alpha readiness.")).toBe(false);
+  });
   it("keeps product evidence out of banter and restores it for a factual follow-up", async () => {
     const retrieve = vi.fn(async () => [published[0]]);
     const answer = vi.fn(async () => ({ text: "A test reply.", sources: [], enquiry: false }));

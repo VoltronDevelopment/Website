@@ -29,6 +29,10 @@ export function isPlayfulAside(question: string) {
     /\b(?:spreadsheet|dashboard|pivot table|cube|conveyor|factory)\b[^.!?]{0,30}\b(?:ate|swallowed|declared itself|demanded a raise|filed for divorce)\b/i.test(text);
 }
 
+export function isSocialTurn(question: string) {
+  return /^(?:(?:hi|hello|hey)(?:[ ,]+vera)?[.! ]*|(?:thanks|thank you|bye|goodbye)[.! ]*|(?:hi[ ,]+vera[.! ]*)?(?:in one sentence[, :]*)?(?:who are you|what is your name)[?!. ]*)$/i.test(question.trim());
+}
+
 async function retrieve(question: string, history: Turn[], records: Record[]) {
   if (history.length && isConversationEdit(question)) return [];
   const start = performance.now();
@@ -59,7 +63,7 @@ const State = Annotation.Root({
 export function createVectraGraph(answer: Answer, retriever: Retriever = async (question, history, records) => selectEvidence(question, history, records)) {
   return new StateGraph(State)
     .addNode("public_context", async state => ({
-      evidence: isPlayfulAside(state.question) ? [] : await retriever(state.question, state.history, state.records),
+      evidence: (isPlayfulAside(state.question) || isSocialTurn(state.question)) ? [] : await retriever(state.question, state.history, state.records),
     }))
     .addNode("conversation_skills", async state => ({
       candidate: await answer({ question: state.question, history: state.history, evidence: state.evidence, preference: state.preference }),
@@ -70,7 +74,7 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
       const ids = Array.isArray(candidate.sources) ? candidate.sources : [];
       const sources = evidence.filter(item => ids.includes(item.id))
         .filter((item, index, all) => all.findIndex(other => other.href === item.href) === index).slice(0, 3)
-        .map(({ id, title, href }) => ({ id, title, href }));
+        .map(({ id, title, href }) => ({ id, title: title.split(" — ")[0], href }));
       const enquiry = candidate.enquiry === true;
       const enquirySummary = enquiry && typeof candidate.enquirySummary === "string"
         ? candidate.enquirySummary.trim().slice(0, 800) : "";

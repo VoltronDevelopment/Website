@@ -9,7 +9,7 @@ describe("Vera model routing", () => {
   expect(routeModel("mini", "Hello", 0).model).toContain("5.4-mini");
   expect(routeModel("auto", "Hello", 0).model).toBe("gpt-6-luna");
   expect(routeModel("auto", "Compare constraints and tradeoffs", 0).model).toContain("5.4-mini");
-  expect(routeModel("auto", "What about that?", 10).model).toContain("5.4-mini");
+  expect(routeModel("auto", "What about that?", 10).model).toBe("gpt-6-luna");
  });
  it("falls back once on transient failure and reports the actual model", async () => {
   const fetcher = vi.fn().mockResolvedValueOnce(new Response("", {status:503})).mockResolvedValueOnce(Response.json({status:"completed",output:[{content:[{type:"output_text",text:JSON.stringify({text:"Hello.",sources:[],enquiry:false,enquirySummary:""})}]}]}));

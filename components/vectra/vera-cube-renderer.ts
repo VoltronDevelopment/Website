@@ -2,12 +2,12 @@ import * as T from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { createFluidCube } from "../intelligence/fluid-cube-materials";
 import type { AgentVisualPreset } from "../intelligence/agent-presets";
-const veraIdentity: AgentVisualPreset = { name: "VERA", family: "clouds", motion: "circulating", seed: 137, scale: [1.3, 1.8, 1.45], contours: 7, warp: 2.6, speed: 1.15, density: .82, smoke: .08, gather: .28, particles: .05, low: "#122B50", mid: "#267EB4", high: "#C9F4F5", aura: "#69B7D3" };
+const veraIdentity: AgentVisualPreset = { name: "VERA", family: "clouds", motion: "circulating", seed: 137, scale: [1.3, 1.8, 1.45], contours: 9, warp: 2.8, speed: 1.15, density: 1.18, smoke: .045, gather: .28, particles: .05, low: "#17257A", mid: "#3970E6", high: "#45E5E0", aura: "#6574E9" };
 import { prefersStaticScene } from "../performance/scene-policy";
 
 type Slot = { canvas: HTMLCanvasElement; host: HTMLElement; preset: number };
 const slots = new Set<Slot>();
-const surfaceSize = 160;
+const surfaceSize = 256;
 const cardSize = 96;
 let stop: (() => void) | undefined;
 let refresh: (() => void) | undefined;

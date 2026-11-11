@@ -573,3 +573,81 @@
 .vera-watermark { z-index: 0; }
 .vectra-transcript, .vectra-bottom { position: relative; z-index: 1; }
 .vectra-transcript { background: transparent; }
+/* Dedicated meet/chat views share a stable window. */
+.vera-intro-view,.vera-conversation-view { display:flex; flex-direction:column; flex:1; min-height:0; }
+.vera-intro-view[hidden],.vera-conversation-view[hidden] { display:none; }
+.vera-intro-view { overflow:auto; }
+.vera-meet { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:24px; padding:28px 32px 40px; text-align:center; }
+.vera-meet-art { width:170px; height:170px; flex:none; }
+.vera-meet-art .vectra-cube { --vera-cube-size:170px; }
+.vera-meet-copy { max-width:36ch; }
+.vera-meet-name { font-size:12px; letter-spacing:.25em; color:var(--muted); margin:0 0 12px; }
+.vera-meet h3 { font-size:30px; line-height:1.2; letter-spacing:-.025em; font-weight:500; margin:0 0 18px; text-wrap:balance; }
+.vera-meet-copy > p:last-child { font-size:14px; line-height:1.8; color:var(--muted); margin:0; }
+.vectra-panel .vera-begin { display:inline-flex; align-items:center; gap:14px; font-size:13px; padding:8px 2px; color:var(--ink); }
+.vera-begin:hover svg { transform:translate(2px,-2px); }
+.vera-begin svg { transition:transform .2s ease; }
+.vera-settings { position:relative; flex:none; }
+.vera-settings > summary { display:grid; place-items:center; width:48px; height:48px; list-style:none; border-radius:7px; cursor:pointer; }
+.vera-settings > summary::-webkit-details-marker { display:none; }
+.vera-settings > summary .vectra-cube { --vera-cube-size:48px; }
+.vera-settings[open] > summary { background:var(--hover); }
+.vera-settings-panel { position:absolute; z-index:5; top:calc(100% + 12px); left:0; width:min(300px,calc(100vw - 64px)); padding:20px; border:1px solid var(--line); border-radius:12px; background:var(--surface); box-shadow:0 12px 36px var(--glass-drop); text-align:left; }
+.vera-settings-panel > strong { font-size:14px; font-weight:500; }
+.vera-settings-panel label { display:grid; gap:8px; margin-top:18px; font-size:12px; color:var(--muted); }
+.vera-settings-panel select { width:100%; padding:10px; min-height:44px; font:inherit; font-size:13px; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:6px; }
+.vera-settings-panel p { font-size:12px; line-height:1.6; color:var(--muted); margin:12px 0; }
+.vectra-panel .vera-motion-choice { display:flex; align-items:center; justify-content:space-between; width:100%; font-size:13px; padding:8px 0; }
+.vera-motion-choice span { font-size:12px; color:var(--muted); }
+.vectra-header { position:relative; z-index:3; }
+.vectra-panel .vera-return { width:32px; min-width:32px; margin-left:-8px; }
+.vera-conversation-view > .vectra-chat { flex:1; }
+.vera-meet[data-entrance] .vera-meet-art { animation:vera-welcome .8s both ease-out; }
+.vera-meet[data-entrance] .vera-meet-copy { animation:vera-welcome .7s .35s both ease-out; }
+.vera-meet[data-entrance] .vera-begin { animation:vera-welcome .6s .65s both ease-out; }
+.vectra-cube-aura { opacity:.23; }
+.vera-cube-canvas { transition:opacity .18s ease; }
+.vera-cube-poster { transition:opacity .18s ease,visibility 0s .18s; }
+.vectra-cube[data-live="true"] .vera-cube-poster { opacity:0; }
+@media(max-width:600px) {
+ .vera-meet { padding:24px 26px 32px; gap:22px; }
+ .vera-meet-art { width:136px; height:136px; }
+ .vera-meet-art .vectra-cube { --vera-cube-size:136px; }
+ .vera-meet h3 { font-size:28px; }
+ .vera-settings > summary { width:44px; height:44px; }
+ .vera-settings > summary .vectra-cube { --vera-cube-size:44px; }
+}
+@media(max-height:580px) {
+ .vera-meet { justify-content:flex-start; gap:14px; padding-block:20px; }
+ .vera-meet-art { width:116px; height:116px; }
+ .vera-meet-art .vectra-cube { --vera-cube-size:116px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .vera-meet[data-entrance] *, .vera-begin svg { animation:none; transition:none; }
+ .vera-cube-canvas,.vera-cube-poster { transition:none; }
+}
+:root:is([data-vera-motion="still"],[data-scene-motion="static"],[data-artwork-motion="off"]) .vera-meet[data-entrance] * { animation:none; }
+.vera-settings-panel { max-height:min(380px,calc(var(--vera-visible-height,100dvh) - 150px)); overflow:auto; }
+/* Final type hierarchy follows the site's Montserrat and colour tokens. */
+.vera-meet h3 { max-width:20ch; margin-inline:auto; font-size:clamp(27px,3vw,30px); line-height:1.25; letter-spacing:-.025em; }
+.vera-meet-copy > p:last-child { max-width:32ch; margin-inline:auto; font-size:15px; line-height:1.75; text-wrap:pretty; }
+.vera-meet-name { font-weight:500; letter-spacing:.23em; }
+.vectra-header h2 { font-size:19px; letter-spacing:.13em; }
+.vera-identity > span { font-size:11px; line-height:1.5; }
+.vera-settings-panel label { font-size:13px; }
+.vera-settings-panel p { font-size:13px; line-height:1.65; }
+.vera-direction strong { font-size:15px; line-height:1.45; }
+.vera-direction-copy > span { font-size:13px; line-height:1.55; }
+@media(max-width:600px) {
+ .vera-meet h3 { font-size:28px; max-width:18ch; }
+ .vera-meet-copy > p:last-child { max-width:29ch; }
+}
+@media(max-width:370px) {
+ .vera-meet { padding-inline:22px; gap:20px; }
+ .vera-meet h3 { font-size:27px; }
+}
+.vera-begin:hover svg { transform:translateX(2px); }
+@keyframes vera-view-in { from { opacity:.35; transform:translateX(4px); } to { opacity:1; transform:none; } }
+.vera-intro-view:not([hidden]),.vera-conversation-view:not([hidden]) { animation:vera-view-in .24s ease-out; }
+@media(prefers-reduced-motion:reduce) { .vera-intro-view,.vera-conversation-view { animation:none !important; } }
+:root:is([data-vera-motion="still"],[data-scene-motion="static"],[data-artwork-motion="off"]) :is(.vera-intro-view,.vera-conversation-view) { animation:none; }
