@@ -229,8 +229,8 @@
 .vectra-bottom {
   position: relative;
   padding: 10px 13px 12px;
-  border-top: 1px solid var(--line);
-  background: var(--vera-material);
+  border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  background: transparent;
 }
 
 .vectra-panel .vectra-latest {
@@ -657,28 +657,43 @@
 .vera-settings > summary:focus-visible .vera-settings-cue { outline:1px solid var(--blue); outline-offset:3px; border-radius:50%; }
 .vera-settings > summary { position:relative; }
 .vera-settings-cue { position:absolute; bottom:1px; right:-2px; color:var(--muted); transition:transform 180ms ease; }
-.vera-settings[open] .vera-settings-cue { transform:rotate(180deg); }
-.vectra-panel .vera-direction { position:relative; isolation:isolate; overflow:hidden; grid-template-columns:58px minmax(0,1fr) 16px; gap:12px; padding:12px; }
+.vera-settings[open] .vera-settings-cue { color:var(--ink); transform:rotate(180deg); }
+.vectra-panel .vera-direction {
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  grid-template-columns:58px minmax(0,1fr) 16px;
+  gap:12px;
+  padding:12px;
+  border-color:color-mix(in srgb, var(--line) 70%, transparent);
+}
 .vera-direction-copy { position:relative; max-width:32ch; }
-.vera-direction > svg:last-child { position:relative; }
+.vera-direction > svg:last-child { position:relative; justify-self:center; }
 @media (prefers-reduced-motion:reduce) { .vera-settings-cue { transition:none; } }
-@media(max-width:600px) { .vectra-panel .vera-direction { grid-template-columns:48px minmax(0,1fr) 14px; gap:9px; padding:12px 10px; } }
+@media(max-width:600px) {
+  .vera-directions { margin-top:8px; }
+  .vectra-panel .vera-direction { grid-template-columns:48px minmax(0,1fr) 16px; gap:9px; padding:12px 10px; }
+}
 .vectra-panel { isolation:isolate; }
 .vera-panel-art {
   position:absolute;
-  inset:72px 0 calc(78px + env(safe-area-inset-bottom, 0px));
+  inset:72px 0 0;
   pointer-events:none;
   z-index:-1;
-  opacity:.23;
+  opacity:.22;
 }
 .vectra-panel[open] .vera-panel-art {
   background:url('/vera/lattice-wireframe.webp') center bottom / contain no-repeat;
 }
-:root[data-theme="dark"] .vera-panel-art { opacity:.16; }
+:root[data-theme="dark"] .vera-panel-art {
+  filter:grayscale(1) invert(1) sepia(.45) hue-rotate(160deg);
+  mix-blend-mode:screen;
+  opacity:.24;
+}
 .vera-settings { margin-left:auto; }
 .vera-settings-panel { left:auto; right:0; }
 .vectra-window-controls { margin-left:0; }
-.vectra-header { gap:9px; }
+.vectra-header { position:relative; z-index:2; gap:9px; }
 .vera-identity { flex:1; }
 .vera-settings > summary { width:44px; height:44px; }
 .vera-settings > summary .vectra-cube { --vera-cube-size:44px; }
