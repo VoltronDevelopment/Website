@@ -66,32 +66,32 @@
   "home": {
     "desktop": {
       "dark": [
-        "/optimized/home-light-type-desktop-dark-1x-5d6705532fef177a.webp",
-        "/optimized/home-light-type-desktop-dark-2x-9c30dc15eb20d8f7.webp"
+        "/optimized/home-light-type-desktop-dark-1x-ebb6a6f9e0baec3b.webp",
+        "/optimized/home-light-type-desktop-dark-2x-e63061ffe2116958.webp"
       ],
       "light": [
-        "/optimized/home-light-type-desktop-light-1x-49e4e1798240e6a6.webp",
-        "/optimized/home-light-type-desktop-light-2x-aeae257b83359704.webp"
+        "/optimized/home-light-type-desktop-light-1x-f6c05c13d6f9b89a.webp",
+        "/optimized/home-light-type-desktop-light-2x-b5c127c9d9cd765a.webp"
       ]
     },
     "phone": {
       "dark": [
-        "/optimized/home-light-type-phone-dark-1x-21fa91fc44f19cb5.webp",
-        "/optimized/home-light-type-phone-dark-2x-1003d9c324c4f846.webp"
+        "/optimized/home-light-type-phone-dark-1x-bab8f21a2a041a07.webp",
+        "/optimized/home-light-type-phone-dark-2x-dce82ccce5da8f34.webp"
       ],
       "light": [
-        "/optimized/home-light-type-phone-light-1x-502366e06e14f315.webp",
-        "/optimized/home-light-type-phone-light-2x-0ffcf5db7571a3a3.webp"
+        "/optimized/home-light-type-phone-light-1x-307476c66acfe90b.webp",
+        "/optimized/home-light-type-phone-light-2x-39f108f552c9c76a.webp"
       ]
     },
     "tablet": {
       "dark": [
-        "/optimized/home-light-type-tablet-dark-1x-84933f32f32a1e89.webp",
-        "/optimized/home-light-type-tablet-dark-2x-430023b4c5ce3415.webp"
+        "/optimized/home-light-type-tablet-dark-1x-12de6cd2ead35988.webp",
+        "/optimized/home-light-type-tablet-dark-2x-257fcbab3f08a463.webp"
       ],
       "light": [
-        "/optimized/home-light-type-tablet-light-1x-d7f8052127863bc1.webp",
-        "/optimized/home-light-type-tablet-light-2x-bfb8db5c20160ff5.webp"
+        "/optimized/home-light-type-tablet-light-1x-68d22ca304daf694.webp",
+        "/optimized/home-light-type-tablet-light-2x-0db8ea668cf59ce1.webp"
       ]
     }
   },

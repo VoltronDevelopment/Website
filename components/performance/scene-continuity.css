@@ -24,7 +24,9 @@
 @media(max-width:767px){.scene-native-opening{--scene-native-width:var(--scene-native-mobile-width);--scene-native-height:var(--scene-native-mobile-height)}}
 
 /* Picture-cube posters follow the live perspective camera's height and mobile FOV. */
-@container (max-aspect-ratio:9/10){.scene-poster-home img{--home-poster-fov:0.825778792}}
+.scene-poster-home {--home-poster-zoom:1}
+@media (max-width:767px){.scene-poster-home{--home-poster-zoom:0.95505618}}
+@container (max-aspect-ratio:9/10){.scene-poster-home img{--home-poster-fov:0.85132977}}
 
 /* The opening plate is captured edge to edge using the live camera. */
 [data-scene-state] .native-opening-plate {position:absolute;inset:0;width:100%;height:100%;pointer-events:none}

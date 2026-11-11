@@ -269,10 +269,12 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     if (!width || !height) return;
     camera.aspect = width / height;
     camera.fov = width / height < 0.9 ? 35.4 : 30.4;
+    camera.zoom = innerWidth < 768 ? .85 : .89;
     camera.updateProjectionMatrix();
     const ratio = options.sharp ? Math.max(2, quality.ratio) : quality.ratio;
     sizeHeroSurface(renderer, [], width, height, ratio);
     canvas.dataset.renderScale = ratio.toFixed(2);
+    canvas.dataset.artworkScale = camera.zoom.toFixed(2);
     draw();
   }
   function stop() {cancelAnimationFrame(frame); frame = 0; last = 0; canvas.dataset.continuousRendering = "false";}
