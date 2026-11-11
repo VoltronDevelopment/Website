@@ -2,7 +2,7 @@ import { Annotation, StateGraph, START, END } from "@langchain/langgraph";
 import type { Reply, Turn } from "./types";
 import { routeModel, type ModelPreference } from "./models";
 import { persona } from "./skills";
-import { selectEvidence, type KnowledgeRecord } from "./retrieval";
+import { retrievalQuery, selectEvidence, type KnowledgeRecord } from "./retrieval";
 import { searchKnowledge } from "./store";
 import { embedTexts } from "./embeddings.mjs";
 
@@ -36,16 +36,18 @@ export function isSocialTurn(question: string) {
 async function retrieve(question: string, history: Turn[], records: Record[]) {
   if (history.length && isConversationEdit(question)) return [];
   const start = performance.now();
-  const contextual = /\b(that|this|those|it|they|their)\b/i.test(question)
-    ? `${history.at(-1)?.question || ""}\n${question}` : question;
+  const contextual = retrievalQuery(question, history, records);
   let embedding: number[] | undefined;
   let degraded = false;
+  const embeddingStart = performance.now();
   try { [embedding] = await embedTexts([contextual]); }
   catch { degraded = true; }
+  const embeddingMs = performance.now() - embeddingStart;
+  const searchStart = performance.now();
   const hits = await searchKnowledge(contextual, embedding);
   const evidence = selectEvidence(question, history, records, hits);
   console.info("[vera:retrieval]", JSON.stringify({
-    durationMs: Math.round(performance.now() - start), sections: evidence.length, degraded,
+    durationMs: Math.round(performance.now() - start), embeddingMs: Math.round(embeddingMs), searchMs: Math.round(performance.now() - searchStart), sections: evidence.length, degraded,
   }));
   return evidence;
 }

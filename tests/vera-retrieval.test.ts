@@ -1,11 +1,23 @@
 import { describe, expect, it, vi } from "vitest";
 import published from "@/lib/vectra/published.json";
-import { selectEvidence, type KnowledgeRecord } from "@/lib/vectra/retrieval";
+import { retrievalQuery, selectEvidence, type KnowledgeRecord } from "@/lib/vectra/retrieval";
 import { compileCorpus } from "../scripts/vera-corpus.mjs";
 import { knowledgeVersion } from "@/lib/vectra/knowledge-version.mjs";
 import { createVectraGraph, isSocialTurn, hasNonLatinLetters, isConversationEdit, openAIAnswer } from "@/lib/vectra/graph";
 
 describe("Vera evidence selection", () => {
+  it("recovers unique public spelling slips without guessing short acronyms or identifiers", () => {
+    const records = [{ ...published[0], aliases: ["ontology", "manufacturing"] }];
+    expect(retrievalQuery("Explain ontolgy", [], records)).toContain("ontology");
+    expect(retrievalQuery("Explain V-M and lot-452", [], records)).toBe("Explain V-M and lot-452");
+    expect(retrievalQuery("Explain ontolgy", [{id:"a",question:"Our project is named ontolgy",reply:{text:"Understood",sources:[],enquiry:false}}], records)).toBe("Explain ontolgy");
+  });
+  it("uses cited context across thanks but respects an explicit new topic", () => {
+    const record = published.find(r => r.topicId === "VL-ONTOLOGY")!;
+    const history = [{id:"a",question:"Explain V-MO",reply:{text:"Shared meaning",sources:[{id:record.id,title:record.title,href:record.href}],enquiry:false}}, {id:"b",question:"Thanks",reply:{text:"Welcome",sources:[],enquiry:false}}];
+    expect(retrievalQuery("How does that work?",history,published)).toContain(record.title);
+    expect(retrievalQuery("What is Commons?",history,published)).not.toContain(record.title);
+  });
   it("keeps simple social turns separate from mixed factual requests", () => {
     expect(isSocialTurn("Hi Vera. In one sentence, who are you?")).toBe(true);
     expect(isSocialTurn("Thanks!")).toBe(true);

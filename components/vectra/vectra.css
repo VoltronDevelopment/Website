@@ -655,3 +655,12 @@
 .vera-settings > summary, .vera-settings[open] > summary, .vera-settings > summary:hover { background:transparent; border:0; box-shadow:none; }
 .vectra-panel .vera-settings > summary:focus-visible { outline:none; filter:none; }
 .vera-settings:has(> summary:focus-visible) + .vera-identity h2 { text-decoration:underline; text-underline-offset:.25em; text-decoration-thickness:1px; }
+.vera-settings > summary { position:relative; }
+.vera-settings-cue { position:absolute; bottom:1px; right:-2px; color:var(--muted); transition:transform 180ms ease; }
+.vera-settings[open] .vera-settings-cue { transform:rotate(180deg); }
+.vectra-panel .vera-direction { position:relative; isolation:isolate; overflow:hidden; grid-template-columns:minmax(0,1fr) 16px; padding:18px; }
+.vera-card-art { position:absolute; z-index:-1; right:22px; top:50%; transform:translateY(-50%); opacity:.08; pointer-events:none; mask-image:linear-gradient(90deg,transparent,#000 60%); }
+.vera-card-art > .vera-question-cube { width:110px; height:110px; }
+.vera-direction-copy { position:relative; max-width:32ch; }
+.vera-direction > svg:last-child { position:relative; }
+@media (prefers-reduced-motion:reduce) { .vera-settings-cue { transition:none; } }

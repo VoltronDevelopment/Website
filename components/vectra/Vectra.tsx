@@ -3,7 +3,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { ArrowLeft, Maximize2, Minimize2, Minus } from "lucide-react";
+import { ArrowLeft, ChevronDown, Maximize2, Minimize2, Minus } from "lucide-react";
 import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
 import { VeraIntroduction } from "./VeraIntroduction";
 import { VeraCube } from "./VeraCube";
@@ -182,7 +182,7 @@ export function Vectra() {
             settings.current.querySelector("summary")?.focus();
           }
         }}>
-          <summary aria-label="Open Vera settings" title="Vera settings"><VeraCube /></summary>
+          <summary aria-label="Open Vera settings" title="Vera settings"><VeraCube /><ChevronDown className="vera-settings-cue" size={10} aria-hidden="true" /></summary>
           <div className="vera-settings-panel" role="region" aria-label="Vera settings">
             <strong>Vera settings</strong>
             <label>Response model<select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label>

@@ -12,7 +12,7 @@ export function VeraStarters({ disabled, onChoose }: { disabled: boolean; onChoo
     <div className="vera-directions">
       {directions.map(direction => <button className="vera-direction" key={direction.id} type="button"
         disabled={disabled} onClick={() => onChoose(direction.message)}>
-        <VeraCube variant={direction.id} />
+        <span className="vera-card-art" aria-hidden="true"><VeraCube variant={direction.id} /></span>
         <span className="vera-direction-copy"><strong>{direction.title}</strong><span>{direction.detail}</span></span>
         <ArrowUpRight size={16} aria-hidden="true" />
       </button>)}
