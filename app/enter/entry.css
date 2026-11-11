@@ -28,8 +28,9 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 .entry-flip-card { position:relative; width:100%; height:100%; transform-style:preserve-3d; transform:rotateY(calc(var(--entry-turn) * -180deg)); }
 .entry-face { position:absolute; inset:0; display:grid; place-items:center; border-radius:20px; background:var(--canvas); backface-visibility:hidden; transform:rotateY(calc(var(--face-turn) * 180deg)) translateZ(12.5px); }
 .entry-face[hidden] { display:none; }
-.entry-face-copy { display:flex; flex-direction:column; align-items:center; max-width:100%; padding:12px; color:var(--blue); font-size:17px; line-height:26px; font-weight:500; animation:entry-copy-float 3s ease-in-out infinite; }
-.entry-face-copy i { width:100%; height:1px; margin:5px 0; background:currentColor; opacity:.55; }
+.entry-face .entry-concept-artwork {
+ position:relative;display:block;width:94%;height:94%;object-fit:contain;border-radius:0;
+}
 .entry-face-enter { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:12px; gap:10px; border-radius:20px; color:var(--blue); font-size:12px; font-weight:500; text-decoration:none; background:transparent; -webkit-tap-highlight-color:transparent; }
 .entry-enter-mark { position:relative; display:block; flex:none; width:68%; aspect-ratio:1; }
 .entry-logo .entry-enter-mark img { border-radius:0; }
@@ -63,14 +64,12 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 @keyframes entry-box-pulse { 0%,100% { opacity:.3; transform:scale(1); } 50% { opacity:.7; transform:scale(1.06); } }
 @keyframes entry-ring-breathe { 0%,100% { opacity:.0484; } 50% { opacity:.1089; } }
 @keyframes entry-ring-breathe-dark { 0%,100% { opacity:.044; } 50% { opacity:.099; } }
-@keyframes entry-copy-float { 0%,100% { transform:translateY(2px); } 50% { transform:translateY(-2px); } }
 @media (max-width:1099px) {
   .entry-wordmark { font-size:38px; line-height:50px; gap:24px; }
 }
 @media (max-width:767px) {
   .brand-entry { --entry-logo-size:144px; }
   .entry-controls { top:16px; right:20px; }
-  .entry-face-copy { font-size:13px; line-height:21px; }
   .entry-face-enter { font-size:14px; gap:6px; padding:10px; }
   .entry-pulse { inset:-9px; border-radius:22px; }
   .entry-wordmark { gap:16px; font-size:29px; line-height:40px; letter-spacing:.1em; }
@@ -78,7 +77,6 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 @media (max-width:389px) {
   .brand-entry { --entry-logo-size:114px; }
   .entry-wordmark { font-size:25px; line-height:36px; gap:12px; letter-spacing:.08em; }
-  .entry-face-copy { font-size:11px; line-height:18px; padding:8px; }
   .entry-face-enter { font-size:13px; gap:5px; padding:8px; }
   .entry-enter-label svg { width:14px; height:14px; }
 }
@@ -86,10 +84,10 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
   .brand-entry { --entry-logo-size:150px; }
   .entry-wordmark { font-size:36px; line-height:46px; }
 }
-.brand-entry[data-paused="true"] .entry-face-copy,.brand-entry[data-paused="true"] .entry-pulse,.brand-entry[data-paused="true"] .entry-radial-grid span { animation-play-state:paused; }
-.brand-entry[data-motion="reduced"] .entry-face-copy,.brand-entry[data-motion="reduced"] .entry-pulse,.brand-entry[data-motion="reduced"] .entry-radial-grid span { animation:none; }
+.brand-entry[data-paused="true"] .entry-pulse,.brand-entry[data-paused="true"] .entry-radial-grid span { animation-play-state:paused; }
+.brand-entry[data-motion="reduced"] .entry-pulse,.brand-entry[data-motion="reduced"] .entry-radial-grid span { animation:none; }
 .brand-entry[data-motion="reduced"] .entry-pause-control { display:none; }
-@media (prefers-reduced-motion:reduce) { .entry-face-copy,.entry-pulse,.entry-radial-grid span { animation:none; } }
+@media (prefers-reduced-motion:reduce) { .entry-pulse,.entry-radial-grid span { animation:none; } }
 
 /* Keep the exact lettered mark readable when text is enlarged independently of the scene. */
 .entry-wordmark{flex-wrap:wrap;row-gap:.15em;padding-inline:16px}
@@ -98,10 +96,8 @@ body:has(.brand-entry) { padding:24px; background:var(--glass-surround); }
 .brand-entry[data-final-face=true] .entry-direct-link{opacity:0;pointer-events:none}
 .brand-entry[data-settled=true] .entry-direct-link:not(:focus){visibility:hidden}
 .entry-face-enter .identity-tile-caption{opacity:1}
-.brand-entry .entry-face-copy{font-weight:300;letter-spacing:.035em;font-size:15px;line-height:1.5}
 .brand-entry .entry-direct-link{font-weight:300;font-size:12px;letter-spacing:.035em;gap:7px}
 .brand-entry .entry-direct-link svg{width:13px;height:13px;stroke-width:1.25}
-@media(max-width:767px){.brand-entry .entry-face-copy{font-size:12px}}
 .brand-entry[data-final-face=true] .entry-face-enter .identity-tile-caption{opacity:1}
 
 /* Short landscape needs a lateral composition rather than a clipped vertical stack. */

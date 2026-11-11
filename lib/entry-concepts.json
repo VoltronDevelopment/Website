@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "human",
+    "label": "Human ingenuity",
+    "src": "/optimized/entry-concept-human-360-449ce5a3e2a2af29.webp",
+    "highDensity": "/optimized/entry-concept-human-720-00ffa954c9097819.webp"
+  },
+  {
+    "kind": "connected",
+    "label": "Connected intelligence",
+    "src": "/optimized/entry-concept-connected-360-4a80de65857cea6a.webp",
+    "highDensity": "/optimized/entry-concept-connected-720-d1a2eda005c200cc.webp"
+  },
+  {
+    "kind": "manufacturing",
+    "label": "Manufacturing possibilities",
+    "src": "/optimized/entry-concept-manufacturing-360-292e013f7e428fdc.webp",
+    "highDensity": "/optimized/entry-concept-manufacturing-720-7606b9ad7786714a.webp"
+  }
+]

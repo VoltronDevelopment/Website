@@ -11,9 +11,10 @@ import { entryDuration, entryStateAt, advanceEntryClock } from "./entry-timeline
 import {prefersStaticScene} from '../performance/scene-policy';
 import {startEntryDissolve} from "./EntryDissolve";
 import {IdentityTile} from './IdentityTile';
+import { EntryConceptArtwork } from "./EntryConceptArtwork";
+import pillars from "@/lib/entry-concepts.json";
 
 
-const pillars=[{id:"human",above:"Human",below:"ingenuity."},{id:"connected",above:"Connected",below:"intelligence."},{id:"manufacturing",above:"Manufacturing",below:"possibilities."}];
 // Tangent panels connect both caps along the same 20px rounded perimeter.
 const curvedEdges=Array.from({length:48},(_,index)=>{
   const corner=Math.floor(index/12),angle=(-90+(index+.5)*7.5)*Math.PI/180;
@@ -34,14 +35,14 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
     if(!host.current)return;
     const root=host.current;
     root.dataset.entryEnhanced='true';
-    // Decode the final emblem during the opening hold, rather than on its first visible frame.
-    root.querySelectorAll<HTMLImageElement>(".identity-tile-mark img").forEach(image=>{void image.decode().catch(()=>{});});
+    // Decode all artwork during the opening hold, before any face turns into view.
+    root.querySelectorAll<HTMLImageElement>(".identity-tile-mark img, .entry-concept-artwork").forEach(image=>{void image.decode().catch(()=>{});});
     let disposed=false,frame=0,time=0,previous=0;
 
 
     const duration=entryDuration;
     const tile=root.querySelector<HTMLElement>('.entry-flip-card');
-    let previousTurn=-1;
+    let previousTurn=-1, previousFace=-1;
     const motion=matchMedia("(prefers-reduced-motion: reduce)");
     const reduced=()=>motion.matches || prefersStaticScene() || new URLSearchParams(location.search).get("motion")==="reduced";
     function paint(){
@@ -66,6 +67,12 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
           element.hidden=face!==front&&face!==front+1;
         });
         faceRef.current=front;
+      }
+      if (state.face !== previousFace) {
+        root.querySelectorAll<HTMLElement>("[data-entry-concept]").forEach(element => {
+          element.setAttribute("aria-hidden", String(Number(element.dataset.entryFace) !== state.face));
+        });
+        previousFace = state.face;
       }
       if(state.face===4&&document.activeElement?.classList.contains('entry-direct-link')){
         root.querySelector<HTMLAnchorElement>('.entry-face-enter')?.focus({preventScroll:true});
@@ -116,9 +123,23 @@ export function BrandEntry({locked=false,children,extraControls,celebration}:{lo
             <span className="entry-body-cap entry-body-front" aria-hidden="true"/><span className="entry-body-cap entry-body-back" aria-hidden="true"/>
             {["top","bottom","left","right"].map(side=><span className={`entry-body-wall entry-body-${side}`} aria-hidden="true" key={side}/>)}
             {curvedEdges.map((style,index)=><span className="entry-body-curve" aria-hidden="true" key={index} style={style}/>)}
-            {[0,1,2,3,4].map(face=><div key={face} className="entry-face" data-entry-face={face} hidden={face!==0} style={{"--face-turn":face%2} as CSSProperties}>
-              {face===0?<><img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/><img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/></>:face<4?<div className="entry-face-copy" key={face}><span>{pillars[face-1].above}</span><i aria-hidden="true"/><span>{pillars[face-1].below}</span></div>:locked?<IdentityTile effects={false}/>:<Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event,true)} aria-disabled={leaving} tabIndex={ready?0:-1}><IdentityTile effects={false} caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/></Link>}
-            </div>)}
+            <div className="entry-face" data-entry-face={0} style={{"--face-turn":0} as CSSProperties}>
+              <img src={optimizedAsset("/Brand%20Assets/logo/light%20rectangle.png")} className="entry-mark-light" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/>
+              <img src={optimizedAsset("/Brand%20Assets/logo/dark%20rectangle.png")} className="entry-mark-dark" alt="Voltron Lattice" width="180" height="180" fetchPriority="high"/>
+            </div>
+            {pillars.map(({kind, label, src, highDensity}, index) => (
+              <div key={kind} className="entry-face" data-entry-face={index + 1} data-entry-concept
+                hidden aria-hidden="true" style={{"--face-turn":(index + 1) % 2} as CSSProperties}>
+                <EntryConceptArtwork label={label} src={src} highDensity={highDensity}/>
+              </div>
+            ))}
+            <div className="entry-face" data-entry-face={4} hidden style={{"--face-turn":0} as CSSProperties}>
+              {locked ? <IdentityTile effects={false}/> : (
+                <Link prefetch={false} href="/?enter=1" className="entry-face-enter" onClick={event=>enter(event,true)} aria-disabled={leaving} tabIndex={ready?0:-1}>
+                  <IdentityTile effects={false} caption={<>Enter Lattice<ArrowRight size={16} aria-hidden="true"/></>}/>
+                </Link>
+              )}
+            </div>
           </div></div>
           <span className="entry-pulse" aria-hidden="true"/>
         </div>
