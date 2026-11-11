@@ -653,5 +653,5 @@
 :root:is([data-vera-motion="still"],[data-scene-motion="static"],[data-artwork-motion="off"]) :is(.vera-intro-view,.vera-conversation-view) { animation:none; }
 /* The settings cube floats without button chrome. */
 .vera-settings > summary, .vera-settings[open] > summary, .vera-settings > summary:hover { background:transparent; border:0; box-shadow:none; }
-.vectra-panel .vera-settings > summary:focus-visible { outline:none; filter:drop-shadow(0 0 3px var(--blue)); }
-.vera-settings[open] > summary .vectra-cube-aura { opacity:.3; }
+.vectra-panel .vera-settings > summary:focus-visible { outline:none; filter:none; }
+.vera-settings:has(> summary:focus-visible) + .vera-identity h2 { text-decoration:underline; text-underline-offset:.25em; text-decoration-thickness:1px; }
