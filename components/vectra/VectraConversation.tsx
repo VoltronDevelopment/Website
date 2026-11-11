@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, ChevronDown, Ellipsis } from "lucide-react";
 import Link from "next/link";
-import type { ModelPreference } from "@/lib/vectra/models";
+import { modelLabel, type ModelPreference } from "@/lib/vectra/models";
 import { chatCapsEnabled, conversationTurnLimit, messageLimit, type AnswerStyle, type Turn } from "@/lib/vectra/types";
+import { VeraDataPolicy } from "./VeraDataPolicy";
 import { VectraEnquiry } from "./VectraEnquiry";
 import { VeraCube } from "./VeraCube";
 import { VeraStarters } from "./VeraIntroduction";
@@ -194,7 +195,7 @@ export default function VectraConversation({ open, dismiss, preference, answerSt
         }} />}
         {turns.map(turn => <div className="vectra-turn" key={turn.id}>
           <p className="vectra-question">{turn.question}</p>
-          <p className="vectra-answer">{turn.reply.text}</p>{turn.reply.fallback && <p className="vera-fallback">Answered with {turn.reply.model?.includes("luna") ? "GPT-6 Luna" : "GPT-5.4 mini"} while the selected model was busy.</p>}
+          <p className="vectra-answer">{turn.reply.text}</p>{turn.reply.fallback && <p className="vera-fallback">Answered with {modelLabel(turn.reply.model)} while the selected model was busy.</p>}
           {turn.reply.sources.length > 0 && <details className="vectra-source-details">
             <summary>Sources <span>{turn.reply.sources.length}</span><ChevronDown size={13} aria-hidden="true" /></summary>
             <ul className="vectra-sources">{turn.reply.sources.map(source =>
@@ -237,7 +238,7 @@ export default function VectraConversation({ open, dismiss, preference, answerSt
     <div className="vectra-bottom">
       {latest && <button className="vectra-latest" type="button" onClick={goToLatest}>Latest reply <ArrowDown size={14} /></button>}
       {reset === "expired" || reset === "limit" ? <div className="vectra-actions"><button ref={resetAction} type="button" disabled={busy} onClick={() => void fresh()}>Start new chat</button></div> :
-        reset === "confirm" ? <div className="vectra-actions"><span>Clear this conversation?</span><button ref={resetAction} type="button" disabled={busy} onClick={() => void fresh()}>Clear</button><button type="button" onClick={() => setReset(undefined)}>Cancel</button></div> :
+        reset === "confirm" ? <div className="vectra-actions"><span>Start a new conversation? Voltron Lattice retains the previous chat.</span><button ref={resetAction} type="button" disabled={busy} onClick={() => void fresh()}>Start new</button><button type="button" onClick={() => setReset(undefined)}>Cancel</button></div> :
         null}
       <form className="vectra-composer" onSubmit={submit}>
         <details ref={menu} className="vectra-menu" onBlur={event => {
@@ -287,6 +288,7 @@ export default function VectraConversation({ open, dismiss, preference, answerSt
     {view === "about" && <div className="vectra-subview vectra-about">
       <p>Vera can explain Voltron’s public material and help you find the right page or enquiry form. Replies are in English.</p>
       <p>A guest chat lasts up to 24 hours {chatCapsEnabled ? `and supports ${conversationTurnLimit} replies` : "with no reply-count cap currently"}. Use the enquiry form to share your contact details.</p>
+      <VeraDataPolicy />
       <Link href="/partner#inquiry" onClick={dismiss}>Partner with us <ArrowUpRight size={14} /></Link>
     </div>}
   </>;

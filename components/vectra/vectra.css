@@ -727,3 +727,11 @@
  .vera-identity > span { font-size:10px; }
  .vectra-header h2 { font-size:17px; }
 }
+
+.vera-data-policy { position: relative; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.vera-data-policy > summary { width: fit-content; min-height: 32px; cursor: pointer; text-underline-offset: 3px; }
+.vera-data-policy p { margin: 8px 0; }
+.vera-data-policy h4 { font-size: 14px; color: var(--ink); margin: 12px 0 8px; }
+.vera-meet > .vera-data-policy { margin-top: 6px; }
+
+@media(max-width:600px) { .vera-data-policy { font-size:14px; } .vera-data-policy > summary { min-height:44px; } }

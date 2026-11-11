@@ -206,8 +206,8 @@ export function Vectra() {
             <label>Answer style<select value={answerStyle} onChange={event => changeAnswerStyle(event.target.value)}><option value="general">General</option><option value="conceptual">Conceptual</option></select></label>
             <p>{answerStyle === "conceptual" ? "Build understanding with analogies and examples." : "Get a direct answer at the level you ask for."}</p>
             <button type="button" className="vera-motion-choice" role="switch" aria-checked={suggestQuestions} onClick={toggleQuestions}>Suggested questions<span aria-hidden="true">{suggestQuestions ? "On" : "Off"}</span></button>
-            <label>Response model<select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label>
-            <p>Auto chooses a model for the current question. Both share this conversation.</p>
+            <label>Response model<select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 Mini</option><option value="luna">GPT-5.4</option></select></label>
+            <p>Auto favours Mini for speed and uses GPT-5.4 for deeper analysis. Both share this conversation.</p>
             <button type="button" className="vera-motion-choice" aria-pressed={motion === "still"} onClick={changeMotion}>Aura motion<span>{motion === "ambient" ? "Ambient" : "Still"}</span></button>
           </div>
         </details>

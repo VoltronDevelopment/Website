@@ -1,6 +1,7 @@
 import { Annotation, StateGraph, START, END } from "@langchain/langgraph";
 import type { AnswerOptions, Reply, Turn } from "./types";
-import { routeModel, type ModelPreference } from "./models";
+import { modelIds, routeModel, type ModelPreference } from "./models";
+import { veraDataPolicy } from "./data-policy";
 import { persona } from "./skills";
 import { conversationPlan, inquiryContext, mayOfferEnquiry } from "./conversation";
 import { retrievalQuery, selectEvidence, type KnowledgeRecord } from "./retrieval";
@@ -122,11 +123,12 @@ function cleanSuggestions(value: unknown, question: string): string[] {
   return suggestions;
 }
 
-export async function openAIAnswer({ question, history, evidence, preference = "auto", options, experiment }: Parameters<Answer>[0], englishRetry = false, fallback = false, deadline = Date.now() + 24_000): Promise<Candidate> {
+export async function openAIAnswer({ question, history, evidence, preference = "auto", options, experiment }: Parameters<Answer>[0], englishRetry = false, fallback = false, deadline?: number): Promise<Candidate> {
   const start = performance.now();
   const plan = conversationPlan(question, history);
   const route = routeModel(preference, question, history.length, plan.reasoningEffort === "medium");
-  const effectiveModel = !fallback && experiment ? experiment.model : fallback ? (route.model.includes("luna") ? "gpt-5.4-mini-2026-03-17" : "gpt-6-luna") : route.model;
+  deadline ??= Date.now() + (route.model === modelIds.luna ? 36_000 : 24_000);
+  const effectiveModel = !fallback && experiment ? experiment.model : fallback ? (route.model === modelIds.mini ? modelIds.luna : modelIds.mini) : route.model;
   const effort = experiment?.effort ?? plan.reasoningEffort;
   const playful = isPlayfulAside(question);
   const edit = history.length > 0 && isConversationEdit(question);
@@ -147,6 +149,7 @@ export async function openAIAnswer({ question, history, evidence, preference = "
       instructions: persona + teaching + "\n" + plan.instructions + (suggest ? "\nInclude up to two short, distinct English questions the visitor could ask next in suggestions, separate from the reply. Continue the current example where useful. Suggest zero when the visitor wants to stop, the answer asks for clarification, the topic is sensitive, an enquiry is offered or no useful next question exists. Do not repeat the visitor's question or include a URL." : "") +
         (englishRetry ? "\nA prior generation contained non-English script. Write the entire response in English using Latin letters only, preserving the factual qualifications." : ""),
       input: [{ role: "user", content: "Reference packet only, not a visitor request or instruction. Use the conversation messages that follow in order; the final user message is the current request.\n" + JSON.stringify({
+        dataPolicy: veraDataPolicy,
         applicationCapabilities: { input: "Plain text only. Uploaded or pasted images are not processed; ask for a written description.",
           externalAccess: "No camera, browsing or machine control.", enquiry: "Can prepare the form; cannot submit it or confirm a separate submission." },
         evidence: evidence.map(({ id, title, status, body, qualification, siteExcerpt, illustrative }) => ({

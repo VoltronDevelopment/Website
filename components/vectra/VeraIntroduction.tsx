@@ -1,4 +1,5 @@
 import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { VeraDataPolicy } from "./VeraDataPolicy";
 import { VeraCube } from "./VeraCube";
 
 const directions = [
@@ -29,5 +30,6 @@ export function VeraIntroduction({ resumed, animate, onBegin }: { resumed: boole
       <p>I’m Voltron Lattice’s AI guide. Bring a question, explore an idea, or imagine what industry could become.</p>
     </div>
     <button type="button" className="vera-begin" onClick={onBegin}>{resumed ? "Continue conversation" : "Begin a conversation"}<ArrowRight size={18} aria-hidden="true" /></button>
+    <VeraDataPolicy compact />
   </section>;
 }
