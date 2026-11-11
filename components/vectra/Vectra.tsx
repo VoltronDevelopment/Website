@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { Maximize2, Minimize2, Minus } from "lucide-react";
+import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
 import { VeraCube } from "./VeraCube";
 import "./vectra.css";
 
@@ -11,6 +12,8 @@ const Conversation = lazy(() => import("./VectraConversation"));
 const mobilePanel = "(max-width: 600px), (max-height: 480px) and (pointer: coarse)";
 
 export function Vectra() {
+  const [preference, setPreference] = useState<ModelPreference>("auto");
+  const [motion, setMotion] = useState("ambient");
   const [open, setOpen] = useState(false);
   const [visited, setVisited] = useState(false);
   const [expanded, setExpanded] = useState(false);
@@ -20,7 +23,25 @@ export function Vectra() {
   const dialog = useRef<HTMLDialogElement>(null);
   const title = useRef<HTMLHeadingElement>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const saved = localStorage.getItem("vera-model");
+      if (isModelPreference(saved)) setPreference(saved);
+      const next = localStorage.getItem("vera-motion") === "still" ? "still" : "ambient";
+      setMotion(next); document.documentElement.dataset.veraMotion = next;
+    } catch {}
+  }, []);
+  function changeModel(value: string) {
+    if (!isModelPreference(value)) return;
+    setPreference(value);
+    try { localStorage.setItem("vera-model", value); } catch {}
+  }
+  function changeMotion() {
+    const next = motion === "ambient" ? "still" : "ambient";
+    setMotion(next); document.documentElement.dataset.veraMotion = next;
+    try { localStorage.setItem("vera-motion", next); } catch {}
+  }
   useEffect(() => {
     const visibility = () => { document.documentElement.dataset.veraHidden = String(document.hidden); };
     visibility();
@@ -132,8 +153,9 @@ export function Vectra() {
       }}>
       <header className="vectra-header">
         <VeraCube />
-        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span></div>
+        <div className="vera-identity"><h2 ref={title} tabIndex={-1} id="vera-title">VERA</h2><span>Voltron’s AI guide</span><label className="vera-model-control"><span className="vera-sr-only">Response model</span><select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label></div>
         <div className="vectra-window-controls">
+          <button type="button" className="vectra-icon vera-motion-control" aria-label={motion === "ambient" ? "Pause Vera aura" : "Animate Vera aura"} aria-pressed={motion === "still"} onClick={changeMotion}><span aria-hidden="true">&#9671;</span></button>
           <button type="button" className="vectra-icon vectra-expand" aria-label={expanded ? "Restore compact window" : "Expand Vera"}
             title={expanded ? "Restore compact window" : "Expand Vera"}
             onClick={() => setExpanded(value => !value)}>
@@ -145,7 +167,7 @@ export function Vectra() {
         </div>
       </header>
       {visited && <Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
-        <Conversation open={open} dismiss={() => dismiss(false)} />
+        <Conversation preference={preference} open={open} dismiss={() => dismiss(false)} />
       </Suspense>}
     </dialog>
   </>, document.body);

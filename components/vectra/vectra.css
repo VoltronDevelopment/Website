@@ -517,3 +517,59 @@
   outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
+/* Vera has one identity; question studies are decorative face treatments. */
+.vectra-header > .vectra-cube { --vera-cube-size: 48px; }
+.vectra-header { gap: 12px; padding-block: 10px; }
+.vera-introduction-heading { display: block; }
+.vera-introduction { padding-block: 12px 6px; }
+.vera-introduction-heading p { max-width: 33ch; }
+.vectra-panel .vera-direction { min-height: 84px; padding-block: 12px; }
+.vectra-chat { position: relative; isolation: isolate; }
+.vera-watermark { position: absolute; z-index: -1; right: 28px; bottom: 100px; opacity: .045; pointer-events: none; }
+.vera-watermark > .vera-question-cube { width: 110px; height: 110px; }
+.vera-model-control { display: block; margin-top: 2px; }
+.vera-model-control select { max-width: 135px; font: inherit; font-size: 11px; color: var(--muted); border: 0; background: var(--vera-material); padding: 3px 16px 3px 0; cursor: pointer; }
+.vera-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.vera-motion-control span { font-size: 22px; font-weight: 300; color: var(--muted); }
+.vera-fallback { font-size: 11px; color: var(--muted); }
+.vera-question-cube { position: relative; display: block; width: 56px; height: 56px; flex: none; --study-top: #c5eaf4; --study-left: #79adc9; --study-right: #bad8e8; }
+.vera-question-cube > span { position: absolute; inset: 5px; }
+.vera-face-top { clip-path: polygon(50% 0,100% 25%,50% 50%,0 25%); background: linear-gradient(120deg,var(--study-top),#f1fafc); }
+.vera-face-left { clip-path: polygon(0 25%,50% 50%,50% 100%,0 75%); background: linear-gradient(145deg,var(--study-left),var(--study-right)); }
+.vera-face-right { clip-path: polygon(50% 50%,100% 25%,100% 75%,50% 100%); background: linear-gradient(25deg,var(--study-right),var(--study-top)); }
+.vera-study-light { clip-path: polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%); background: radial-gradient(ellipse at 55% 45%,#effdffb0,transparent 65%); opacity: .35; animation: vera-study-breathe 9s ease-in-out infinite alternate; }
+.vera-question-cube[data-study="vision"] { --study-top: #d5edea; --study-left: #8ab9b6; --study-right: #b5d2d0; }
+.vera-question-cube[data-study="challenge"] { --study-top: #d5def5; --study-left: #859bc7; --study-right: #b1c4e3; }
+.vera-question-cube[data-study="identity"] { width: 100%; height: 100%; }
+.vera-cube-poster { transform: none; }
+:root[data-theme="dark"] .vera-question-cube { filter: brightness(.77) saturate(.8); }
+@keyframes vera-study-breathe { from { opacity: .15; } to { opacity: .5; } }
+@keyframes vera-welcome { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.vera-introduction-heading { animation: vera-welcome .65s .12s both cubic-bezier(.2,.7,.2,1); }
+.vera-direction { animation: vera-welcome .65s .24s both cubic-bezier(.2,.7,.2,1); }
+.vera-direction:nth-child(2) { animation-delay: .32s; }
+.vera-direction:nth-child(3) { animation-delay: .4s; }
+.vectra-chat[data-composing] .vera-introduction * { animation: none; }
+:root[data-vera-motion="still"] :is(.vectra-cube-aura,.vera-study-light,.vera-introduction-heading,.vera-direction) { animation: none; }
+@media (max-width: 600px) {
+ .vectra-header > .vectra-cube { --vera-cube-size: 44px; }
+ .vectra-header { padding-inline: 16px 8px; gap: 10px; }
+ .vectra-panel .vera-direction { min-height: 88px; }
+}
+@media (max-width: 370px) {
+ .vera-identity > span { font-size: 10px; }
+ .vectra-header { gap: 7px; }
+ .vectra-header > .vectra-cube { --vera-cube-size: 40px; }
+ .vera-question-cube { width: 46px; height: 46px; }
+ .vectra-panel .vectra-window-controls { gap: 0; }
+ .vectra-panel .vera-motion-control { min-width: 32px; width: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .vera-study-light,.vera-introduction-heading,.vera-direction { animation: none; }
+}
+
+.vectra-panel:has(.vera-introduction) .vectra-header > .vectra-cube { animation: vera-welcome .6s both ease-out; }
+@media (prefers-reduced-motion: reduce) { .vectra-panel:has(.vera-introduction) .vectra-header > .vectra-cube { animation: none; } }
+.vera-watermark { z-index: 0; }
+.vectra-transcript, .vectra-bottom { position: relative; z-index: 1; }
+.vectra-transcript { background: transparent; }

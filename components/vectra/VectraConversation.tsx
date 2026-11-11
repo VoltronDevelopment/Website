@@ -3,12 +3,13 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, ChevronDown, Ellipsis } from "lucide-react";
 import Link from "next/link";
+import type { ModelPreference } from "@/lib/vectra/models";
 import { conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
 import { VectraEnquiry } from "./VectraEnquiry";
 import { VeraCube } from "./VeraCube";
 import { VeraIntroduction } from "./VeraIntroduction";
 
-type Pending = { id: string; message: string };
+type Pending = { id: string; message: string; preference?: ModelPreference };
 
 class ChatError extends Error {
   constructor(message: string, readonly status: number, readonly code?: string) { super(message); }
@@ -24,7 +25,7 @@ async function chat(method: "GET" | "POST" | "DELETE", pending?: Pending) {
   return data.turns;
 }
 
-export default function VectraConversation({ open, dismiss }: { open: boolean; dismiss: () => void }) {
+export default function VectraConversation({ open, dismiss, preference }: { open: boolean; dismiss: () => void; preference: ModelPreference }) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<Pending>();
@@ -120,7 +121,7 @@ export default function VectraConversation({ open, dismiss }: { open: boolean; d
   async function send(value: string, retry?: Pending) {
     const clean = value.trim();
     if (request.current || !ready || !clean || clean.length > messageLimit) return;
-    const next = retry || { id: crypto.randomUUID(), message: clean };
+    const next = retry || { id: crypto.randomUUID(), message: clean, preference };
     follow.current = true;
     setLatest(false);
     request.current = true;
@@ -171,7 +172,8 @@ export default function VectraConversation({ open, dismiss }: { open: boolean; d
   }
 
   return <>
-    <div className="vectra-chat" hidden={view !== "conversation"}>
+    <div className="vectra-chat" data-composing={!!message || undefined} hidden={view !== "conversation"}>
+    <span className="vera-watermark" aria-hidden="true"><VeraCube variant="platform" /></span>
     <div className="vectra-transcript" ref={scroll} tabIndex={-1} onScroll={event => {
       const transcript = event.currentTarget;
       if (!transcript.clientHeight) return;
@@ -185,7 +187,7 @@ export default function VectraConversation({ open, dismiss }: { open: boolean; d
         }} />}
         {turns.map(turn => <div className="vectra-turn" key={turn.id}>
           <p className="vectra-question">{turn.question}</p>
-          <p className="vectra-answer">{turn.reply.text}</p>
+          <p className="vectra-answer">{turn.reply.text}</p>{turn.reply.fallback && <p className="vera-fallback">Answered with {turn.reply.model?.includes("luna") ? "GPT-6 Luna" : "GPT-5.4 mini"} while the selected model was busy.</p>}
           {turn.reply.sources.length > 0 && <details className="vectra-source-details">
             <summary>Sources <span>{turn.reply.sources.length}</span><ChevronDown size={13} aria-hidden="true" /></summary>
             <ul className="vectra-sources">{turn.reply.sources.map(source =>

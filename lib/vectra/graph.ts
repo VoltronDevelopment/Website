@@ -1,13 +1,14 @@
 import { Annotation, StateGraph, START, END } from "@langchain/langgraph";
 import type { Reply, Turn } from "./types";
+import { routeModel, type ModelPreference } from "./models";
 import { persona } from "./skills";
 import { selectEvidence, type KnowledgeRecord } from "./retrieval";
 import { searchKnowledge } from "./store";
 import { embedTexts } from "./embeddings.mjs";
 
 type Record = KnowledgeRecord;
-type Candidate = { text?: unknown; sources?: unknown; enquiry?: unknown; enquirySummary?: unknown };
-type Answer = (input: { question: string; history: Turn[]; evidence: Record[] }) => Promise<Candidate>;
+type Candidate = { model?: string; fallback?: boolean; text?: unknown; sources?: unknown; enquiry?: unknown; enquirySummary?: unknown };
+type Answer = (input: { question: string; history: Turn[]; evidence: Record[]; preference?: ModelPreference }) => Promise<Candidate>;
 
 type Retriever = (question: string, history: Turn[], records: Record[]) => Promise<Record[]>;
 
@@ -47,6 +48,7 @@ async function retrieve(question: string, history: Turn[], records: Record[]) {
 
 const State = Annotation.Root({
   question: Annotation<string>(),
+  preference: Annotation<ModelPreference>(),
   history: Annotation<Turn[]>(),
   records: Annotation<Record[]>(),
   evidence: Annotation<Record[]>(),
@@ -60,7 +62,7 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
       evidence: isPlayfulAside(state.question) ? [] : await retriever(state.question, state.history, state.records),
     }))
     .addNode("conversation_skills", async state => ({
-      candidate: await answer({ question: state.question, history: state.history, evidence: state.evidence }),
+      candidate: await answer({ question: state.question, history: state.history, evidence: state.evidence, preference: state.preference }),
     }))
     .addNode("review_reply", state => {
       const { candidate, evidence } = state;
@@ -73,6 +75,7 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
       const enquirySummary = enquiry && typeof candidate.enquirySummary === "string"
         ? candidate.enquirySummary.trim().slice(0, 800) : "";
       return { reply: { text: candidate.text.trim().slice(0, 4000), sources, enquiry,
+        ...(candidate.model && { model: candidate.model }), ...(candidate.fallback && { fallback: true }),
         ...(enquirySummary && { enquirySummary }),
       } };
     })
@@ -83,8 +86,10 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
     .compile();
 }
 
-export async function openAIAnswer({ question, history, evidence }: Parameters<Answer>[0], englishRetry = false): Promise<Candidate> {
+export async function openAIAnswer({ question, history, evidence, preference = "auto" }: Parameters<Answer>[0], englishRetry = false, fallback = false, deadline = Date.now() + 24_000): Promise<Candidate> {
   const start = performance.now();
+  const route = routeModel(preference, question, history.length);
+  const effectiveModel = fallback ? (route.model.includes("luna") ? "gpt-5.4-mini-2026-03-17" : "gpt-6-luna") : route.model;
   const playful = isPlayfulAside(question);
   const edit = history.length > 0 && isConversationEdit(question);
   const latestReplyEdit = edit && revisionRequest.test(requestText(question)) &&
@@ -94,9 +99,9 @@ export async function openAIAnswer({ question, history, evidence }: Parameters<A
   const response = await fetch("https://api.openai.com/v1/responses", {
     method: "POST",
     headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
-    signal: AbortSignal.timeout(24_000),
+    signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
     body: JSON.stringify({
-      model: process.env.VECTRA_MODEL || "gpt-5.4-mini-2026-03-17",
+      model: effectiveModel,
       instructions: persona + (englishRetry ? "\nA prior generation contained non-English script. Write the entire response in English using Latin letters only, preserving the factual qualifications." : ""),
       input: JSON.stringify({
         evidence: evidence.map(({ id, title, status, body, qualification, siteExcerpt }) => ({
@@ -127,20 +132,24 @@ export async function openAIAnswer({ question, history, evidence }: Parameters<A
       } } },
     }),
   });
+  if (!response.ok && !fallback && (response.status === 429 || response.status >= 500) && deadline - Date.now() > 6000) {
+    console.info("[vera:fallback]", JSON.stringify({ model: effectiveModel, status: response.status }));
+    return openAIAnswer({ question, history, evidence, preference }, englishRetry, true, deadline);
+  }
   if (!response.ok) throw new Error(`Vectra model request failed (${response.status})`);
   const result = await response.json() as { status?: string; output?: { content?: { type: string; text?: string }[] }[] };
   const usage = result as { usage?: { input_tokens?: number; output_tokens?: number } };
-  console.info("[vera:model]", JSON.stringify({ durationMs: Math.round(performance.now() - start),
+  console.info("[vera:model]", JSON.stringify({ durationMs: Math.round(performance.now() - start), model: effectiveModel, route: route.reason, fallback,
     inputTokens: usage.usage?.input_tokens, outputTokens: usage.usage?.output_tokens }));
   const text = result.output?.flatMap(item => item.content ?? []).find(item => item.type === "output_text")?.text;
   if (result.status !== "completed" || !text) throw new Error("Vectra model did not complete");
   const candidate = JSON.parse(text) as Candidate;
   const visible = `${candidate.text || ""} ${candidate.enquirySummary || ""}`;
   if (hasNonLatinLetters(visible)) {
-    if (!englishRetry) return openAIAnswer({ question, history, evidence }, true);
+    if (!englishRetry) return openAIAnswer({ question, history, evidence, preference }, true, fallback, deadline);
     throw new Error("Vera English-only response validation failed");
   }
-  return candidate;
+  return { ...candidate, model: effectiveModel, fallback };
 }
 
 export function hasNonLatinLetters(text: string): boolean {

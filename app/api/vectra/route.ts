@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { siteUrl } from "@/lib/assets";
 import { isPrelaunch } from "@/lib/launch";
+import { isModelPreference } from "@/lib/vectra/models";
 import { vectraGraph } from "@/lib/vectra/graph";
 import { createSession, digest, finishTurn, loadTurns, releaseKnowledge, reserveTurn, takeWindow, vectraConfigured } from "@/lib/vectra/store";
 import { conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
@@ -98,10 +99,11 @@ async function readTurn(request: Request) {
       }
       text += decoder.decode(value, { stream: true });
     }
-    const data = JSON.parse(text + decoder.decode()) as { id?: unknown; message?: unknown } | null;
+    const data = JSON.parse(text + decoder.decode()) as { id?: unknown; message?: unknown; preference?: unknown } | null;
     const question = typeof data?.message === "string" ? data.message.trim() : "";
     return question && question.length <= messageLimit && typeof data?.id === "string" && uuidPattern.test(data.id)
-      ? { question, id: data.id } : null;
+      && (data.preference === undefined || isModelPreference(data.preference))
+      ? { question, id: data.id, preference: data.preference ?? "auto" } : null;
   } catch { return null; }
 }
 
@@ -144,7 +146,7 @@ export async function POST(request: NextRequest) {
     const records = await releaseKnowledge();
     const contextMs = performance.now() - contextStart;
     const answerStart = performance.now();
-    const { reply: answer } = await vectraGraph.invoke({ question: input.question, history: reserved.turns, records });
+    const { reply: answer } = await vectraGraph.invoke({ question: input.question, history: reserved.turns, records, preference: input.preference });
     const answerMs = performance.now() - answerStart;
     const turn: Turn = { id: input.id, question: input.question, reply: answer };
     const persistStart = performance.now();

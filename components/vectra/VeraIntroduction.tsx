@@ -11,10 +11,9 @@ export function VeraIntroduction({ disabled, onChoose }: { disabled: boolean; on
   return <section className="vera-introduction" aria-label="Meet Vera">
     <div className="vera-introduction-heading">
       <div>
-        <h3>Where shall we begin?</h3>
-        <p>Explore an idea or bring a question from the shop floor.</p>
+        <h3>I'm Vera.</h3>
+        <p>Let's explore how manufacturing can work better together.</p>
       </div>
-      <VeraCube />
     </div>
     <div className="vera-directions">
       {directions.map(direction => <button className="vera-direction" key={direction.id} type="button"

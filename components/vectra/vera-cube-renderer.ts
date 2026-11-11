@@ -1,7 +1,8 @@
 import * as T from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { createFluidCube } from "../intelligence/fluid-cube-materials";
-import { agentPresets } from "../intelligence/agent-presets";
+import type { AgentVisualPreset } from "../intelligence/agent-presets";
+const veraIdentity: AgentVisualPreset = { name: "VERA", family: "clouds", motion: "circulating", seed: 137, scale: [1.3, 1.8, 1.45], contours: 7, warp: 2.6, speed: 1.15, density: .82, smoke: .08, gather: .28, particles: .05, low: "#122B50", mid: "#267EB4", high: "#C9F4F5", aura: "#69B7D3" };
 import { prefersStaticScene } from "../performance/scene-policy";
 
 type Slot = { canvas: HTMLCanvasElement; host: HTMLElement; preset: number };
@@ -74,13 +75,13 @@ function start() {
     if (last && now - last < 32) { frame = requestAnimationFrame(draw); return; }
     time += last ? Math.min((now - last) / 1000, .1) : 0;
     last = now;
-    const still = prefersStaticScene();
+    const still = prefersStaticScene() || document.documentElement.dataset.veraMotion === "still";
     const dark = document.documentElement.dataset.theme === "dark";
 
     for (const preset of new Set(visible.map(slot => slot.preset))) {
       let item = cubes.get(preset);
       if (!item) {
-        item = { cube: createFluidCube(preset), last: 0 };
+        item = { cube: createFluidCube(preset, veraIdentity), last: 0 };
         cubes.set(preset, item);
       }
       const matching = visible.filter(slot => slot.preset === preset);
@@ -102,7 +103,7 @@ function start() {
         if (canvas.width !== size || canvas.height !== size) { canvas.width = size; canvas.height = size; }
         context.clearRect(0, 0, size, size);
         context.drawImage(source, 0, surfaceSize - size, size, size, 0, 0, size, size);
-        host.style.setProperty("--vera-aura-color", agentPresets[preset].aura);
+        host.style.setProperty("--vera-aura-color", veraIdentity.aura);
         host.dataset.live = "true";
       }
     }
@@ -117,7 +118,7 @@ function start() {
   }
   refresh = resume;
   const observer = new MutationObserver(resume);
-  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-scene-motion", "data-artwork-motion"] });
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-scene-motion", "data-artwork-motion", "data-vera-motion"] });
   const panels = new MutationObserver(resume);
   panels.observe(document.body, { subtree: true, attributes: true, attributeFilter: ["open", "hidden", "data-active"] });
   const motion = matchMedia("(prefers-reduced-motion: reduce)");

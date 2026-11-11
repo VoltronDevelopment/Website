@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 const presets = { vera: 5, platform: 3, vision: 4, challenge: 0 } as const;
 
 export function VeraCube({ active = false, variant = "vera" }: { active?: boolean; variant?: keyof typeof presets }) {
+  if (variant !== "vera") return <span className="vera-question-cube" data-study={variant} aria-hidden="true"><span className="vera-face-top" /><span className="vera-face-left" /><span className="vera-face-right" /><span className="vera-study-light" /></span>;
+  return <VeraIdentity active={active} />;
+}
+
+function VeraIdentity({ active }: { active: boolean }) {
+  const variant = "vera";
   const host = useRef<HTMLSpanElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const preset = presets[variant];
@@ -25,8 +31,7 @@ export function VeraCube({ active = false, variant = "vera" }: { active?: boolea
   return <span ref={host} className="vectra-cube" data-variant={variant} data-active={active || undefined} aria-hidden="true">
     <span className="vectra-cube-aura" />
     <span className="vera-cube-poster">
-      <img className="art-theme-light" src={`/agent-clouds/${preset}-light-small.webp`} alt="" width={384} height={384} />
-      <img className="art-theme-dark" src={`/agent-clouds/${preset}-dark-small.webp`} alt="" width={384} height={384} />
+      <span className="vera-question-cube" data-study="identity"><span className="vera-face-top" /><span className="vera-face-left" /><span className="vera-face-right" /><span className="vera-study-light" /></span>
     </span>
     <canvas ref={canvas} className="vera-cube-canvas" />
   </span>;

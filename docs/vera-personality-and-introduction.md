@@ -16,9 +16,11 @@ Runtime authority: `lib/vectra/skills.ts`. Model replies remain probabilistic; t
 
 ## Visual treatment
 
-The shared aura cube is 72px on desktop, 68px on tablet and 62px on mobile, with a larger invisible hit area and clearance above the hero strip. The conversation header uses a 38px cube, an 18px VERA name and a quiet AI-guide descriptor. It retains the site’s Montserrat and semantic light/dark palette.
+Vera uses a dedicated fluid material configuration rather than any specialist agent identity. The launcher keeps its established desktop/tablet/mobile size. The header cube is 48px on desktop, 44px on mobile and 40px on the narrowest phones. Its fine enclosure and internal cyan-blue illumination share rendering utilities with the site. Question illustrations use lightweight shaded faces with three distinct tonal studies and a slow inner light; they do not reuse agent auras. A faint cube watermark occupies unused chat space.
 
-The introduction keeps typing available immediately. Three illustrated cards lead into platform, industry and manufacturing questions. Shaded cube studies form in sequence, then a brief connection travels between them. They settle after two cycles and respect reduced motion. The intro’s aura uses the same cube as the launcher and pending response. Pending copy reads “Connecting the ideas…”; the animation is decorative and does not claim a live reasoning trace.
+The introduction says "I'm Vera" and reveals its supporting line and three question cards with overlapping delays. The header cube settles first. Space is reserved throughout and typing remains immediately available. There is no duplicate cube beside the welcome heading. Reduced motion and Vera's Still setting show the settled composition immediately. Minimize/reopen preserves the current chat.
+
+A compact model selector offers Auto, GPT-5.4 mini and GPT-6 Luna. Preferences persist locally without resetting history or limits. Auto uses Luna for everyday conversation and mini for synthesis, long questions and longer threads. This is an initial routing policy, not a claim that one model is universally better. A temporary provider 429/5xx may trigger one alternate model attempt within the same response deadline. The actual fallback model is disclosed beside its reply. Both models use identical personality, public evidence, English-only and enquiry rules.
 
 The desktop panel is 448px wide, with a 720px expanded option. Mobile uses the existing keyboard-aware sheet. Introduction scroll starts at the top; conversation replies follow the existing reading-position controls. Minimize/reopen preserves drafts. Hidden panels pause their animations.
 

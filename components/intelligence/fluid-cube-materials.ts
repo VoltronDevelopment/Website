@@ -1,5 +1,5 @@
 import * as T from 'three';
-import {agentPresets} from './agent-presets';
+import {agentPresets,type AgentVisualPreset} from './agent-presets';
 import {galleryFormation,settleFormation,type AgentFormation} from './agent-motion';
 const flowField=`float hash(vec3 p){p=fract(p*.3183099+vec3(.13,.27,.41));p*=17.;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
 float noise(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);}
@@ -117,7 +117,7 @@ void main(){float d=length(gl_PointCoord-.5);if(d>.5)discard;
 `;
 
 export const fluidSpeeds=agentPresets.map(p=>p.speed);
-export function createFluidCube(agent:number){
+export function createFluidCube(agent:number, identity?:AgentVisualPreset){
  let currentAgent=agent,lastTime:number|null=null,phase=0;
  const transitions=[{value:0,velocity:0},{value:0,velocity:0},{value:0,velocity:0}];
  const group=new T.Group(),geometry=new T.BoxGeometry(1.8,1.8,1.8);
@@ -130,9 +130,9 @@ export function createFluidCube(agent:number){
  const particleGeometry=new T.BufferGeometry();particleGeometry.setAttribute('position',new T.BufferAttribute(positions,3));particleGeometry.setAttribute('seed',new T.BufferAttribute(seeds,1));
  const particleMaterial=new T.ShaderMaterial({transparent:true,depthWrite:false,uniforms:fluid.uniforms,vertexShader:particleVertex,fragmentShader:particleFragment});const particles=new T.Points(particleGeometry,particleMaterial);particles.frustumCulled=false;particles.renderOrder=2;current.add(particles);
 
- function applyPreset(index:number){const preset=agentPresets[index];fluid.uniforms.patternScale.value.set(...preset.scale);fluid.uniforms.contours.value=preset.contours;fluid.uniforms.warpStrength.value=preset.warp;fluid.uniforms.densityScale.value=preset.density;fluid.uniforms.smoke.value=preset.smoke;fluid.uniforms.gathering.value=preset.gather;fluid.uniforms.motionType.value=preset.motion==='circulating'?1:0;fluid.uniforms.textureFamily.value=['folds','fine','clouds'].indexOf(preset.family);fluid.uniforms.patternSeed.value=preset.seed;fluid.uniforms.particleAmount.value=preset.particles;fluid.uniforms.paletteLow.value.set(preset.low);fluid.uniforms.paletteMid.value.set(preset.mid);fluid.uniforms.paletteHigh.value.set(preset.high);}
+ function applyPreset(index:number){const preset=identity??agentPresets[index];fluid.uniforms.patternScale.value.set(...preset.scale);fluid.uniforms.contours.value=preset.contours;fluid.uniforms.warpStrength.value=preset.warp;fluid.uniforms.densityScale.value=preset.density;fluid.uniforms.smoke.value=preset.smoke;fluid.uniforms.gathering.value=preset.gather;fluid.uniforms.motionType.value=preset.motion==='circulating'?1:0;fluid.uniforms.textureFamily.value=['folds','fine','clouds'].indexOf(preset.family);fluid.uniforms.patternSeed.value=preset.seed;fluid.uniforms.particleAmount.value=preset.particles;fluid.uniforms.paletteLow.value.set(preset.low);fluid.uniforms.paletteMid.value.set(preset.mid);fluid.uniforms.paletteHigh.value.set(preset.high);}
  applyPreset(agent);
- return {group,current,enclosure,setAgent(index:number){currentAgent=index;fluid.uniforms.agent.value=index;applyPreset(index);phase=0;lastTime=null;transitions.forEach(s=>{s.value=0;s.velocity=0;});},update(time:number,dark:boolean,eye:T.Vector3,response=0,motionScale=1,requested?:AgentFormation,instantFormation=false){const delta=lastTime===null?0:Math.max(0,Math.min(.1,time-lastTime));phase=lastTime===null?time*fluidSpeeds[currentAgent]:phase+delta*fluidSpeeds[currentAgent]*(1+response*.3)*motionScale;lastTime=time;
+ return {group,current,enclosure,setAgent(index:number){currentAgent=index;fluid.uniforms.agent.value=index;applyPreset(index);phase=0;lastTime=null;transitions.forEach(s=>{s.value=0;s.velocity=0;});},update(time:number,dark:boolean,eye:T.Vector3,response=0,motionScale=1,requested?:AgentFormation,instantFormation=false){const delta=lastTime===null?0:Math.max(0,Math.min(.1,time-lastTime));phase=lastTime===null?time*(identity?.speed??fluidSpeeds[currentAgent]):phase+delta*(identity?.speed??fluidSpeeds[currentAgent])*(1+response*.3)*motionScale;lastTime=time;
  const pose=requested??galleryFormation(time,currentAgent),targets=[pose.amount,pose.arrangement,pose.resolve];
  transitions.forEach((state,i)=>{const next=instantFormation?{value:targets[i],velocity:0}:settleFormation(state.value,state.velocity,targets[i],delta);state.value=next.value;state.velocity=next.velocity;});
  fluid.uniforms.formation.value=transitions[0].value;fluid.uniforms.arrangement.value=transitions[1].value;fluid.uniforms.resolution.value=transitions[2].value;
