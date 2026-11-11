@@ -4,9 +4,11 @@ import { useSearchParams } from "next/navigation";
 import { ArrowRight, CheckCircle2, LoaderCircle } from "lucide-react";
 import { partnerIntents, productionIntents, processSlugs } from "@/lib/inquiry-intents";
 import {useEntryChoice} from "@/lib/use-entry-choice";
+import {draftKey} from "@/lib/vectra/types";
 import "./partner-forms.css";
 
 type Values = Record<string, string>;
+type VectraDraft = { kind: "production" | "partnership"; intent: string; requirement: string; expires: number };
 type FieldSpec = { key: string; label: string; required?: boolean; type?: string; options?: readonly string[]; multiline?: boolean; placeholder?: string; autoComplete?: string };
 const common: FieldSpec[] = [
   { key: "name", label: "Full name", required: true, autoComplete: "name" },
@@ -26,13 +28,19 @@ const partnershipFields: FieldSpec[] = [...common.map(field => field.key === "co
   { key: "requirement", label: "What are you building?", required: true, multiline: true, placeholder: "The factory opportunity, capability or initiative you want to develop" },
 ];
 
-function InquiryForm({ kind, initialIntent = "" }: { kind: "production" | "partnership"; initialIntent?: string }) {
+function InquiryForm({ kind, initialIntent = "", handoff }: { kind: "production" | "partnership"; initialIntent?: string; handoff?: VectraDraft }) {
   const fields = kind === "production" ? productionFields : partnershipFields;
   const options: readonly string[] = kind === 'production' ? productionIntents : partnerIntents;
   const [saved, saveIntent] = useEntryChoice(kind+'-intent', options.length+1, -1);
   const [draft, setValues] = useState<Values>({});
   const values: Values = {...draft, intent: saved < 0 ? initialIntent : options[saved-1] || ''};
   const [expanded, setExpanded] = useState(false);
+  useEffect(() => {
+    if (!handoff) return;
+    setValues(current => ({ ...current, requirement: handoff.requirement }));
+    if (options.includes(handoff.intent)) saveIntent(options.indexOf(handoff.intent) + 1);
+    if (kind === "production") setExpanded(true);
+  }, [handoff, kind, options, saveIntent]);
 
   const [errors, setErrors] = useState<Values>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -112,7 +120,25 @@ export function PartnerFormsSection() {
     return ()=>{window.removeEventListener('hashchange',sync);window.removeEventListener('popstate',sync);};
   },[interest,process]);
   const [tab,saveTab]=useEntryChoice('inquiry-tab',2,-1);
-  const active = tab===0?'production':tab===1?'partnership':hash==='#production'?'production':hash==='#partnership'||preset?'partnership':'production';
-  const setActive=(kind:'production'|'partnership')=>saveTab(kind==='production'?0:1);
-  return <><nav className="form-jumps" aria-label="Inquiry type"><button type="button" aria-pressed={active==='production'} onClick={()=>setActive('production')}>Production inquiry</button><button type="button" aria-pressed={active==='partnership'} onClick={()=>setActive('partnership')}>Partnership enquiry</button></nav><div className="partner-form-panels"><article id="production" className="inquiry-panel" hidden={active!=='production'}><h3>Production programs</h3><p>Discuss a phosphating, CED, powder coating or related requirement.</p><InquiryForm kind="production" initialIntent={process}/></article><article id="partnership" className="inquiry-panel" hidden={active!=='partnership'}><h3>Partnership &amp; collaboration</h3><p>Explore factory JVs, strategic investment, platform partnerships or Commons collaborations.</p><InquiryForm kind="partnership" initialIntent={preset}/></article></div></>;
+  const [handoff, setHandoff] = useState<VectraDraft>();
+  const [handoffTab, setHandoffTab] = useState<VectraDraft["kind"]>();
+  const handoffId = params.get("vectra");
+  useEffect(() => {
+    if (!handoffId) return;
+    try {
+      const raw = sessionStorage.getItem(draftKey);
+      if (!raw) return;
+      sessionStorage.removeItem(draftKey);
+      const draft = JSON.parse(raw) as VectraDraft;
+      if ((draft.kind === "production" || draft.kind === "partnership") && draft.expires > Date.now()
+        && typeof draft.requirement === "string" && draft.requirement.length <= 800 && typeof draft.intent === "string") {
+        setHandoff(draft);
+        setHandoffTab(draft.kind);
+        requestAnimationFrame(() => document.getElementById(draft.kind)?.scrollIntoView({ block: "start" }));
+      }
+    } catch { /* Storage is optional; the regular form remains usable. */ }
+  }, [handoffId]);
+  const active = handoffTab || (tab===0?'production':tab===1?'partnership':hash==='#production'?'production':hash==='#partnership'||preset?'partnership':'production');
+  const setActive=(kind:'production'|'partnership')=>{setHandoffTab(undefined);saveTab(kind==='production'?0:1);};
+  return <><nav className="form-jumps" aria-label="Inquiry type"><button type="button" aria-pressed={active==='production'} onClick={()=>setActive('production')}>Production inquiry</button><button type="button" aria-pressed={active==='partnership'} onClick={()=>setActive('partnership')}>Partnership enquiry</button></nav><div className="partner-form-panels"><article id="production" className="inquiry-panel" hidden={active!=='production'}><h3>Production programs</h3><p>Discuss a phosphating, CED, powder coating or related requirement.</p><InquiryForm kind="production" initialIntent={process} handoff={handoff?.kind === "production" ? handoff : undefined}/></article><article id="partnership" className="inquiry-panel" hidden={active!=='partnership'}><h3>Partnership &amp; collaboration</h3><p>Explore factory JVs, strategic investment, platform partnerships or Commons collaborations.</p><InquiryForm kind="partnership" initialIntent={preset} handoff={handoff?.kind === "partnership" ? handoff : undefined}/></article></div></>;
 }

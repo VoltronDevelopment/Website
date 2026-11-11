@@ -3,12 +3,13 @@ import {useEffect} from "react";
 import {usePathname,useSelectedLayoutSegment} from 'next/navigation';
 import type {ReactNode} from 'react';
 import {SiteHeader} from '@/components/SiteHeader';
+import {Vectra} from '@/components/vectra/Vectra';
 import './presentation.css';
 import './interaction-finish.css';
 import './layout-polish.css';
 
 /** Marketing chrome persists across client navigation; each page still checks access server-side. */
-export function SiteFrame({children,footer}:{children:ReactNode;footer:ReactNode}){
+export function SiteFrame({children,footer,vectraEnabled=false}:{children:ReactNode;footer:ReactNode;vectraEnabled?:boolean}){
  const pathname=usePathname(),segment=useSelectedLayoutSegment();
  useEffect(()=>{
    const url=new URL(window.location.href);
@@ -19,5 +20,5 @@ export function SiteFrame({children,footer}:{children:ReactNode;footer:ReactNode
  },[pathname,segment]);
  // The prelaunch root URL is internally rewritten to coming-soon.
  if(segment==='coming-soon'||segment==='enter'||pathname==='/coming-soon'||pathname==='/enter')return <>{children}</>;
- return <div className={`site-presentation${pathname==='/'?' home-presentation':''}`}><div className="presentation-veil" aria-hidden="true"/><SiteHeader/><main id="main-content">{children}</main>{footer}</div>;
+ return <div className={`site-presentation${pathname==='/'?' home-presentation':''}`}><div className="presentation-veil" aria-hidden="true"/><SiteHeader/><main id="main-content">{children}</main>{footer}{vectraEnabled&&<Vectra/>}</div>;
 }

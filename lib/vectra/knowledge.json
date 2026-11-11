@@ -1,0 +1,90 @@
+[
+  {
+    "id": "voltron",
+    "title": "Voltron Lattice",
+    "href": "/",
+    "status": "positioning",
+    "body": "Voltron connects physical production, manufacturing knowledge and intelligence. Its stated purpose is building India’s intelligent manufacturing backbone.",
+    "terms": "company overview voltron about vision"
+  },
+  {
+    "id": "platform",
+    "title": "One connected factory",
+    "href": "/technology#operating-platform",
+    "status": "demonstration",
+    "body": "The website follows one lot from order through receipt, storage, production, inspection and dispatch. The operating platform connects execution, signals and knowledge. A simulated journey illustrates the approach; it is not evidence of a customer deployment.",
+    "terms": "VOS MES ERP WMS PLC edge factory integration operating system"
+  },
+  {
+    "id": "applications",
+    "title": "Five applications, one factory",
+    "href": "/#factory-systems",
+    "status": "demonstration",
+    "body": "The public application views show five roles around the same lot. V MES connects production operations and release evidence. V Twin represents the physical process. V AI illustrates specialist assistance using a model, context, skills and tools. V MO supplies shared concepts, rules and relationships. SCADA illustrates equipment visibility and the link between a station reading and the lot record.",
+    "terms": "applications software product VOS VMO VAI"
+  },
+  {
+    "id": "specialists",
+    "title": "Six specialist perspectives",
+    "href": "/intelligence#specialists",
+    "status": "demonstration",
+    "body": "The investigation demonstration gives KAVO operator checks, RIXA quality evidence, MEKO equipment history, ZILO process comparisons, SARO evidence gathering and TEYO fault investigation. The specialists help organize evidence for human review. Vera is the website guide.",
+    "terms": "agents skills SARO KAVO RIXA MEKO ZILO TEYO"
+  },
+  {
+    "id": "quality",
+    "title": "Investigate with evidence",
+    "href": "/intelligence#quality",
+    "status": "demonstration",
+    "body": "Follow a Tank 06 observation from lot history to a proposed check. Specialist perspectives compare process and equipment history. Guidance reaches the responsible person for review. Process completion and quality release are distinct.",
+    "terms": "AI intelligence agents evidence investigation SARO quality"
+  },
+  {
+    "id": "alpha",
+    "title": "Voltron Alpha",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Alpha is Voltron’s first manufacturing environment for developing and validating the wider architecture. Public production enquiries cover phosphating, CED coating and powder coating. Specific readiness, capacity and commercial commitments need confirmation from the team.",
+    "terms": "manufacturing surface treatment pilot alpha coating part production"
+  },
+  {
+    "id": "network",
+    "title": "Voltron Network",
+    "href": "/network",
+    "status": "direction",
+    "body": "The network describes how manufacturing capability can extend across sites and partners. Treat expansion and broader coverage as a direction rather than a claim of available capacity.",
+    "terms": "network factories sites scale partners"
+  },
+  {
+    "id": "roadmap",
+    "title": "A decade of building capability",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "Voltron’s thesis is that repeatable process capability, shared manufacturing context, quality evidence and engineering depth help firms earn trust and build original products. Global competitiveness follows demonstrated readiness. Roadmap milestones are ambitions measured from the start of operations.",
+    "terms": "India competitiveness coherence industry transformation milestones roadmap"
+  },
+  {
+    "id": "people",
+    "title": "People and culture",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "Voltron emphasizes developing capability through practice, depth in the work and accountability for decisions.",
+    "terms": "people leadership culture careers"
+  },
+  {
+    "id": "commons",
+    "title": "Voltron Commons",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "Commons explores how access to manufacturing knowledge, shared learning and practice can develop capability and contribution. Some participation pathways are in development.",
+    "terms": "Commons learning education research access"
+  },
+  {
+    "id": "partner",
+    "title": "Partner with us",
+    "href": "/partner#inquiry",
+    "status": "available",
+    "body": "Visitors can send production or partnership enquiries, including factory JVs, investment, platform partnerships, Commons collaborations and building with Voltron. A submission opens a conversation; the team confirms feasibility, availability and next steps.",
+    "terms": "contact enquiry inquiry email register quote partner pricing"
+  }
+]

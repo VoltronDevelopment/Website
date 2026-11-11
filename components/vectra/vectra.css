@@ -1,0 +1,519 @@
+.vectra-launch,
+.vectra-panel {
+  --vera-edge: max(24px, env(safe-area-inset-right));
+  --vera-bottom: max(20px, env(safe-area-inset-bottom));
+  --vera-material: color-mix(in srgb, var(--surface) 94%, var(--cube-top));
+}
+
+.vectra-launch {
+  --vera-edge: max(clamp(42px, 6vw, 112px), env(safe-area-inset-right));
+  position: fixed;
+  z-index: 45;
+  right: var(--vera-edge);
+  bottom: max(var(--vera-bottom), var(--vera-strip-clearance, 0px));
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.vectra-launch[hidden] { display: none; }
+:root:has([data-entry-sweep]) .vectra-launch { visibility: hidden; }
+.vectra-launch .vectra-cube { --vera-cube-size: 72px; }
+.vectra-cube { position: relative; isolation: isolate; display: block; flex: none; width: var(--vera-cube-size, 30px); height: var(--vera-cube-size, 30px); pointer-events: none; }
+.vectra-cube-aura { position: absolute; inset: -18%; background: radial-gradient(ellipse 44% 45% at 50% 54%, var(--vera-aura-color, #739bf4) 24%, transparent 100%); opacity: .16; animation: vera-aura 12s ease-in-out infinite; }
+.vera-cube-canvas, .vera-cube-poster, .vera-cube-poster img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vera-cube-poster { transform: translate(2%, -6%) scale(1.1); }
+.vera-cube-canvas { opacity: 0; }
+.vectra-cube[data-live="true"] .vera-cube-canvas { opacity: 1; }
+.vectra-cube[data-live="true"] .vera-cube-poster { visibility: hidden; }
+
+.vectra-panel {
+  position: fixed;
+  z-index: 50;
+  inset: auto var(--vera-edge) var(--vera-bottom) auto;
+  margin: 0;
+  padding: 0;
+  width: min(448px, calc(100vw - var(--vera-edge) - 20px));
+  height: min(700px, calc(100dvh - var(--vera-bottom) - 20px));
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background:
+    radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--cyan) 7%, transparent), transparent 58%),
+    var(--vera-material);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.6;
+  box-shadow: 0 18px 64px var(--glass-drop), inset 0 1px 0 var(--glass-rim-lo);
+}
+
+.vectra-panel[data-expanded] {
+  width: min(720px, calc(100vw - var(--vera-edge) - 20px));
+  height: min(780px, calc(100dvh - var(--vera-bottom) - 20px));
+}
+
+.vectra-panel[open] {
+  display: flex;
+  flex-direction: column;
+  animation: vera-open 200ms cubic-bezier(.18,.8,.25,1) both;
+}
+
+.vectra-panel::backdrop { background: rgba(12, 24, 37, .28); }
+
+.vectra-header {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 8px 14px 8px 19px;
+  border-bottom: 1px solid var(--line);
+  background: var(--vera-material);
+}
+
+.vectra-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: .15em;
+}
+
+.vectra-header h2:focus, .vectra-subview-header h3:focus, .vectra-receipt h3:focus {
+  outline: none;
+}
+
+.vectra-window-controls {
+  display: flex;
+  gap: 2px;
+  margin-inline-start: auto;
+}
+
+.vectra-panel button,
+.vectra-panel summary {
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.vectra-panel button:disabled { cursor: default; }
+
+.vectra-panel .vectra-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  border-radius: 7px;
+}
+
+.vectra-icon:hover,
+.vectra-menu[open] .vectra-icon { background: var(--hover); }
+
+.vectra-loading { padding: 24px; }
+
+.vectra-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.vectra-chat[hidden], .vectra-subview[hidden] { display: none; }
+
+.vectra-transcript {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 24px 21px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+}
+
+.vectra-transcript > * {
+  width: min(100%, 64ch);
+  margin-inline: auto;
+}
+
+.vectra-welcome,
+.vectra-answer {
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vectra-turn { margin-top: 24px; }
+
+.vectra-question {
+  width: fit-content;
+  max-width: 89%;
+  margin: 16px 0 14px auto;
+  padding: 9px 13px;
+  border-radius: 11px 11px 3px 11px;
+  background: var(--hover);
+  color: var(--ink);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.vectra-sources {
+  display: grid;
+  gap: 1px;
+  padding: 0;
+  margin: 9px 0 0;
+  list-style: none;
+}
+
+.vectra-sources a, .vectra-about a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  gap: 5px;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+
+.vectra-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 12px;
+  font-size: 13px;
+}
+
+.vectra-actions button { padding: 0; text-decoration: underline; text-underline-offset: .2em; }
+
+.vectra-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 27px;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.vectra-status .vectra-cube { --vera-cube-size: 25px; }
+.vectra-error { margin-top: 10px; color: var(--error); font-size: 14px; }
+
+.vectra-panel .vectra-outline, .vectra-panel .vectra-primary {
+  width: fit-content;
+  max-width: 100%;
+  padding: 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  font-size: 14px;
+}
+
+.vectra-transcript .vectra-outline { display: block; margin-top: 16px; }
+.vectra-outline:hover { background: var(--hover); }
+
+.vectra-panel .vectra-primary {
+  border-color: var(--action);
+  background: var(--action);
+  color: var(--action-text);
+}
+
+.vectra-panel .vectra-primary:hover { background: var(--action-hover); }
+
+.vectra-bottom {
+  position: relative;
+  padding: 10px 13px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--vera-material);
+}
+
+.vectra-panel .vectra-latest {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  box-shadow: 0 3px 12px var(--shadow);
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.vectra-composer {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  max-width: 640px;
+  margin-inline: auto;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.vectra-composer:focus-within { border-color: var(--control-line); }
+
+.vectra-composer textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  max-height: 116px;
+  padding: 9px 3px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  caret-color: var(--blue);
+  resize: none;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.vectra-composer textarea::placeholder { color: var(--muted); }
+
+.vectra-panel .vectra-send {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  padding: 0;
+  border-radius: 7px;
+  background: var(--action);
+  color: var(--action-text);
+}
+
+.vectra-panel .vectra-send:disabled { background: var(--hover); color: var(--muted); }
+.vectra-panel .vectra-send:hover:not(:disabled) { background: var(--action-hover); }
+
+.vectra-menu { position: relative; flex: none; }
+.vectra-menu summary { list-style: none; }
+.vectra-menu summary::-webkit-details-marker { display: none; }
+
+.vectra-menu-items {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 0;
+  z-index: 1;
+  width: min(208px, calc(100vw - 48px));
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px var(--glass-drop);
+}
+
+.vectra-menu-items button {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.vectra-menu-items button:hover:not(:disabled) { background: var(--hover); }
+
+.vectra-subview-header { padding: 6px 20px 13px; border-bottom: 1px solid var(--line); }
+.vectra-subview-header h3, .vectra-receipt h3 { font-size: 19px; font-weight: 500; }
+.vectra-panel .vectra-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.vectra-subview {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 18px 20px max(20px, env(safe-area-inset-bottom));
+}
+
+.vectra-enquiry, .vectra-receipt, .vectra-about > * {
+  max-width: 540px;
+  margin-inline: auto;
+}
+
+.vectra-enquiry fieldset {
+  display: grid;
+  gap: 13px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.vectra-field {
+  display: grid;
+  gap: 4px;
+}
+
+.vectra-enquiry label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.vectra-enquiry :is(input:not([type="checkbox"]), textarea, select) {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding: 7px 10px;
+  border: 1px solid var(--control-line);
+  border-radius: 7px;
+  background: var(--canvas);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.vectra-enquiry .vectra-consent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.vectra-consent input { width: 18px; height: 18px; accent-color: var(--blue); }
+.vectra-about p + p { margin-block: 12px; }
+.vectra-receipt p { margin-block: 5px 16px; overflow-wrap: anywhere; }
+
+@keyframes vera-open {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes vera-current {
+  0%, 100% { transform: translate(-8%, 4%) rotate(-23deg); }
+  52% { transform: translate(8%, -5%) rotate(30deg); }
+}
+
+@keyframes vera-current-cross {
+  0%, 100% { transform: translate(7%, 0) rotate(24deg); }
+  48% { transform: translate(-7%, -3%) rotate(-40deg); }
+}
+
+@keyframes vera-aura {
+  0%, 100% { opacity: .12; transform: translateX(-3%); }
+  50% { opacity: .22; transform: translateX(3%); }
+}
+
+@media (max-width: 600px), (max-height: 480px) and (pointer: coarse) {
+  :root:has(.vectra-panel:modal) { overflow: hidden; }
+  .vectra-launch {
+    --vera-edge: max(25px, env(safe-area-inset-right));
+    --vera-bottom: max(12px, env(safe-area-inset-bottom));
+    width: 72px;
+    height: 72px;
+  }
+  .vectra-launch .vectra-cube { --vera-cube-size: 62px; }
+
+  .vectra-panel, .vectra-panel[data-expanded] {
+    inset: auto 0 var(--vera-keyboard-offset, 0px);
+    width: 100%;
+    height: calc(var(--vera-visible-height, 100dvh) - max(10px, env(safe-area-inset-top)));
+    border-radius: 14px 14px 0 0;
+  }
+
+  .vectra-panel .vectra-expand { display: none; }
+  .vectra-header { padding-block: 5px; }
+  .vectra-transcript { padding: 19px 16px; }
+  .vectra-sources a { min-height: 44px; }
+  .vectra-bottom { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vectra-panel[open], .vectra-cube[data-active] .vectra-cube-aura,
+  .vectra-cube .vectra-cube-current, .vectra-launch-label {
+    animation: none;
+    transition: none;
+  }
+}
+
+:root:is([data-scene-motion="static"], [data-artwork-motion="off"]) .vectra-cube :is(.vectra-cube-current, .vectra-cube-aura) {
+  animation: none;
+}
+
+/* The same identity scales from launcher to conversation, without a second renderer. */
+.vectra-header > .vectra-cube { --vera-cube-size: 38px; }
+.vera-identity { min-width: 0; }
+.vera-identity > span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.4; }
+.vera-introduction { padding-block: 7px 4px; }
+.vera-introduction-heading { display: grid; grid-template-columns: minmax(0,1fr) 70px; gap: 12px; align-items: start; }
+.vera-introduction-heading .vectra-cube { --vera-cube-size: 70px; margin-top: 9px; }
+.vera-introduction h3 { margin: 0 0 12px; font-size: clamp(23px, 3vw, 27px); line-height: 1.22; font-weight: 500; letter-spacing: -.025em; text-wrap: balance; }
+.vera-introduction-heading p { font-size: 14px; line-height: 1.65; color: var(--muted); }
+.vera-directions { display: grid; gap: 10px; margin-top: 20px; }
+.vectra-panel .vera-direction { display: grid; grid-template-columns: 58px minmax(0,1fr) 16px; gap: 12px; align-items: center; width: 100%; padding: 8px 13px 8px 9px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); text-align: left; transition: border-color 180ms ease-out, background-color 180ms ease-out; }
+.vera-direction-copy { display: grid; gap: 3px; }
+.vera-direction strong { font-size: 14px; font-weight: 500; line-height: 1.45; }
+.vera-direction-copy > span { font-size: 12px; line-height: 1.5; color: var(--muted); }
+.vera-direction > svg:last-child { color: var(--muted); }
+.vectra-panel .vera-direction:hover:not(:disabled) { border-color: var(--control-line); background: var(--hover); }
+.vera-direction:disabled { opacity: .65; }
+.vera-direction > .vectra-cube { --vera-cube-size: 56px; }
+.vectra-transcript { scrollbar-width: thin; scrollbar-color: var(--control-line) transparent; }
+.vectra-panel ::selection { background: var(--hover); color: var(--ink); }
+.vectra-panel:not([open]) *, .vectra-launch[hidden] * { animation-play-state: paused !important; }
+@media (min-width: 601px) and (max-width: 1024px) {
+  .vectra-launch { --vera-edge: max(34px, env(safe-area-inset-right)); }
+  .vectra-launch .vectra-cube { --vera-cube-size: 68px; }
+}
+@media (max-width: 370px) {
+  .vera-introduction-heading { grid-template-columns: minmax(0,1fr) 52px; gap: 8px; }
+  .vera-introduction-heading .vectra-cube { --vera-cube-size: 52px; }
+  .vectra-panel .vera-direction { grid-template-columns: 48px minmax(0,1fr) 14px; gap: 8px; }
+  .vera-direction > .vectra-cube { --vera-cube-size: 46px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vera-direction { transition: none; }
+}
+
+@media (prefers-reduced-motion: reduce) { .vectra-cube-aura { animation: none; } }
+:root:is([data-scene-motion="static"], [data-artwork-motion="off"], [data-vera-hidden="true"]) .vectra-cube-aura { animation-play-state: paused; }
+
+.vectra-launch-label { position: absolute; right: calc(100% + 10px); white-space: nowrap; padding: 5px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); font-size: 12px; opacity: 0; pointer-events: none; transition: opacity 140ms ease-out; }
+.vectra-launch:focus-visible .vectra-launch-label { opacity: 1; }
+@media (hover: hover) { .vectra-launch:hover .vectra-launch-label { opacity: 1; } }
+
+
+.vectra-source-details { margin-top: 5px; }
+.vectra-panel .vectra-source-details > summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  color: var(--muted);
+  font-size: 12px;
+  list-style: none;
+}
+.vectra-source-details > summary::-webkit-details-marker { display: none; }
+.vectra-source-details > summary span { font-variant-numeric: tabular-nums; }
+.vectra-source-details[open] > summary svg { transform: rotate(180deg); }
+.vectra-source-details .vectra-sources { margin-top: 0; }
+.vectra-actions a { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; }
+.vectra-panel .vectra-text-action {
+  justify-self: start;
+  padding-inline: 0;
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: .2em;
+}
+.vectra-panel :is(button, summary, a):focus-visible, .vectra-launch:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}

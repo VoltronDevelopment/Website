@@ -6,6 +6,7 @@ recordings/
 node_modules
 data
 .env.local
+/supabase password.txt
 out
 index.html
 styles.css

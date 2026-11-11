@@ -1,0 +1,4625 @@
+[
+  {
+    "id": "voltron",
+    "title": "Voltron Lattice",
+    "href": "/",
+    "status": "positioning",
+    "body": "Voltron connects physical production, manufacturing knowledge and intelligence. Its stated purpose is building India’s intelligent manufacturing backbone.",
+    "terms": "company overview voltron about vision",
+    "topicId": "VL-IDENTITY",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "platform",
+    "title": "One connected factory",
+    "href": "/technology#operating-platform",
+    "status": "demonstration",
+    "body": "The website follows one lot from order through receipt, storage, production, inspection and dispatch. The operating platform connects execution, signals and knowledge. A simulated journey illustrates the approach; it is not evidence of a customer deployment.",
+    "terms": "VOS MES ERP WMS PLC edge factory integration operating system",
+    "topicId": "VL-VOS",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "applications",
+    "title": "Five applications, one factory",
+    "href": "/#factory-systems",
+    "status": "demonstration",
+    "body": "The public application views show five roles around the same lot. V MES connects production operations and release evidence. V Twin represents the physical process. V AI illustrates specialist assistance using a model, context, skills and tools. V MO supplies shared concepts, rules and relationships. SCADA illustrates equipment visibility and the link between a station reading and the lot record.",
+    "terms": "applications software product VOS VMO VAI",
+    "topicId": "VL-VOS",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "See how the factory plans work, runs equipment, and verifies quality."
+  },
+  {
+    "id": "specialists",
+    "title": "Six specialist perspectives",
+    "href": "/intelligence#specialists",
+    "status": "demonstration",
+    "body": "The investigation demonstration gives KAVO operator checks, RIXA quality evidence, MEKO equipment history, ZILO process comparisons, SARO evidence gathering and TEYO fault investigation. The specialists help organize evidence for human review. Vera is the website guide.",
+    "terms": "agents skills SARO KAVO RIXA MEKO ZILO TEYO",
+    "topicId": "VL-AI",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Each specialist examines a different part of the same manufacturing investigation."
+  },
+  {
+    "id": "quality",
+    "title": "Investigate with evidence",
+    "href": "/intelligence#quality",
+    "status": "demonstration",
+    "body": "Follow a Tank 06 observation from lot history to a proposed check. Specialist perspectives compare process and equipment history. Guidance reaches the responsible person for review. Process completion and quality release are distinct.",
+    "terms": "AI intelligence agents evidence investigation SARO quality",
+    "topicId": "VL-AI",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Follow a Tank 06 observation from lot history to a proposed check."
+  },
+  {
+    "id": "alpha",
+    "title": "Voltron Alpha",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Alpha is Voltron’s first manufacturing environment for developing and validating the wider architecture. Public production enquiries cover phosphating, CED coating and powder coating. Specific readiness, capacity and commercial commitments need confirmation from the team.",
+    "terms": "manufacturing surface treatment pilot alpha coating part production",
+    "topicId": "VL-ALPHA",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "network",
+    "title": "Voltron Network",
+    "href": "/network",
+    "status": "direction",
+    "body": "The network describes how manufacturing capability can extend across sites and partners. Treat expansion and broader coverage as a direction rather than a claim of available capacity.",
+    "terms": "network factories sites scale partners",
+    "topicId": "VL-NETWORK",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "roadmap",
+    "title": "A decade of building capability",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "Voltron’s thesis is that repeatable process capability, shared manufacturing context, quality evidence and engineering depth help firms earn trust and build original products. Global competitiveness follows demonstrated readiness. Roadmap milestones are ambitions measured from the start of operations.",
+    "terms": "India competitiveness coherence industry transformation milestones roadmap",
+    "topicId": "VL-VISION",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "people",
+    "title": "People and culture",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "Voltron emphasizes developing capability through practice, depth in the work and accountability for decisions.",
+    "terms": "people leadership culture careers",
+    "topicId": "VL-HUMAN",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "commons",
+    "title": "Voltron Commons",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "Commons explores how access to manufacturing knowledge, shared learning and practice can develop capability and contribution. Some participation pathways are in development.",
+    "terms": "Commons learning education research access",
+    "topicId": "VL-COMMONS",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Explore manufacturing, exchange perspectives and help shape developing directions for access, learning and shared progress."
+  },
+  {
+    "id": "partner",
+    "title": "Partner with us",
+    "href": "/partner#inquiry",
+    "status": "available",
+    "body": "Visitors can send production or partnership enquiries, including factory JVs, investment, platform partnerships, Commons collaborations and building with Voltron. A submission opens a conversation; the team confirms feasibility, availability and next steps.",
+    "terms": "contact enquiry inquiry email register quote partner pricing",
+    "topicId": "VL-PARTNER",
+    "approval": "approved",
+    "classification": "public_safe",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-identity--short-answer",
+    "topicId": "VL-IDENTITY",
+    "title": "Voltron Lattice: identity and purpose — Short answer",
+    "href": "/",
+    "status": "positioning",
+    "body": "Voltron Lattice is building a technology-native industrial organization that connects physical production, engineering knowledge, digital systems and human judgment. Manufacturing is its first application. The wider direction is reusable industrial capability, a connected factory network and, over time, industrial product development.",
+    "terms": "Voltron Voltron Lattice company about",
+    "aliases": [
+      "Voltron",
+      "Voltron Lattice",
+      "company",
+      "about"
+    ],
+    "section": "Short answer",
+    "qualification": "Voltron Lattice is the public brand used in the supplied material. This package does not establish a registered legal entity, ownership structure, address or regulatory status. Lila and Flute & Forge are separate projects, not Voltron products. Vera is Voltron Lattice’s English-language website guide. Visitors can begin as guests and provide contact details when they choose to submit an enquiry.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "6017410708340ed720a7b2c5c04c04fdda925f589e2aeb090cf2104732c6c753",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-identity--what-lattice-means",
+    "topicId": "VL-IDENTITY",
+    "title": "Voltron Lattice: identity and purpose — What Lattice means",
+    "href": "/",
+    "status": "positioning",
+    "body": "A lattice is a useful metaphor for distinct capabilities working through clear relationships. A factory needs process knowledge, equipment, quality, software and people. Their usefulness grows when they share context and responsibilities remain clear. The same principle applies to individual people and the organization.",
+    "terms": "Voltron Voltron Lattice company about",
+    "aliases": [
+      "Voltron",
+      "Voltron Lattice",
+      "company",
+      "about"
+    ],
+    "section": "What Lattice means",
+    "qualification": "Voltron Lattice is the public brand used in the supplied material. This package does not establish a registered legal entity, ownership structure, address or regulatory status. Lila and Flute & Forge are separate projects, not Voltron products. Vera is Voltron Lattice’s English-language website guide. Visitors can begin as guests and provide contact details when they choose to submit an enquiry.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "006b5ca5291b46855a768143ccc88bb466498683d2e5b48e106cb1c0b25680b5",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-identity--brand-statements",
+    "topicId": "VL-IDENTITY",
+    "title": "Voltron Lattice: identity and purpose — Brand statements",
+    "href": "/",
+    "status": "positioning",
+    "body": "- Company headline: **Engineering intelligent industry.**\n- Manufacturing ambition: **Building India’s Intelligent Manufacturing Backbone.**\n- Organizational philosophy: **Individual excellence. Aligned to the whole.**\n- Human belief: **Human progress should deepen alongside technological progress.**\n\nThese are positioning statements, not measured performance claims. Use one relevant line rather than stacking slogans.",
+    "terms": "Voltron Voltron Lattice company about",
+    "aliases": [
+      "Voltron",
+      "Voltron Lattice",
+      "company",
+      "about"
+    ],
+    "section": "Brand statements",
+    "qualification": "Voltron Lattice is the public brand used in the supplied material. This package does not establish a registered legal entity, ownership structure, address or regulatory status. Lila and Flute & Forge are separate projects, not Voltron products. Vera is Voltron Lattice’s English-language website guide. Visitors can begin as guests and provide contact details when they choose to submit an enquiry.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "faf75918ff2de1127701d619936aa52ac6f8e0a7240eab148c9fcd8f20edce12",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-identity--boundaries-of-identity",
+    "topicId": "VL-IDENTITY",
+    "title": "Voltron Lattice: identity and purpose — Boundaries of identity",
+    "href": "/",
+    "status": "positioning",
+    "body": "Voltron Lattice is the public brand used in the supplied material. This package does not establish a registered legal entity, ownership structure, address or regulatory status. Lila and Flute & Forge are separate projects, not Voltron products. Vera is Voltron Lattice’s English-language website guide. Visitors can begin as guests and provide contact details when they choose to submit an enquiry.",
+    "terms": "Voltron Voltron Lattice company about",
+    "aliases": [
+      "Voltron",
+      "Voltron Lattice",
+      "company",
+      "about"
+    ],
+    "section": "Boundaries of identity",
+    "qualification": "Voltron Lattice is the public brand used in the supplied material. This package does not establish a registered legal entity, ownership structure, address or regulatory status. Lila and Flute & Forge are separate projects, not Voltron products. Vera is Voltron Lattice’s English-language website guide. Visitors can begin as guests and provide contact details when they choose to submit an enquiry.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "e04d39b327eed9e1a4c62b2b5c63cb489f17512e965407c6992869b1bfcebafb",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-vision--short-answer",
+    "topicId": "VL-VISION",
+    "title": "India vision: the connected story — Short answer",
+    "href": "/about",
+    "status": "positioning",
+    "body": "Voltron’s ambition is to help turn India’s engineering talent and manufacturing experience into coherent, repeatable industrial capability—and eventually globally competitive products. Technology should strengthen human judgment, opportunity and responsibility as well as production.",
+    "terms": "India software plus X software+x global ambition why Voltron",
+    "aliases": [
+      "India",
+      "software plus X",
+      "software+x",
+      "global ambition",
+      "why Voltron"
+    ],
+    "section": "Short answer",
+    "qualification": "These are Voltron’s strategic interpretations, not a sourced economic forecast. This package does not establish job-loss statistics, a market valuation, a government endorsement or a guaranteed national outcome. Use constructive language about capability development; do not describe India or its people using derogatory metaphors from brainstorming. Comparisons to global industrial-software companies express ambition, not verified feature parity or competitive superiority.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "a743a06cccf157b30b6f35d596d3029cd0944c8439c2a11f9fa2184315c7d259",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-vision--six-connected-observations",
+    "topicId": "VL-VISION",
+    "title": "India vision: the connected story — Six connected observations",
+    "href": "/about",
+    "status": "positioning",
+    "body": "| Node | Observation or strategic belief | Voltron’s response |\n|---|---|---|\n| Changing work | AI is changing how software and knowledge work are performed; outcomes are uncertain. | Develop judgment, creativity, first-principles thinking and domain depth. |\n| Software plus physical domains | Digital capability becomes valuable when connected to the realities of a domain. | Begin with software plus manufacturing: parts, processes, equipment and evidence. |\n| Coherent execution | Talent and isolated automation do not automatically create consistent production. | Connect requirements, process knowledge, quality evidence and accountable work. |\n| Learning through production | Practical operating conditions reveal gaps that theoretical designs can miss. | Develop and validate the approach through Alpha. |\n| Global ambition | Competing on innovation and quality requires sustained engineering capability. | Expand demonstrated capabilities, then develop selected industrial products. |\n| Human and environmental responsibility | Industrial progress affects people, communities and the environment. | Treat human agency and consequences as part of organizational decisions. |",
+    "terms": "India software plus X software+x global ambition why Voltron",
+    "aliases": [
+      "India",
+      "software plus X",
+      "software+x",
+      "global ambition",
+      "why Voltron"
+    ],
+    "section": "Six connected observations",
+    "qualification": "These are Voltron’s strategic interpretations, not a sourced economic forecast. This package does not establish job-loss statistics, a market valuation, a government endorsement or a guaranteed national outcome. Use constructive language about capability development; do not describe India or its people using derogatory metaphors from brainstorming. Comparisons to global industrial-software companies express ambition, not verified feature parity or competitive superiority.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "55e6884f86e679f94be8a1483b0afcb2fc205e5b6e61d0415663ecebd8144414",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-vision--story-for-a-visitor",
+    "topicId": "VL-VISION",
+    "title": "India vision: the connected story — Story for a visitor",
+    "href": "/about",
+    "status": "positioning",
+    "body": "India has talent, entrepreneurial energy and substantial industrial experience. The opportunity is to make more of that capability repeatable: knowledge that survives a shift change, quality supported by evidence, and systems that improve as they grow. AI adds another reason to invest in judgment and creativity. Voltron Lattice begins where these ideas meet—in manufacturing—and aims to connect physical work, context and intelligence into a stronger industrial foundation.\n\nThe longer ambition is an Indian-rooted organization capable of competing globally through technology, innovation and quality, while creating room for people to develop their own excellence.",
+    "terms": "India software plus X software+x global ambition why Voltron",
+    "aliases": [
+      "India",
+      "software plus X",
+      "software+x",
+      "global ambition",
+      "why Voltron"
+    ],
+    "section": "Story for a visitor",
+    "qualification": "These are Voltron’s strategic interpretations, not a sourced economic forecast. This package does not establish job-loss statistics, a market valuation, a government endorsement or a guaranteed national outcome. Use constructive language about capability development; do not describe India or its people using derogatory metaphors from brainstorming. Comparisons to global industrial-software companies express ambition, not verified feature parity or competitive superiority.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "7c3aaea96ebaebcf5cda073e39a6fe00ba33f287ede0d2bf14bfbfb843d3b080",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-vision--evidence-discipline",
+    "topicId": "VL-VISION",
+    "title": "India vision: the connected story — Evidence discipline",
+    "href": "/about",
+    "status": "positioning",
+    "body": "These are Voltron’s strategic interpretations, not a sourced economic forecast. This package does not establish job-loss statistics, a market valuation, a government endorsement or a guaranteed national outcome. Use constructive language about capability development; do not describe India or its people using derogatory metaphors from brainstorming. Comparisons to global industrial-software companies express ambition, not verified feature parity or competitive superiority.",
+    "terms": "India software plus X software+x global ambition why Voltron",
+    "aliases": [
+      "India",
+      "software plus X",
+      "software+x",
+      "global ambition",
+      "why Voltron"
+    ],
+    "section": "Evidence discipline",
+    "qualification": "These are Voltron’s strategic interpretations, not a sourced economic forecast. This package does not establish job-loss statistics, a market valuation, a government endorsement or a guaranteed national outcome. Use constructive language about capability development; do not describe India or its people using derogatory metaphors from brainstorming. Comparisons to global industrial-software companies express ambition, not verified feature parity or competitive superiority.",
+    "relationships": [
+      {
+        "id": "E01",
+        "from": "VL-IDENTITY",
+        "relation": "expresses",
+        "to": "VL-VISION",
+        "status": "positioning",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "458ae2ecff2696667f5168dcb12a80a2a79439e14f035a2c1a47b2301a59ffab",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-roadmap--status",
+    "topicId": "VL-ROADMAP",
+    "title": "Ten-year direction and milestones — Status",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "An indicative vision, not a delivery commitment. Years are measured from the start of operations, as described on the current website. No calendar start date is established here. Do not convert relative years into dates or represent milestones as completed.\n\n| Phase | Intended direction | Public technology description | Evidence needed before claiming completion |\n|---|---|---|---|\n| Years 1–2 | Develop and prove Alpha | Connect execution, manufacturing context, quality evidence and intelligence in the initial surface-treatment environment. | Verified operating readiness and documented validation. |\n| Years 3–4 | Expand demonstrated capability | Carry reviewed process knowledge and configurations into selected additional operating environments or partnerships. | Deployment-specific readiness, repeatability and accountable support. |\n| Year 5 | Begin dedicated product development alongside expansion | Select recurring industrial problems for focused product discovery, engineering and validation. | Approved product program, scoped problem and validation plan. |\n| Years 6–7 | Compete globally | Selected products pursue markets with dependable quality and support. | Customer validation, product quality, support and market readiness. |\n| Years 8–10 | Establish the brand | Original products, sustained quality and lifecycle support earn lasting trust. | Repeat demand, original capability and dependable lifecycle support. |",
+    "terms": "roadmap 10 year ten years year five products",
+    "aliases": [
+      "roadmap",
+      "10 year",
+      "ten years",
+      "year five",
+      "products"
+    ],
+    "section": "Status",
+    "qualification": "An indicative vision, not a delivery commitment. Years are measured from the start of operations, as described on the current website. No calendar start date is established here. Do not convert relative years into dates or represent milestones as completed.\n\n| Phase | Intended direction | Public technology description | Evidence needed before claiming completion |\n|---|---|---|---|\n| Years 1–2 | Develop and prove Alpha | Connect execution, manufacturing context, quality evidence and intelligence in the initial surface-treatment environment. | Verified operating readiness and documented validation. |\n| Years 3–4 | Expand demonstrated capability | Carry reviewed process knowledge and configurations into selected additional operating environments or partnerships. | Deployment-specific readiness, repeatability and accountable support. |\n| Year 5 | Begin dedicated product development alongside expansion | Select recurring industrial problems for focused product discovery, engineering and validation. | Approved product program, scoped problem and validation plan. |\n| Years 6–7 | Compete globally | Selected products pursue markets with dependable quality and support. | Customer validation, product quality, support and market readiness. |\n| Years 8–10 | Establish the brand | Original products, sustained quality and lifecycle support earn lasting trust. | Repeat demand, original capability and dependable lifecycle support. |\n\nNo fixed factory count, revenue, valuation, market share, product catalog or launch date is established here. Dedicated product development is a future direction, not proof that products can be ordered now. “Exponential growth” expresses ambition, not a forecast.",
+    "relationships": [
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "7511c64b5e36c0bff588efc32dab53f1d7606bee151881ec07c05662da43efc8",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-roadmap--how-growth-connects",
+    "topicId": "VL-ROADMAP",
+    "title": "Ten-year direction and milestones — How growth connects",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "Operating experience informs reusable capability. Reusable capability can support expansion. Recurring needs can inform proprietary product opportunities. Each step still requires engineering, validation and judgment; expansion is not automatic replication.",
+    "terms": "roadmap 10 year ten years year five products",
+    "aliases": [
+      "roadmap",
+      "10 year",
+      "ten years",
+      "year five",
+      "products"
+    ],
+    "section": "How growth connects",
+    "qualification": "An indicative vision, not a delivery commitment. Years are measured from the start of operations, as described on the current website. No calendar start date is established here. Do not convert relative years into dates or represent milestones as completed.\n\n| Phase | Intended direction | Public technology description | Evidence needed before claiming completion |\n|---|---|---|---|\n| Years 1–2 | Develop and prove Alpha | Connect execution, manufacturing context, quality evidence and intelligence in the initial surface-treatment environment. | Verified operating readiness and documented validation. |\n| Years 3–4 | Expand demonstrated capability | Carry reviewed process knowledge and configurations into selected additional operating environments or partnerships. | Deployment-specific readiness, repeatability and accountable support. |\n| Year 5 | Begin dedicated product development alongside expansion | Select recurring industrial problems for focused product discovery, engineering and validation. | Approved product program, scoped problem and validation plan. |\n| Years 6–7 | Compete globally | Selected products pursue markets with dependable quality and support. | Customer validation, product quality, support and market readiness. |\n| Years 8–10 | Establish the brand | Original products, sustained quality and lifecycle support earn lasting trust. | Repeat demand, original capability and dependable lifecycle support. |\n\nNo fixed factory count, revenue, valuation, market share, product catalog or launch date is established here. Dedicated product development is a future direction, not proof that products can be ordered now. “Exponential growth” expresses ambition, not a forecast.",
+    "relationships": [
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "927a6c5bbc01892fe31e957aaa11abfdbb7a6c26b56a013fae4ebf720402033a",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-roadmap--what-is-not-promised",
+    "topicId": "VL-ROADMAP",
+    "title": "Ten-year direction and milestones — What is not promised",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "No fixed factory count, revenue, valuation, market share, product catalog or launch date is established here. Dedicated product development is a future direction, not proof that products can be ordered now. “Exponential growth” expresses ambition, not a forecast.",
+    "terms": "roadmap 10 year ten years year five products",
+    "aliases": [
+      "roadmap",
+      "10 year",
+      "ten years",
+      "year five",
+      "products"
+    ],
+    "section": "What is not promised",
+    "qualification": "An indicative vision, not a delivery commitment. Years are measured from the start of operations, as described on the current website. No calendar start date is established here. Do not convert relative years into dates or represent milestones as completed.\n\n| Phase | Intended direction | Public technology description | Evidence needed before claiming completion |\n|---|---|---|---|\n| Years 1–2 | Develop and prove Alpha | Connect execution, manufacturing context, quality evidence and intelligence in the initial surface-treatment environment. | Verified operating readiness and documented validation. |\n| Years 3–4 | Expand demonstrated capability | Carry reviewed process knowledge and configurations into selected additional operating environments or partnerships. | Deployment-specific readiness, repeatability and accountable support. |\n| Year 5 | Begin dedicated product development alongside expansion | Select recurring industrial problems for focused product discovery, engineering and validation. | Approved product program, scoped problem and validation plan. |\n| Years 6–7 | Compete globally | Selected products pursue markets with dependable quality and support. | Customer validation, product quality, support and market readiness. |\n| Years 8–10 | Establish the brand | Original products, sustained quality and lifecycle support earn lasting trust. | Repeat demand, original capability and dependable lifecycle support. |\n\nNo fixed factory count, revenue, valuation, market share, product catalog or launch date is established here. Dedicated product development is a future direction, not proof that products can be ordered now. “Exponential growth” expresses ambition, not a forecast.",
+    "relationships": [
+      {
+        "id": "E04",
+        "from": "VL-VISION",
+        "relation": "is_phased_by",
+        "to": "VL-ROADMAP",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S03",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "b92422b9edac4440bb9b73fb5285338151594e1af739207f6b81d6a3fec1f2f7",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-vos--short-answer",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Short answer",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "VOS is Voltron’s manufacturing operating-system direction: connecting what happens in production, what that activity means, and how people can use the evidence to make better decisions.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Short answer",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "794af9aca0205e9f942196c7b1574bb0c078f24e0bfe1e42e97046d28cc6e192",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--execution",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Execution",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "Execution concerns physical operations and their accountable workflows: equipment, production steps, supervision, quality checks and authorized release. Deterministic machine control belongs to appropriate control systems. A conversational assistant is not a machine controller.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Execution",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "5721a5b1175e1ea2b8bb69398501161828cdffd83d3470f4ad859d6927c7f38b",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--context",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Context",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "Context connects a reading or record to the relevant part, lot, equipment, process step, requirement and time. An isolated measurement becomes more useful when its manufacturing meaning is known. V-MO is the shared-language direction behind these identities and relationships.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Context",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "ea6793fd7d5313d4b47738e11947d0470ff7b758e14db36c87142504a68c0e58",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--intelligence",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Intelligence",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "Intelligence helps people investigate evidence, find relevant knowledge, understand situations and prepare decisions. An AI suggestion is not automatically a verified fact, an approval or an executed action.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Intelligence",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "da0da8d8f7e059480c562cd872f225c26283ebb3dfe372f5250ee29d027f35e3",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--illustrative-example",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Illustrative example",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "A quality result for a component can be understood alongside the applicable requirement, production lot and relevant process history. A user could investigate the situation using that context. This explains the intended relationship; it does not demonstrate a commissioned workflow or guarantee a quality result.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Illustrative example",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "2b04f88e2591db617f2d2d0414c35b0643c0bf5d935a3477905c4346bc9d849b",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--product-framing",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Product framing",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Product framing",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "79c8cbf6d2d60811bac0935959f2309781812bfd2818a715d3ad371473d60a95",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-vos--public-ai-principle",
+    "topicId": "VL-VOS",
+    "title": "VOS: execution, context and intelligence — Public AI principle",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "**AI investigates. Evidence supports. Humans decide.** Appropriate human and system responsibilities remain visible. Do not claim autonomous direct PLC operation or unsupervised safety-critical decisions.",
+    "terms": "VOS operating system execution context intelligence",
+    "aliases": [
+      "VOS",
+      "operating system",
+      "execution",
+      "context",
+      "intelligence"
+    ],
+    "section": "Public AI principle",
+    "qualification": "VOS is broader than a standalone chatbot. It connects industrial applications and operating context. The material does not establish a currently purchasable software edition, price list, integration guarantee or certified feature matrix.",
+    "relationships": [
+      {
+        "id": "E02",
+        "from": "VL-IDENTITY",
+        "relation": "is_building",
+        "to": "VL-VOS",
+        "status": "in_development",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "ee2429baad99a2c79395b3bf5a072ec38bde152fc1fb6b8888ec7e55e0e884af",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-ontology--short-answer",
+    "topicId": "VL-ONTOLOGY",
+    "title": "V-MO: connected manufacturing meaning — Short answer",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "V-MO is Voltron’s manufacturing ontology direction: a shared way to identify manufacturing things and describe their relationships, so systems and people can work with meaningful context.",
+    "terms": "V-MO VMO ontology connected by meaning manufacturing ontology",
+    "aliases": [
+      "V-MO",
+      "VMO",
+      "ontology",
+      "connected by meaning",
+      "manufacturing ontology"
+    ],
+    "section": "Short answer",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "f90e39f7644c0f2e70a4bd8b8504fd95fe314e14371af42329403b0abc5deb0f",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-ontology--plain-language-explanation",
+    "topicId": "VL-ONTOLOGY",
+    "title": "V-MO: connected manufacturing meaning — Plain-language explanation",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "One system may record a production lot, another a quality result, and another equipment activity. The objective is to connect their meaning: which result belongs to which lot, what requirement applies, and which process context is relevant. A connected model helps avoid treating every record as an unrelated fragment.",
+    "terms": "V-MO VMO ontology connected by meaning manufacturing ontology",
+    "aliases": [
+      "V-MO",
+      "VMO",
+      "ontology",
+      "connected by meaning",
+      "manufacturing ontology"
+    ],
+    "section": "Plain-language explanation",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "35d72916a610aaefeb54746dbdf3fa6f403a06bf419a3b52b5029bbb04a4fd01",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-ontology--public-conceptual-relationships",
+    "topicId": "VL-ONTOLOGY",
+    "title": "V-MO: connected manufacturing meaning — Public conceptual relationships",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "- A part can belong to a production lot.\n- A lot follows a process route.\n- A process step involves equipment and applicable requirements.\n- Quality evidence relates to the relevant product and requirement.\n- A decision should retain its evidence and accountable owner.\n\nThese examples are explanatory. They are not an export of the proprietary schema, database design or implementation contract.",
+    "terms": "V-MO VMO ontology connected by meaning manufacturing ontology",
+    "aliases": [
+      "V-MO",
+      "VMO",
+      "ontology",
+      "connected by meaning",
+      "manufacturing ontology"
+    ],
+    "section": "Public conceptual relationships",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "9444c15322ca43a320c758ed8a3d4b16add5e8b2e10902cf8e408de535378db1",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-ontology--what-connected-meaning-does-not-imply",
+    "topicId": "VL-ONTOLOGY",
+    "title": "V-MO: connected manufacturing meaning — What connected meaning does not imply",
+    "href": "/technology#operating-platform",
+    "status": "in development",
+    "body": "It does not mean every customer sees every record, all information must occupy one database, or AI becomes the authority for physical truth. Shared meaning and governed access are compatible.",
+    "terms": "V-MO VMO ontology connected by meaning manufacturing ontology",
+    "aliases": [
+      "V-MO",
+      "VMO",
+      "ontology",
+      "connected by meaning",
+      "manufacturing ontology"
+    ],
+    "section": "What connected meaning does not imply",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E05",
+        "from": "VL-VOS",
+        "relation": "uses_shared_meaning_from",
+        "to": "VL-ONTOLOGY",
+        "status": "intended_architecture",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "003262a13559e6010b10f625371933244bcedd83cbf818540869a1367c22a075",
+    "siteExcerpt": "Choose a chapter to follow one lot from the customer order to dispatch."
+  },
+  {
+    "id": "vl-ai--short-answer",
+    "topicId": "VL-AI",
+    "title": "Industrial intelligence and human judgment — Short answer",
+    "href": "/intelligence",
+    "status": "in development",
+    "body": "Voltron’s intelligence direction is contextual assistance for industrial work: help people understand evidence, investigate questions and prepare responsible decisions.",
+    "terms": "AI agents autonomy automation decision support",
+    "aliases": [
+      "AI",
+      "agents",
+      "autonomy",
+      "automation",
+      "decision support"
+    ],
+    "section": "Short answer",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "6230904afc80dce3227f9ad99f7fc71b76caaefd1dcbc536a6b9497f4ce064a5",
+    "siteExcerpt": "Quality evidence, specialist assistance and human judgment connected to the manufacturing situation."
+  },
+  {
+    "id": "vl-ai--intended-assistance",
+    "topicId": "VL-AI",
+    "title": "Industrial intelligence and human judgment — Intended assistance",
+    "href": "/intelligence",
+    "status": "in development",
+    "body": "| Need | Public explanation |\n|---|---|\n| Understand a situation | Bring the relevant manufacturing context together. |\n| Find knowledge | Locate applicable documents or evidence within permitted access. |\n| Investigate a deviation | Help compare observations and identify questions to examine. |\n| Prepare a decision | Organize the reasoning, evidence and remaining uncertainty. |\n| Learn from experience | Carry reviewed lessons into reusable knowledge. |\n\nThese are intended roles, not a list of certified, deployed features. The website guide explains Voltron; it cannot inspect a visitor’s factory or diagnose production without an authorized, separately implemented system.",
+    "terms": "AI agents autonomy automation decision support",
+    "aliases": [
+      "AI",
+      "agents",
+      "autonomy",
+      "automation",
+      "decision support"
+    ],
+    "section": "Intended assistance",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "e644d2010dbb84a813c71b696f90d39e5519130dde1d5c29f4813a0677773a85",
+    "siteExcerpt": "Quality evidence, specialist assistance and human judgment connected to the manufacturing situation."
+  },
+  {
+    "id": "vl-ai--automation-and-autonomy",
+    "topicId": "VL-AI",
+    "title": "Industrial intelligence and human judgment — Automation and autonomy",
+    "href": "/intelligence",
+    "status": "in development",
+    "body": "Automation can repeat a defined operation. Broader autonomy requires reliable context, constraints, uncertainty handling and clear responsibility. Voltron’s public story should explain why these conditions matter without claiming that autonomous operation has already been achieved.",
+    "terms": "AI agents autonomy automation decision support",
+    "aliases": [
+      "AI",
+      "agents",
+      "autonomy",
+      "automation",
+      "decision support"
+    ],
+    "section": "Automation and autonomy",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "930c0e228d9cbd74884ee50376f043156f01cc8a0c875de86b3c7e61ddc6ecdc",
+    "siteExcerpt": "Quality evidence, specialist assistance and human judgment connected to the manufacturing situation."
+  },
+  {
+    "id": "vl-ai--working-with-people",
+    "topicId": "VL-AI",
+    "title": "Industrial intelligence and human judgment — Working with people",
+    "href": "/intelligence",
+    "status": "in development",
+    "body": "People remain responsible for direction, judgment and consequential decisions. Useful AI should make evidence and uncertainty easier to examine, not hide them behind fluent language. No guaranteed productivity, defect reduction or cost-saving percentage is available in this corpus.",
+    "terms": "AI agents autonomy automation decision support",
+    "aliases": [
+      "AI",
+      "agents",
+      "autonomy",
+      "automation",
+      "decision support"
+    ],
+    "section": "Working with people",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E06",
+        "from": "VL-VOS",
+        "relation": "includes_intelligence_direction",
+        "to": "VL-AI",
+        "status": "in_development",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "9a93942ac6a41da047c91441050c1d23ce67fefb7a63626daba2058c9a54a0e2",
+    "siteExcerpt": "Quality evidence, specialist assistance and human judgment connected to the manufacturing situation."
+  },
+  {
+    "id": "vl-alpha--short-answer",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Short answer",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Voltron Alpha is the first manufacturing environment in Voltron’s plan for developing and validating its approach under real production conditions, initially focused on surface treatment.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Short answer",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "dfa0ae60d49aba4629e948ae1de85e37b54f7b8f6acf8f470c324536f0c094ce",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--readiness",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Readiness",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Readiness",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "9b307f7bbf72ed68553aaefdc692b18bcce84af5f846b4515b51939ba9555ce9",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--process-scope-discussed",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Process scope discussed",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Phosphating, CED and powder coating appear in the public content direction. Their individual operating status and suitability must be confirmed. Do not infer capacity, substrate compatibility, corrosion performance, test hours, certification or delivery dates from illustrative artwork.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Process scope discussed",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "d2ef28c97f8d8ef2fb3e91312f57b47a802fc0c7681b3ae956e599ec6545b665",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--why-this-application",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Why this application",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Surface treatment brings preparation, processing, equipment, quality evidence and release into a connected sequence. What happens at one stage can affect another. This makes it a useful initial setting for examining coherent production and learning from practical conditions.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Why this application",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "77afef438ebc563f0f21c6ee9590c37fcbf2445e5fdddda2f9a173e0599bc388",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--intended-production-conversation",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Intended production conversation",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Understand the part and requirements; review the proposed process route; establish applicable inspection needs; confirm scope and readiness; then agree the next commercial or technical step. A chat is not a quotation or production booking.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Intended production conversation",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "bc1a7a6067ab14270cb5b9f33be9ee4a1400e82c959d4b69a793aeb26a7f263c",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--information-a-visitor-may-share",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Information a visitor may share",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Part/application, required process or need for guidance, expected volume and units, quality specifications and timeline. Do not request confidential drawings or process recipes in ordinary chat. Use an approved secure channel if technical files are needed.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Information a visitor may share",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "37ac74cc7cc29c5996264b7f6f90916dbdda557c2d776ec974e0ca9d8296ef0b",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-alpha--illustrations",
+    "topicId": "VL-ALPHA",
+    "title": "Voltron Alpha and surface treatment — Illustrations",
+    "href": "/manufacturing",
+    "status": "in development",
+    "body": "Three-tank demonstrations, thirteen-tank line artwork, gantries and animated components in earlier design discussions are marketing representations. They must not become factual plant specifications in answers.",
+    "terms": "Alpha Voltron Alpha manufacturing surface treatment CED phosphating powder coating",
+    "aliases": [
+      "Alpha",
+      "Voltron Alpha",
+      "manufacturing",
+      "surface treatment",
+      "CED",
+      "phosphating",
+      "powder coating"
+    ],
+    "section": "Illustrations",
+    "qualification": "Alpha is in development. Commissioning, commercial readiness, physical validation and CED certification remain unconfirmed. Confirm availability and suitability for the specific requirement with the production team.",
+    "relationships": [
+      {
+        "id": "E07",
+        "from": "VL-VOS",
+        "relation": "is_intended_for_validation_in",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S01",
+          "S03"
+        ]
+      },
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "ad2c5692fed928205f9e4fa7bc0323fe42a659211a2c07a2bfa6caca8240de93",
+    "siteExcerpt": "Follow one lot through Alpha’s illustrative 13-tank square-U treatment line, with execution, manufacturing context and evidence connected to each operation."
+  },
+  {
+    "id": "vl-network--short-answer",
+    "topicId": "VL-NETWORK",
+    "title": "Factory network and reusable capability — Short answer",
+    "href": "/network",
+    "status": "direction",
+    "body": "Voltron’s intended network combines directly operated environments with selected factory partnerships, using a reusable manufacturing foundation while respecting the configuration and responsibilities of each factory.",
+    "terms": "network Core Process Packs factory JV factory partnership scaling",
+    "aliases": [
+      "network",
+      "Core",
+      "Process Packs",
+      "factory JV",
+      "factory partnership",
+      "scaling"
+    ],
+    "section": "Short answer",
+    "qualification": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.\n\nThis is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "relationships": [
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "c944987a44b0fe11f469730a8f0b3ac14632c79c3140f9663c7edabff6d1bbcc",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "vl-network--reusable-foundation",
+    "topicId": "VL-NETWORK",
+    "title": "Factory network and reusable capability — Reusable foundation",
+    "href": "/network",
+    "status": "direction",
+    "body": "The public blueprint calls the reusable foundation Voltron Core. Process Packs describe the direction for carrying reviewed knowledge for particular manufacturing applications. Each new process family needs its own engineering and validation; the shared foundation does not make every industrial process immediately supported.",
+    "terms": "network Core Process Packs factory JV factory partnership scaling",
+    "aliases": [
+      "network",
+      "Core",
+      "Process Packs",
+      "factory JV",
+      "factory partnership",
+      "scaling"
+    ],
+    "section": "Reusable foundation",
+    "qualification": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.\n\nThis is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "relationships": [
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "46c8cef9bc507b249d22dcc068cb840f41b77a0a04ec327ace59c91696f6da50",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "vl-network--operating-and-partnership-paths",
+    "topicId": "VL-NETWORK",
+    "title": "Factory network and reusable capability — Operating and partnership paths",
+    "href": "/network",
+    "status": "direction",
+    "body": "Direct operations connect architecture decisions to production conditions. Partnerships may combine a partner’s assets, capital, market access or industrial capabilities with Voltron’s technology and engineering approach. Contributions, responsibilities and commercial terms are established for each opportunity.",
+    "terms": "network Core Process Packs factory JV factory partnership scaling",
+    "aliases": [
+      "network",
+      "Core",
+      "Process Packs",
+      "factory JV",
+      "factory partnership",
+      "scaling"
+    ],
+    "section": "Operating and partnership paths",
+    "qualification": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.\n\nThis is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "relationships": [
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "ba4d6393320881ecd5660f68484d2c24591683fd31ff1a77dee846b04b4d91e7",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "vl-network--shared-learning-with-boundaries",
+    "topicId": "VL-NETWORK",
+    "title": "Factory network and reusable capability — Shared learning with boundaries",
+    "href": "/network",
+    "status": "direction",
+    "body": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.",
+    "terms": "network Core Process Packs factory JV factory partnership scaling",
+    "aliases": [
+      "network",
+      "Core",
+      "Process Packs",
+      "factory JV",
+      "factory partnership",
+      "scaling"
+    ],
+    "section": "Shared learning with boundaries",
+    "qualification": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.\n\nThis is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "relationships": [
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "678c291d746435d5cdeb97524476625eb02b748ecaa56054043deca8eaa74674",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "vl-network--status",
+    "topicId": "VL-NETWORK",
+    "title": "Factory network and reusable capability — Status",
+    "href": "/network",
+    "status": "direction",
+    "body": "This is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "terms": "network Core Process Packs factory JV factory partnership scaling",
+    "aliases": [
+      "network",
+      "Core",
+      "Process Packs",
+      "factory JV",
+      "factory partnership",
+      "scaling"
+    ],
+    "section": "Status",
+    "qualification": "Reusable methods and reviewed lessons can improve future deployments. Customer information and plant-specific operations remain governed in their permitted context. A network does not imply unrestricted data sharing.\n\nThis is a scaling direction. Do not describe illustrative factory nodes as live locations, infer an operating fleet or offer standard JV terms. Future network diagrams must be labelled as such.",
+    "relationships": [
+      {
+        "id": "E08",
+        "from": "VL-ALPHA",
+        "relation": "can_inform",
+        "to": "VL-NETWORK",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "986e9816bb01da1c69d58bcaecc38ac9ef1c7edeedab45438ad32512a75094ab",
+    "siteExcerpt": "One architecture and multiple paths to scale, through directly operated plants and future factory partnerships."
+  },
+  {
+    "id": "vl-products--short-answer",
+    "topicId": "VL-PRODUCTS",
+    "title": "Industrial product development — Short answer",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "Voltron intends to use recurring needs encountered in industrial work as a starting point for selected proprietary product development. This is a future direction alongside manufacturing expansion.",
+    "terms": "products deep tech innovation product development",
+    "aliases": [
+      "products",
+      "deep tech",
+      "innovation",
+      "product development"
+    ],
+    "section": "Short answer",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "1d35a349dbc59fa7079e4832832c2ffe1bc2ff9742c9f8affd18c1a6d47ef8b0",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-products--distinct-growth-paths",
+    "topicId": "VL-PRODUCTS",
+    "title": "Industrial product development — Distinct growth paths",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "Manufacturing expansion extends process capability and operating environments. Product development turns selected problems into engineered solutions that need their own discovery, validation and support. These paths can inform one another without being the same business activity.",
+    "terms": "products deep tech innovation product development",
+    "aliases": [
+      "products",
+      "deep tech",
+      "innovation",
+      "product development"
+    ],
+    "section": "Distinct growth paths",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "38687dc673a64edd902054ca551b9055ba594cccb9d3d3bf0de13c2adbf997c9",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-products--timing-and-ambition",
+    "topicId": "VL-PRODUCTS",
+    "title": "Industrial product development — Timing and ambition",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "The ten-year vision places the beginning of dedicated product development around Year 5, subject to validation and priorities. The ambition is to compete globally on innovation, technology and quality with Indian roots. No current catalog, orderable product, release date or global certification follows from that ambition.",
+    "terms": "products deep tech innovation product development",
+    "aliases": [
+      "products",
+      "deep tech",
+      "innovation",
+      "product development"
+    ],
+    "section": "Timing and ambition",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "62f0cb0f20ee30c1d737bc4e6d42c4d940323565b1358238bae6ac6daa4c51d3",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-products--visitor-response",
+    "topicId": "VL-PRODUCTS",
+    "title": "Industrial product development — Visitor response",
+    "href": "/about#roadmap",
+    "status": "direction",
+    "body": "For a proposed product collaboration, understand the problem, application and desired outcome before discussing fit. Do not promise customization or development commitments on behalf of the company.",
+    "terms": "products deep tech innovation product development",
+    "aliases": [
+      "products",
+      "deep tech",
+      "innovation",
+      "product development"
+    ],
+    "section": "Visitor response",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E09",
+        "from": "VL-NETWORK",
+        "relation": "may_generate_needs_for",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E10",
+        "from": "VL-ROADMAP",
+        "relation": "includes_future_phase",
+        "to": "VL-PRODUCTS",
+        "status": "planned",
+        "sources": [
+          "S04",
+          "S05"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04",
+      "S05"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "4a9d8e84dd2207e1a0584fc5d7b9a0877b0f27c3bee23164fd2b1d623719cff1",
+    "siteExcerpt": "Process capability, connected intelligence and quality come first. Original products and global competitiveness follow demonstrated readiness. Milestones are ambitions, measured from the start of operations."
+  },
+  {
+    "id": "vl-human--short-answer",
+    "topicId": "VL-HUMAN",
+    "title": "Human Lattice and organizational philosophy — Short answer",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "Human Lattice expresses the human side of Voltron’s organizing idea: distinct people developing their own excellence while contributing to a meaningful whole.\n\n**Individual excellence. Aligned to the whole.**\n\nEach individual strengthens the whole. The whole creates room for individual growth. Shared purpose should preserve distinct perspectives, agency and responsible disagreement.",
+    "terms": "Human Lattice People Culture individual excellence culture future skills",
+    "aliases": [
+      "Human Lattice",
+      "People Culture",
+      "individual excellence",
+      "culture",
+      "future skills"
+    ],
+    "section": "Short answer",
+    "qualification": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "relationships": [
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "484952719444b7348a4c127ccb696866d183fb7aa06b2f02b93de371624c2752",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "vl-human--qualities-to-cultivate",
+    "topicId": "VL-HUMAN",
+    "title": "Human Lattice and organizational philosophy — Qualities to cultivate",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "| Quality | Meaning in work |\n|---|---|\n| Depth | Understand the problem and examine assumptions before settling on an answer. |\n| Craft | Care about how work is designed, built, operated, documented and improved. |\n| Courage | Raise concerns, acknowledge mistakes and accept responsibility. |\n| Imagination | Connect disciplines and explore possibilities beyond the familiar method. |\n| Humanity | Consider the dignity, constraints and agency of people affected. |",
+    "terms": "Human Lattice People Culture individual excellence culture future skills",
+    "aliases": [
+      "Human Lattice",
+      "People Culture",
+      "individual excellence",
+      "culture",
+      "future skills"
+    ],
+    "section": "Qualities to cultivate",
+    "qualification": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "relationships": [
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "b7dd095528796abbda07749667aad29bd7610084c7a3cb6b5c1e57f2ee577fd5",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "vl-human--skills-for-an-ai-era",
+    "topicId": "VL-HUMAN",
+    "title": "Human Lattice and organizational philosophy — Skills for an AI era",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "Framing useful questions, first-principles reasoning, domain knowledge, creativity, taste, evidence evaluation, systems thinking and emotional intelligence all matter to the culture being built. AI can expand possibilities; choosing worthwhile directions and accepting consequences remain essential responsibilities.",
+    "terms": "Human Lattice People Culture individual excellence culture future skills",
+    "aliases": [
+      "Human Lattice",
+      "People Culture",
+      "individual excellence",
+      "culture",
+      "future skills"
+    ],
+    "section": "Skills for an AI era",
+    "qualification": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "relationships": [
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "86b56ce75779b167d18cbcc700964025e71586ea150b6af72408f116597278f6",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "vl-human--organizational-expression",
+    "topicId": "VL-HUMAN",
+    "title": "Human Lattice and organizational philosophy — Organizational expression",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "Make reasoning visible, responsibility clear and learning part of work. Assess contribution through capability, care and results. People Culture describes intended conditions inside Voltron. Commons concerns wider access and opportunity beyond it.",
+    "terms": "Human Lattice People Culture individual excellence culture future skills",
+    "aliases": [
+      "Human Lattice",
+      "People Culture",
+      "individual excellence",
+      "culture",
+      "future skills"
+    ],
+    "section": "Organizational expression",
+    "qualification": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "relationships": [
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "b51e216978688b01c860507e69c8c5e88a733032ebafb599a40d5d7355494d93",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "vl-human--status-and-boundaries",
+    "topicId": "VL-HUMAN",
+    "title": "Human Lattice and organizational philosophy — Status and boundaries",
+    "href": "/about#culture",
+    "status": "positioning",
+    "body": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "terms": "Human Lattice People Culture individual excellence culture future skills",
+    "aliases": [
+      "Human Lattice",
+      "People Culture",
+      "individual excellence",
+      "culture",
+      "future skills"
+    ],
+    "section": "Status and boundaries",
+    "qualification": "This is a philosophy and cultural ambition, not an audit that all practices exist or a guarantee of employment benefits. Invitations to contribute do not imply open jobs, internships or fellowships. Do not invent application deadlines.",
+    "relationships": [
+      {
+        "id": "E03",
+        "from": "VL-IDENTITY",
+        "relation": "embodies",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01",
+          "S04"
+        ]
+      },
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E15",
+        "from": "VL-AI",
+        "relation": "depends_on_responsible_judgment_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S02",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "e11a7182779ab69d55f6bf208d2dd1b64c6d8f912b5e87dabd3050944583b343",
+    "siteExcerpt": "The eight cubes around the head represent capabilities our people develop through practice. Select one to see how it shapes the work."
+  },
+  {
+    "id": "vl-commons--short-answer",
+    "topicId": "VL-COMMONS",
+    "title": "Voltron Commons: access, learning and possibility — Short answer",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "Voltron Commons is a developing vision for opening pathways to access, learning, inquiry and creative practice beyond the company. Its guiding belief is that human progress should deepen alongside technological progress.",
+    "terms": "Commons Voltron Commons access learning fellowship residency",
+    "aliases": [
+      "Commons",
+      "Voltron Commons",
+      "access",
+      "learning",
+      "fellowship",
+      "residency"
+    ],
+    "section": "Short answer",
+    "qualification": "Do not invent beneficiaries, grants, selection criteria, fees, dates or enrollment links. If asked to apply, explain that this package does not confirm an open program and offer the verified contact route when available.",
+    "relationships": [
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "418ea33ece1d62380f58c59e8f2cd9025b28b1fb0367b64f298e335ac79a515f",
+    "siteExcerpt": "Explore manufacturing, exchange perspectives and help shape developing directions for access, learning and shared progress."
+  },
+  {
+    "id": "vl-commons--intended-directions",
+    "topicId": "VL-COMMONS",
+    "title": "Voltron Commons: access, learning and possibility — Intended directions",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "- Access: encounters with ideas, people and disciplines that expand possibility.\n- Apprenticeship: learning through real work, observation and craft.\n- Fellowships: potential opportunities for sustained inquiry or meaningful work.\n- Residencies: possible exchanges involving artists, thinkers and practitioners.\n- Regeneration: responsible attention to environments, relationships, nature and reflection.\n\nThese are directions under consideration, not announced programs. Nature and environmental responsibility are part of the philosophy; they do not establish emissions, sustainability or impact credentials.",
+    "terms": "Commons Voltron Commons access learning fellowship residency",
+    "aliases": [
+      "Commons",
+      "Voltron Commons",
+      "access",
+      "learning",
+      "fellowship",
+      "residency"
+    ],
+    "section": "Intended directions",
+    "qualification": "Do not invent beneficiaries, grants, selection criteria, fees, dates or enrollment links. If asked to apply, explain that this package does not confirm an open program and offer the verified contact route when available.",
+    "relationships": [
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "378d5db9e38d945f5fbb4383566942188cf49df5c88f033f8f98eba89165d13f",
+    "siteExcerpt": "Explore manufacturing, exchange perspectives and help shape developing directions for access, learning and shared progress."
+  },
+  {
+    "id": "vl-commons--collaboration",
+    "topicId": "VL-COMMONS",
+    "title": "Voltron Commons: access, learning and possibility — Collaboration",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "Educators, artists, practitioners and organizations may explore a relevant collaboration. Understand the proposed pathway and people it could benefit. Confirm whether a specific initiative exists before giving participation instructions.",
+    "terms": "Commons Voltron Commons access learning fellowship residency",
+    "aliases": [
+      "Commons",
+      "Voltron Commons",
+      "access",
+      "learning",
+      "fellowship",
+      "residency"
+    ],
+    "section": "Collaboration",
+    "qualification": "Do not invent beneficiaries, grants, selection criteria, fees, dates or enrollment links. If asked to apply, explain that this package does not confirm an open program and offer the verified contact route when available.",
+    "relationships": [
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "c21c51d746b4ecfc19720fcd1a8730c8f965b69682cd7ef4121bd2da3d55150a",
+    "siteExcerpt": "Explore manufacturing, exchange perspectives and help shape developing directions for access, learning and shared progress."
+  },
+  {
+    "id": "vl-commons--public-claim-boundary",
+    "topicId": "VL-COMMONS",
+    "title": "Voltron Commons: access, learning and possibility — Public claim boundary",
+    "href": "/about/voltron-commons",
+    "status": "in development",
+    "body": "Do not invent beneficiaries, grants, selection criteria, fees, dates or enrollment links. If asked to apply, explain that this package does not confirm an open program and offer the verified contact route when available.",
+    "terms": "Commons Voltron Commons access learning fellowship residency",
+    "aliases": [
+      "Commons",
+      "Voltron Commons",
+      "access",
+      "learning",
+      "fellowship",
+      "residency"
+    ],
+    "section": "Public claim boundary",
+    "qualification": "Do not invent beneficiaries, grants, selection criteria, fees, dates or enrollment links. If asked to apply, explain that this package does not confirm an open program and offer the verified contact route when available.",
+    "relationships": [
+      {
+        "id": "E11",
+        "from": "VL-HUMAN",
+        "relation": "extends_outward_through",
+        "to": "VL-COMMONS",
+        "status": "developing_vision",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "a12a04b832b458ed7f47019b5bb9dddd0909bb525ffa422ef6cd97624086f466",
+    "siteExcerpt": "Explore manufacturing, exchange perspectives and help shape developing directions for access, learning and shared progress."
+  },
+  {
+    "id": "vl-partner--short-answer",
+    "topicId": "VL-PARTNER",
+    "title": "Starting a conversation with Voltron — Short answer",
+    "href": "/partner#inquiry",
+    "status": "positioning",
+    "body": "Start with what you are building: a production requirement, a factory opportunity or an industrial capability you want to develop. Voltron’s proposed inquiry routes separate production programs from broader partnership conversations.",
+    "terms": "partner contact quote inquiry enquiry production programs",
+    "aliases": [
+      "partner",
+      "contact",
+      "quote",
+      "inquiry",
+      "enquiry",
+      "production programs"
+    ],
+    "section": "Short answer",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "ae8dbf80502679c19e0c363d6b804614642466b5cd9ebf5d657375930dc724bd",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-partner--production-programs",
+    "topicId": "VL-PARTNER",
+    "title": "Starting a conversation with Voltron — Production programs",
+    "href": "/partner#inquiry",
+    "status": "positioning",
+    "body": "Useful context: name, company, work email, optional phone, part/application, required process or need for guidance, expected volume and unit, quality requirements, target timeline and a short description. Scope and production readiness require review.",
+    "terms": "partner contact quote inquiry enquiry production programs",
+    "aliases": [
+      "partner",
+      "contact",
+      "quote",
+      "inquiry",
+      "enquiry",
+      "production programs"
+    ],
+    "section": "Production programs",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "11df5c936c431bacdeb5c4a28cf7a9d6e6144c883b3b511a6fa8327519ba2f52",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-partner--partnerships",
+    "topicId": "VL-PARTNER",
+    "title": "Starting a conversation with Voltron — Partnerships",
+    "href": "/partner#inquiry",
+    "status": "positioning",
+    "body": "Useful context: name, organization, work email, optional phone, area of interest, location or market, relevant assets or capability, timeline and what the parties might build together. Areas discussed include factory partnerships, platform collaboration and Commons collaboration. Investment interest is an inquiry category, not an investment offer.",
+    "terms": "partner contact quote inquiry enquiry production programs",
+    "aliases": [
+      "partner",
+      "contact",
+      "quote",
+      "inquiry",
+      "enquiry",
+      "production programs"
+    ],
+    "section": "Partnerships",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "3ca19cbabd39a858408b1247efb55fa5154e6f1e82acd3415000d83ee641dbe1",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-partner--chat-behavior",
+    "topicId": "VL-PARTNER",
+    "title": "Starting a conversation with Voltron — Chat behavior",
+    "href": "/partner#inquiry",
+    "status": "positioning",
+    "body": "Answer ordinary questions without forcing lead capture. If a visitor wants follow-up, ask for only the details needed, explain their purpose and let the visitor review the summary. A detailed form may be more appropriate for a complex requirement.",
+    "terms": "partner contact quote inquiry enquiry production programs",
+    "aliases": [
+      "partner",
+      "contact",
+      "quote",
+      "inquiry",
+      "enquiry",
+      "production programs"
+    ],
+    "section": "Chat behavior",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "9c7d501de74a7f1ee106a36fb59f59e66eafa3264d14f9f215484104bd98df62",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-partner--confirmation",
+    "topicId": "VL-PARTNER",
+    "title": "Starting a conversation with Voltron — Confirmation",
+    "href": "/partner#inquiry",
+    "status": "positioning",
+    "body": "An inquiry is submitted only after a real submission service confirms success. Do not promise an appointment, quote, response time or agreement. If no submission service is connected, offer a copyable summary and a verified contact route; never say the details have been saved or sent.",
+    "terms": "partner contact quote inquiry enquiry production programs",
+    "aliases": [
+      "partner",
+      "contact",
+      "quote",
+      "inquiry",
+      "enquiry",
+      "production programs"
+    ],
+    "section": "Confirmation",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E12",
+        "from": "VL-PARTNER",
+        "relation": "routes_production_interest_to",
+        "to": "VL-ALPHA",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E13",
+        "from": "VL-PARTNER",
+        "relation": "routes_factory_interest_to",
+        "to": "VL-NETWORK",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      },
+      {
+        "id": "E14",
+        "from": "VL-PARTNER",
+        "relation": "routes_collaboration_interest_to",
+        "to": "VL-COMMONS",
+        "status": "inquiry_direction",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "a296d6666bb20975d4037e247f07d7bdaee786c1cba3bb9af85ab5903e98412e",
+    "siteExcerpt": "Share what you know today. Optional details can help give the conversation more context."
+  },
+  {
+    "id": "vl-faq--what-does-voltron-lattice-do",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — What does Voltron Lattice do?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Voltron is building connected industrial capability, beginning with manufacturing. Its approach links physical execution, manufacturing context and intelligence, with a longer-term direction toward a factory network and industrial products. Identity",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "What does Voltron Lattice do?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "5862ea1231ee19c4aa62780d70a1bc20735c08127ba137b8b4b12fe47e05ef9e",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--is-this-a-software-company-or-a-manufacturer",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Is this a software company or a manufacturer?",
+    "href": "/",
+    "status": "positioning",
+    "body": "The vision connects technology and physical production. Manufacturing is the first application, while VOS and shared manufacturing knowledge form the technology direction. Current commercial scope needs confirmation. VOS",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Is this a software company or a manufacturer?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "36975043da12103f72d62ff1321418a8a313e2f85689bdd6d9c5376948e1de05",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--is-alpha-operating-now",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Is Alpha operating now?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Alpha is in development. Commissioned capacity and availability are unconfirmed. The production team can confirm readiness for a specific requirement. Alpha",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Is Alpha operating now?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "03ca34f3335c1a2ccf25635d23453871d3f840982599cc1db648363f6220ead6",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--can-you-coat-my-parts",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Can you coat my parts?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Surface treatment is the initial domain, with phosphating, CED and powder coating discussed. Suitability and readiness must be reviewed against your part, specification, volume and timing. Partnerships",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Can you coat my parts?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "062d6bfcf01e21622a586390062cea8164845c55bdd19d6e2bd6b4aa4f6d3759",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--what-makes-the-idea-different",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — What makes the idea different?",
+    "href": "/",
+    "status": "positioning",
+    "body": "The emphasis is coherence: connecting physical work to its requirements, evidence and manufacturing knowledge, so intelligence has relevant context. That is the intended approach, not proof of superiority over another platform. Ontology",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "What makes the idea different?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "8d5752fa206559ed00ff980dce435fba3f86faceed69c4e018cc8966f1121f4c",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--will-ai-run-the-factory-on-its-own",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Will AI run the factory on its own?",
+    "href": "/",
+    "status": "positioning",
+    "body": "The public principle is “AI investigates. Evidence supports. Humans decide.” Intelligence is intended to support work within appropriate human and system responsibilities, not to replace machine-control safeguards. Intelligence",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Will AI run the factory on its own?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "72bb4b8ce290daf98fcedb662f4b230a5383c47a450b35d1db4b9edcb6b9b320",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--can-i-see-the-source-code-or-internal-architecture",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Can I see the source code or internal architecture?",
+    "href": "/",
+    "status": "positioning",
+    "body": "I can explain the public roles of execution, context and intelligence. Proprietary implementation details are outside this guide. For an integration discussion, we can start with the outcome and interface needs you want to explore. VOS",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Can I see the source code or internal architecture?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "4314df685746c001c7577969a7a3dc8688afd5e36ab097bff0ea526e5f137d07",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--are-you-competing-with-global-industrial-technology-companies",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Are you competing with global industrial technology companies?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Global competitiveness in selected areas is a long-term ambition. This knowledge base does not establish feature parity, certifications or comparative benchmarks. Roadmap",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Are you competing with global industrial technology companies?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "d8276f55b8be15aa9be9e7beb2e47ee15dc4ce1d5918ecbc19a10bfe1a70110d",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--how-do-people-fit-into-the-vision",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — How do people fit into the vision?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Individual excellence and shared purpose belong together. Voltron’s culture direction values depth, craft, courage, imagination and humanity alongside technical capability. Human Lattice",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "How do people fit into the vision?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "d9fce205462307e56d1ea79c3df4b6fff84789804cda168a8ea60c6fb3e64bf5",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--are-commons-fellowships-open",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Are Commons fellowships open?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Commons is a developing vision. I do not have confirmation of an open fellowship or application deadline. A relevant collaboration can be discussed through a verified contact route. Commons",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Are Commons fellowships open?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "2ce96c9fb8202074ef8941831f704de35840a4cbe93cb3a1ea387a3684b70f99",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--what-are-the-prices-certifications-and-capacity",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — What are the prices, certifications and capacity?",
+    "href": "/",
+    "status": "positioning",
+    "body": "This package contains no verified figures or certificates. Those details must be confirmed for the relevant product or production program. Claim register",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "What are the prices, certifications and capacity?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "2670bffe69f77999f66f5f189a71ab937c01a5371c4271d72d04c1c8eb16159a",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-faq--have-you-saved-my-inquiry",
+    "topicId": "VL-FAQ",
+    "title": "Visitor questions and grounded answers — Have you saved my inquiry?",
+    "href": "/",
+    "status": "positioning",
+    "body": "Only a successful response from the connected submission service can confirm that. Otherwise, I can help prepare a summary for you to send. Inquiry behavior",
+    "terms": "FAQ questions answers",
+    "aliases": [
+      "FAQ",
+      "questions",
+      "answers"
+    ],
+    "section": "Have you saved my inquiry?",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E16",
+        "from": "VL-FAQ",
+        "relation": "summarizes",
+        "to": "VL-IDENTITY",
+        "status": "answer_navigation",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S03",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "7ed02754c81f959cfa316a7434637497b28a805f17691f12ecf238f230e70838",
+    "siteExcerpt": ""
+  },
+  {
+    "id": "vl-glossary--overview",
+    "topicId": "VL-GLOSSARY",
+    "title": "Public terminology and aliases — Overview",
+    "href": "/technology",
+    "status": "positioning",
+    "body": "# Public terminology and aliases\n\n| Term | Public meaning | Qualification |\n|---|---|---|\n| Voltron Lattice | Public company/brand identity | Legal identity is not established here. |\n| VOS | Voltron manufacturing operating-system direction | Execution + Context + Intelligence. |\n| V-MO / VMO | Manufacturing ontology direction | Shared manufacturing meaning, not a disclosed schema. |\n| Alpha | First manufacturing application environment | Readiness must be confirmed. |\n| Voltron Core | Reusable industrial foundation in the blueprint | Conceptual public label; availability not confirmed. |\n| Process Pack | Reusable knowledge/configuration for a process family | Each family still requires validation. |\n| Human Lattice | Individual development within a coherent whole | Organizational philosophy. |\n| People Culture | Intended working and development conditions inside Voltron | Not a benefits or hiring promise. |\n| Commons | Wider access, learning and possibility | Developing vision. |\n| ERP | Business and production records/workflows | Generic role, not proof of a live integration. |\n| QMS | Quality management and associated evidence/workflows | Generic role. |\n| SCADA | Industrial supervision and monitoring | Generic role. |\n| PLC | Programmable logic controller for machine/control tasks | Not the conversational agent. |\n| Historian | Time-oriented industrial records | Generic role. |\n| Twin | A digital representation of relevant industrial state | Not necessarily a photorealistic model. |\n| CED | Cathodic electrodeposition in the surface-treatment context | Availability and suitability need confirmation. |\n| Coherence | Distinct systems working with meaningful relationships and responsibilities | Does not erase independence. |\n\nUse expansions only when they help the visitor. Do not overwhelm a newcomer with acronyms. “Execution/context/intelligence” are conceptual roles, not three independently purchasable products established by this package.",
+    "terms": "terms definitions ERP QMS SCADA PLC",
+    "aliases": [
+      "terms",
+      "definitions",
+      "ERP",
+      "QMS",
+      "SCADA",
+      "PLC"
+    ],
+    "section": "Overview",
+    "qualification": "",
+    "relationships": [
+      {
+        "id": "E17",
+        "from": "VL-GLOSSARY",
+        "relation": "defines_terms_for",
+        "to": "VL-VOS",
+        "status": "terminology",
+        "sources": [
+          "S01"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.1",
+    "sourceIds": [
+      "S01",
+      "S04"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "a0d2bd9b49d321413e0729ae914ea78f44ccba6825b9b6647de28f7f9030937a",
+    "siteExcerpt": "Execution, context and intelligence connected through the Voltron Lattice architecture."
+  },
+  {
+    "id": "vl-thesis--short-answer",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — Short answer",
+    "href": "/about",
+    "status": "direction",
+    "body": "The founder’s public thesis in Flute & Forge connects human ingenuity, industrial capability and shared progress. Talent needs conditions in which it can become capability: meaningful problems, freedom to question, disciplined craft and institutions that retain learning. Voltron aims to connect manufacturing, process science, software, quality and human judgment so expertise can travel beyond an individual or factory.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "Short answer",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "db918546df492d0cc1ec22bf5852beefd2e53b0fbc3e1621a2e0ae07dc32d515",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--manufacturing-led-learning-and-its-tradeoffs",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — Manufacturing-led learning and its tradeoffs",
+    "href": "/about",
+    "status": "direction",
+    "body": "The thesis combines software with physical expertise: Software + X, where X is manufacturing. Alpha is intended as a surface-treatment proving ground, where technology must confront actual materials, variation, quality and delivery. Owning that learning brings capital needs and operational responsibility. Software-first development reduces direct plant exposure but depends on partners for process knowledge. A partner facility offers real-process access with less ownership burden, but less control over data, priorities and changes. The final model must fit actual resources, customer access and evidence; the thesis does not dismiss these alternatives.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "Manufacturing-led learning and its tradeoffs",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "1e067a5cce58294cdb80b0ddb207aa1dfb146c6d850abfb05257efdce12c37d7",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--what-alpha-must-prove",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — What Alpha must prove",
+    "href": "/about",
+    "status": "direction",
+    "body": "National potential does not establish demand for a particular facility. Alpha must demonstrate repeatable quality against agreed acceptance criteria, value customers recognise, credible operating and capital economics, and transfer of the method to another trained team without constant founder intervention. These are proposed tests, not reported results. Customer problems, acceptance criteria and measurement baselines still need to be established.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "What Alpha must prove",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "64385e4610a93b57fb78bd9f12a086cff3487e0dbf016423beb2a85d830f49d1",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--what-would-change-the-approach",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — What would change the approach",
+    "href": "/about",
+    "status": "direction",
+    "body": "The founder explicitly identifies weak customer demand, poor economics, excessive customisation and inability to transfer expertise as reasons to revise the approach. Growth should follow evidence, capital discipline and organisational readiness. Proposed measures include first-pass yield, rework, cost per accepted unit, working capital, investigation time, verified decision quality, independent leadership, safety and resource use. No measured performance is supplied here.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "What would change the approach",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "1d494eee83bbcc10fb10f50600a861933c2c0695faea553a5038dedd00f5c574",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--human-development-and-technological-progress",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — Human development and technological progress",
+    "href": "/about",
+    "status": "direction",
+    "body": "Human Lattice means distinct people growing through trust, shared purpose and responsibility without losing their individuality. The thesis names depth, craft, courage, imagination and humanity. In an AI era, it values choosing worthwhile problems, reasoning under uncertainty, emotional maturity and collaboration alongside technical depth. Mentorship, honest feedback, room for experimentation and meaningful responsibility are intended conditions, not established employment benefits. People Culture addresses life within the organisation; Commons is a developing outward-facing direction for learning across art, nature, philosophy and technology.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "Human development and technological progress",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "62a30810be6fbbcd2da394a2e8e3bf81352938d2d09707c95ee237d451a083d6",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--authority-and-earned-autonomy",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — Authority and earned autonomy",
+    "href": "/about",
+    "status": "direction",
+    "body": "The thesis distinguishes repeatable automation from the harder problem of responding to uncertainty. It proposes earning autonomy through bounded actions, clear authority and verified outcomes. People set limits; approved automation can execute within them; exceptions require human review. AI investigates, evidence supports and humans decide. This does not establish an autonomous machine-control product or connect Vera to an operating factory.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "Authority and earned autonomy",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "adeaa8a13a085fc26cefe33af37281b9c674c064964abc01822e959b8212fd7c",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  },
+  {
+    "id": "vl-thesis--qualification-and-source-precedence",
+    "topicId": "VL-THESIS",
+    "title": "The founder’s thesis: the capacity to create — Qualification and source precedence",
+    "href": "/about",
+    "status": "direction",
+    "body": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "terms": "founder thesis founder's thesis capacity to create Software + X human ingenuity what would change your mind manufacturing-led learning",
+    "aliases": [
+      "founder thesis",
+      "founder's thesis",
+      "capacity to create",
+      "Software + X",
+      "human ingenuity",
+      "what would change your mind",
+      "manufacturing-led learning"
+    ],
+    "section": "Qualification and source precedence",
+    "qualification": "This is the founder’s published strategic perspective and proposed direction, not proof of operating performance, demand, commissioning, certifications, active programs or achieved milestones. The current Voltron website and approved readiness records govern current offerings and roadmap wording. The Flute & Forge narrative groups later roadmap stages differently; do not blend those into new promises. Years are relative to the start of operations, not calendar commitments. The leaf–circuit identity describes growth and engineered connection; it is a metaphor, not evidence of capability.",
+    "relationships": [
+      {
+        "id": "E18",
+        "from": "VL-THESIS",
+        "relation": "motivates",
+        "to": "VL-VISION",
+        "status": "founder_perspective",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E19",
+        "from": "VL-THESIS",
+        "relation": "proposes_validation_through",
+        "to": "VL-ALPHA",
+        "status": "planned_validation",
+        "sources": [
+          "S06"
+        ]
+      },
+      {
+        "id": "E20",
+        "from": "VL-THESIS",
+        "relation": "grounds_strategy_in",
+        "to": "VL-HUMAN",
+        "status": "philosophy",
+        "sources": [
+          "S06"
+        ]
+      }
+    ],
+    "classification": "public_safe",
+    "approval": "approved",
+    "revision": "1.0",
+    "sourceIds": [
+      "S06"
+    ],
+    "reviewedAt": "2026-11-11",
+    "contentHash": "c735e6d1c6c40f66c8acb47e4a1e2149654a5adb78fa00a491005d8750c9444b",
+    "siteExcerpt": "Building industrial capability and advancing human possibility through manufacturing, engineering, connected intelligence and shared practice."
+  }
+]

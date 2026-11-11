@@ -1,0 +1,103 @@
+{
+  "VL-IDENTITY": {
+    "href": "/",
+    "siteIds": [
+      "voltron"
+    ],
+    "status": "positioning"
+  },
+  "VL-VISION": {
+    "href": "/about",
+    "siteIds": [
+      "roadmap"
+    ],
+    "status": "positioning"
+  },
+  "VL-ROADMAP": {
+    "href": "/about#roadmap",
+    "siteIds": [
+      "roadmap"
+    ],
+    "status": "direction"
+  },
+  "VL-VOS": {
+    "href": "/technology#operating-platform",
+    "siteIds": [
+      "platform",
+      "applications"
+    ],
+    "status": "in development"
+  },
+  "VL-ONTOLOGY": {
+    "href": "/technology#operating-platform",
+    "siteIds": [
+      "applications"
+    ],
+    "status": "in development"
+  },
+  "VL-AI": {
+    "href": "/intelligence",
+    "siteIds": [
+      "specialists",
+      "quality"
+    ],
+    "status": "in development"
+  },
+  "VL-ALPHA": {
+    "href": "/manufacturing",
+    "siteIds": [
+      "alpha"
+    ],
+    "status": "in development"
+  },
+  "VL-NETWORK": {
+    "href": "/network",
+    "siteIds": [
+      "network"
+    ],
+    "status": "direction"
+  },
+  "VL-PRODUCTS": {
+    "href": "/about#roadmap",
+    "siteIds": [
+      "roadmap"
+    ],
+    "status": "direction"
+  },
+  "VL-HUMAN": {
+    "href": "/about#culture",
+    "siteIds": [
+      "people"
+    ],
+    "status": "positioning"
+  },
+  "VL-COMMONS": {
+    "href": "/about/voltron-commons",
+    "siteIds": [
+      "commons"
+    ],
+    "status": "in development"
+  },
+  "VL-PARTNER": {
+    "href": "/partner#inquiry",
+    "siteIds": [
+      "partner"
+    ],
+    "status": "positioning"
+  },
+  "VL-FAQ": {
+    "href": "/",
+    "siteIds": [],
+    "status": "positioning"
+  },
+  "VL-GLOSSARY": {
+    "href": "/technology",
+    "siteIds": [],
+    "status": "positioning"
+  },
+  "VL-THESIS": {
+    "href": "/about",
+    "siteIds": [],
+    "status": "direction"
+  }
+}

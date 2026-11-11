@@ -10,6 +10,7 @@ import {SiteFrame} from "@/components/brand/SiteFrame";
 import {SiteFooter} from "@/components/brand/SiteFooter";
 import { LatticeExperience } from "@/components/navigation/LatticeExperience";
 import {PerformanceMonitor} from "@/components/performance/PerformanceMonitor";
+import {isPrelaunch} from "@/lib/launch";
 import "@/components/brand/atmosphere.css";
 import "@fontsource/montserrat/latin-300.css";
 import "@fontsource/montserrat/latin-400.css";
@@ -36,5 +37,6 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/><script dangerouslySetInnerHTML={{ __html: sceneMotionBootstrap }}/></head><body><PerformanceMonitor/><SiteAudio><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience><SiteFrame footer={<SiteFooter/>}>{children}</SiteFrame></LatticeExperience></SiteAudio></body></html>;
+  const vectraEnabled = !isPrelaunch() && Boolean(process.env.VECTRA_DATABASE_URL && process.env.OPENAI_API_KEY);
+  return <html lang="en" suppressHydrationWarning><head><script dangerouslySetInnerHTML={{ __html: themeBootstrap }}/><script dangerouslySetInnerHTML={{ __html: sceneMotionBootstrap }}/></head><body><PerformanceMonitor/><SiteAudio><LatticeAtmosphere/><a className="skip-link" href="#main-content">Skip to main content</a><LatticeExperience><SiteFrame footer={<SiteFooter/>} vectraEnabled={vectraEnabled}>{children}</SiteFrame></LatticeExperience></SiteAudio></body></html>;
 }
