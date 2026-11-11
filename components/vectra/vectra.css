@@ -665,14 +665,11 @@
 @media(max-width:600px) { .vectra-panel .vera-direction { grid-template-columns:48px minmax(0,1fr) 14px; gap:9px; padding:12px 10px; } }
 .vectra-panel { isolation:isolate; }
 .vera-panel-art { position:absolute; inset:60% 0 0; overflow:hidden; pointer-events:none; z-index:-1; mask-image:linear-gradient(180deg,transparent,#000 24%,#000 78%,transparent); }
-/* Reuse the website's exact grouped geometry, with a finer panel-scale outline. */
-.vectra-panel .vera-panel-art .lattice-atmosphere { display:block; position:absolute; inset:0 8px 64px; width:auto; height:auto; opacity:1; filter:none; transform:none; mask-image:none; }
-.vectra-panel .vera-panel-art .atmosphere-motion { position:absolute; inset:0; animation:none; transform:none; }
-.vectra-panel .vera-panel-art .atmosphere-motion > span { display:none; }
-.vectra-panel .vera-panel-art .atmosphere-lattice { position:absolute; inset:0; width:100%; height:100%; opacity:.14; filter:none; color:#4387b5; }
-.vera-panel-art .atmosphere-lattice g { stroke-width:.65; }
-.vera-panel-art .atmosphere-lattice polygon { vector-effect:non-scaling-stroke; }
-:root[data-theme="dark"] .vectra-panel .vera-panel-art .atmosphere-lattice { opacity:.2; color:#7ab8dd; filter:none; }
+/* Three oversized site-style cubes: the centre is raised, the sides crop into the panel. */
+.vera-panel-lattice { position:absolute; width:130%; height:130%; left:-15%; top:-15%; opacity:.14; color:#4387b5; }
+.vera-panel-lattice g { stroke:currentColor; stroke-width:.65; stroke-linejoin:round; }
+.vera-panel-lattice polygon { vector-effect:non-scaling-stroke; }
+:root[data-theme="dark"] .vera-panel-lattice { opacity:.2; color:#7ab8dd; }
 .vera-settings { margin-left:auto; }
 .vera-settings-panel { left:auto; right:0; }
 .vectra-window-controls { margin-left:0; }

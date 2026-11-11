@@ -7,7 +7,6 @@ import { ArrowLeft, ChevronDown, Maximize2, Minimize2, Minus } from "lucide-reac
 import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
 import { VeraIntroduction } from "./VeraIntroduction";
 import { VeraCube } from "./VeraCube";
-import { LatticeAtmosphere } from "../brand/LatticeAtmosphere";
 import "./vectra.css";
 
 const Conversation = lazy(() => import("./VectraConversation"));
@@ -205,7 +204,14 @@ export function Vectra() {
         </div>
       </header>
       <div className="vera-panel-art" aria-hidden="true">
-        <LatticeAtmosphere />
+        <svg className="vera-panel-lattice" viewBox="80 0 800 560" preserveAspectRatio="xMidYMid slice">
+          {[{ x: 250, y: 220 }, { x: 690, y: 220 }, { x: 470, y: 110 }].map(({ x, y }) =>
+            <g key={x} transform={`translate(${x} ${y})`}>
+              <polygon className="atmosphere-top" points="-170,0 0,-90 170,0 0,90" />
+              <polygon className="atmosphere-side" points="-170,0 0,90 0,310 -170,220" />
+              <polygon className="atmosphere-front" points="170,0 0,90 0,310 170,220" />
+            </g>)}
+        </svg>
       </div>
       {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
       {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
