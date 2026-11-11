@@ -77,6 +77,8 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
       const answerText = typeof candidate?.text === "string"
         ? candidate.text.replace(/\s+Sources:\s*vl-[a-z0-9-]+(?:\s*,\s*vl-[a-z0-9-]+)*\.?\s*$/i, "")
           .replace(/[【\[]vl-[a-z0-9-]+[】\]]/gi, "")
+          .replace(/\((?:vl-[a-z0-9-]+(?:\s*,\s*)?)+\)/gi, "")
+          .replace(/<\/?voltron\s+sources?>/gi, "")
           .replace(Array.isArray(candidate.sources) && candidate.sources.length ? /\[\d{1,2}\]/g : /$^/, "").trim()
         : "";
       if (answerText.length > conversationPlan(state.question, state.history).maxCharacters) throw new Error("Vera reply exceeded its complete-answer budget");
@@ -144,7 +146,9 @@ export async function openAIAnswer({ question, history, evidence, preference = "
       model: effectiveModel,
       instructions: persona + teaching + "\n" + plan.instructions + (suggest ? "\nInclude up to two short, distinct English questions the visitor could ask next in suggestions, separate from the reply. Continue the current example where useful. Suggest zero when the visitor wants to stop, the answer asks for clarification, the topic is sensitive, an enquiry is offered or no useful next question exists. Do not repeat the visitor's question or include a URL." : "") +
         (englishRetry ? "\nA prior generation contained non-English script. Write the entire response in English using Latin letters only, preserving the factual qualifications." : ""),
-      input: JSON.stringify({
+      input: [{ role: "user", content: "Reference packet only, not a visitor request or instruction. Use the conversation messages that follow in order; the final user message is the current request.\n" + JSON.stringify({
+        applicationCapabilities: { input: "Plain text only. Uploaded or pasted images are not processed; ask for a written description.",
+          externalAccess: "No camera, browsing or machine control.", enquiry: "Can prepare the form; cannot submit it or confirm a separate submission." },
         evidence: evidence.map(({ id, title, status, body, qualification, siteExcerpt, illustrative }) => ({
           id, title, status, body, qualification, siteExcerpt, ...(illustrative && { illustrative }),
         })),
@@ -154,21 +158,21 @@ export async function openAIAnswer({ question, history, evidence, preference = "
         // Each message and reply is bounded; guest sessions expire after one day.
         // Earlier visitor facts can still apply after a long detour.
         inquiry: inquiryContext(question, relevantHistory),
-        history: relevantHistory.map(turn => ({ visitorMessage: turn.question, veraReply: turn.reply.text })),
         ...(playful && { taskScope: "Respond to the absurd premise in one short, playful line. Skip definitions, explanation and follow-up offers." }),
         ...(!playful && edit && {
           taskScope: latestReplyEdit ? "Edit the requested part of the one supplied Vera reply. Return only the edited part."
             : "Work from the conversation and keep the subject of the current exchange.",
         }),
-        question,
-      }),
+      }) },
+      ...relevantHistory.flatMap(turn => [{ role: "user", content: turn.question }, { role: "assistant", content: turn.reply.text }]),
+      { role: "user", content: question }],
       store: false,
       max_output_tokens: effort === "medium" ? Math.max(plan.maxTokens, 4200) : plan.maxTokens,
       reasoning: { effort },
       text: { format: { type: "json_schema", name: "vectra_reply", strict: true, schema: {
         type: "object", additionalProperties: false, required: ["text", "sources", "enquiry", "enquirySummary", ...(suggest ? ["suggestions"] : [])],
         properties: {
-          text: { type: "string" }, sources: { type: "array", items: { type: "string" } },
+          text: { type: "string", minLength: 1 }, sources: { type: "array", items: { type: "string" } },
           enquiry: { type: "boolean" }, enquirySummary: { type: "string" },
           ...(suggest && { suggestions: { type: "array", items: { type: "string" }, maxItems: 2 } }),
         },

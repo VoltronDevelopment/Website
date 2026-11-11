@@ -63,20 +63,19 @@ describe("Vera evidence selection", () => {
     try {
       await openAIAnswer({ question: "What was the tray project called?", history, evidence: [] });
       const body = JSON.parse(String(provider.mock.calls[0][1]?.body));
-      const input = JSON.parse(body.input);
-      expect(input.history).toHaveLength(23);
-      expect(input.history[0]).toEqual({
-        visitorMessage: "The tray project is blue-mango-72.",
-        veraReply: "Vera response 0",
-      });
-      expect(input.history.at(-1).visitorMessage).toBe("Side question 22");
+      const input = body.input;
+      expect(input).toHaveLength(48);
+      expect(input[1]).toEqual({role:"user",content:"The tray project is blue-mango-72."});
+      expect(input[2]).toEqual({role:"assistant",content:"Vera response 0"});
+      expect(input.at(-3).content).toBe("Side question 22");
+      expect(input.at(-1)).toEqual({role:"user",content:"What was the tray project called?"});
       await openAIAnswer({
         question: "Now rewrite the middle one only, without using the word cause.",
         history,
         evidence: [],
       });
-      const rewrite = JSON.parse(JSON.parse(String(provider.mock.calls[1][1]?.body)).input);
-      expect(rewrite.history).toEqual([{ visitorMessage: "Side question 22", veraReply: "Vera response 22" }]);
+      const rewrite = JSON.parse(String(provider.mock.calls[1][1]?.body)).input;
+      expect(rewrite.slice(1,-1)).toEqual([{role:"user",content:"Side question 22"},{role:"assistant",content:"Vera response 22"}]);
     } finally {
       provider.mockRestore();
     }

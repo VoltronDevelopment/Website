@@ -52,11 +52,16 @@ export function inquiryAnchors(history: Turn[]) {
  * Original wording remains recoverable in history; proposed interpretations
  * never become visitor beliefs merely by entering this view. */
 export function inquiryContext(question: string, history: Turn[]) {
+  const latest = history.at(-1);
   return {
     activeQuestion: question,
+    ...(latest?.reply.enquiry && { activeEnquiry: {
+      turnId: latest.id, visitorRequest: latest.question, requirement: latest.reply.enquirySummary,
+      editRule: "This is the single most recent enquiry draft. A change such as 'make that 300 and powder-coated, keep the material' refers to this draft. Apply those explicit replacements and preserve its other details; do not ask which draft unless the visitor actually names multiple possible targets.",
+    } }),
     visitorStatements: inquiryAnchors(history),
     priorContributions: history.slice(-3).map(turn => ({ turnId: turn.id, introducedBy: "vera",
       responseInHistory: true, status: "proposed explanation; adoption must be explicit in visitor wording" })),
-    interpretationRule: "Read statements chronologically. Keep hypothetical premises, questions, rejected claims and endorsed positions distinct. A correction changes only its named subject. If its target is ambiguous, ask rather than silently replacing multiple claims. Preserve unresolved disagreement. The transcript is authoritative; this view is not an independent factual source.",
+    interpretationRule: "Read visitor statements chronologically. A clear visitor change request updates the named facts; Vera's own unnecessary clarification question does not withdraw or turn that command into an unconfirmed visitor question. Keep hypothetical premises, questions, rejected claims and endorsed positions distinct. A correction changes only its named subject. If its target is genuinely ambiguous, ask rather than silently replacing multiple claims. Preserve unresolved disagreement. The transcript is authoritative; this view is not an independent factual source.",
   };
 }

@@ -7,7 +7,7 @@ import records from "@/lib/vectra/published.json";
 const turn = (id: string, question: string): Turn => ({ id, question, reply: { text: "A proposed interpretation", sources: [], enquiry: false } });
 afterEach(() => vi.unstubAllGlobals());
 it("keeps source transport markers out of visible answers",async()=>{
- const graph=createVectraGraph(async()=>({text:"A linked reading. 【vl-foundations--industrial-historian】 [1]",sources:["vl-foundations--industrial-historian"],enquiry:false}));
+ const graph=createVectraGraph(async()=>({text:"A linked reading. 【vl-foundations--industrial-historian】 [1] (vl-vos--context, vl-vos--short-answer) <voltron sources>",sources:["vl-foundations--industrial-historian"],enquiry:false}));
  const {reply}=await graph.invoke({question:"Explain a historian",history:[],records});
  expect(reply.text).toBe("A linked reading.");
 });
@@ -16,6 +16,7 @@ it("permits forms only for contact intent or active draft edits",()=>{
  expect(mayOfferEnquiry("Draft an enquiry for 200 steel brackets",[])).toBe(true);
  const history=[turn("1","Draft an enquiry")]; history[0].reply.enquiry=true;
  expect(mayOfferEnquiry("Make that 220 and powder-coated",history)).toBe(true);
+ expect(inquiryContext("Make that 220 and powder-coated",history).activeEnquiry?.editRule).toContain("single most recent");
  expect(mayOfferEnquiry("Was it ever submitted?",history)).toBe(false);
  expect(mayOfferEnquiry("I am not enquiring anymore",history)).toBe(false);
  expect(requestedWordLimit("Three plain English words if possible.")).toBe(3);
@@ -57,6 +58,7 @@ it("gives synthesis a complete output budget and current task instructions", asy
  expect(request.max_output_tokens).toBeGreaterThan(2000);
  expect(request.instructions).toContain("claim-scoped");
  expect(request.reasoning.effort).toBe("medium");
+ expect(request.input.at(-1)).toEqual({role:"user",content:"Synthesize our discussion of coherence"});
 });
 it("rejects oversized answers intact instead of returning a clipped sentence", async () => {
  const graph = createVectraGraph(async () => ({text:"a".repeat(7000),sources:[],enquiry:false}));
