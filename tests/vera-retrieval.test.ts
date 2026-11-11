@@ -117,9 +117,33 @@ describe("Vera evidence selection", () => {
     expect(result.some(record => record.topicId === "VL-ONTOLOGY")).toBe(true);
   });
 
+  it.each([
+    ["What are the levels of a twin and where does the Voltron demo fit?", ["twin-levels-and-data-flow", "voltron-s-public-walkthrough"]],
+    ["How are SCADA and ontology different?", ["scada-and-plc", "manufacturing-ontology"]],
+    ["What's the difference between a digital thread and a historian?", ["digital-thread", "industrial-historian"]],
+  ])("retrieves separate explanations for %s", (question, sections) => {
+    const evidence = selectEvidence(question, [], published);
+    expect(evidence.map(record => record.id)).toEqual(expect.arrayContaining(sections.map(section => `vl-foundations--${section}`)));
+  });
+
+  it("keeps suggestions optional and exposes only curated source links", async () => {
+    const record = published.find(item => item.id === "vl-foundations--digital-twin")!;
+    const illustration = published.find(item => item.id === "vl-foundations--one-batch-through-the-coating-line")!;
+    const question = "What is a digital twin?";
+    const graph = createVectraGraph(async () => ({ text: `A connected representation of a physical system. Sources: ${record.id}`, sources: [record.id, illustration.id, "invented"], enquiry: false,
+      suggestions: [question, "How is it different from a simulation?", "How is it different from a simulation?", "What data would an oven twin use?", "Is there another example?"] }));
+    const input = { question, records: [record, illustration], history: [] };
+    const enabled = await graph.invoke({ ...input, options: { answerStyle: "conceptual", suggestQuestions: true } });
+    expect(enabled.reply.text).toBe("A connected representation of a physical system.");
+    expect(enabled.reply.sources).toEqual([{ id: record.id, title: "Digital twin", href: record.reference }]);
+    expect(enabled.reply.suggestions).toEqual(["How is it different from a simulation?", "What data would an oven twin use?"]);
+    const disabled = await graph.invoke({ ...input, options: { suggestQuestions: false } });
+    expect(disabled.reply.suggestions).toBeUndefined();
+  });
+
   it("compiles all approved topics with valid graph endpoints and bounded sections", async () => {
     const { records, topics } = await compileCorpus();
-    expect(new Set(records.map(record => record.topicId)).size).toBe(15);
+    expect(new Set(records.map(record => record.topicId)).size).toBe(16);
     expect(new Set(records.map(record => record.id)).size).toBe(records.length);
     for (const record of records) {
       expect(record.body.length).toBeLessThan(7000);

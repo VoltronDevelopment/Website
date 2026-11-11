@@ -48,7 +48,7 @@ describe("Vectra guest recovery", () => {
     vi.mocked(finishTurn).mockResolvedValue(true);
     const answer = { text: "Alpha is Voltron’s first manufacturing environment.", sources: [], enquiry: false };
     vi.mocked(vectraGraph.invoke).mockRejectedValueOnce(new Error("Provider unavailable"))
-      .mockResolvedValueOnce({ question, preference: "auto", history: [], records: [], evidence: [], candidate: answer, reply: answer });
+      .mockResolvedValueOnce({ question, preference: "auto", options: undefined, history: [], records: [], evidence: [], candidate: answer, reply: answer });
 
     expect((await POST(request("POST"))).status).toBe(503);
     expect(finishTurn).toHaveBeenNthCalledWith(1, `hash:${oldToken}`, "00000000-0000-4000-8000-000000000001");
@@ -64,7 +64,7 @@ describe("Vectra guest recovery", () => {
     vi.mocked(reserveTurn).mockResolvedValue({lease:"00000000-0000-4000-8000-000000000003",turns:history});
     vi.mocked(finishTurn).mockResolvedValue(true);
     vi.mocked(takeWindow).mockImplementation(async bucket => !bucket.startsWith("day/"));
-    vi.mocked(vectraGraph.invoke).mockResolvedValue({question, preference:"auto", history, records:[], evidence:[], candidate:answer, reply:answer});
+    vi.mocked(vectraGraph.invoke).mockResolvedValue({question, preference:"auto", options:undefined, history, records:[], evidence:[], candidate:answer, reply:answer});
     const response = await POST(request("POST"));
     expect(response.status).toBe(200);
     expect((await response.json()).turns).toHaveLength(26);

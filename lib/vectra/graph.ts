@@ -1,5 +1,5 @@
 import { Annotation, StateGraph, START, END } from "@langchain/langgraph";
-import type { Reply, Turn } from "./types";
+import type { AnswerOptions, Reply, Turn } from "./types";
 import { routeModel, type ModelPreference } from "./models";
 import { persona } from "./skills";
 import { retrievalQuery, selectEvidence, type KnowledgeRecord } from "./retrieval";
@@ -7,8 +7,8 @@ import { searchKnowledge } from "./store";
 import { embedTexts } from "./embeddings.mjs";
 
 type Record = KnowledgeRecord;
-type Candidate = { model?: string; fallback?: boolean; text?: unknown; sources?: unknown; enquiry?: unknown; enquirySummary?: unknown };
-type Answer = (input: { question: string; history: Turn[]; evidence: Record[]; preference?: ModelPreference }) => Promise<Candidate>;
+type Candidate = { model?: string; fallback?: boolean; text?: unknown; sources?: unknown; enquiry?: unknown; enquirySummary?: unknown; suggestions?: unknown };
+type Answer = (input: { question: string; history: Turn[]; evidence: Record[]; preference?: ModelPreference; options?: AnswerOptions }) => Promise<Candidate>;
 
 type Retriever = (question: string, history: Turn[], records: Record[]) => Promise<Record[]>;
 
@@ -55,6 +55,7 @@ async function retrieve(question: string, history: Turn[], records: Record[]) {
 const State = Annotation.Root({
   question: Annotation<string>(),
   preference: Annotation<ModelPreference>(),
+  options: Annotation<AnswerOptions | undefined>(),
   history: Annotation<Turn[]>(),
   records: Annotation<Record[]>(),
   evidence: Annotation<Record[]>(),
@@ -68,21 +69,28 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
       evidence: (isPlayfulAside(state.question) || isSocialTurn(state.question)) ? [] : await retriever(state.question, state.history, state.records),
     }))
     .addNode("conversation_skills", async state => ({
-      candidate: await answer({ question: state.question, history: state.history, evidence: state.evidence, preference: state.preference }),
+      candidate: await answer({ question: state.question, history: state.history, evidence: state.evidence, preference: state.preference, options: state.options }),
     }))
     .addNode("review_reply", state => {
       const { candidate, evidence } = state;
-      if (typeof candidate?.text !== "string" || !candidate.text.trim()) throw new Error("Empty Vectra reply");
+      const answerText = typeof candidate?.text === "string"
+        ? candidate.text.replace(/\s+Sources:\s*vl-[a-z0-9-]+(?:\s*,\s*vl-[a-z0-9-]+)*\.?\s*$/i, "").trim()
+        : "";
+      if (!answerText) throw new Error("Empty Vectra reply");
       const ids = Array.isArray(candidate.sources) ? candidate.sources : [];
-      const sources = evidence.filter(item => ids.includes(item.id))
-        .filter((item, index, all) => all.findIndex(other => other.href === item.href) === index).slice(0, 3)
-        .map(({ id, title, href }) => ({ id, title: title.split(" — ")[0], href }));
+      const sources = evidence.filter(item => !item.illustrative && ids.includes(item.id))
+        .map(({ id, title, href, section, reference }) => ({ id, title: reference ? section || title : title.split(" — ")[0], href: reference || href }))
+        .filter((item, index, all) => all.findIndex(other => other.href === item.href) === index).slice(0, 3);
       const enquiry = candidate.enquiry === true;
+      const suggestions = state.options?.suggestQuestions && !enquiry && !isSocialTurn(state.question) &&
+        !isPlayfulAside(state.question) && !isConversationEdit(state.question)
+        ? cleanSuggestions(candidate.suggestions, state.question) : [];
       const enquirySummary = enquiry && typeof candidate.enquirySummary === "string"
         ? candidate.enquirySummary.trim().slice(0, 800) : "";
-      return { reply: { text: candidate.text.trim().slice(0, 4000), sources, enquiry,
+      return { reply: { text: answerText.slice(0, 4000), sources, enquiry,
         ...(candidate.model && { model: candidate.model }), ...(candidate.fallback && { fallback: true }),
         ...(enquirySummary && { enquirySummary }),
+        ...(suggestions.length && { suggestions }),
       } };
     })
     .addEdge(START, "public_context")
@@ -92,12 +100,32 @@ export function createVectraGraph(answer: Answer, retriever: Retriever = async (
     .compile();
 }
 
-export async function openAIAnswer({ question, history, evidence, preference = "auto" }: Parameters<Answer>[0], englishRetry = false, fallback = false, deadline = Date.now() + 24_000): Promise<Candidate> {
+function cleanSuggestions(value: unknown, question: string): string[] {
+  if (!Array.isArray(value)) return [];
+  const key = (text: string) => text.toLowerCase().replace(/[\p{P}\s]+/gu, " ").trim();
+  const seen = new Set([key(question)]);
+  const suggestions: string[] = [];
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const text = item.trim();
+    if (!text.endsWith("?") || text.length > 120 || /[\r\n<>]|https?:/i.test(text) || hasNonLatinLetters(text) || seen.has(key(text))) continue;
+    seen.add(key(text));
+    suggestions.push(text);
+    if (suggestions.length === 2) break;
+  }
+  return suggestions;
+}
+
+export async function openAIAnswer({ question, history, evidence, preference = "auto", options }: Parameters<Answer>[0], englishRetry = false, fallback = false, deadline = Date.now() + 24_000): Promise<Candidate> {
   const start = performance.now();
   const route = routeModel(preference, question, history.length);
   const effectiveModel = fallback ? (route.model.includes("luna") ? "gpt-5.4-mini-2026-03-17" : "gpt-6-luna") : route.model;
   const playful = isPlayfulAside(question);
   const edit = history.length > 0 && isConversationEdit(question);
+  const suggest = options?.suggestQuestions === true && !playful && !edit && !isSocialTurn(question);
+  const teaching = options?.answerStyle === "conceptual"
+    ? "\nConceptual style: for a substantive explanation, build a mental model with a plain definition, an analogy and a concrete example as useful. Show how related concepts differ or connect. Respect requests for brevity, a different format, or a direct status answer."
+    : "";
   const latestReplyEdit = edit && revisionRequest.test(requestText(question)) &&
     /^(?:rewrite|rephrase|reword|shorten)\b/i.test(requestText(question)) &&
     !/\b(?:earlier|initial|first (?:answer|reply|response)|from before|include|add)\b/i.test(question);
@@ -108,10 +136,11 @@ export async function openAIAnswer({ question, history, evidence, preference = "
     signal: AbortSignal.timeout(Math.max(1, deadline - Date.now())),
     body: JSON.stringify({
       model: effectiveModel,
-      instructions: persona + (englishRetry ? "\nA prior generation contained non-English script. Write the entire response in English using Latin letters only, preserving the factual qualifications." : ""),
+      instructions: persona + teaching + (suggest ? "\nInclude up to two short, distinct English questions the visitor could ask next in suggestions, separate from the reply. Continue the current example where useful. Suggest zero when the visitor wants to stop, the answer asks for clarification, the topic is sensitive, an enquiry is offered or no useful next question exists. Do not repeat the visitor's question or include a URL." : "") +
+        (englishRetry ? "\nA prior generation contained non-English script. Write the entire response in English using Latin letters only, preserving the factual qualifications." : ""),
       input: JSON.stringify({
-        evidence: evidence.map(({ id, title, status, body, qualification, siteExcerpt }) => ({
-          id, title, status, body, qualification, siteExcerpt,
+        evidence: evidence.map(({ id, title, status, body, qualification, siteExcerpt, illustrative }) => ({
+          id, title, status, body, qualification, siteExcerpt, ...(illustrative && { illustrative }),
         })),
         relationships: [...new Map(evidence.flatMap(record => record.relationships || [])
           .filter(edge => evidence.some(record => record.topicId === edge.from) && evidence.some(record => record.topicId === edge.to))
@@ -130,17 +159,18 @@ export async function openAIAnswer({ question, history, evidence, preference = "
       max_output_tokens: 950,
       reasoning: { effort: "low" },
       text: { format: { type: "json_schema", name: "vectra_reply", strict: true, schema: {
-        type: "object", additionalProperties: false, required: ["text", "sources", "enquiry", "enquirySummary"],
+        type: "object", additionalProperties: false, required: ["text", "sources", "enquiry", "enquirySummary", ...(suggest ? ["suggestions"] : [])],
         properties: {
           text: { type: "string" }, sources: { type: "array", items: { type: "string" } },
           enquiry: { type: "boolean" }, enquirySummary: { type: "string" },
+          ...(suggest && { suggestions: { type: "array", items: { type: "string" }, maxItems: 2 } }),
         },
       } } },
     }),
   });
   if (!response.ok && !fallback && (response.status === 429 || response.status >= 500) && deadline - Date.now() > 6000) {
     console.info("[vera:fallback]", JSON.stringify({ model: effectiveModel, status: response.status }));
-    return openAIAnswer({ question, history, evidence, preference }, englishRetry, true, deadline);
+    return openAIAnswer({ question, history, evidence, preference, options }, englishRetry, true, deadline);
   }
   if (!response.ok) throw new Error(`Vectra model request failed (${response.status})`);
   const result = await response.json() as { status?: string; output?: { content?: { type: string; text?: string }[] }[] };
@@ -152,7 +182,7 @@ export async function openAIAnswer({ question, history, evidence, preference = "
   const candidate = JSON.parse(text) as Candidate;
   const visible = `${candidate.text || ""} ${candidate.enquirySummary || ""}`;
   if (hasNonLatinLetters(visible)) {
-    if (!englishRetry) return openAIAnswer({ question, history, evidence, preference }, true, fallback, deadline);
+    if (!englishRetry) return openAIAnswer({ question, history, evidence, preference, options }, true, fallback, deadline);
     throw new Error("Vera English-only response validation failed");
   }
   return { ...candidate, model: effectiveModel, fallback };

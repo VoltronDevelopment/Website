@@ -54,7 +54,7 @@ for (const record of records) {
       if (description && ts.isPropertyAssignment(description) && ts.isStringLiteral(description.initializer)) excerpt = description.initializer.text;
     }
   }
-  snapshot.push({ ...record, siteExcerpt: excerpt.replace(/\s+/g, " ").trim() });
+  snapshot.push({ ...record, siteExcerpt: record.reference || record.illustrative ? "" : excerpt.replace(/\s+/g, " ").trim() });
 }
 if (!snapshot.length) throw new Error("No public Vectra knowledge records.");
 await writeFile(new URL("../lib/vectra/published.json", import.meta.url), JSON.stringify(snapshot, null, 2) + "\n");

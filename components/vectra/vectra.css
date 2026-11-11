@@ -692,6 +692,30 @@
 }
 .vera-settings { margin-left:auto; }
 .vera-settings-panel { left:auto; right:0; }
+.vera-followups {
+  display:grid;
+  gap:2px;
+  margin-top:12px;
+}
+.vectra-panel .vera-followups button {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  min-height:44px;
+  padding:6px 10px;
+  border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  border-radius:7px;
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  color:var(--ink);
+  font-size:13px;
+  line-height:1.5;
+  text-align:left;
+  overflow-wrap:anywhere;
+}
+.vera-followups button svg { flex:none; color:var(--muted); }
+.vectra-panel .vera-followups button:hover:not(:disabled) { background:var(--hover); }
+.vectra-panel .vera-followups button:disabled { color:var(--muted); }
 .vectra-window-controls { margin-left:0; }
 .vectra-header { position:relative; z-index:2; gap:9px; }
 .vera-identity { flex:1; }

@@ -5,7 +5,7 @@ import { isPrelaunch } from "@/lib/launch";
 import { isModelPreference } from "@/lib/vectra/models";
 import { vectraGraph } from "@/lib/vectra/graph";
 import { createSession, digest, finishTurn, loadTurns, releaseKnowledge, reserveTurn, takeWindow, vectraConfigured } from "@/lib/vectra/store";
-import { chatCapsEnabled, dailyReplyLimit, conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
+import { chatCapsEnabled, dailyReplyLimit, conversationTurnLimit, isAnswerStyle, messageLimit, type Turn } from "@/lib/vectra/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -99,11 +99,13 @@ async function readTurn(request: Request) {
       }
       text += decoder.decode(value, { stream: true });
     }
-    const data = JSON.parse(text + decoder.decode()) as { id?: unknown; message?: unknown; preference?: unknown } | null;
+    const data = JSON.parse(text + decoder.decode()) as { id?: unknown; message?: unknown; preference?: unknown; answerStyle?: unknown; suggestQuestions?: unknown } | null;
     const question = typeof data?.message === "string" ? data.message.trim() : "";
     return question && question.length <= messageLimit && typeof data?.id === "string" && uuidPattern.test(data.id)
       && (data.preference === undefined || isModelPreference(data.preference))
-      ? { question, id: data.id, preference: data.preference ?? "auto" } : null;
+      && (data.answerStyle === undefined || isAnswerStyle(data.answerStyle))
+      && (data.suggestQuestions === undefined || typeof data.suggestQuestions === "boolean")
+      ? { question, id: data.id, preference: data.preference ?? "auto", options: { answerStyle: data.answerStyle ?? "general", suggestQuestions: data.suggestQuestions ?? false } } : null;
   } catch { return null; }
 }
 
@@ -146,7 +148,7 @@ export async function POST(request: NextRequest) {
     const records = await releaseKnowledge();
     const contextMs = performance.now() - contextStart;
     const answerStart = performance.now();
-    const { reply: answer } = await vectraGraph.invoke({ question: input.question, history: reserved.turns, records, preference: input.preference });
+    const { reply: answer } = await vectraGraph.invoke({ question: input.question, history: reserved.turns, records, preference: input.preference, options: input.options });
     const answerMs = performance.now() - answerStart;
     const turn: Turn = { id: input.id, question: input.question, reply: answer };
     const persistStart = performance.now();

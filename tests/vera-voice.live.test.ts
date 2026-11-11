@@ -43,6 +43,20 @@ const scenarios = [
 describe.skipIf(process.env.VERA_LIVE_VOICE !== "1")("Vera voice with the configured model", () => {
   const graph = createVectraGraph(openAIAnswer);
   const directory = process.env.VERA_VOICE_OUTPUT || "data/vera-evaluation/voice-refinement-2026-11-11";
+  it("carries a beginner's factory example into a follow-up and honors the suggestion toggle", async () => {
+    const first = "I'm new to engineering. Explain a digital twin using a coating-line example.";
+    const conceptual = await graph.invoke({ question: first, history: [], records,
+      options: { answerStyle: "conceptual", suggestQuestions: true } });
+    expect(conceptual.reply.text).toMatch(/coat/i);
+    expect(conceptual.reply.suggestions?.length).toBeGreaterThan(0);
+    const general = await graph.invoke({ question: "In that same example, how are SCADA and ontology different?",
+      history: [{ id: "1", question: first, reply: conceptual.reply }], records,
+      options: { answerStyle: "general", suggestQuestions: false } });
+    expect(general.reply.text).toMatch(/coat|oven|conveyor/i);
+    expect(general.reply.suggestions).toBeUndefined();
+    await mkdir(directory, { recursive: true });
+    await writeFile(`${directory}/industrial-learning.json`, JSON.stringify([conceptual.reply, general.reply], null, 2));
+  }, 75_000);
   for (const scenario of scenarios) {
     it(scenario.id, async () => {
       const history: Turn[] = [];

@@ -4,12 +4,12 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEve
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, ChevronDown, Ellipsis } from "lucide-react";
 import Link from "next/link";
 import type { ModelPreference } from "@/lib/vectra/models";
-import { chatCapsEnabled, conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
+import { chatCapsEnabled, conversationTurnLimit, messageLimit, type AnswerStyle, type Turn } from "@/lib/vectra/types";
 import { VectraEnquiry } from "./VectraEnquiry";
 import { VeraCube } from "./VeraCube";
 import { VeraStarters } from "./VeraIntroduction";
 
-type Pending = { id: string; message: string; preference?: ModelPreference };
+type Pending = { id: string; message: string; preference: ModelPreference; answerStyle: AnswerStyle; suggestQuestions: boolean };
 
 class ChatError extends Error {
   constructor(message: string, readonly status: number, readonly code?: string) { super(message); }
@@ -25,7 +25,14 @@ async function chat(method: "GET" | "POST" | "DELETE", pending?: Pending) {
   return data.turns;
 }
 
-export default function VectraConversation({ open, dismiss, preference, onThreadChange }: { open: boolean; dismiss: () => void; preference: ModelPreference; onThreadChange: (exists: boolean) => void }) {
+export default function VectraConversation({ open, dismiss, preference, answerStyle, suggestQuestions, onThreadChange }: {
+  open: boolean;
+  dismiss: () => void;
+  preference: ModelPreference;
+  answerStyle: AnswerStyle;
+  suggestQuestions: boolean;
+  onThreadChange: (exists: boolean) => void;
+}) {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState<Pending>();
@@ -68,7 +75,7 @@ export default function VectraConversation({ open, dismiss, preference, onThread
       if (newest && !follow.current) setLatest(true);
       lastReply.current = newest;
     }
-  }, [turns, pending, busy, open, view, error]);
+  }, [turns, pending, busy, open, view, error, suggestQuestions]);
 
   useEffect(() => {
     const transcript = scroll.current;
@@ -122,7 +129,7 @@ export default function VectraConversation({ open, dismiss, preference, onThread
   async function send(value: string, retry?: Pending) {
     const clean = value.trim();
     if (request.current || !ready || !clean || clean.length > messageLimit) return;
-    const next = retry || { id: crypto.randomUUID(), message: clean, preference };
+    const next = retry || { id: crypto.randomUUID(), message: clean, preference, answerStyle, suggestQuestions };
     follow.current = true;
     setLatest(false);
     request.current = true;
@@ -191,8 +198,23 @@ export default function VectraConversation({ open, dismiss, preference, onThread
           {turn.reply.sources.length > 0 && <details className="vectra-source-details">
             <summary>Sources <span>{turn.reply.sources.length}</span><ChevronDown size={13} aria-hidden="true" /></summary>
             <ul className="vectra-sources">{turn.reply.sources.map(source =>
-              <li key={source.id}><Link href={source.href === "/" ? "/?enter=1" : source.href.startsWith("/#") ? source.href.replace("/#", "/?enter=1#") : source.href} onClick={dismiss}>{source.title} <ArrowUpRight size={13} aria-hidden="true" /></Link></li>)}</ul>
+              <li key={source.id}>{source.href.startsWith("https://")
+                ? <a href={source.href} target="_blank" rel="noopener noreferrer">{source.title} <ArrowUpRight size={13} aria-hidden="true" /></a>
+                : <Link href={source.href === "/" ? "/?enter=1" : source.href.startsWith("/#") ? source.href.replace("/#", "/?enter=1#") : source.href} onClick={dismiss}>{source.title} <ArrowUpRight size={13} aria-hidden="true" /></Link>}
+              </li>)}</ul>
           </details>}
+          {suggestQuestions && !pending && !busy && !reset && turn.id === turns.at(-1)?.id && !!turn.reply.suggestions?.length && (
+            <nav className="vera-followups" aria-label="Suggested questions">
+              {turn.reply.suggestions.slice(0, 2).map(question => (
+                <button key={question} type="button" disabled={!!message.trim()} onClick={() => {
+                  setMessage(question);
+                  composer.current?.focus({ preventScroll: true });
+                }}>
+                  <span>{question}</span><ArrowUpRight size={13} aria-hidden="true" />
+                </button>
+              ))}
+            </nav>
+          )}
         </div>)}
         {pending && <p className="vectra-question">{pending.message}</p>}
       </div>

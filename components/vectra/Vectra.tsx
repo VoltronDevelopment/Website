@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { ArrowLeft, ChevronDown, Maximize2, Minimize2, Minus } from "lucide-react";
 import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
+import { isAnswerStyle, type AnswerStyle } from "@/lib/vectra/types";
 import { VeraIntroduction } from "./VeraIntroduction";
 import { VeraCube } from "./VeraCube";
 import "./vectra.css";
@@ -19,6 +20,8 @@ export function Vectra() {
   const settings = useRef<HTMLDetailsElement>(null);
   const begin = useRef<HTMLDivElement>(null);
   const [preference, setPreference] = useState<ModelPreference>("auto");
+  const [answerStyle, setAnswerStyle] = useState<AnswerStyle>("general");
+  const [suggestQuestions, setSuggestQuestions] = useState(true);
   const [motion, setMotion] = useState("ambient");
   const [open, setOpen] = useState(false);
   const [visited, setVisited] = useState(false);
@@ -34,6 +37,9 @@ export function Vectra() {
     try {
       const saved = localStorage.getItem("vera-model");
       if (isModelPreference(saved)) setPreference(saved);
+      const style = localStorage.getItem("vera-answer-style");
+      if (isAnswerStyle(style)) setAnswerStyle(style);
+      setSuggestQuestions(localStorage.getItem("vera-suggest-questions") !== "off");
       const next = localStorage.getItem("vera-motion") === "still" ? "still" : "ambient";
       setMotion(next); document.documentElement.dataset.veraMotion = next;
     } catch {}
@@ -47,6 +53,16 @@ export function Vectra() {
     const next = motion === "ambient" ? "still" : "ambient";
     setMotion(next); document.documentElement.dataset.veraMotion = next;
     try { localStorage.setItem("vera-motion", next); } catch {}
+  }
+  function changeAnswerStyle(value: string) {
+    if (!isAnswerStyle(value)) return;
+    setAnswerStyle(value);
+    try { localStorage.setItem("vera-answer-style", value); } catch {}
+  }
+  function toggleQuestions() {
+    const next = !suggestQuestions;
+    setSuggestQuestions(next);
+    try { localStorage.setItem("vera-suggest-questions", next ? "on" : "off"); } catch {}
   }
   useEffect(() => {
     const visibility = () => { document.documentElement.dataset.veraHidden = String(document.hidden); };
@@ -187,6 +203,9 @@ export function Vectra() {
           <summary aria-label="Open Vera settings" title="Vera settings"><VeraCube /><ChevronDown className="vera-settings-cue" size={10} aria-hidden="true" /></summary>
           <div className="vera-settings-panel" role="region" aria-label="Vera settings">
             <strong>Vera settings</strong>
+            <label>Answer style<select value={answerStyle} onChange={event => changeAnswerStyle(event.target.value)}><option value="general">General</option><option value="conceptual">Conceptual</option></select></label>
+            <p>{answerStyle === "conceptual" ? "Build understanding with analogies and examples." : "Get a direct answer at the level you ask for."}</p>
+            <button type="button" className="vera-motion-choice" role="switch" aria-checked={suggestQuestions} onClick={toggleQuestions}>Suggested questions<span aria-hidden="true">{suggestQuestions ? "On" : "Off"}</span></button>
             <label>Response model<select value={preference} onChange={event => changeModel(event.target.value)}><option value="auto">Auto</option><option value="mini">GPT-5.4 mini</option><option value="luna">GPT-6 Luna</option></select></label>
             <p>Auto chooses a model for the current question. Both share this conversation.</p>
             <button type="button" className="vera-motion-choice" aria-pressed={motion === "still"} onClick={changeMotion}>Aura motion<span>{motion === "ambient" ? "Ambient" : "Still"}</span></button>
@@ -206,7 +225,7 @@ export function Vectra() {
       <div className="vera-panel-art" aria-hidden="true" />
       {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
       {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
-        <Conversation onThreadChange={setResumed} preference={preference} open={open && screen === "chat"} dismiss={() => dismiss(false)} />
+        <Conversation onThreadChange={setResumed} preference={preference} answerStyle={answerStyle} suggestQuestions={suggestQuestions} open={open && screen === "chat"} dismiss={() => dismiss(false)} />
       </Suspense></div>}
     </dialog>
   </>, document.body);

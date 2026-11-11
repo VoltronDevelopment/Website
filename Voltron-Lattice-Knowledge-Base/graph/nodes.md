@@ -30,3 +30,4 @@ related_ids: []
 | VL-PARTNER | Starting a conversation with Voltron | [Open](../knowledge/12-partnerships.md) | positioning |
 | VL-FAQ | Visitor questions and grounded answers | [Open](../knowledge/13-faq.md) | answer_templates |
 | VL-GLOSSARY | Public terminology and aliases | [Open](../knowledge/14-glossary.md) | positioning |
+| VL-FOUNDATIONS | Industrial concepts in plain language | [Open](../knowledge/16-industrial-foundations.md) | general_education |

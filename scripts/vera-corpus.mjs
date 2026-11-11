@@ -50,10 +50,14 @@ export async function compileCorpus() {
       if (heading === "Related knowledge") continue;
       const plain = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").trim();
       if (!plain) continue;
+      const aliases = metadata.section_aliases?.[heading] ?? metadata.aliases;
+      const reference = metadata.section_references?.[heading];
+      if (reference && new URL(reference).protocol !== "https:") throw new Error("Knowledge references must use HTTPS");
       const record = {
         id: slug(id) + "--" + slug(heading), topicId: id, title: metadata.title + " — " + heading,
-        href: topic.href, status: topic.status, body: plain, terms: metadata.aliases.join(" "),
-        aliases: metadata.aliases, section: heading, qualification,
+        href: topic.href, status: topic.status, body: plain, terms: aliases.join(" "),
+        aliases, section: heading, qualification, ...(reference && { reference }),
+        ...(metadata.illustrative_sections?.includes(heading) && { illustrative: true }),
         relationships: edges, classification: metadata.classification, approval: metadata.approval_status,
         revision: metadata.version, sourceIds: metadata.source_ids, reviewedAt: metadata.as_of,
       };

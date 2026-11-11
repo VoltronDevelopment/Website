@@ -5,7 +5,7 @@ export type KnowledgeRecord = {
   id: string; title: string; href: string; status: string; body: string; terms: string;
   topicId?: string; section?: string; aliases?: string[]; qualification?: string;
   approval?: string; classification?: string; relationships?: Relationship[];
-  siteExcerpt?: string;
+  siteExcerpt?: string; reference?: string; illustrative?: boolean;
 };
 export type RankedHit = { id: string; score: number };
 const stop = new Set("what how does do is are the a an to for and in of it that this with can me my about".split(" "));
