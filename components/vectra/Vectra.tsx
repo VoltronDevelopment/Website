@@ -203,16 +203,7 @@ export function Vectra() {
           </button>
         </div>
       </header>
-      <div className="vera-panel-art" aria-hidden="true">
-        <svg className="vera-panel-lattice" viewBox="80 0 800 560" preserveAspectRatio="xMidYMid slice">
-          {[{ x: 250, y: 220 }, { x: 690, y: 220 }, { x: 470, y: 110 }].map(({ x, y }) =>
-            <g key={x} transform={`translate(${x} ${y})`}>
-              <polygon className="atmosphere-top" points="-170,0 0,-90 170,0 0,90" />
-              <polygon className="atmosphere-side" points="-170,0 0,90 0,310 -170,220" />
-              <polygon className="atmosphere-front" points="170,0 0,90 0,310 170,220" />
-            </g>)}
-        </svg>
-      </div>
+      <div className="vera-panel-art" aria-hidden="true" />
       {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
       {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
         <Conversation onThreadChange={setResumed} preference={preference} open={open && screen === "chat"} dismiss={() => dismiss(false)} />
