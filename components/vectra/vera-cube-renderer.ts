@@ -3,6 +3,14 @@ import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment
 import { createFluidCube } from "../intelligence/fluid-cube-materials";
 import type { AgentVisualPreset } from "../intelligence/agent-presets";
 const veraIdentity: AgentVisualPreset = { name: "VERA", family: "clouds", motion: "circulating", seed: 137, scale: [1.3, 1.8, 1.45], contours: 9, warp: 2.8, speed: 1.15, density: 1.18, smoke: .045, gather: .28, particles: .05, low: "#17257A", mid: "#3970E6", high: "#45E5E0", aura: "#6574E9" };
+// Original Vera studies, independent of the site's specialist-agent identities.
+function studyIdentity(preset: number): AgentVisualPreset {
+  if (preset === 5) return veraIdentity;
+  return { ...veraIdentity, seed: 151 + preset * 17, speed: .8,
+    ...(preset === 4 ? { low: "#174D63", mid: "#368EAD", high: "#80DED4", aura: "#67BBB9" }
+      : preset === 0 ? { low: "#34316D", mid: "#6968C3", high: "#A9CBEF", aura: "#9291D5" }
+      : { low: "#213D79", mid: "#467FCC", high: "#7AD5EA", aura: "#6AA6D5" }) };
+}
 import { prefersStaticScene } from "../performance/scene-policy";
 
 type Slot = { canvas: HTMLCanvasElement; host: HTMLElement; preset: number };
@@ -81,7 +89,7 @@ function start() {
     for (const preset of new Set(visible.map(slot => slot.preset))) {
       let item = cubes.get(preset);
       if (!item) {
-        item = { cube: createFluidCube(preset, veraIdentity), last: 0 };
+        item = { cube: createFluidCube(preset, studyIdentity(preset)), last: 0 };
         cubes.set(preset, item);
       }
       const matching = visible.filter(slot => slot.preset === preset);
@@ -103,7 +111,7 @@ function start() {
         if (canvas.width !== size || canvas.height !== size) { canvas.width = size; canvas.height = size; }
         context.clearRect(0, 0, size, size);
         context.drawImage(source, 0, surfaceSize - size, size, size, 0, 0, size, size);
-        host.style.setProperty("--vera-aura-color", veraIdentity.aura);
+        host.style.setProperty("--vera-aura-color", studyIdentity(preset).aura);
         host.dataset.live = "true";
       }
     }
