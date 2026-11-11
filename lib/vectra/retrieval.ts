@@ -1,3 +1,4 @@
+import { conversationPlan } from "./conversation";
 import type { Turn } from "./types";
 
 export type Relationship = { id: string; from: string; to: string; relation: string; status: string };
@@ -37,8 +38,16 @@ export function retrievalQuery(question: string, history: Turn[], records: Knowl
     if (candidates.length === 1) additions.add(candidates[0]);
   }
   let context = "";
+  const plan = conversationPlan(question, history);
+  if (/\b(back to|return to|our corrected|earlier example)\b/i.test(question)) {
+    const current = tokens(question);
+    const prior = history.map((turn, index) => ({ turn, index,
+      overlap: [...tokens(turn.question)].filter(word => current.has(word) && word.length > 3).length }))
+      .filter(item => item.overlap >= 2).sort((a, b) => b.overlap - a.overlap || b.index - a.index)[0];
+    if (prior) context = prior.turn.question;
+  }
   const explicit = safe.some(r => (r.aliases || []).some(a => (` ${normalized(question)} `).includes(` ${normalized(a)} `)));
-  if (!explicit && /\b(that|this|those|it|they|their|continue|more)\b/i.test(question)) {
+  if (!context && !explicit && (/\b(that|this|those|it|they|their|continue|more)\b/i.test(question) || plan.substantial)) {
     for (const turn of history.slice(-8).reverse()) {
       const cited = safe.filter(r => turn.reply.sources.some(s => s.id === r.id));
       if (cited.length) { context = cited.map(r => r.title).slice(0, 2).join("; "); break; }
@@ -51,7 +60,14 @@ export function retrievalQuery(question: string, history: Turn[], records: Knowl
 }
 
 export function selectEvidence(question: string, history: Turn[], records: KnowledgeRecord[], hits: RankedHit[] = []) {
-  const approved = records.filter(record => record.approval === "approved" && record.classification === "public_safe");
+  const companyQuestion = /\b(Voltron|VOS|V-MO|Alpha|Commons|Human Lattice|founder|roadmap|your (?:product|company|platform))\b/i.test(question);
+  const visitorScenario = history.some(turn => /\b(my (?:project|sample|factory|plant|pumping)|our (?:plant|factory|project)|suppose|hypothetical|separate project|we make)\b/i.test(turn.question)) ||
+    /\b(my (?:project|sample|factory|plant)|our (?:plant|factory|project)|suppose|hypothetical)\b/i.test(question);
+  const technical = /\b(scan|gauges?|measurements?|sensors?|SCADA|PLC|historian|digital twin|simulation|ontology)\b/i;
+  const technicalQuestion = technical.test(question) ||
+    (/\b(that|this|there|independent evidence|what would|how so)\b/i.test(question) && technical.test(history.at(-1)?.question || ""));
+  const approved = records.filter(record => record.approval === "approved" && record.classification === "public_safe" &&
+    (!(visitorScenario || technicalQuestion) || companyQuestion || (record.topicId === "VL-FOUNDATIONS" && Boolean(record.reference || record.illustrative))));
   const resolved = retrievalQuery(question, history, approved);
   const words = tokens(resolved);
   const followUp = words.size < 5 || /\b(that|this|those|it|they|their)\b/i.test(question);
