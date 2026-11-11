@@ -1,4 +1,4 @@
-import {identityMark, identityMark2x} from '@/lib/identity-assets';
+import {identityMark2x} from '@/lib/identity-assets';
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
 import {addArtworkSoftboxes,createFloorEcho} from "../brand/artwork-studio";
@@ -46,7 +46,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   camera.position.set(-0.62, 1.7, 7.9);
   camera.lookAt(0, 0, 0);
   const quality = createRenderQuality(canvas, 2);
-  const tileSize = options.sharp ? PIECE * 3 : TILE;
+  // Each third retains a full 512px of source detail, including the settled face.
+  const tileSize = PIECE * 3;
   const px = (value: number) => Math.round(value * tileSize / TILE);
   const query = new URLSearchParams(location.search);
   const review = query.get("hero-time");
@@ -63,7 +64,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   const faceKinds:GlassFace[]=['side','side','top','bottom','front','rear'];
   const faceRoles:PaneRole[]=['near','recess','crown','base','clear','recess'];
   const glasses=faceKinds.map((kind,i)=>{const m=track(glassFace(kind,false,true,'home',faceRoles[i]));m.forceSinglePass=true;return m;});
-  let logoImage=options.shared?.texture.image as CanvasImageSource|undefined;
+  let logoImage: CanvasImageSource | undefined;
   const bodyGeometry = track(new RoundedBoxGeometry(CUBIE, CUBIE, CUBIE, 3, 0.03));
   const stickerGeometry = track(new THREE.PlaneGeometry(STICKER, STICKER));
   const stickerMeshes: THREE.Mesh[] = [];
@@ -136,7 +137,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   // otherwise introduce sampling seams through the fine circuit strokes.
   const joinedGeometry = track(new THREE.PlaneGeometry(CUBIE * 3, CUBIE * 3));
   for (const face of faces) {
-    const map = track(new THREE.CanvasTexture(canvases[face.id]));
+    const map = atlas?.[face.id] ?? track(new THREE.CanvasTexture(canvases[face.id]));
     map.colorSpace = THREE.SRGBColorSpace;
     map.anisotropy = 8;
     const material = track(new THREE.MeshBasicMaterial({map, transparent:true, depthWrite:true, toneMapped:false}));
@@ -330,7 +331,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       scene.environment = options.shared?.environment ?? null;
       await document.fonts?.load(`300 ${px(92)}px Montserrat`).catch(() => undefined);
       if (disposed) return;
-      if(!logoImage){const texture=track(await new THREE.TextureLoader().loadAsync(options.sharp ? identityMark2x : identityMark));logoImage=texture.image as CanvasImageSource;if(disposed)return;}
+      if(!logoImage){const texture=track(await new THREE.TextureLoader().loadAsync(identityMark2x));logoImage=texture.image as CanvasImageSource;if(disposed)return;}
       paint();
       await yieldToBrowser();
       if (disposed) return;
