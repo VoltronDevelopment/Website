@@ -3,9 +3,9 @@ import { readFile, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 
 const concepts = [
-  ['human', 'Human ingenuity', 'Icy point-cloud hand with hovering cube-2.png'],
-  ['connected', 'Connected intelligence', 'Three Glass Wafers and Cyan Signal-1.png'],
-  ['manufacturing', 'Manufacturing possibilities', 'Machined bearing flange with voxel trail-3.png'],
+  ['human', 'Human ingenuity', 'living-lattice-human.png'],
+  ['connected', 'Connected intelligence', 'living-lattice-connected.png'],
+  ['manufacturing', 'Manufacturing possibilities', 'living-lattice-manufacturing.png'],
 ];
 const artwork = [];
 
@@ -13,7 +13,7 @@ for (const [kind, label, filename] of concepts) {
   const source = await readFile(`public/tile/${filename}`);
   const images = [];
   for (const width of [360, 720]) {
-    const bytes = await sharp(source).resize(width, width).webp({ quality:96, alphaQuality:100 }).toBuffer();
+    const bytes = await sharp(source).resize(width, width).webp({ lossless:true }).toBuffer();
     const hash = createHash('sha256').update(bytes).digest('hex').slice(0,16);
     const url = `/optimized/entry-concept-${kind}-${width}-${hash}.webp`;
     await writeFile(`public${url}`, bytes);
