@@ -7,6 +7,7 @@ import { ArrowLeft, ChevronDown, Maximize2, Minimize2, Minus } from "lucide-reac
 import { isModelPreference, type ModelPreference } from "@/lib/vectra/models";
 import { VeraIntroduction } from "./VeraIntroduction";
 import { VeraCube } from "./VeraCube";
+import { LatticeAtmosphere } from "../brand/LatticeAtmosphere";
 import "./vectra.css";
 
 const Conversation = lazy(() => import("./VectraConversation"));
@@ -204,7 +205,7 @@ export function Vectra() {
         </div>
       </header>
       <div className="vera-panel-art" aria-hidden="true">
-        <VeraCube variant="platform" decorative /><VeraCube variant="vision" decorative /><VeraCube variant="challenge" decorative />
+        <LatticeAtmosphere />
       </div>
       {visited && <div ref={begin} className="vera-intro-view" hidden={screen !== "intro"}><VeraIntroduction resumed={resumed} animate={entrance} onBegin={() => navigate("chat")} /></div>}
       {visited && <div className="vera-conversation-view" hidden={screen !== "chat"}><Suspense fallback={<p className="vectra-loading" role="status">Opening Vera…</p>}>
