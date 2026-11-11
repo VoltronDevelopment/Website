@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE, GET, POST } from "@/app/api/vectra/route";
 import { vectraGraph } from "@/lib/vectra/graph";
-import { createSession, finishTurn, loadTurns, reserveTurn } from "@/lib/vectra/store";
+import { createSession, finishTurn, loadTurns, reserveTurn, takeWindow } from "@/lib/vectra/store";
 
 vi.mock("@/lib/launch", () => ({ isPrelaunch: () => false }));
 vi.mock("@/lib/vectra/graph", () => ({ vectraGraph: { invoke: vi.fn() } }));
@@ -57,4 +57,18 @@ describe("Vectra guest recovery", () => {
     await expect(retried.json()).resolves.toEqual({ turns: [{ id, question, reply: answer }] });
     expect(finishTurn).toHaveBeenCalledTimes(2);
   });
+  it("continues beyond 24 replies and ignores the daily quota while caps are disabled", async () => {
+    const answer = { text: "Hello.", sources: [], enquiry: false };
+    const history = Array.from({length: 25}, (_, index) => ({id: `old-${index}`, question: "Hi", reply: answer}));
+    vi.mocked(loadTurns).mockResolvedValue(history);
+    vi.mocked(reserveTurn).mockResolvedValue({lease:"00000000-0000-4000-8000-000000000003",turns:history});
+    vi.mocked(finishTurn).mockResolvedValue(true);
+    vi.mocked(takeWindow).mockImplementation(async bucket => !bucket.startsWith("day/"));
+    vi.mocked(vectraGraph.invoke).mockResolvedValue({question, preference:"auto", history, records:[], evidence:[], candidate:answer, reply:answer});
+    const response = await POST(request("POST"));
+    expect(response.status).toBe(200);
+    expect((await response.json()).turns).toHaveLength(26);
+    expect(vi.mocked(takeWindow).mock.calls.some(([bucket]) => bucket.startsWith("day/"))).toBe(false);
+  });
+
 });

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEve
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpRight, ChevronDown, Ellipsis } from "lucide-react";
 import Link from "next/link";
 import type { ModelPreference } from "@/lib/vectra/models";
-import { conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
+import { chatCapsEnabled, conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
 import { VectraEnquiry } from "./VectraEnquiry";
 import { VeraCube } from "./VeraCube";
 import { VeraIntroduction } from "./VeraIntroduction";
@@ -264,7 +264,7 @@ export default function VectraConversation({ open, dismiss, preference }: { open
     </div>}
     {view === "about" && <div className="vectra-subview vectra-about">
       <p>Vera can explain Voltron’s public material and help you find the right page or enquiry form. Replies are in English.</p>
-      <p>A guest chat lasts up to 24 hours and supports {conversationTurnLimit} replies. Use the enquiry form to share your contact details.</p>
+      <p>A guest chat lasts up to 24 hours {chatCapsEnabled ? `and supports ${conversationTurnLimit} replies` : "with no reply-count cap currently"}. Use the enquiry form to share your contact details.</p>
       <Link href="/partner#inquiry" onClick={dismiss}>Partner with us <ArrowUpRight size={14} /></Link>
     </div>}
   </>;

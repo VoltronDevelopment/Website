@@ -5,7 +5,7 @@ import { isPrelaunch } from "@/lib/launch";
 import { isModelPreference } from "@/lib/vectra/models";
 import { vectraGraph } from "@/lib/vectra/graph";
 import { createSession, digest, finishTurn, loadTurns, releaseKnowledge, reserveTurn, takeWindow, vectraConfigured } from "@/lib/vectra/store";
-import { conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
+import { chatCapsEnabled, dailyReplyLimit, conversationTurnLimit, messageLimit, type Turn } from "@/lib/vectra/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
     if (!saved) return expired();
     const replay = saved.find(turn => turn.id === input.id);
     if (replay) return replay.question === input.question ? reply({ turns: saved }) : reply({}, 409);
-    if (saved.length >= conversationTurnLimit) {
+    if (chatCapsEnabled && saved.length >= conversationTurnLimit) {
       return reply({ code: "conversation_limit", message: "This conversation has reached its reply limit. Start a new chat to keep going." }, 429);
     }
     const now = Date.now();
@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
     lease = reserved.lease;
     const duplicate = reserved.turns.find(turn => turn.id === input.id);
     if (duplicate) return duplicate.question === input.question ? reply({ turns: reserved.turns }) : reply({}, 409);
-    if (!await takeWindow(`day/${day}`, 350, new Date((day + 1) * 86_400_000))) {
+    if (chatCapsEnabled && !await takeWindow(`day/${day}`, dailyReplyLimit, new Date((day + 1) * 86_400_000))) {
       return reply({ code: "daily_limit", message: "Vera has reached its chat limit for today. You can still contact the Voltron team." }, 429);
     }
 

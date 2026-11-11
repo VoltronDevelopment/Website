@@ -110,7 +110,7 @@ export async function openAIAnswer({ question, history, evidence, preference = "
         relationships: [...new Map(evidence.flatMap(record => record.relationships || [])
           .filter(edge => evidence.some(record => record.topicId === edge.from) && evidence.some(record => record.topicId === edge.to))
           .map(edge => [edge.id, edge])).values()],
-        // The API bounds guest history to 24 turns and caps each message and reply.
+        // Each message and reply is bounded; guest sessions expire after one day.
         // Earlier visitor facts can still apply after a long detour.
         history: relevantHistory.map(turn => ({ visitorMessage: turn.question, veraReply: turn.reply.text })),
         ...(playful && { taskScope: "Respond to the absurd premise in one short, playful line. Skip definitions, explanation and follow-up offers." }),

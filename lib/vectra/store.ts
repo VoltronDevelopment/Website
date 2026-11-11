@@ -2,7 +2,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { Pool } from "pg";
 import knowledge from "./published.json";
 import { knowledgeVersion } from "./knowledge-version.mjs";
-import type { Turn } from "./types";
+import { chatCapsEnabled, conversationTurnLimit, type Turn } from "./types";
 import type { RankedHit } from "./retrieval";
 import { databaseConfig } from "./database-config.mjs";
 
@@ -78,8 +78,8 @@ export async function reserveTurn(session: string) {
   const { rows } = await db().query<{ turns: Turn[] }>(
     `update vectra.guest_sessions set lease = $2, lease_until = now() + interval '45 seconds'
      where session_hash = $1 and expires_at > now()
-       and (lease is null or lease_until <= now()) and jsonb_array_length(turns) < 24
-     returning turns`, [session, lease]);
+       and (lease is null or lease_until <= now()) and (not $3::boolean or jsonb_array_length(turns) < $4)
+     returning turns`, [session, lease, chatCapsEnabled, conversationTurnLimit]);
   return rows[0] ? { lease, turns: rows[0].turns } : null;
 }
 
