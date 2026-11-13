@@ -5,7 +5,7 @@ import {addArtworkSoftboxes,createFloorEcho} from "../brand/artwork-studio";
 import type {HeroController, SharedHeroResources} from "./hero-renderer";
 import {sizeHeroSurface} from "./hero-surface";
 import {isSceneScrollActive} from "./scene-preparation";
-import {createRenderQuality, yieldToBrowser} from "../performance/scene-policy";
+import {yieldToBrowser} from "../performance/scene-policy";
 import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTurn, type CubeMove} from "./home-cube-timeline";
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
 import type {PaneRole} from "./home-glass";
@@ -45,7 +45,6 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 40);
   camera.position.set(-0.62, 1.7, 7.9);
   camera.lookAt(0, 0, 0);
-  const quality = createRenderQuality(canvas, 2);
   // Each third retains a full 512px of source detail, including the settled face.
   const tileSize = PIECE * 3;
   const px = (value: number) => Math.round(value * tileSize / TILE);
@@ -271,7 +270,8 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     camera.fov = width / height < 0.9 ? 35.4 : 30.4;
     camera.zoom = innerWidth < 768 ? .85 : .89;
     camera.updateProjectionMatrix();
-    const ratio = options.sharp ? Math.max(2, quality.ratio) : quality.ratio;
+    // Thin lettering needs a stable sample grid throughout formation and rotation.
+    const ratio = 2;
     sizeHeroSurface(renderer, [], width, height, ratio);
     canvas.dataset.renderScale = ratio.toFixed(2);
     canvas.dataset.artworkScale = camera.zoom.toFixed(2);
@@ -283,14 +283,12 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     if (disposed || lost || paused || frozen || !visible || document.hidden) return;
     if (isSceneScrollActive(now)) {
       last = 0;
-      quality.reset();
       frame = requestAnimationFrame(tick);
       return;
     }
     const delta = last ? Math.max(0, Math.min(0.05, (now - last) / 1000)) : 0;
     time += delta;
     last = now;
-    if (quality.sample(now)) size();
     draw();
     frame = requestAnimationFrame(tick);
     canvas.dataset.continuousRendering = "true";
@@ -330,6 +328,10 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.05;
+      const anisotropy = renderer.capabilities.getMaxAnisotropy();
+      for (const material of stickers) {
+        if (material.map) material.map.anisotropy = anisotropy;
+      }
       scene.environment = options.shared?.environment ?? null;
       await document.fonts?.load(`300 ${px(92)}px Montserrat`).catch(() => undefined);
       if (disposed) return;

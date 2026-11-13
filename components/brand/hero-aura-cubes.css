@@ -1,0 +1,21 @@
+.hero-tags .vectra-cube {
+  position:relative;
+  display:block;
+  flex:none;
+  width:38px;
+  height:38px;
+  pointer-events:none;
+}
+.hero-tags .vera-cube-canvas,
+.hero-tags .vera-cube-poster,
+.hero-tags .vera-cube-poster img {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.hero-tags .vera-cube-canvas {opacity:0}
+.hero-tags .vectra-cube[data-live="true"] .vera-cube-canvas {opacity:1}
+.hero-tags .vectra-cube[data-live="true"] .vera-cube-poster {visibility:hidden}
+.hero-tags .vectra-cube-aura {display:none}
+.hero-tags .vera-cube-poster {transform:none}

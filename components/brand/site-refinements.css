@@ -93,3 +93,16 @@
   line-height:1.5;
  }
 }
+
+.site-presentation #main-content :is(.section-intro,.split-copy,.closing,.home-philosophy-content,.partner-contact,.alpha-decision) h2 {
+ font-family:Montserrat,Arial,sans-serif;
+ font-weight:400;
+ letter-spacing:.01em;
+ text-wrap:balance;
+}
+.site-presentation #main-content :is(article,.commons-detail,.network-factory-detail,.leadership-copy,.inquiry-panel) h3 {
+ font-family:Montserrat,Arial,sans-serif;
+ font-weight:500;
+ letter-spacing:0;
+ text-wrap:balance;
+}
