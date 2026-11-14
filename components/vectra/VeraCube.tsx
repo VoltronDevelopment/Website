@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 
-const presets = { vera: 5, platform: 3, vision: 4, challenge: 0 } as const;
+const presets = { vera: 5, platform: 3, vision: 4, challenge: 0, "ice-blue": 6, "brand-blue": 7, cobalt: 8 } as const;
 
 export function VeraCube({ active = false, variant = "vera", decorative = false }: { active?: boolean; variant?: keyof typeof presets; decorative?: boolean }) {
   if (decorative) return <span className="vera-question-cube" data-study={variant} aria-hidden="true"><span className="vera-face-top" /><span className="vera-face-left" /><span className="vera-face-right" /><span className="vera-study-light" /></span>;

@@ -6,7 +6,7 @@ import type {HeroController, SharedHeroResources} from "./hero-renderer";
 import {sizeHeroSurface} from "./hero-surface";
 import {isSceneScrollActive} from "./scene-preparation";
 import {yieldToBrowser} from "../performance/scene-policy";
-import {homeCubeDuration, homeCubeHold, homeCubeMoves, homeCubeStep, homeCubeTurn, type CubeMove} from "./home-cube-timeline";
+import {homeCubeDuration, homeCubeHold, homeCubeJoinDuration, homeCubeMoves, homeCubeSpinAngle, homeCubeStep, homeCubeTurn, type CubeMove} from "./home-cube-timeline";
 import {glassFace,setGlass,type GlassFace} from "./lattice-materials";
 import type {PaneRole} from "./home-glass";
 
@@ -22,7 +22,7 @@ const phrases = ["Human ingenuity", "Shared progress", "Connected intelligence"]
 /** 0 while the pieces are apart, 1 when the solved faces read as single tiles. */
 function joined(now: number) {
   if (now < homeCubeHold) return 1 - ease((now - homeCubeHold + 0.3) / 0.3);
-  return ease((now - homeCubeDuration) / 0.55);
+  return ease((now - homeCubeDuration) / homeCubeJoinDuration);
 }
 
 function ease(v: number) {
@@ -167,10 +167,16 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       if (snap) {cubie.x = Math.round(cubie.x); cubie.y = Math.round(cubie.y); cubie.z = Math.round(cubie.z);}
     }
   }
+  let facesJoined = false;
   function pose(now: number) {
+    cube.rotation.set(0, homeCubeSpinAngle(now), 0);
+    const seamless = now >= homeCubeDuration + homeCubeJoinDuration;
+    if (seamless && facesJoined) return;
+    facesJoined = seamless;
+
     for (const cubie of cubies) {cubie.x = cubie.sx; cubie.y = cubie.sy; cubie.z = cubie.sz; cubie.q.identity();}
     const motion = now - homeCubeHold;
-    if (motion > 0) for (let index = 0; index < homeCubeMoves.length; index++) {
+    if (motion > 0 && now < homeCubeDuration) for (let index = 0; index < homeCubeMoves.length; index++) {
       const start = index * homeCubeStep;
       if (motion < start) break;
       const local = motion - start;
@@ -182,13 +188,10 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     const spacing = SPACING + (CUBIE - SPACING) * join;
     const reach = STICKER + (spacing - STICKER) * join;
     for (const cubie of cubies) {cubie.mesh.position.set(cubie.x * spacing, cubie.y * spacing, cubie.z * spacing); cubie.mesh.quaternion.copy(cubie.q);}
-    const seamless = join >= 1;
     for (const mesh of stickerMeshes) { mesh.scale.set(reach / STICKER, reach / STICKER, 1); mesh.visible = !seamless; }
     for (const mesh of joinedFaces) mesh.visible = seamless;
     canvas.dataset.seamlessFace = String(seamless);
     canvas.dataset.joined = join.toFixed(2);
-    const spin = now > homeCubeDuration ? (now - homeCubeDuration) * 0.28 : 0;
-    cube.rotation.set(0, spin, 0);
   }
 
   function paint() {
@@ -301,7 +304,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
     else {paused = !paused; if (paused) stop(); else {frozen = false; schedule();} draw();}
   }
   function visibility() {if (document.hidden) stop(); else schedule();}
-  function preference() {if (motion.matches) {stop(); time = homeCubeDuration+.55; draw();} else schedule();}
+  function preference() {if (motion.matches) {stop(); time = homeCubeDuration + homeCubeJoinDuration; draw();} else schedule();}
   function contextLost(event: Event) {event.preventDefault(); lost = true; stop(); canvas.hidden = true; host.dataset.scenePose = "complete"; host.dataset.sceneState = "fallback"; host.dataset.sceneMode = "static";}
   function restored() {lost = false; canvas.hidden = false; paint(); size(); host.dataset.sceneState = "live"; schedule();}
   const resize = new ResizeObserver(size);
@@ -341,7 +344,7 @@ export function mountHomeCube(canvas: HTMLCanvasElement, host: HTMLDivElement, h
       if (disposed) return;
       await renderer.compileAsync(scene, camera);
       if (disposed) return;
-      if (options.immediate || motion.matches) time = homeCubeDuration+.55;
+      if (options.immediate || motion.matches) time = homeCubeDuration + homeCubeJoinDuration;
       size();
       resize.observe(host);
       themes.observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});

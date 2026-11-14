@@ -2,7 +2,14 @@ import * as T from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { createFluidCube } from "../intelligence/fluid-cube-materials";
 import type { AgentVisualPreset } from "../intelligence/agent-presets";
+import { prefersStaticScene } from "../performance/scene-policy";
+
 const veraIdentity: AgentVisualPreset = { name: "VERA", family: "clouds", motion: "circulating", seed: 137, scale: [1.3, 1.8, 1.45], contours: 9, warp: 2.8, speed: 1.15, density: 1.18, smoke: .045, gather: .28, particles: .05, low: "#17257A", mid: "#3970E6", high: "#45E5E0", aura: "#6574E9" };
+const heroPalettes: Partial<Record<number, { agent: number; colors: Pick<AgentVisualPreset, "low" | "mid" | "high" | "aura"> }>> = {
+  6: { agent: 3, colors: { low: "#4A79AD", mid: "#85B6E8", high: "#DBF0FF", aura: "#A9D2F5" } },
+  7: { agent: 4, colors: { low: "#173E79", mid: "#246BD4", high: "#86C1FF", aura: "#528FE0" } },
+  8: { agent: 0, colors: { low: "#0E265C", mid: "#214BA7", high: "#659CF1", aura: "#3966C7" } },
+};
 // Original Vera studies, independent of the site's specialist-agent identities.
 function studyIdentity(preset: number): AgentVisualPreset {
   if (preset === 5) return veraIdentity;
@@ -11,8 +18,6 @@ function studyIdentity(preset: number): AgentVisualPreset {
       : preset === 0 ? { low: "#34316D", mid: "#6968C3", high: "#A9CBEF", aura: "#9291D5" }
       : { low: "#213D79", mid: "#467FCC", high: "#7AD5EA", aura: "#6AA6D5" }) };
 }
-import { prefersStaticScene } from "../performance/scene-policy";
-
 type Slot = { canvas: HTMLCanvasElement; host: HTMLElement; preset: number };
 const slots = new Set<Slot>();
 const surfaceSize = 256;
@@ -69,7 +74,7 @@ function start() {
   key.position.set(-3, 5, 3);
   scene.add(key);
 
-  const cubes = new Map<number, { cube: ReturnType<typeof createFluidCube>; last: number }>();
+  const cubes = new Map<number, { cube: ReturnType<typeof createFluidCube>; aura: string; last: number }>();
   let frame = 0;
   let last = 0;
   let time = 7;
@@ -89,7 +94,10 @@ function start() {
     for (const preset of new Set(visible.map(slot => slot.preset))) {
       let item = cubes.get(preset);
       if (!item) {
-        item = { cube: createFluidCube(preset, studyIdentity(preset)), last: 0 };
+        const hero = heroPalettes[preset];
+        const agent = hero?.agent ?? preset;
+        const visual = { ...studyIdentity(agent), ...hero?.colors };
+        item = { cube: createFluidCube(agent, visual), aura: visual.aura, last: 0 };
         cubes.set(preset, item);
       }
       const matching = visible.filter(slot => slot.preset === preset);
@@ -111,7 +119,7 @@ function start() {
         if (canvas.width !== size || canvas.height !== size) { canvas.width = size; canvas.height = size; }
         context.clearRect(0, 0, size, size);
         context.drawImage(source, 0, surfaceSize - size, size, size, 0, 0, size, size);
-        host.style.setProperty("--vera-aura-color", studyIdentity(preset).aura);
+        host.style.setProperty("--vera-aura-color", item.aura);
         host.dataset.live = "true";
       }
     }

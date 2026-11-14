@@ -29,3 +29,15 @@ export const homeCubeMoves: CubeMove[] = [
 
 export const homeCubeScrambleEnd = homeCubeHold + homeCubeStep * homeCubeScramble.length;
 export const homeCubeDuration = homeCubeHold + homeCubeStep * homeCubeMoves.length;
+export const homeCubeJoinDuration = 0.55;
+
+export function homeCubeSpinAngle(time: number) {
+  const elapsed = Math.max(0, time - homeCubeDuration);
+  const rampDuration = 0.8;
+  const speed = 0.23;
+  if (elapsed >= rampDuration) return speed * (elapsed - rampDuration / 2);
+
+  // Integrate smoothstep velocity so both angle and speed match at the handoff.
+  const progress = elapsed / rampDuration;
+  return speed * rampDuration * progress ** 3 * (1 - progress / 2);
+}

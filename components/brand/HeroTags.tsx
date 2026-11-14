@@ -1,7 +1,7 @@
 import { VeraCube } from "../vectra/VeraCube";
 import "./hero-aura-cubes.css";
 
-const variants = ["platform", "vision", "challenge"] as const;
+const variants = ["ice-blue", "brand-blue", "cobalt"] as const;
 
 export function HeroTags({keywords}:{keywords:string}) {
   return (
